@@ -9,41 +9,37 @@ import { getCommonApplyFooter, validateFields } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
+
 import {
-  createUpdateADVNocApplication,
+  createUpdateSellMeatNocApplication,
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, localStorageGet, getUserInfo, setapplicationType, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getOPMSTenantId, localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 import { UpdateStatus } from "../../../../../ui-utils/commons";
-///import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 const setReviewPageRoute = (state, dispatch, applnid) => {
-  let tenantId = getOPMSTenantId();
-  const applicationNumber = get(
-    state,
-    "screenConfiguration.preparedFinalObject.ADVERTISEMENTNOC.applicationId"
-  );
+  let tenantId = '';
+  const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
 
   if (applicationNumber) {
-
+    tenantId = getOPMSTenantId();
     const appendUrl =
       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-    const reviewUrl = `${appendUrl}/egov-opms/advertisement_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
+    const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
     dispatch(setRoute(reviewUrl));
   }
   else {
-    // const appendUrl =
-    // process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-    // const reviewUrl = `${appendUrl}/egov-opms/summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
-    // dispatch(setRoute(reviewUrl));
+    tenantId = getOPMSTenantId();
     const appendUrl =
       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-    const reviewUrl = `${appendUrl}/egov-opms/advertisement_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
+    const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
     dispatch(setRoute(reviewUrl));
   }
 };
+
 const moveToReview = (state, dispatch, applnid) => {
   const documentsFormat = Object.values(
     get(state.screenConfiguration.preparedFinalObject, "documentsUploadRedux")
@@ -94,123 +90,132 @@ const moveToReview = (state, dispatch, applnid) => {
     }
   }
 
-  // alert("validateDocumentField1 : " + validateDocumentField + " " + applnid)
+  /// Removed from here pls do not remove commented code 
+  // if (validateDocumentField) {
+  //   setReviewPageRoute(state, dispatch, applnid);
+  // };
   return validateDocumentField;
 };
 
 const getMdmsData = async (state, dispatch) => {
   let tenantId = getOPMSTenantId();
+  /** get(
+    state.screenConfiguration.preparedFinalObject,
+    "SELLMEATNOC.tenantId"
+  ); */
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
       moduleDetails: [
-        { moduleName: "ADVT", masterDetails: [{ name: "Documents" }] }
+        { moduleName: "SellMeatNOC", masterDetails: [{ name: "SellMeatDocuments" }] }
       ]
     }
   };
   try {
     let payload = await httpRequest(
-      "post",
-      "/egov-mdms-service/v1/_search",
-      "_search",
-      [],
+      "post", "/egov-mdms-service/v1/_search", "_search", [],
       mdmsBody
     );
 
     dispatch(
       prepareFinalObject(
-        "applyScreenMdmsData.ADVT.Documents",
-        payload.MdmsRes.ADVT.Documents
+        "applyScreenMdmsData.SELLMEATNOC.SellMeatDocuments",
+        payload.MdmsRes.SELLMEATNOC.SellMeatDocuments
       )
     );
-    //  alert("prepareDocumentsUploadData")
-    prepareDocumentsUploadData(state, dispatch, 'apply_Advt');
+    prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
   } catch (e) {
     console.log(e);
   }
 };
 
+
+
+
+
 const callBackForNext = async (state, dispatch) => {
   let activeStep = get(
-    state.screenConfiguration.screenConfig["advertisementApply"],
+    state.screenConfiguration.screenConfig["applyopenspace"],
     "components.div.children.stepper.props.activeStep",
     0
   );
-  //  alert("activestepsss1 : " + (activeStep + 1))
+  
+  //alert("activestepsss asd : " + (activeStep+1))
+  // validatestepform(activeStep+1)
+  // console.log(activeStep);
   let isFormValid = true;
   let hasFieldToaster = false;
+  
   let validatestepformflag = validatestepform(activeStep + 1)
-
+  
   isFormValid = validatestepformflag[0];
   hasFieldToaster = validatestepformflag[1];
-
-  if (activeStep === 1) {
+  // alert('activeStep final :'+activeStep)
+  if (activeStep === 0) {
     let isapplicantnamevalid = validateFields(
       "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
       state,
       dispatch
     );
   }
-
-  if (activeStep === 2) {
+  if (activeStep === 1) {
     isFormValid = moveToReview(state, dispatch);
   }
-
-  if (activeStep !== 3) {
+  if (activeStep !== 2) {
     if (isFormValid) {
       let responseStatus = "success";
-      if (activeStep === 2) {
-        try {
-          prepareDocumentsUploadData(state, dispatch, 'apply_Advt');
-          //getMdmsData(state, dispatch);
-          let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "RESENT" : "INITIATED";
-          let response = await createUpdateADVNocApplication(state, dispatch, statuss);
-          responseStatus = get(response, "status", "");
-          let applicationId = get(response, "applicationId", "");
-          if (responseStatus == 'SUCCESS' || responseStatus == 'success') {
-            isFormValid = moveToReview(state, dispatch, applicationId);
-            if (isFormValid) {
-              setReviewPageRoute(state, dispatch, applicationId);
-            }
-            let errorMessage = {
-              labelName: 'APPLICATION ' + statuss + ' SUCCESSFULLY! ',
-              labelKey: "" //UPLOAD_FILE_TOAST
-            };
-            dispatch(toggleSnackbar(true, errorMessage, "success"));
-      
+      if (activeStep === 1) {
+        prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
+
+        let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "RESENT" : "INITIATED";
+        let response = await createUpdateSellMeatNocApplication(state, dispatch, statuss);
+        responseStatus = get(response, "status", "");
+        let applicationId = get(response, "applicationId", "");
+
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+          isFormValid = moveToReview(state, dispatch, applicationId);
+          if (isFormValid) {
+            setReviewPageRoute(state, dispatch, applicationId);
           }
-          else {
-            console.log(`Error Response : ` + response.message);
-            let errorMessage = {
-              labelName: "Submission Falied, Try Again later!",
-              labelKey: "" //UPLOAD_FILE_TOAST
-            };
-            dispatch(toggleSnackbar(true, errorMessage, "error"));
-          }
-        } catch (error) {
-          console.log(error);
+          let errorMessage = {
+            labelName: 'APPLICATION ' + statuss + ' SUCCESSFULLY! ',
+            labelKey: "" //UPLOAD_FILE_TOAST
+          };
+          dispatch(toggleSnackbar(true, errorMessage, "success"));
+
+        } else {
+          // let errorMessage = {
+          //   labelName:
+          //     "Submission Falied, Try Again!",
+          //   labelKey: "UPLOAD_FILES_TOAST"
+          // };
+          // dispatch(toggleSnackbar(true, errorMessage, "warning"));
+          let errorMessage = {
+            labelName: "Submission Falied, Try Again later!",
+            labelKey: "" //UPLOAD_FILE_TOAST
+          };
+          dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
       }
-
       responseStatus === "success" && changeStep(state, dispatch);
     } else if (hasFieldToaster) {
       let errorMessage = {
-        labelName: "Please fill all mandatory fields and upload the documents!",
-        labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_PET_TOAST"
+        labelName: "Please fill all mandatory fields !",
+        labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_TOAST"
       };
       switch (activeStep) {
         case 1:
           errorMessage = {
             labelName:
               "Please check the Missing/Invalid field for Property Details, then proceed!",
-            labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_PET_TOAST"
+            labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_PROPERTY_TOAST"
           };
           break;
         case 2:
           errorMessage = {
             labelName:
               "Please fill all mandatory fields for Applicant Details, then proceed!",
-            labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_PET_TOAST"
+            labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_TOAST"
           };
           break;
       }
@@ -225,14 +230,23 @@ export const changeStep = (
   mode = "next",
   defaultActiveStep = -1
 ) => {
-  //alert("Inside step change1")
+  //alert("Inside step change")
   let activeStep = get(
-    state.screenConfiguration.screenConfig["advertisementApply"],
+    state.screenConfiguration.screenConfig["applyopenspace"],
     "components.div.children.stepper.props.activeStep",
     0
   );
   if (defaultActiveStep === -1) {
+    // if (activeStep === 2 && mode === "next") {
+    //   const isDocsUploaded = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "LicensesTemp[0].reviewDocData",
+    //     null
+    //   );
+    //   activeStep = isDocsUploaded ? 3 : 2;
+    // } else {
     activeStep = mode === "next" ? activeStep + 1 : activeStep - 1;
+    // }
   } else {
     activeStep = defaultActiveStep;
   }
@@ -262,7 +276,7 @@ export const changeStep = (
       value: isPayButtonVisible
     }
   ];
-  dispatchMultipleFieldChangeAction("advertisementApply", actionDefination, dispatch);
+  dispatchMultipleFieldChangeAction("applyopenspace", actionDefination, dispatch);
   renderSteps(activeStep, dispatch);
 };
 
@@ -270,39 +284,23 @@ export const renderSteps = (activeStep, dispatch) => {
   switch (activeStep) {
     case 0:
       dispatchMultipleFieldChangeAction(
-        "advertisementApply",
+        "applyopenspace",
         getActionDefinationForStepper(
           "components.div.children.formwizardFirstStep"
         ),
         dispatch
       );
       break;
-    case 1:
+    default:
       dispatchMultipleFieldChangeAction(
-        "advertisementApply",
+        "applyopenspace",
         getActionDefinationForStepper(
           "components.div.children.formwizardSecondStep"
         ),
         dispatch
       );
       break;
-    case 2:
-      dispatchMultipleFieldChangeAction(
-        "advertisementApply",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardThirdStep"
-        ),
-        dispatch
-      );
-      break;
-    default:
-      dispatchMultipleFieldChangeAction(
-        "advertisementApply",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardFourthStep"
-        ),
-        dispatch
-      );
+
   }
 };
 
@@ -317,17 +315,8 @@ export const getActionDefinationForStepper = path => {
       path: "components.div.children.formwizardSecondStep",
       property: "visible",
       value: false
-    },
-    {
-      path: "components.div.children.formwizardThirdStep",
-      property: "visible",
-      value: false
-    },
-    {
-      path: "components.div.children.formwizardFourthStep",
-      property: "visible",
-      value: false
     }
+
   ];
   for (var i = 0; i < actionDefination.length; i++) {
     actionDefination[i] = {
@@ -347,9 +336,8 @@ export const getActionDefinationForStepper = path => {
 export const callBackForPrevious = (state, dispatch) => {
   changeStep(state, dispatch, "previous");
 };
-//alert("FOOTER ADVERTISEMENT")
-export const footer = getCommonApplyFooter({
 
+export const footer = getCommonApplyFooter({
   previousButton: {
     componentPath: "Button",
     props: {
@@ -441,52 +429,52 @@ export const footer = getCommonApplyFooter({
   }
 });
 
-
 export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
-
   let allAreFilled = true;
-  document.getElementById("apply_form" + activeStep).querySelectorAll("[required]").forEach(function (i) {
-    i.parentNode.classList.remove("MuiInput-error-853");
-    i.parentNode.parentNode.classList.remove("MuiFormLabel-error-844");
-    if (!i.value) {
-      i.focus();
-      allAreFilled = false;
-      i.parentNode.classList.add("MuiInput-error-853");
-      i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-    }
-    if (i.getAttribute("aria-invalid") === 'true' && allAreFilled) {
-      i.parentNode.classList.add("MuiInput-error-853");
-      i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-      allAreFilled = false;
-      isFormValid = false;
-      hasFieldToaster = true;
-    }
-  })
+  if (activeStep == 1) {
+    document.getElementById("apply_form" + activeStep).querySelectorAll("[required]").forEach(function (i) {
+      //  alert(i+"::::"+i.value)
+      //  alert(i.getAttribute("aria-invalid"))
+      if (!i.value) {
+        i.focus();
+        allAreFilled = false;
+        i.parentNode.classList.add("MuiInput-error-853");
+        i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+      }
+      if (i.getAttribute("aria-invalid") === 'true' && allAreFilled) {
+        i.parentNode.classList.add("MuiInput-error-853");
+        i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+        allAreFilled = false;
+        isFormValid = false;
+        hasFieldToaster = true;
+      }
+    })
 
-  document.getElementById("apply_form" + activeStep).querySelectorAll("input[type='hidden']").forEach(function (i) {
-    i.parentNode.classList.remove("MuiInput-error-853");
-    i.parentNode.parentNode.parentNode.classList.remove("MuiFormLabel-error-844");
-    if (i.value == i.placeholder) {
-      i.focus();
-      allAreFilled = false;
-      i.parentNode.classList.add("MuiInput-error-853");
-      i.parentNode.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-      allAreFilled = false;
-      isFormValid = false;
-      hasFieldToaster = true;
-    }
 
-  })
-  if (!allAreFilled) {
-    //  alert('Fill all fields1')
+    document.getElementById("apply_form" + activeStep).querySelectorAll("input[type='hidden']").forEach(function (i) {
+      // alert("hidden "+i+"::::"+i.value)
+      //  alert(i.getAttribute("aria-invalid"))
+      if (i.value == i.placeholder) {
+        //	 alert(" inside hidden "+i+"::"+i.placeholder+"::"+i.value)
+        i.focus();
+        allAreFilled = false;
+        i.parentNode.classList.add("MuiInput-error-853");
+        i.parentNode.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+        allAreFilled = false;
+        isFormValid = false;
+        hasFieldToaster = true;
+      }
+
+    })
+  } 
+  if (allAreFilled == false) {
+    //alert('Fill all fields')
     isFormValid = false;
     hasFieldToaster = true;
   }
   else {
-    // alert('Submit1')
-
     isFormValid = true;
     hasFieldToaster = false;
   }
   return [isFormValid, hasFieldToaster]
-}; 
+};

@@ -13,7 +13,7 @@ import {
   prepareFinalObject,
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId,getUserInfo, setapplicationType,IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getOPMSTenantId, getUserInfo, setapplicationType, IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import jp from "jsonpath";
 import set from "lodash/set";
@@ -28,15 +28,15 @@ import {
 
 
 
-export const stepsData = [
-  { labelName: "Sell Meat NOC Details", labelKey: "SELLMEATNOC_APPLICANT_DETAILS_NOC" },
-  { labelName: "Documents", labelKey: "SELLMEATNOC_STEP_DOCUMENTS_NOC" },
-  { labelName: "Summary", labelKey: "SELLMEATNOC_SUMMARY" }
-];
-export const stepper = getStepperObject(
-  { props: { activeStep: 0 } },
-  stepsData
-);
+// export const stepsData = [
+//   { labelName: "Sell Meat NOC Details", labelKey: "SELLMEATNOC_APPLICANT_DETAILS_NOC" },
+//   { labelName: "Documents", labelKey: "SELLMEATNOC_STEP_DOCUMENTS_NOC" },
+//   { labelName: "Summary", labelKey: "SELLMEATNOC_SUMMARY" }
+// ];
+// export const stepper = getStepperObject(
+//   { props: { activeStep: 0 } },
+//   stepsData
+// );
 
 const applicationNumberContainer = () => {
   const applicationNumber = getQueryArg(
@@ -46,7 +46,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-services",
+      moduleName: "egov-opms",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
@@ -59,8 +59,8 @@ const applicationNumberContainer = () => {
 
 export const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Apply New Permission for Sell Meat NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
-    labelKey: "SELLMEAT_APPLY_NOC"
+    labelName: `Apply For New Location`,
+    labelKey: "BK_OSB_APPLY_NEW_LOCATION"
   }),
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
@@ -83,18 +83,6 @@ export const formwizardFirstStep = {
   children: {
     nocDetails
   }
-};
-
-export const formwizardSecondStep = {
-  uiFramework: "custom-atoms",
-  componentPath: "Form",
-  props: {
-    id: "apply_form2"
-  },
-  children: {
-    documentDetails
-  },
-  visible: false
 };
 
 
@@ -136,68 +124,23 @@ const getMdmsData = async (action, state, dispatch) => {
       [],
       mdmsBody
     );
-    
+    payload.MdmsRes.egpm.sector = [
+      {id : 1, code:'1_sector', tenantId : 'ch.chandigarh', name : 'Sector 1', active : true},
+      {id : 2, code:'2_sector', tenantId : 'ch.chandigarh', name : 'Sector 2', active : true}
+    ]
+    payload.MdmsRes.egpm.nocSought = [
+      {id : 1, code:'residential', tenantId : 'ch.chandigarh', name : 'Residential', active : true},
+      {id : 2, code:'commercial', tenantId : 'ch.chandigarh', name : 'Commercial', active : true}
+    ]
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
     console.log(e);
   }
 };
 
-export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId) => {
-  if (applicationNumber) {
-    let response = await getSearchResultsView([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber }
-    ]);
-    let Refurbishresponse = furnishSellMeatNocResponse(response);
-
-    dispatch(prepareFinalObject("SELLMEATNOC", Refurbishresponse));
-    if (applicationNumber) {
-      setapplicationNumber(applicationNumber);
-      setApplicationNumberBox(state, dispatch, applicationNumber);
-    }
-
-    let documentsPreview = [];
-
-    // Get all documents from response
-    let slelmeatnocdetail = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC", {});
-    let uploadVaccinationCertificate = slelmeatnocdetail.hasOwnProperty('uploadDocuments') ?
-      slelmeatnocdetail.uploadDocuments[0]['fileStoreId'] : '';
-    
-    if (uploadVaccinationCertificate !== '') {
-      documentsPreview.push({
-        title: "PROOF_POSSESSION_RENT_AGREEMENT",
-        fileStoreId: uploadVaccinationCertificate,
-        linkText: "View"
-      });
-      let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-      let fileUrls =
-        fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
-      documentsPreview = documentsPreview.map(function (doc, index) {
-
-        doc["link"] = fileUrls && fileUrls[doc.fileStoreId] && fileUrls[doc.fileStoreId].split(",")[0] || "";
-        //doc["name"] = doc.fileStoreId;
-        doc["name"] =
-          (fileUrls[doc.fileStoreId] &&
-            decodeURIComponent(
-              fileUrls[doc.fileStoreId]
-                .split(",")[0]
-                .split("?")[0]
-                .split("/")
-                .pop()
-                .slice(13)
-            )) ||
-          `Document - ${index + 1}`;
-        return doc;
-      });
-      dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-    }
-  }
-};
-
 const screenConfig = {
   uiFramework: "material-ui",
-  name: "applysellmeat",
+  name: "applylocation",
   beforeInitScreen: (action, state, dispatch) => {
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     !applicationNumber ? clearlocalstorageAppDetails(state) : '';
@@ -215,40 +158,7 @@ const screenConfig = {
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then(response => {
-
-      // Set Documents Data (TEMP)
-      prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
     });
-
-    // Search in case of EDIT flow
-    prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-
-
-    // Code to goto a specific step through URL
-    if (step && step.match(/^\d+$/)) {
-      let intStep = parseInt(step);
-      set(
-        action.screenConfig,
-        "components.div.children.stepper.props.activeStep",
-        intStep
-      );
-      let formWizardNames = [
-        "formwizardFirstStep",
-        "formwizardSecondStep"
-      ];
-      for (let i = 0; i < 4; i++) {
-        set(
-          action.screenConfig,
-          `components.div.children.${formWizardNames[i]}.visible`,
-          i == step
-        );
-        set(
-          action.screenConfig,
-          `components.div.children.footer.children.previousButton.visible`,
-          step != 0
-        );
-      }
-    }
 
     return action;
   },
@@ -273,9 +183,7 @@ const screenConfig = {
             }
           }
         },
-        stepper,
         formwizardFirstStep,
-        formwizardSecondStep,
         footer
       }
     }

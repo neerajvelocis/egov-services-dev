@@ -20,82 +20,82 @@ import { UpdateStatus } from "../../../../../ui-utils/commons";
 import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
-const setReviewPageRoute = (state, dispatch, applnid) => {
-  let tenantId = '';
-  const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
+// const setReviewPageRoute = (state, dispatch, applnid) => {
+//   let tenantId = '';
+//   const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
 
-  if (applicationNumber) {
-    tenantId = getOPMSTenantId();
-    const appendUrl =
-      process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-    const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
-    dispatch(setRoute(reviewUrl));
-  }
-  else {
-    tenantId = getOPMSTenantId();
-    const appendUrl =
-      process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-    const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
-    dispatch(setRoute(reviewUrl));
-  }
-};
+//   if (applicationNumber) {
+//     tenantId = getOPMSTenantId();
+//     const appendUrl =
+//       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+//     const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
+//     dispatch(setRoute(reviewUrl));
+//   }
+//   else {
+//     tenantId = getOPMSTenantId();
+//     const appendUrl =
+//       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+//     const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
+//     dispatch(setRoute(reviewUrl));
+//   }
+// };
 
-const moveToReview = (state, dispatch, applnid) => {
-  const documentsFormat = Object.values(
-    get(state.screenConfiguration.preparedFinalObject, "documentsUploadRedux")
-  );
+// const moveToReview = (state, dispatch, applnid) => {
+//   const documentsFormat = Object.values(
+//     get(state.screenConfiguration.preparedFinalObject, "documentsUploadRedux")
+//   );
 
-  let validateDocumentField = false;
+//   let validateDocumentField = false;
 
-  for (let i = 0; i < documentsFormat.length; i++) {
-    let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
-    let isDocumentTypeRequired = get(
-      documentsFormat[i],
-      "isDocumentTypeRequired"
-    );
+//   for (let i = 0; i < documentsFormat.length; i++) {
+//     let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
+//     let isDocumentTypeRequired = get(
+//       documentsFormat[i],
+//       "isDocumentTypeRequired"
+//     );
 
-    let documents = get(documentsFormat[i], "documents");
-    if (isDocumentRequired) {
-      if (documents && documents.length > 0) {
-        if (isDocumentTypeRequired) {
-          if (get(documentsFormat[i], "dropdown.value")) {
-            validateDocumentField = true;
-          } else {
-            dispatch(
-              toggleSnackbar(
-                true,
-                { labelName: "Please select type of Document!", labelKey: "" },
-                "warning"
-              )
-            );
-            validateDocumentField = false;
-            break;
-          }
-        } else {
-          validateDocumentField = true;
-        }
-      } else {
-        dispatch(
-          toggleSnackbar(
-            true,
-            { labelName: "Please uplaod mandatory documents!", labelKey: "" },
-            "warning"
-          )
-        );
-        validateDocumentField = false;
-        break;
-      }
-    } else {
-      validateDocumentField = true;
-    }
-  }
+//     let documents = get(documentsFormat[i], "documents");
+//     if (isDocumentRequired) {
+//       if (documents && documents.length > 0) {
+//         if (isDocumentTypeRequired) {
+//           if (get(documentsFormat[i], "dropdown.value")) {
+//             validateDocumentField = true;
+//           } else {
+//             dispatch(
+//               toggleSnackbar(
+//                 true,
+//                 { labelName: "Please select type of Document!", labelKey: "" },
+//                 "warning"
+//               )
+//             );
+//             validateDocumentField = false;
+//             break;
+//           }
+//         } else {
+//           validateDocumentField = true;
+//         }
+//       } else {
+//         dispatch(
+//           toggleSnackbar(
+//             true,
+//             { labelName: "Please uplaod mandatory documents!", labelKey: "" },
+//             "warning"
+//           )
+//         );
+//         validateDocumentField = false;
+//         break;
+//       }
+//     } else {
+//       validateDocumentField = true;
+//     }
+//   }
 
-  /// Removed from here pls do not remove commented code 
-  // if (validateDocumentField) {
-  //   setReviewPageRoute(state, dispatch, applnid);
-  // };
-  return validateDocumentField;
-};
+//   /// Removed from here pls do not remove commented code 
+//   // if (validateDocumentField) {
+//   //   setReviewPageRoute(state, dispatch, applnid);
+//   // };
+//   return validateDocumentField;
+// };
 
 const getMdmsData = async (state, dispatch) => {
   let tenantId = getOPMSTenantId();
@@ -151,20 +151,19 @@ const callBackForNext = async (state, dispatch) => {
   isFormValid = validatestepformflag[0];
   hasFieldToaster = validatestepformflag[1];
   // alert('activeStep final :'+activeStep)
-  if (activeStep === 0) {
-    let isapplicantnamevalid = validateFields(
-      "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
-      state,
-      dispatch
-    );
-  }
-  if (activeStep === 1) {
-    isFormValid = moveToReview(state, dispatch);
-  }
-  if (activeStep !== 2) {
+  // if (activeStep === 0) {
+  //   let isapplicantnamevalid = validateFields(
+  //     "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
+  //     state,
+  //     dispatch
+  //   );
+  // }
+  // if (activeStep === 1) {
+  //   isFormValid = moveToReview(state, dispatch);
+  // }
     if (isFormValid) {
       let responseStatus = "success";
-      if (activeStep === 1) {
+      alert("final call")
         prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
 
         let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "RESENT" : "INITIATED";
@@ -196,8 +195,6 @@ const callBackForNext = async (state, dispatch) => {
           };
           dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
-      }
-      responseStatus === "success" && changeStep(state, dispatch);
     } else if (hasFieldToaster) {
       let errorMessage = {
         labelName: "Please fill all mandatory fields !",
@@ -221,182 +218,10 @@ const callBackForNext = async (state, dispatch) => {
       }
       dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
-  }
-};
 
-export const changeStep = (
-  state,
-  dispatch,
-  mode = "next",
-  defaultActiveStep = -1
-) => {
-  //alert("Inside step change")
-  let activeStep = get(
-    state.screenConfiguration.screenConfig["applysellmeat"],
-    "components.div.children.stepper.props.activeStep",
-    0
-  );
-  if (defaultActiveStep === -1) {
-    // if (activeStep === 2 && mode === "next") {
-    //   const isDocsUploaded = get(
-    //     state.screenConfiguration.preparedFinalObject,
-    //     "LicensesTemp[0].reviewDocData",
-    //     null
-    //   );
-    //   activeStep = isDocsUploaded ? 3 : 2;
-    // } else {
-    activeStep = mode === "next" ? activeStep + 1 : activeStep - 1;
-    // }
-  } else {
-    activeStep = defaultActiveStep;
-  }
-
-  const isPreviousButtonVisible = activeStep > 0 ? true : false;
-  const isNextButtonVisible = activeStep < 4 ? true : false;
-  const isPayButtonVisible = activeStep === 4 ? true : false;
-  const actionDefination = [
-    {
-      path: "components.div.children.stepper.props",
-      property: "activeStep",
-      value: activeStep
-    },
-    {
-      path: "components.div.children.footer.children.previousButton",
-      property: "visible",
-      value: isPreviousButtonVisible
-    },
-    {
-      path: "components.div.children.footer.children.nextButton",
-      property: "visible",
-      value: isNextButtonVisible
-    },
-    {
-      path: "components.div.children.footer.children.payButton",
-      property: "visible",
-      value: isPayButtonVisible
-    }
-  ];
-  dispatchMultipleFieldChangeAction("applysellmeat", actionDefination, dispatch);
-  renderSteps(activeStep, dispatch);
-};
-
-export const renderSteps = (activeStep, dispatch) => {
-  switch (activeStep) {
-    case 0:
-      dispatchMultipleFieldChangeAction(
-        "applysellmeat",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardFirstStep"
-        ),
-        dispatch
-      );
-      break;
-    default:
-      dispatchMultipleFieldChangeAction(
-        "applysellmeat",
-        getActionDefinationForStepper(
-          "components.div.children.formwizardSecondStep"
-        ),
-        dispatch
-      );
-      break;
-
-  }
-};
-
-export const getActionDefinationForStepper = path => {
-  const actionDefination = [
-    {
-      path: "components.div.children.formwizardFirstStep",
-      property: "visible",
-      value: true
-    },
-    {
-      path: "components.div.children.formwizardSecondStep",
-      property: "visible",
-      value: false
-    }
-
-  ];
-  for (var i = 0; i < actionDefination.length; i++) {
-    actionDefination[i] = {
-      ...actionDefination[i],
-      value: false
-    };
-    if (path === actionDefination[i].path) {
-      actionDefination[i] = {
-        ...actionDefination[i],
-        value: true
-      };
-    }
-  }
-  return actionDefination;
-};
-
-export const callBackForPrevious = (state, dispatch) => {
-  changeStep(state, dispatch, "previous");
 };
 
 export const footer = getCommonApplyFooter({
-  previousButton: {
-    componentPath: "Button",
-    props: {
-      variant: "outlined",
-      color: "primary",
-      style: {
-        // minWidth: "200px",
-        height: "48px",
-        marginRight: "16px"
-      }
-    },
-    children: {
-      previousButtonIcon: {
-        uiFramework: "custom-atoms",
-        componentPath: "Icon",
-        props: {
-          iconName: "keyboard_arrow_left"
-        }
-      },
-      previousButtonLabel: getLabel({
-        labelName: "Previous Step",
-        labelKey: "NOC_COMMON_BUTTON_PREV_STEP"
-      })
-    },
-    onClickDefination: {
-      action: "condition",
-      callBack: callBackForPrevious
-    },
-    visible: false
-  },
-  nextButton: {
-    componentPath: "Button",
-    props: {
-      variant: "contained",
-      color: "primary",
-      style: {
-        // minWidth: "200px",
-        height: "48px",
-        marginRight: "45px"
-      }
-    },
-    children: {
-      nextButtonLabel: getLabel({
-        labelName: "Next Step",
-        labelKey: "NOC_COMMON_BUTTON_NXT_STEP"
-      }),
-      nextButtonIcon: {
-        uiFramework: "custom-atoms",
-        componentPath: "Icon",
-        props: {
-          iconName: "keyboard_arrow_right"
-        }
-      }
-    },
-    onClickDefination: {
-      action: "condition",
-      callBack: callBackForNext
-    }
-  },
   payButton: {
     componentPath: "Button",
     props: {
@@ -425,7 +250,7 @@ export const footer = getCommonApplyFooter({
       action: "condition",
       callBack: callBackForNext
     },
-    visible: false
+    visible: true
   }
 });
 

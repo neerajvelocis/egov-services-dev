@@ -1,40 +1,37 @@
 import {
-  getCommonContainer,  getCommonHeader,  getStepperObject} from "egov-ui-framework/ui-config/screens/specs/utils";
+  getCommonContainer,
+  getCommonHeader,
+  getStepperObject
+} from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
-import { footer } from "./applyResource/footer";
-import { nocDetails, PetParticularDetails } from "./applyResource/nocDetails";
-import { immunizationDetails } from "./applyResource/immunization";
-import jp from "jsonpath";
-
-import { documentDetails } from "./applyResource/documentDetails";
+import { footer } from "./applyResourceOpenSpace/footer";
+import { nocDetails } from "./applyResourceOpenSpace/nocDetails";
+import { documentDetails } from "./applyResourceOpenSpace/documentDetails";
 import { getFileUrlFromAPI, getQueryArg, getTransformedLocale, setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
+
 import {
   prepareFinalObject,
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, setapplicationType, lSRemoveItem, lSRemoveItemlocal, setapplicationNumber, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getOPMSTenantId, getUserInfo, setapplicationType, IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
-import {
-  sampleSearch,
-  sampleSingleSearch,
-  sampleDocUpload
-} from "../../../../ui-utils/sampleResponses";
+import jp from "jsonpath";
 import set from "lodash/set";
 import get from "lodash/get";
-
 import {
+  prepareDocumentsUploadDataForSellMeat,
   prepareDocumentsUploadData,
-  getSearchResults,
   getSearchResultsView,
-  setApplicationNumberBox,
-  furnishNocResponse,
+  furnishSellMeatNocResponse,
+  setApplicationNumberBox
 } from "../../../../ui-utils/commons";
 
+
+
 export const stepsData = [
-  { labelName: "PET NOC Details", labelKey: "Applicant_DETAILS" },
-  { labelName: "veterinary Details", labelKey: "STEP_PET_NOC_VETERINARY_DETAILS" },
-  // { labelName: "Documents", labelKey: "STEP_PET_NOC_DOCUMENTS" },
-  // { labelName: "Applicant Details", labelKey: "PET_NOC_APPLICANT_SUMMARY_STEP" }
+  { labelName: "Applicant Details", labelKey: "BK_OSB_APPLICANT_DETAILS" },
+  { labelName: "Documents", labelKey: "BK_OSB_DOCUMENTS" },
+  { labelName: "Summary", labelKey: "BK_OSB_SUMMARY" }
 ];
 export const stepper = getStepperObject(
   { props: { activeStep: 0 } },
@@ -49,7 +46,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-services",
+      moduleName: "egov-opms",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
@@ -62,14 +59,15 @@ const applicationNumberContainer = () => {
 
 export const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Application for PET NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
-    labelKey: "NOC_COMMON_APPLY_PET"
+    // labelName: `Apply New Permission for Sell Meat NOC (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+    labelName: `Apply New Booking`, //later use getFinancialYearDates
+    labelKey: "BK_OSB_APPLY"
   }),
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-services",
-    componentPath: "applicationNumberContainer",
+    moduleName: "egov-opms",
+    componentPath: "ApplicationNoContainer",
     props: {
       number: "NA"
     },
@@ -84,8 +82,7 @@ export const formwizardFirstStep = {
     id: "apply_form1"
   },
   children: {
-    nocDetails,
-    // PetParticularDetails
+    nocDetails
   }
 };
 
@@ -96,34 +93,23 @@ export const formwizardSecondStep = {
     id: "apply_form2"
   },
   children: {
-    PetParticularDetails
+    documentDetails
   },
   visible: false
 };
 
-// export const formwizardThirdStep = {
-//   uiFramework: "custom-atoms",
-//   componentPath: "Form",
-//   props: {
-//     id: "apply_form3"
-//   },
-//   children: {
-//     documentDetails
-//   },
-//   visible: false
-// };
-
-// export const formwizardFourthStep = {
-//   uiFramework: "custom-atoms",
-//   componentPath: "Form",
-//   props: {
-//     id: "apply_form4"
-//   },
-//   children: {
-//     //documentuploadDetails
-//   },
-//   visible: false
-// };
+export const formwizardThirdStep = {
+  // This is for step 4
+  uiFramework: "custom-atoms",
+  componentPath: "Form",
+  props: {
+    id: "apply_form4"
+  },
+  children: {
+    //documentuploadDetails
+  },
+  visible: false
+};
 
 
 const getMdmsData = async (action, state, dispatch) => {
@@ -144,23 +130,14 @@ const getMdmsData = async (action, state, dispatch) => {
           moduleName: "egpm",
           masterDetails: [
             {
-              name: "color"
+              name: "nocSought"
             },
             {
               name: "sector"
-            },
-            {
-              name: "breed"
-            },
-            {
-              name: "sex"
-            },
-            {
-              name: "age"
             }
           ]
         },
-        { moduleName: "PetNOC", masterDetails: [{ name: "Documents" }, { name: "RemarksDocuments" }] }
+        { moduleName: "SellMeatNOC", masterDetails: [{ name: "SellMeatDocuments" }] }
       ]
     }
   };
@@ -173,6 +150,17 @@ const getMdmsData = async (action, state, dispatch) => {
       [],
       mdmsBody
     );
+
+    // payload.MdmsRes.SellMeatNOC.SellMeatDocuments = [
+    //   {
+    //   active: true,
+    //   code: "SELLMEAT.PROOF_POSSESSION_RENT_AGREEMENT",
+    //   description: "SELLMEAT.PROOF_POSSESSION_RENT.PROOF_POSSESSION_RENT_AGREEMENT_DESCRIPTION",
+    //   documentType: "SELLMEAT",
+    //   dropdownData: [],
+    //   hasDropdown: false,
+    //   required: true
+    // }]
     payload.MdmsRes.egpm.sector = [
       {id : 1, code:'1_sector', tenantId : 'ch.chandigarh', name : 'Sector 1', active : true},
       {id : 2, code:'2_sector', tenantId : 'ch.chandigarh', name : 'Sector 2', active : true}
@@ -198,6 +186,8 @@ const getMdmsData = async (action, state, dispatch) => {
       {id : 2, code:'cat-b', tenantId : 'ch.chandigarh', name : 'Cat-B', active : true},
       {id : 3, code:'cat-c', tenantId : 'ch.chandigarh', name : 'Cat-C', active : true}
     ]
+
+    console.log("payload.MdmsRes", payload.MdmsRes);
     
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
@@ -205,44 +195,33 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
-
 export const prepareEditFlow = async (state, dispatch, applicationNumber, tenantId) => {
   if (applicationNumber) {
     let response = await getSearchResultsView([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber }
     ]);
+    let Refurbishresponse = furnishSellMeatNocResponse(response);
 
-    let Refurbishresponse = furnishNocResponse(response);
-    dispatch(prepareFinalObject("PETNOC", Refurbishresponse));
+    dispatch(prepareFinalObject("SELLMEATNOC", Refurbishresponse));
     if (applicationNumber) {
       setapplicationNumber(applicationNumber);
       setApplicationNumberBox(state, dispatch, applicationNumber);
     }
 
-    // Set sample docs upload
-    // dispatch(prepareFinalObject("documentsUploadRedux", sampleDocUpload()));
     let documentsPreview = [];
 
     // Get all documents from response
-    let petnocdetails = get(state, "screenConfiguration.preparedFinalObject.PETNOC", {});
-    let uploadVaccinationCertificate = petnocdetails.hasOwnProperty('uploadVaccinationCertificate') ?
-      petnocdetails.uploadVaccinationCertificate[0]['fileStoreId'] : '';
+    let slelmeatnocdetail = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC", {});
+    let uploadVaccinationCertificate = slelmeatnocdetail.hasOwnProperty('uploadDocuments') ?
+      slelmeatnocdetail.uploadDocuments[0]['fileStoreId'] : '';
 
-    let uploadPetPicture = petnocdetails.hasOwnProperty('uploadPetPicture') ?
-      petnocdetails.uploadPetPicture[0]['fileStoreId'] : '';
-
-    if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
+    if (uploadVaccinationCertificate !== '') {
       documentsPreview.push({
-        title: "VACCINATION_CERTIFIACTE",
+        title: "PROOF_POSSESSION_RENT_AGREEMENT",
         fileStoreId: uploadVaccinationCertificate,
         linkText: "View"
-      },
-        {
-          title: "PET_PICTURE",
-          fileStoreId: uploadPetPicture,
-          linkText: "View"
-        });
+      });
       let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
       let fileUrls =
         fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
@@ -265,10 +244,8 @@ export const prepareEditFlow = async (state, dispatch, applicationNumber, tenant
       });
       dispatch(prepareFinalObject("documentsPreview", documentsPreview));
     }
-
   }
 };
-
 
 const screenConfig = {
   uiFramework: "material-ui",
@@ -276,20 +253,25 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     !applicationNumber ? clearlocalstorageAppDetails(state) : '';
-    setapplicationType('PETNOC');
+    setapplicationType('SELLMEATNOC');
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
-    dispatch(prepareFinalObject("PETNOC.applicantName", JSON.parse(getUserInfo()).name));
-    dispatch(prepareFinalObject("PETNOC.houseNo", JSON.parse(getUserInfo()).permanentAddress));
-    dispatch(prepareFinalObject("PETNOC.emailId", JSON.parse(getUserInfo()).emailId));
-    dispatch(prepareFinalObject("PETNOC.mobileNumber", JSON.parse(getUserInfo()).mobileNumber));
 
+    const userInfo = JSON.parse(getUserInfo());
+    const applicantName = userInfo.hasOwnProperty('name') && userInfo.name != null ? userInfo.name : '';
+    const fatherHusbandName = userInfo.hasOwnProperty('fatherOrHusbandName') && userInfo.fatherOrHusbandName != null ? userInfo.fatherOrHusbandName : '';
+    dispatch(prepareFinalObject("SELLMEATNOC.applicantName", JSON.parse(getUserInfo()).name));
+    dispatch(prepareFinalObject("SELLMEATNOC.houseNo", JSON.parse(getUserInfo()).permanentAddress));
+    dispatch(prepareFinalObject("SELLMEATNOC.emailId", JSON.parse(getUserInfo()).emailId));
+    dispatch(prepareFinalObject("SELLMEATNOC.mobileNumber", JSON.parse(getUserInfo()).mobileNumber));
     //Set Module Name
     set(state, "screenConfiguration.moduleName", "opms");
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then(response => {
-      prepareDocumentsUploadData(state, dispatch, 'apply_pet');
+
+      // Set Documents Data (TEMP)
+      prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
     });
 
     // Search in case of EDIT flow
@@ -307,8 +289,8 @@ const screenConfig = {
       let formWizardNames = [
         "formwizardFirstStep",
         "formwizardSecondStep",
-        // "formwizardThirdStep",
-        // "formwizardFourthStep"
+
+        "formwizardThirdStep"
       ];
       for (let i = 0; i < 4; i++) {
         set(
@@ -350,8 +332,8 @@ const screenConfig = {
         stepper,
         formwizardFirstStep,
         formwizardSecondStep,
-        // formwizardThirdStep,
-        // formwizardFourthStep,
+        formwizardThirdStep,
+
         footer
       }
     }

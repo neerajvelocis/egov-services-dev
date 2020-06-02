@@ -320,31 +320,31 @@ export const PetParticularDetails = getCommonCard({
       jsonPath: "PETNOC.nameOfPetDog",
     }),
 
-    Age: {
-      ...getSelectField({
-        label: { labelName: "Age", labelKey: "DOG_AGE_LABEL" },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "age"
-        // },
-        optionLabel: "name",
-        optionValue: "name",
-        placeholder: {
-          labelName: "Select Age",
-          labelKey: "DOG_AGE_LABEL",
-        },
-        sourceJsonPath: "applyScreenMdmsData.egpm.age",
-        //sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
-        jsonPath: "PETNOC.age",
-        required: true,
-        props: {
-          className: "applicant-details-error",
-          required: true,
-          // disabled: true
-        },
-        required: true,
-      }),
-    },
+    // Age: {
+    //   ...getSelectField({
+    //     label: { labelName: "Age", labelKey: "DOG_AGE_LABEL" },
+    //     // localePrefix: {
+    //     //   moduleName: "egpm",
+    //     //   masterName: "age"
+    //     // },
+    //     optionLabel: "name",
+    //     optionValue: "name",
+    //     placeholder: {
+    //       labelName: "Select Age",
+    //       labelKey: "DOG_AGE_LABEL",
+    //     },
+    //     sourceJsonPath: "applyScreenMdmsData.egpm.age",
+    //     //sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
+    //     jsonPath: "PETNOC.age",
+    //     required: true,
+    //     props: {
+    //       className: "applicant-details-error",
+    //       required: true,
+    //       // disabled: true
+    //     },
+    //     required: true,
+    //   }),
+    // },
 
     // Sex: {
     //   ...getSelectField({
