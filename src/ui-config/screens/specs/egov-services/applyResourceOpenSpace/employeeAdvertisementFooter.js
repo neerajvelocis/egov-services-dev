@@ -15,8 +15,11 @@ import {
   showHideAdhocPopupopms,
   showHideAdhocPopupopmsReject,
   showHideAdhocPopupopmsReassign,
-  showHideAdhocPopupopmsApprove
-  } from "../../utils";
+  showHideAdhocPopupopmsApprove,
+  showHideAdhocPopupopmsForward,
+  showHideAdhocPopup
+} from "../../utils";
+import { gotoApplyWithStep } from "../../utils/index";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import {
@@ -30,22 +33,23 @@ import jsPDF from "jspdf";
 import get from "lodash/get";
 import some from "lodash/some";
 import set from "lodash/set";
-import { adhocPopup1 ,adhocPopup2} from "../payResource/adhocPopup";
+import { adhocPopup1, adhocPopup2 } from "../payResource/adhocPopup";
 import {
   getAccessToken,
   getOPMSTenantId,
   getLocale,
-  getUserInfo
+  getUserInfo,
+  localStorageGet
 } from "egov-ui-kit/utils/localStorageUtils";
+import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 
-let role_name=JSON.parse(getUserInfo()).roles[0].code
+let role_name = JSON.parse(getUserInfo()).roles[0].code
 //import { getCurrentFinancialYear, generateBill, showHideAdhocPopup } from "../utils";
-
 
 export const generatePdfFromDiv = (action, applicationNumber) => {
   let target = document.querySelector("#custom-atoms-div");
   html2canvas(target, {
-    onclone: function(clonedDoc) {
+    onclone: function (clonedDoc) {
       // clonedDoc.getElementById("custom-atoms-footer")[
       //   "data-html2canvas-ignore"
       // ] = "true";
@@ -105,16 +109,16 @@ export const changeStep = (
   }
 
   const isPreviousButtonVisible = activeStep > 0 ? true : false;
- // const isNextButtonVisible = activeStep < 3 ? true : false;
+  // const isNextButtonVisible = activeStep < 3 ? true : false;
   const isPayButtonVisible = activeStep === 3 ? true : false;
-  if(JSON.parse(getUserInfo()).roles[0].code=="CITIZEN"){
+  if (JSON.parse(getUserInfo()).roles[0].code == "CITIZEN") {
     //alert(JSON.parse(getUserInfo()).roles[0].code)
-    const isNextButtonVisible =  false 
-    
+    const isNextButtonVisible = false
+
   }
-  else{
-    const isNextButtonVisible =  false 
-    
+  else {
+    const isNextButtonVisible = false
+
   }
   const actionDefination = [
     {
@@ -249,7 +253,7 @@ export const footer = getCommonApplyFooter({
         minWidth: "180px",
         height: "48px",
         marginRight: "16px",
-        borderRadius:"inherit"
+        borderRadius: "inherit"
       }
     },
     children: {
@@ -271,7 +275,7 @@ export const footer = getCommonApplyFooter({
     },
     visible: false
   },
-  
+
   nextButton: {
     componentPath: "Button",
     props: {
@@ -281,7 +285,7 @@ export const footer = getCommonApplyFooter({
         minWidth: "180px",
         height: "48px",
         marginRight: "45px",
-        borderRadius:"inherit"
+        borderRadius: "inherit"
       }
     },
     children: {
@@ -299,10 +303,10 @@ export const footer = getCommonApplyFooter({
     },
     onClickDefination: {
       action: "condition",
-      callBack: (state, dispatch) => showHideAdhocPopupopms(state, dispatch, "search-preview","nextButton")
+      callBack: (state, dispatch) => showHideAdhocPopupopmsForward(state, dispatch, "advertisementnoc-search-preview", "nextButton")
     },
-    visible:role_name=="SI"?true:false
-    
+    visible: false
+
   },
   reject: {
     componentPath: "Button",
@@ -313,7 +317,7 @@ export const footer = getCommonApplyFooter({
         minWidth: "180px",
         height: "48px",
         marginRight: "45px",
-        borderRadius:"inherit"
+        borderRadius: "inherit"
       }
     },
     children: {
@@ -331,14 +335,14 @@ export const footer = getCommonApplyFooter({
     },
     onClickDefination: {
       action: "condition",
-      
-      callBack: (state, dispatch) =>{
-       
-   
-        showHideAdhocPopupopmsReject(state, dispatch, "search-preview","reject")
-    }
+
+      callBack: (state, dispatch) => {
+
+
+        showHideAdhocPopupopmsReject(state, dispatch, "advertisementnoc-search-preview", "reject")
+      }
     },
-   visible: role_name=="SI"?false:role_name=="MOH"?true:false
+    visible: role_name == "COMMISSIONER" ? true : false
   },
   reassign: {
     componentPath: "Button",
@@ -349,7 +353,7 @@ export const footer = getCommonApplyFooter({
         minWidth: "180px",
         height: "48px",
         marginRight: "45px",
-        borderRadius:"inherit"
+        borderRadius: "inherit"
       }
     },
     children: {
@@ -367,14 +371,14 @@ export const footer = getCommonApplyFooter({
     },
     onClickDefination: {
       action: "condition",
-      
-      callBack: (state, dispatch) =>{
-       
-   
-        showHideAdhocPopupopmsReassign(state, dispatch, "search-preview","reject")
-    }
+
+      callBack: (state, dispatch) => {
+
+
+        showHideAdhocPopupopmsReassign(state, dispatch, "advertisementnoc-search-preview", "reject")
+      }
     },
-    visible: role_name=="SI"?true:role_name=="MOH"?true:false
+    visible: false
   },
   approve: {
     componentPath: "Button",
@@ -385,7 +389,7 @@ export const footer = getCommonApplyFooter({
         minWidth: "180px",
         height: "48px",
         marginRight: "45px",
-        borderRadius:"inherit"
+        borderRadius: "inherit"
       }
     },
     children: {
@@ -403,15 +407,118 @@ export const footer = getCommonApplyFooter({
     },
     onClickDefination: {
       action: "condition",
-      
-      callBack: (state, dispatch) =>{
-       
-   
-        showHideAdhocPopupopmsApprove(state, dispatch, "search-preview","reject")
-    }
+
+      callBack: (state, dispatch) => {
+
+
+        showHideAdhocPopupopmsApprove(state, dispatch, "advertisementnoc-search-preview", "reject")
+      }
     },
-    visible: role_name=="SI"?false:role_name=="MOH"?true:false
-  }
+    visible: role_name == "COMMISSIONER" ? true : false
+  },
+  withdrawapprove: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "45px",
+        borderRadius: "inherit"
+      }
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "FORWARD",
+        labelKey: "FORWARD"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+
+      callBack: (state, dispatch) => {
+        showHideAdhocPopup(state, dispatch, "advertisementnoc-search-preview")
+      }
+    },
+    visible: false
+
+  },
+  withdraw: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "45px",
+        borderRadius: "inherit"
+      }
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "WITHDRAW ",
+        labelKey: "WITHDRAW "
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+
+      callBack: (state, dispatch) => {
+        showHideAdhocPopup(state, dispatch, "advertisementnoc-search-preview")
+      }
+    },
+    visible: false
+  },
+  resendbutton: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "45px",
+        borderRadius: "inherit"
+      }
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "RESEND",
+        labelKey: "RESEND"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+
+      callBack: (state, dispatch) => {
+        gotoApplyWithStep(state, dispatch, 0);
+      }
+    },
+    visible: role_name == "CITIZEN" && localStorageGet("app_noc_status") == "REASSIGN" ? true : false
+  },
 });
 
 export const footerReview = (
@@ -563,7 +670,7 @@ export const footerReview = (
                   minWidth: "180px",
                   height: "48px",
                   marginRight: "16px",
-                  borderRadius:"inherit"
+                  borderRadius: "inherit"
                 }
               },
               children: {
@@ -572,7 +679,6 @@ export const footerReview = (
                   labelKey: "PM_APPROVER_TRADE_APP_BUTTON_REJECT"
                 })
               },
-              
               visible: getButtonVisibility(status, "REJECT"),
               roleDefination: {
                 rolePath: "user-info.roles",
@@ -621,7 +727,7 @@ export const footerReview = (
               },
               onClickDefination: {
                 action: "page_change",
-                path:`/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenantId}&businessService=NewTL`
+                path: `/egov-common/pay?consumerCode=${applicationNumber}&tenantId=${tenantId}&businessService=NewTL`
               },
               roleDefination: {
                 rolePath: "user-info.roles",

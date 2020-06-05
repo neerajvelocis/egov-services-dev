@@ -1,18 +1,32 @@
-import {  getBreak,  getCommonCard,  getCommonContainer,  getCommonTitle,  getTextField,  getSelectField,  getPattern} from "egov-ui-framework/ui-config/screens/specs/utils";
-import {  handleScreenConfigurationFieldChange as handleField,  prepareFinalObject} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {
+  getBreak,
+  getCommonCard,
+  getCommonContainer,
+  getCommonTitle,
+  getTextField,
+  getSelectField,
+  getPattern,
+} from "egov-ui-framework/ui-config/screens/specs/utils";
+import {
+  handleScreenConfigurationFieldChange as handleField,
+  prepareFinalObject,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {  furnishNocResponse,  getSearchResults} from "../../../../../ui-utils/commons";
+import {
+  furnishNocResponse,
+  getSearchResults,
+} from "../../../../../ui-utils/commons";
 
 export const nocDetails = getCommonCard({
   header: getCommonTitle(
     {
-      labelName: "PET NOC Details",
-      labelKey: "BK_OSB_DETAILS_HEADER",
+      labelName: "Applicant Details",
+      labelKey: "BK_OSB_HEADER_STEP_1",
     },
     {
       style: {
-        marginBottom: 10,
+        marginBottom: 18,
       },
     }
   ),
@@ -31,9 +45,70 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("Name"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "SELLMEATNOC.applicantName",
+        jsonPath: "PETNOC.applicantName",
       }),
     },
+    Email: {
+      ...getTextField({
+        label: {
+          labelName: "Email Address",
+          labelKey: "BK_OSB_EMAIL_LABEL",
+        },
+        placeholder: {
+          labelName: "Enter Email Address",
+          labelKey: "BK_OSB_EMAIL_PLACEHOLDER",
+        },
+        required: true,
+        pattern: getPattern("Email"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "PETNOC.emailId",
+      }),
+    },
+    Mobile: {
+      ...getTextField({
+        label: {
+          labelName: "Contact Number",
+          labelKey: "BK_OSB_MOBILE_NO_LABEL",
+        },
+        placeholder: {
+          labelName: "Enter Contact Number",
+          labelKey: "BK_OSB_MOBILE_NO_PLACEHOLDER",
+        },
+        required: true,
+        pattern: getPattern("MobileNo"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "PETNOC.mobileNumber",
+      }),
+    },
+    dummyDiv: {
+      uiFramework: "custom-atoms",
+      componentPath: "Div",
+      gridDefination: {
+        xs: 12,
+        sm: 12,
+        md: 6,
+      },
+      props: {
+        disabled: true,
+      },
+    },
+  }),
+});
+
+export const PetParticularDetails = getCommonCard({
+  header: getCommonTitle(
+    {
+      labelName: "Applicant Details",
+      labelKey: "BK_OSB_HEADER_STEP_2",
+    },
+    {
+      style: {
+        marginBottom: 18,
+      },
+    }
+  ),
+
+  applicationDetailsConatiner: getCommonContainer({
     houseNumber: {
       ...getTextField({
         label: {
@@ -47,7 +122,7 @@ export const nocDetails = getCommonCard({
         pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
-        jsonPath: "SELLMEATNOC.houseNo",
+        jsonPath: "PETNOC.houseNo",
       }),
     },
     completeAddress: {
@@ -63,12 +138,15 @@ export const nocDetails = getCommonCard({
         // pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
-        jsonPath: "SELLMEATNOC.completeAddress",
+        jsonPath: "PETNOC.completeAddress",
       }),
     },
     Sector: {
       ...getSelectField({
-        label: { labelName: "Sector", labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL" },
+        label: {
+          labelName: "Sector",
+          labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
+        },
         // localePrefix: {
         //   moduleName: "egpm",
         //   masterName: "sector"
@@ -80,7 +158,7 @@ export const nocDetails = getCommonCard({
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        jsonPath: "SELLMEATNOC.sector",
+        jsonPath: "PETNOC.sector",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -89,32 +167,32 @@ export const nocDetails = getCommonCard({
         },
       }),
     },
-    // City: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Village/City",
-    //       labelKey: "BK_OSB_CITY_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Village/City",
-    //       labelKey: "BK_OSB_CITY_LABEL",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.egpm.city",
-    //     jsonPath: "SELLMEATNOC.city",
-    //     // required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //     //   required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
+    City: {
+      ...getSelectField({
+        label: {
+          labelName: "Village/City",
+          labelKey: "BK_OSB_CITY_LABEL",
+        },
+        // localePrefix: {
+        //   moduleName: "egpm",
+        //   masterName: "sector"
+        // },
+        optionLabel: "name",
+        placeholder: {
+          labelName: "Select Village/City",
+          labelKey: "BK_OSB_CITY_LABEL",
+        },
+        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+        sourceJsonPath: "applyScreenMdmsData.egpm.city",
+        jsonPath: "PETNOC.city",
+        // required: true,
+        props: {
+          className: "applicant-details-error",
+        //   required: true,
+          // disabled: true
+        },
+      }),
+    },
     propertyType: {
       ...getSelectField({
         label: {
@@ -132,7 +210,7 @@ export const nocDetails = getCommonCard({
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.propertyType",
-        jsonPath: "SELLMEATNOC.propertyType",
+        jsonPath: "PETNOC.propertyType",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -158,7 +236,7 @@ export const nocDetails = getCommonCard({
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.storageArea",
-        jsonPath: "SELLMEATNOC.storageArea",
+        jsonPath: "PETNOC.storageArea",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -184,7 +262,7 @@ export const nocDetails = getCommonCard({
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.duration",
-        jsonPath: "SELLMEATNOC.duration",
+        jsonPath: "PETNOC.duration",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -210,7 +288,7 @@ export const nocDetails = getCommonCard({
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.egpm.category",
-        jsonPath: "SELLMEATNOC.category",
+        jsonPath: "PETNOC.category",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -219,50 +297,5 @@ export const nocDetails = getCommonCard({
         },
       }),
     },
-    Email: {
-      ...getTextField({
-        label: {
-          labelName: "Email Address",
-          labelKey: "BK_OSB_EMAIL_LABEL",
-        },
-        placeholder: {
-          labelName: "Enter Email Address",
-          labelKey: "BK_OSB_EMAIL_PLACEHOLDER",
-        },
-        required: true,
-        pattern: getPattern("Email"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "SELLMEATNOC.emailId",
-      }),
-    },
-    Mobile : {
-      ...getTextField({
-        label: {
-          labelName: "Contact Number",
-          labelKey: "BK_OSB_MOBILE_NO_LABEL",
-        },
-        placeholder: {
-          labelName: "Enter Contact Number",
-          labelKey: "BK_OSB_MOBILE_NO_PLACEHOLDER",
-        },
-        required: true,
-        pattern: getPattern("MobileNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "SELLMEATNOC.mobileNumber",
-      }),
-    },
-    dummyDiv: {
-      uiFramework: "custom-atoms",
-      componentPath: "Div",
-      gridDefination: {
-        xs: 12,
-        sm: 12,
-        md: 6,
-      },
-      props: {
-        disabled: true,
-      },
-    },
   }),
 });
-

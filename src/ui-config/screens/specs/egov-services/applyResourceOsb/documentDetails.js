@@ -27,7 +27,7 @@ export const documentDetails = getCommonCard({
     uiFramework: "custom-containers-local",
     moduleName: "egov-services",
     componentPath: "DocumentListContainer",
-    // required:false,
+    required:true,
     props: {      
       buttonLabel: {
         labelName: "UPLOAD FILE",

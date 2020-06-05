@@ -46,7 +46,7 @@ const applicationNumberContainer = () => {
   if (applicationNumber)
     return {
       uiFramework: "custom-atoms-local",
-      moduleName: "egov-opms",
+      moduleName: "egov-services",
       componentPath: "ApplicationNoContainer",
       props: {
         number: `${applicationNumber}`,
