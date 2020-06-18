@@ -41,6 +41,7 @@ const setReviewPageRoute = (state, dispatch, applnid) => {
 
 
 const moveToReview = (state, dispatch, applnid) => {
+  // alert("Review")
   const documentsFormat = Object.values(get(state.screenConfiguration.preparedFinalObject, "documentsUploadRedux")
   );
 
@@ -152,11 +153,11 @@ const callBackForNext = async (state, dispatch) => {
     isFormValid = moveToReview(state, dispatch);
   }
   
-  console.log(activeStep);
+  // console.log(activeStep);
   
   if (activeStep !== 3) {
-    console.log(activeStep)
-    console.log(isFormValid)
+    // console.log(activeStep)
+    // console.log(isFormValid)
     if (isFormValid) {
 
       let responseStatus = "success";
@@ -458,7 +459,7 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
   let allAreFilled = true;
 
   document.getElementById("apply_form" + activeStep).querySelectorAll("[required]").forEach(function (i) {
-    console.log(i, "fields");
+    // console.log(i, "fields");
     
     if (!i.value) {
       i.focus();

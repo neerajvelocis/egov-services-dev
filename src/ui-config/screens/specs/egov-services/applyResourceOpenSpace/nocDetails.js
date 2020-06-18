@@ -18,7 +18,7 @@ import {
   getSearchResults,
 } from "../../../../../ui-utils/commons";
 
-export const nocDetails = getCommonCard({
+export const personalDetails = getCommonCard({
   header: getCommonTitle(
     {
       labelName: "Applicant Details",
@@ -32,7 +32,7 @@ export const nocDetails = getCommonCard({
   ),
   break: getBreak(),
   nocDetailsContainer: getCommonContainer({
-    applicantName: {
+    bkApplicantName: {
       ...getTextField({
         label: {
           labelName: "Applicant Name",
@@ -45,10 +45,10 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("Name"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "PETNOC.applicantName",
+        jsonPath: "Booking.ApplicantName",
       }),
     },
-    Email: {
+    bkEmail: {
       ...getTextField({
         label: {
           labelName: "Email Address",
@@ -61,10 +61,10 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("Email"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "PETNOC.emailId",
+        jsonPath: "Booking.Email",
       }),
     },
-    Mobile: {
+    bkMobileNumber: {
       ...getTextField({
         label: {
           labelName: "Contact Number",
@@ -77,7 +77,7 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("MobileNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "PETNOC.mobileNumber",
+        jsonPath: "Booking.MobileNumber",
       }),
     },
     dummyDiv: {
@@ -95,7 +95,7 @@ export const nocDetails = getCommonCard({
   }),
 });
 
-export const PetParticularDetails = getCommonCard({
+export const bookingDetails = getCommonCard({
   header: getCommonTitle(
     {
       labelName: "Applicant Details",
@@ -109,7 +109,7 @@ export const PetParticularDetails = getCommonCard({
   ),
 
   applicationDetailsConatiner: getCommonContainer({
-    houseNumber: {
+    bkHouseNo: {
       ...getTextField({
         label: {
           labelName: "House/Site No.",
@@ -122,10 +122,10 @@ export const PetParticularDetails = getCommonCard({
         pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
-        jsonPath: "PETNOC.houseNo",
+        jsonPath: "Booking.HouseNo",
       }),
     },
-    completeAddress: {
+    bkCompleteAddress: {
       ...getTextField({
         label: {
           labelName: "Complete Address",
@@ -138,62 +138,62 @@ export const PetParticularDetails = getCommonCard({
         // pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
-        jsonPath: "PETNOC.completeAddress",
+        jsonPath: "Booking.CompleteAddress",
       }),
     },
-    Sector: {
-      ...getSelectField({
-        label: {
-          labelName: "Sector",
-          labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
-        },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        optionLabel: "name",
-        placeholder: {
-          labelName: "Select Sector",
-          labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
-        },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        jsonPath: "PETNOC.sector",
-        required: true,
-        props: {
-          className: "applicant-details-error",
-          required: true,
-          // disabled: true
-        },
-      }),
-    },
-    City: {
-      ...getSelectField({
-        label: {
-          labelName: "Village/City",
-          labelKey: "BK_OSB_CITY_LABEL",
-        },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        optionLabel: "name",
-        placeholder: {
-          labelName: "Select Village/City",
-          labelKey: "BK_OSB_CITY_LABEL",
-        },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.egpm.city",
-        jsonPath: "PETNOC.city",
-        // required: true,
-        props: {
-          className: "applicant-details-error",
-        //   required: true,
-          // disabled: true
-        },
-      }),
-    },
-    propertyType: {
+    // bkSector: {
+    //   ...getSelectField({
+    //     label: {
+    //       labelName: "Sector",
+    //       labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
+    //     },
+    //     // localePrefix: {
+    //     //   moduleName: "egpm",
+    //     //   masterName: "sector"
+    //     // },
+    //     optionLabel: "name",
+    //     placeholder: {
+    //       labelName: "Select Sector",
+    //       labelKey: "BK_OSB_PROPERTY_SECTOR_PLACEHOLDER",
+    //     },
+    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+    //     sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
+    //     jsonPath: "Booking.Sector",
+    //     required: true,
+    //     props: {
+    //       className: "applicant-details-error",
+    //       required: true,
+    //       // disabled: true
+    //     },
+    //   }),
+    // },
+    // bkVillCity: {
+    //   ...getSelectField({
+    //     label: {
+    //       labelName: "Village/City",
+    //       labelKey: "BK_OSB_CITY_LABEL",
+    //     },
+    //     // localePrefix: {
+    //     //   moduleName: "egpm",
+    //     //   masterName: "sector"
+    //     // },
+    //     optionLabel: "name",
+    //     placeholder: {
+    //       labelName: "Select Village/City",
+    //       labelKey: "BK_OSB_CITY_PLACEHOLDER",
+    //     },
+    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+    //     sourceJsonPath: "applyScreenMdmsData.Booking.City",
+    //     jsonPath: "Booking.VillCity",
+    //     // required: true,
+    //     props: {
+    //       className: "applicant-details-error",
+    //     //   required: true,
+    //       // disabled: true
+    //     },
+    //   }),
+    // },
+    bkType: {
       ...getSelectField({
         label: {
           labelName: "Residential/Commercial",
@@ -206,11 +206,11 @@ export const PetParticularDetails = getCommonCard({
         // optionLabel: "name",
         placeholder: {
           labelName: "Select Residential/Commercial",
-          labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
+          labelKey: "BK_OSB_PROPERTY_TYPE_PLACEHOLDER",
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.egpm.propertyType",
-        jsonPath: "PETNOC.propertyType",
+        sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
+        jsonPath: "Booking.Type",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -219,7 +219,7 @@ export const PetParticularDetails = getCommonCard({
         },
       }),
     },
-    storageArea: {
+    bkAreaRequired: {
       ...getSelectField({
         label: {
           labelName: "Storage Area",
@@ -232,11 +232,11 @@ export const PetParticularDetails = getCommonCard({
         optionLabel: "name",
         placeholder: {
           labelName: "Select Storage Area",
-          labelKey: "BK_OSB_STORAGE_AREA_LABEL",
+          labelKey: "BK_OSB_STORAGE_AREA_PLACEHOLDER",
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.egpm.storageArea",
-        jsonPath: "PETNOC.storageArea",
+        sourceJsonPath: "applyScreenMdmsData.Booking.Area",
+        jsonPath: "Booking.AreaRequired",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -245,7 +245,7 @@ export const PetParticularDetails = getCommonCard({
         },
       }),
     },
-    Duration: {
+    bkDuration: {
       ...getSelectField({
         label: {
           labelName: "Duration",
@@ -258,11 +258,11 @@ export const PetParticularDetails = getCommonCard({
         optionLabel: "name",
         placeholder: {
           labelName: "Select Duration",
-          labelKey: "BK_OSB_DURATION_LABEL",
+          labelKey: "BK_OSB_DURATION_PLACEHOLDER",
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.egpm.duration",
-        jsonPath: "PETNOC.duration",
+        sourceJsonPath: "applyScreenMdmsData.Booking.Duration",
+        jsonPath: "Booking.Duration",
         required: true,
         props: {
           className: "applicant-details-error",
@@ -271,7 +271,7 @@ export const PetParticularDetails = getCommonCard({
         },
       }),
     },
-    Category: {
+    bkCategory: {
       ...getSelectField({
         label: {
           labelName: "Category",
@@ -284,11 +284,11 @@ export const PetParticularDetails = getCommonCard({
         optionLabel: "name",
         placeholder: {
           labelName: "Select Category",
-          labelKey: "BK_OSB_CATEGORY_LABEL",
+          labelKey: "BK_OSB_CATEGORY_PLACEHOLDER",
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.egpm.category",
-        jsonPath: "PETNOC.category",
+        sourceJsonPath: "applyScreenMdmsData.Booking.Category",
+        jsonPath: "Booking.Category",
         required: true,
         props: {
           className: "applicant-details-error",

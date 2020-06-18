@@ -6,8 +6,8 @@ import {
 import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
 import { footer } from "./applyResourceOpenSpace/footer";
 import {
-  nocDetails,
-  PetParticularDetails,
+  personalDetails,
+  bookingDetails,
 } from "./applyResourceOpenSpace/nocDetails";
 import { immunizationDetails } from "./applyResourceOpenSpace/immunization";
 import jp from "jsonpath";
@@ -102,7 +102,7 @@ export const formwizardFirstStep = {
     id: "apply_form1",
   },
   children: {
-    nocDetails,
+    personalDetails,
   },
 };
 
@@ -113,7 +113,7 @@ export const formwizardSecondStep = {
     id: "apply_form2",
   },
   children: {
-    PetParticularDetails,
+    bookingDetails,
   },
   visible: false,
 };
@@ -143,7 +143,9 @@ export const formwizardFourthStep = {
 };
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  // let tenantId = getOPMSTenantId();
+  let tenantId = getOPMSTenantId().split('.')[0];
+  alert(tenantId)
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -157,34 +159,34 @@ const getMdmsData = async (action, state, dispatch) => {
           ],
         },
         {
-          moduleName: "egpm",
+          moduleName: "Booking",
           masterDetails: [
             {
-              name: "sector",
+              name: "Sector",
             },
             {
-              name: "city",
+              name: "CityType",
             },
             {
-              name: "propertyType",
+              name: "PropertyType",
             },
             {
-              name: "storageArea",
+              name: "Area",
             },
             {
-              name: "duration",
+              name: "Duration",
             },
             {
-              name: "category",
+              name: "Category",
+            },
+            {
+              name: "Documents",
             },
           ],
-        },
-        {
-          moduleName: "PetNOC",
-          masterDetails: [{ name: "Documents" }, { name: "RemarksDocuments" }],
-        },
-      ],
-    },
+        }
+        
+      ]
+    }
   };
   try {
     let payload = null;
@@ -195,159 +197,9 @@ const getMdmsData = async (action, state, dispatch) => {
       [],
       mdmsBody
     );
-    payload.MdmsRes.egpm.sector = [
-      {
-        id: 1,
-        code: "1_sector",
-        tenantId: "ch.chandigarh",
-        name: "Sector 1",
-        active: true,
-      },
-      {
-        id: 2,
-        code: "2_sector",
-        tenantId: "ch.chandigarh",
-        name: "Sector 2",
-        active: true,
-      },
-    ];
-    payload.MdmsRes.egpm.city = [
-      {
-        id: 1,
-        code: "1_city",
-        tenantId: "ch.chandigarh",
-        name: "City 1",
-        active: true,
-      },
-      {
-        id: 2,
-        code: "2_city",
-        tenantId: "ch.chandigarh",
-        name: "City 2",
-        active: true,
-      },
-    ];
-    payload.MdmsRes.egpm.propertyType = [
-      {
-        id: 1,
-        code: "residential",
-        tenantId: "ch.chandigarh",
-        name: "Residential",
-        active: true,
-      },
-      {
-        id: 2,
-        code: "commercial",
-        tenantId: "ch.chandigarh",
-        name: "Commercial",
-        active: true,
-      },
-    ];
-    payload.MdmsRes.egpm.storageArea = [
-      {
-        id: 1,
-        code: "less than 1000 sq.ft",
-        tenantId: "ch.chandigarh",
-        name: "Less than 1000 sq.ft",
-        active: true,
-      },
-      {
-        id: 2,
-        code: "more than 1000 sq.ft",
-        tenantId: "ch.chandigarh",
-        name: "More than 1000 sq.ft",
-        active: true,
-      },
-    ];
-    payload.MdmsRes.egpm.duration = [
-      {
-        id: 1,
-        code: "1 month",
-        tenantId: "ch.chandigarh",
-        name: "1 Month",
-        active: true,
-      },
-      {
-        id: 2,
-        code: "2 month",
-        tenantId: "ch.chandigarh",
-        name: "2 Month",
-        active: true,
-      },
-      {
-        id: 3,
-        code: "3 month",
-        tenantId: "ch.chandigarh",
-        name: "3 Month",
-        active: true,
-      },
-      {
-        id: 4,
-        code: "4 month",
-        tenantId: "ch.chandigarh",
-        name: "4 Month",
-        active: true,
-      },
-      {
-        id: 5,
-        code: "5 month",
-        tenantId: "ch.chandigarh",
-        name: "5 Month",
-        active: true,
-      },
-      {
-        id: 6,
-        code: "6 month",
-        tenantId: "ch.chandigarh",
-        name: "6 Month",
-        active: true,
-      },
-    ];
-    payload.MdmsRes.egpm.category = [
-      {
-        id: 1,
-        code: "cat-a",
-        tenantId: "ch.chandigarh",
-        name: "Cat-A",
-        active: true,
-      },
-      {
-        id: 2,
-        code: "cat-b",
-        tenantId: "ch.chandigarh",
-        name: "Cat-B",
-        active: true,
-      },
-      {
-        id: 3,
-        code: "cat-c",
-        tenantId: "ch.chandigarh",
-        name: "Cat-C",
-        active: true,
-      },
-	];
-	payload.MdmsRes.PetNOC.Documents = [
-		{
-		  active: false,
-		  code: "PET.PET_PICTURE",
-		  description: "PET.PET_PICTURE.PICTURE_DESCRIPTION",
-		  documentType: "PET",
-		  dropdownData: [],
-		  hasDropdown: false,
-		  required: true,
-		},
-		{
-		  active: true,
-		  code: "PET.PET_VACCINATION_CERTIFICATE",
-		  description:
-			"PET.PET_VACCINATION_CERTIFICATE.VACCINATION_CERTIFICATE_DESCRIPTION",
-		  documentType: "PET",
-		  dropdownData: [],
-		  hasDropdown: false,
-		  required: false,
-		},
-	];
-	  console.log(payload.MdmsRes, "payload.MdmsRes1");
+
+    
+    console.log(payload.MdmsRes, "payload.MdmsRes1");
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
     console.log(e);
@@ -360,6 +212,7 @@ export const prepareEditFlow = async (
   applicationNumber,
   tenantId
 ) => {
+  // alert("In Edit")
   if (applicationNumber) {
     let response = await getSearchResultsView([
       { key: "tenantId", value: tenantId },
@@ -367,7 +220,7 @@ export const prepareEditFlow = async (
     ]);
 
     let Refurbishresponse = furnishNocResponse(response);
-    dispatch(prepareFinalObject("PETNOC", Refurbishresponse));
+    dispatch(prepareFinalObject("Booking", Refurbishresponse));
     if (applicationNumber) {
       setapplicationNumber(applicationNumber);
       setApplicationNumberBox(state, dispatch, applicationNumber);
@@ -380,7 +233,7 @@ export const prepareEditFlow = async (
     // Get all documents from response
     let petnocdetails = get(
       state,
-      "screenConfiguration.preparedFinalObject.PETNOC",
+      "screenConfiguration.preparedFinalObject.Booking",
       {}
     );
     let uploadVaccinationCertificate = petnocdetails.hasOwnProperty(
@@ -443,34 +296,36 @@ const screenConfig = {
       "applicationNumber"
     );
     !applicationNumber ? clearlocalstorageAppDetails(state) : "";
-    setapplicationType("PETNOC");
+    setapplicationType("Booking");
     const tenantId = getQueryArg(window.location.href, "tenantId");
+    // alert(getQueryArg(window.location.href, "tenantId"), "id")
+    // console.log(getQueryArg(window.location.href, "tenantId"), "id")
+    // const tenantId = "CH";
     const step = getQueryArg(window.location.href, "step");
     dispatch(
-      prepareFinalObject("PETNOC.applicantName", JSON.parse(getUserInfo()).name)
+      prepareFinalObject(
+        "Booking.ApplicantName",
+        JSON.parse(getUserInfo()).name
+      )
     ),
-      dispatch(prepareFinalObject("PETNOC.houseNo", "2"));
-    dispatch(prepareFinalObject("PETNOC.completeAddress", "hello address"));
-    dispatch(prepareFinalObject("PETNOC.sector", "1_sector"));
-    dispatch(prepareFinalObject("PETNOC.city", "1_city"));
-    dispatch(prepareFinalObject("PETNOC.propertyType", "residential"));
-    dispatch(prepareFinalObject("PETNOC.storageArea", "less than 1000 sq.ft"));
-    dispatch(prepareFinalObject("PETNOC.duration", "1month"));
-    dispatch(prepareFinalObject("PETNOC.category", "cat-a"));
-    dispatch(prepareFinalObject("PETNOC.emailId", "HELLO@GMAIL.COM"));
+      dispatch(prepareFinalObject("Booking.Email", "HELLO@GMAIL.COM"));
     dispatch(
       prepareFinalObject(
-        "PETNOC.mobileNumber",
+        "Booking.MobileNumber",
         JSON.parse(getUserInfo()).mobileNumber
       )
     );
 
+    dispatch(prepareFinalObject("Booking.HouseNo", "2"));
+    dispatch(prepareFinalObject("Booking.CompleteAddress", "hello address"));
     //Set Module Name
     set(state, "screenConfiguration.moduleName", "services");
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then((response) => {
-      prepareDocumentsUploadData(state, dispatch, "apply_pet");
+      // alert(response, "documentupload");
+      prepareDocumentsUploadData(state, dispatch, "apply_osb");
+      // alert(response, "documentuploaded");
     });
 
     // Search in case of EDIT flow

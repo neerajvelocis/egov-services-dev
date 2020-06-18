@@ -47,7 +47,7 @@ if(role_name === 'CITIZEN'){
         labelName: "BK_MY_BOOKINGS"
       },
       icon: <MyApplicationIcon />,
-      route: "my-applications"
+      route: "mybookings"
     },
    
   

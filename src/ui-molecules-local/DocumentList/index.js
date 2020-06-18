@@ -192,6 +192,8 @@ class DocumentList extends Component {
   };
 
   handleDocument = async (file, fileStoreId) => {
+    console.log(file, "file");
+    
     let { uploadedDocIndex } = this.state;
     const { prepareFinalObject, documentsUploadRedux } = this.props;
     const fileUrl = await getFileUrlFromAPI(fileStoreId);
@@ -234,6 +236,8 @@ class DocumentList extends Component {
   getUploadCard = (card, key) => {
     const { classes, documentsUploadRedux } = this.props;
     let jsonPath = `documentsUploadRedux[${key}].dropdown.value`;
+    console.log(card, "card");
+    
     return (
       <Grid container={true}>
         <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>

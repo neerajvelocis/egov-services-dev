@@ -454,6 +454,13 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
       []
     );
   }
+  else if (type == "apply_osb") {
+    documents = get(
+      state,
+      "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
+      []
+    );
+  }
   else {
     documents = get(
       state,
@@ -461,6 +468,9 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
       []
     );
   }
+
+  // console.log(documents, "documents");
+  
 
   documents = documents.filter(item => {
     return item.active;
@@ -477,7 +487,8 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 
   documents.forEach(doc => {
     // Handle the case for multiple muildings
-    if (doc.code === "PET.PET_PICTURE" && doc.hasMultipleRows && doc.options) {
+    if (doc.code === "DOC.PICTURE" && doc.hasMultipleRows && doc.options) {
+      alert("multiple")
       let buildingsData = get(state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
@@ -668,6 +679,8 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 
 
 export const createUpdateNocApplication = async (state, dispatch, status) => {
+  alert("Create Noc")
+  
   let response = '';
   let response_updatestatus = '';
   let nocId = getapplicationNumber() === 'null' ? '' : getapplicationNumber(); // get(state, "screenConfiguration.preparedFinalObject.PETNOC.applicationId");
