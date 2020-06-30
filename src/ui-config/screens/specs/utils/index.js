@@ -229,25 +229,18 @@ export const OPMSTenantId = (state, dispatch) => {
 }
 
 export const gotoApplyWithStep = (state, dispatch, step) => {
-
   const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
   const applicationNumberQueryString = applicationNumber ? `&applicationNumber=${applicationNumber}` : ``;
   const tetantQueryString = applicationNumber ? `&tenantId=${getOPMSTenantId()}` : ``;
-  const applicationTpye = getapplicationType();
+  const applicationType = getapplicationType();
   let applyUrl = '';
 
   applyUrl = process.env.REACT_APP_SELF_RUNNING === "true"
-    ? `/egov-ui-framework/egov-services/apply?step=${step}${applicationNumberQueryString}`
-    : applicationTpye === `PETNOC` ?
-      `/egov-services/apply?step=${step}${applicationNumberQueryString}${tetantQueryString}` :
-      applicationTpye === `SELLMEATNOC` ?
-        `/egov-services/applysellmeat?step=${step}${applicationNumberQueryString}${tetantQueryString}` :
-        applicationTpye === `ROADCUTNOC` ?
-          `/egov-services/applyroadcuts?step=${step}${applicationNumberQueryString}${tetantQueryString}` :
-          applicationTpye === `ADVERTISEMENTNOC` ?
-            `/egov-services/advertisementApply?step=${step}${applicationNumberQueryString}${tetantQueryString}` : ``
-    ;
+    ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
+    : applicationType === "Booking" ?
+      `/egov-services/applyopenspace?step=${step}${tetantQueryString}` : ``;
 
+console.log(applyUrl, "applyUrl");
 
 
   dispatch(setRoute(applyUrl));

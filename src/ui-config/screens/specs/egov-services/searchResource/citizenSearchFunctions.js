@@ -24,10 +24,10 @@ export const fetchData = async (action, state, dispatch) => {
   // );
   try {
 
-    if (response.nocApplicationDetail.length > 0) {
-      dispatch(prepareFinalObject("searchResults", response.nocApplicationDetail));
+    if (response.bookingsModelList.length > 0) {
+      dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
       dispatch(
-        prepareFinalObject("myApplicationsCount", response.nocApplicationDetail.length)
+        prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
       );
     }
   } catch (error) {

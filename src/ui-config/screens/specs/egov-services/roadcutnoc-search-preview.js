@@ -1,11 +1,17 @@
 import {
-  getCommonCard, getCommonContainer, getCommonHeader, getLabelWithValue, getLabel, getBreak
+  getCommonCard,
+  getCommonContainer,
+  getCommonHeader,
+  getLabelWithValue,
+  getLabel,
+  getBreak
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../utils/index";
 import {
   handleScreenConfigurationFieldChange as handleField,
-  prepareFinalObject
+  prepareFinalObject,toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { localStorageGet, localStorageSet, setapplicationNumber,getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { gotoApplyWithStep } from "../utils/index";
 import {
   getFileUrlFromAPI,
   getQueryArg,
@@ -16,38 +22,37 @@ import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
-import { searchBill, createDemandForRoadCutNOC } from "../utils/index";
+import { searchBill } from "../utils/index";
 //import  generatePdf from "../utils/receiptPdf";
 
-import { footer } from "./applyResource/employeeRoadCutFooter";
+import { footer } from "./applyResource/employeeSellMeatFooter";
 //import { footer ,footerReview} from "./applyResource/footer";
-import {
-  adhocPopupForJeRoadCutForward, adhocPopupForJeRoadCutReassign, adhocPopupForCeRoadCutApprove,
-  adhocPopupForSeRoadCutForward, adhocPopupForCeRoadCutReject
-} from "./payResource/adhocPopup";
-
+import { adhocPopup1, adhocPopup2 } from "./payResource/adhocPopup";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 
-import { roadcutapplicantSummary } from "./summaryResource/roadcutapplicantSummary";
+import {
+  sellmeatapplicantSummary
+
+} from "./summaryResource/sellmeatapplicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
-import { estimateSummary } from "./summaryResource/estimateSummary";
+import { taskStatusSummary } from "./summaryResource/taskStatusSummary";
 import { showHideAdhocPopup } from "../utils";
-
-import { httpRequest } from "../../../../ui-utils";
+import { SellMeatReassign, SellMeatReject, SellMeatForward, SellMeatApprove } from "./payResource/adhocPopup";
 import {
-  localStorageGet, localStorageSet, setapplicationNumber, getOPMSTenantId, setapplicationType,
-  getAccessToken, getLocale, getUserInfo, getapplicationType, getapplicationNumber
+  getAccessToken,
+  getOPMSTenantId,
+  getLocale,
+  getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
-
-import {
-  preparepopupDocumentsRoadCutUploadData, prepareDocumentsUploadData,
-  getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload
-} from "../../../../ui-utils/commons";
-import { taskStatusSummary } from './summaryResource/taskStatusSummary';
+import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload } from "../../../../ui-utils/commons";
+import { preparepopupDocumentsSellMeatUploadData, prepareDocumentsUploadData } from "../../../../ui-utils/commons";
+import { httpRequest } from "../../../../ui-utils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
+ let nocStatus = '';
 
-const ReassignButton = getCommonContainer({
+
+const undertakingButton1 = getCommonContainer({
   resendButton: {
     componentPath: "Button",
     props: {
@@ -80,15 +85,38 @@ const ReassignButton = getCommonContainer({
         gotoApplyWithStep(state, dispatch, 0);
       }
     },
-    visible: localStorageGet("app_noc_status") == "REASSIGN" ? true : false
+    visible: nocStatus === "REASSIGN" ? true : false
 
   }
 });
 
+const undertakingButton = getCommonContainer({
+  addPenaltyRebateButton: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "200px",
+        height: "48px",
+        marginRight: "40px"
+      }
+    },
+    children: {
+      previousButtonLabel: getLabel({
+        labelName: "Undertaking",
+        labelKey: "NOC_UNDERTAKING"
+      })
+    },
+    onClickDefination: {
+      action: "condition",
+      callBack: (state, dispatch) => showHideAdhocPopup(state, dispatch, "sellmeatnoc-search-preview")
+    }
+  },
+});
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  
   let tenantId = getOPMSTenantId();
   let mdmsBody = {
     MdmsCriteria: {
@@ -103,45 +131,47 @@ const getMdmsData = async (action, state, dispatch) => {
           ]
         },
         {
-          moduleName: "egpm",
+          moduleName: "Booking",
           masterDetails: [
             {
-              name: "color"
+              name: "Sector",
             },
             {
-              name: "sector"
+              name: "CityType",
             },
             {
-              name: "breed"
+              name: "PropertyType",
             },
             {
-              name: "sex"
+              name: "Area",
             },
             {
-              name: "age"
-            }
-          ]
+              name: "Duration",
+            },
+            {
+              name: "Category",
+            },
+            {
+              name: "Documents",
+            },
+          ],
         },
-        { moduleName: "RoadCutNOC", masterDetails: [{ name: "RoadCutNOCRemarksDocuments" }] }
+        // { moduleName: "SellMeatNOC", masterDetails: [{ name: "SellMeatNOCRemarksDocuments" }] }
       ]
     }
   };
   try {
     let payload = null;
-    payload = await httpRequest(
-      "post",
-      "/egov-mdms-service/v1/_search",
-      "_search",
-      [],
-      mdmsBody
-    );
-
+    // alert('in payload')
+    payload = await httpRequest("post", "/egov-mdms-service/v1/_search", "_search", [], mdmsBody);
 
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
     console.log(e);
   }
 };
+
+
 
 const titlebar = getCommonContainer({
   header: getCommonHeader({
@@ -153,7 +183,7 @@ const titlebar = getCommonContainer({
     moduleName: "egov-services",
     componentPath: "ApplicationNoContainer",
     props: {
-      number: getapplicationNumber(),
+      number:getapplicationNumber(), //localStorage.getItem('applicationsellmeatNumber')
     }
   },
   downloadMenu: {
@@ -168,53 +198,34 @@ const titlebar = getCommonContainer({
         menu: []
       }
     }
-  }//,
-  // printMenu: {
-  //   uiFramework: "custom-atoms",
-  //   componentPath: "MenuButton",
-  //   props: {
-  //     data: {
-  //       label: "Print",
-  //       leftIcon: "print",
-  //       rightIcon: "arrow_drop_down",
-  //       props: { variant: "outlined", style: { marginLeft: 10 } },
-  //       menu: []
-  //     }
-  //   }
-  // }
+  }
 });
-
 
 
 const prepareDocumentsView = async (state, dispatch) => {
   let documentsPreview = [];
 
   // Get all documents from response
-  let ROADCUTNOC = get(
-    state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0]", {});
-  let uploadDocuments = JSON.parse(ROADCUTNOC.applicationdetail).hasOwnProperty('uploadDocuments') ?
-    JSON.parse(ROADCUTNOC.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
+  let docs = get(state, "screenConfiguration.preparedFinalObject.Booking[0]", {});
 
-  // let uploadPetPicture=JSON.parse(ROADCUTNOC.applicationdetail).hasOwnProperty('uploadPetPicture')?
-  // JSON.parse(ROADCUTNOC.applicationdetail).uploadPetPicture[0]['fileStoreId']:'';
+  let aggrementdocumnet = JSON.parse(docs.applicationdetail).hasOwnProperty('uploadDocuments') ?
+    JSON.parse(docs.applicationdetail).uploadDocuments[0]['fileStoreId'] : '';
 
-  let allDocuments = [];
-  allDocuments.push(uploadDocuments)
-  
-  if (uploadDocuments !== '') {
-    documentsPreview.push(
-      {
-        title: "ROAD_CUT_STAMP_DOC",
-        fileStoreId: uploadDocuments,
-        linkText: "View"
-      });
-
+  // let uploadPetPicture=JSON.parse(doc.applicationdetail).hasOwnProperty('uploadPetPicture')?
+  // JSON.parse(doc.applicationdetail).uploadPetPicture[0]['fileStoreId']:'';
+  if (aggrementdocumnet !== '') {
+    documentsPreview.push({
+      title: "SELLMEAT.PROOF_POSSESSION_RENT_AGREEMENT",
+      fileStoreId: aggrementdocumnet,
+      linkText: "View"
+    });
     let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
     let fileUrls =
       fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
     documentsPreview = documentsPreview.map(function (doc, index) {
 
       doc["link"] = fileUrls && fileUrls[doc.fileStoreId] && fileUrls[doc.fileStoreId].split(",")[0] || "";
+      //doc["name"] = doc.fileStoreId;
       doc["name"] =
         (fileUrls[doc.fileStoreId] &&
           decodeURIComponent(
@@ -228,10 +239,10 @@ const prepareDocumentsView = async (state, dispatch) => {
         `Document - ${index + 1}`;
       return doc;
     });
-
     dispatch(prepareFinalObject("documentsPreview", documentsPreview));
   }
 };
+
 
 const setDownloadMenu = (state, dispatch) => {
   /** MenuButton data based on status */
@@ -246,154 +257,51 @@ const setDownloadMenu = (state, dispatch) => {
     },
     leftIcon: "book"
   };
-  // let certificateDownloadObjectSELLMEAT = {
-  //   label: { labelName: "NOC Certificate SELLMEAT", labelKey: "NOC_CERTIFICATE_SELLMEAT" },
-  //   link: () => {
-  //     window.location.href = httpLinkSELLMEAT;
-  //   },
-  //   leftIcon: "book"
-  // };
-  // let certificateDownloadObjectROADCUT = {
-  //   label: { labelName: "NOC Certificate ROADCUT", labelKey: "NOC_CERTIFICATE_ROADCUT" },
-  //   link: () => {
-  //     window.location.href = httpLinkROADCUT;
-  //   },
-  //   leftIcon: "book"
-  // };
-  // let certificateDownloadObjectADVT = {
-  //   label: { labelName: "NOC Certificate ADVT", labelKey: "NOC_CERTIFICATE_ADVT" },
-  //   link: () => {
-  //     window.location.href = httpLinkADVT;
-  //   },
-  //   leftIcon: "book"
-  // };
-
-  //Object creation for Receipt's
-  // let certificateDownloadObjectPET_RECEIPT = {
-  //   label: { labelName: "NOC Certificate PET", labelKey: "NOC_RECEIPT_PET" },
-  //   link: () => {
-  //    window.location.href = httpLinkPET_RECEIPT;
-  //    //// generatePdf(state, dispatch, "certificate_download");
-  //   },
-  //   leftIcon: "book"
-  // };
-  // let certificateDownloadObjectROADCUT_RECEIPT = {
-  //   label: { labelName: "NOC Certificate ROADCUT", labelKey: "NOC_RECEIPT_ROADCUT" },
-  //   link: () => {
-  //     window.location.href = httpLinkROADCUT_RECEIPT;
-  //   },
-  //   leftIcon: "book"
-  // };
-  // let certificateDownloadObjectADVT_RECEIPT = {
-  //   label: { labelName: "NOC Certificate ADVT", labelKey: "NOC_RECEIPT_ADVT" },
-  //   link: () => {
-  //     window.location.href = httpLinkADVT_RECEIPT;
-  //   },
-  //   leftIcon: "book"
-  // };
 
   downloadMenu = [
     certificateDownloadObjectPET
-    //certificateDownloadObjectSELLMEAT,
-    //certificateDownloadObjectROADCUT,
-    //certificateDownloadObjectADVT,
-    // certificateDownloadObjectPET_RECEIPT,
-    // certificateDownloadObjectROADCUT_RECEIPT,
-    // certificateDownloadObjectADVT_RECEIPT
   ];
 
-  // switch (status) {
-  //   case "APPROVED":
-  //     downloadMenu = [
-  //       certificateDownloadObject
-  //     ];
-  //     printMenu = [
-  //       certificatePrintObject
-  //     ];
-  //     break;
-  //   case "DOCUMENTVERIFY":
-  //   case "FIELDINSPECTION":
-  //   case "PENDINGAPPROVAL":
-  //   case "REJECTED":
-  //     downloadMenu = [receiptDownloadObject, applicationDownloadObject];
-  //     printMenu = [receiptPrintObject, applicationPrintObject];
-  //     break;
-  //   case "CANCELLED":
-  //   case "PENDINGPAYMENT":
-  //     downloadMenu = [applicationDownloadObject];
-  //     printMenu = [applicationPrintObject];
-  //     break;
-  //   default:
-  //     break;
-  // }
   dispatch(
     handleField(
-      "roadcutnoc-search-preview",
+      "sellmeatnoc-search-preview",
       "components.div.children.headerDiv.children.header.children.downloadMenu",
       "props.data.menu",
       downloadMenu
     )
   );
-  // dispatch(
-  //   handleField(
-  //     "search-preview",
-  //     "components.div.children.headerDiv.children.header.children.printMenu",
-  //     "props.data.menu",
-  //     printMenu
-  //   )
-  // );
   /** END */
 };
 
-const HideshowEdit = (action, nocStatus, amount) => {
-  // Hide edit buttons
-  let showEdit = false;
-  if (nocStatus === "REASSIGN") {
-    showEdit = true;
-  }
-  set(
-    action,
-    "screenConfig.components.div.children.body.children.cardContent.children.nocSummary.children.cardContent.children.header.children.editSection.visible",
-    role_name === 'CITIZEN' ? showEdit === true ? true : false : false
-  );
-  set(
-    action,
-    "screenConfig.components.div.children.body.children.cardContent.children.roadcutapplicantSummary.children.cardContent.children.header.children.editSection.visible",
-    role_name === 'CITIZEN' ? showEdit === true ? true : false : false
-  );
-  set(
-    action,
-    "screenConfig.components.div.children.body.children.cardContent.children.documentsSummary.children.cardContent.children.header.children.editSection.visible",
-    role_name === 'CITIZEN' ? showEdit === true ? true : false : false
-  );
+const HideshowEdit = (action, nocStatus) => {
+// Hide edit buttons
+let showEdit = false;
+if (nocStatus === "REASSIGN") {
+  showEdit = true;
+}
+set(
+  action,
+  "screenConfig.components.div.children.body.children.cardContent.children.sellmeatapplicantSummary.children.cardContent.children.header.children.editSection.visible",
+  role_name === 'CITIZEN' ? showEdit === true ? true : false : false
+);
+set(
+  action,
+  "screenConfig.components.div.children.body.children.cardContent.children.documentsSummary.children.cardContent.children.header.children.editSection.visible",
+  role_name === 'CITIZEN' ? showEdit === true ? true : false : false
+);
 
-  set(
-    action,
-    "screenConfig.components.div.children.body.children.cardContent.children.taskStatusSummary.children.cardContent.children.header.children.editSection.visible",
-    false
-  );
-
-  set(
-    action,
-    "screenConfig.components.div.children.footer.children.approve.visible",
-    amount < 10000 && role_name == 'EE' ? true
-      : role_name == 'CE' ? true : false
-  );
-
-  set(
-    action,
-    "screenConfig.components.div.children.footer.children.reject.visible",
-    amount < 10000 && role_name == 'EE' ? true : role_name == 'CE' ? true : false
-  );
+set(
+  action,
+  "screenConfig.components.div.children.body.children.cardContent.children.taskStatusSummary.children.cardContent.children.header.children.editSection.visible",
+  false
+);
 
 
-  set(
-    action,
-    "screenConfig.components.div.children.footer.children.MakePayment.visible",
-    (role_name === 'CITIZEN' && nocStatus === "APPROVED") ? true : false
-  );
-
-
+set(
+  action,
+  "screenConfig.components.adhocDialog.children.popup",
+  getRequiredDocuments()
+);
 }
 
 const setSearchResponse = async (state, action, dispatch, applicationNumber, tenantId) => {
@@ -401,201 +309,134 @@ const setSearchResponse = async (state, action, dispatch, applicationNumber, ten
     { key: "tenantId", value: tenantId },
     { key: "applicationNumber", value: applicationNumber }
   ]);
+console.log(response, "Booking");
 
-  dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
-  // Set Institution/Applicant info card visibility
-  let applicationStatus = get(response, "nocApplicationDetail.[0].applicationstatus");
+  dispatch(prepareFinalObject("Booking", get(response, "bookingsModelList", [])));
 
-  let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
+  nocStatus = get(state, "screenConfiguration.preparedFinalObject.Booking[0].bkApplicationStatus", {});
   localStorageSet("app_noc_status", nocStatus);
-  localStorageSet("applicationStatus", applicationStatus);
-  let amount = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].amount", {});
-  let performancebankguaranteecharges = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].performancebankguaranteecharges", {});
-  let gstamount = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].gstamount", {});
-  HideshowEdit(action, nocStatus, amount);
+  HideshowEdit(action, nocStatus);
 
-  if (amount > 0 && performancebankguaranteecharges > 0 && gstamount > 0 && role_name == 'CITIZEN') {
+  // prepareDocumentsView(state, dispatch);
 
-    createDemandForRoadCutNOC(state, dispatch, applicationNumber, tenantId);
-    searchBill(dispatch, applicationNumber, tenantId);
-
-  }
-  prepareDocumentsView(state, dispatch);
- 
   if (role_name == 'CITIZEN')
-    setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
-
+  console.log("in Citizen");
+  
+    // setSearchResponseForNocCretificate(state,  dispatch, applicationNumber, tenantId);
+  //setDownloadMenu(state, dispatch);
 };
 
 let httpLinkPET;
-let httpLinkROADCUT;
-let httpLinkROADCUT_RECEIPT;
+let httpLinkSELLMEAT="";
 
-
-const setSearchResponseForNocCretificate = async (state, dispatch, applicationNumber, tenantId) => {
+const setSearchResponseForNocCretificate = async (
+  state,
+  dispatch,
+  applicationNumber,
+  tenantId
+) => {
   let downloadMenu = [];
-  let certificateDownloadObjectROADCUT_RECEIPT = {};
-  let certificateDownloadObjectROADCUT = {};
-  // let nocStatus = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationstatus", {});
-  let nocRemarks = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].remarks", {});
+  //nocStatus = get(state, "screenConfiguration.preparedFinalObject.Booking[0].applicationstatus", {});
+  let nocRemarks = get(state, "screenConfiguration.preparedFinalObject.Booking[0].remarks", {});
+   let nocStatus = "";
 
-  let nocRemark = "";
-  let nocStatus = "";
+  var resApproved = nocRemarks.filter(function (item) {
+    return item.applicationstatus == "APPROVED";
+   });
 
-  //var resApproved = nocRemarks.filter(function (item) {
-  //  return item.applicationstatus == "APPROVED";
-  //});
-  var resPaid = nocRemarks.filter(function (item) {
-    return item.applicationstatus == "PAID";
-  });
-
-  //if (resApproved.length != 0)
-  //  nocStatus = "APPROVED";
-
-  if (resPaid.length != 0)
-    nocRemark = "PAID";
-
-  //role_name !== 'CITIZEN' ?
-  if (nocRemark == "PAID") {
-    let getCertificateDataForROADCUT = { "applicationType": "ROADCUTNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
-
-    //ROADCUTNOC
-    const response0ROADCUT = await getSearchResultsForNocCretificate([
+   if (resApproved.length != 0)
+     nocStatus = "APPROVED";
+  
+  if (nocStatus == "APPROVED") {
+    let getCertificateDataForSELLMEAT = { "applicationType": "SELLMEATNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "certificateData" } };
+    
+    //SELLMEAT
+    const response0SELLMEAT = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateData", value: getCertificateDataForROADCUT },
+      { key: "getCertificateData", value: getCertificateDataForSELLMEAT },
       { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
     ]);
 
-    let getFileStoreIdForROADCUT = { "nocApplicationDetail": [get(response0ROADCUT, "nocApplicationDetail[0]", "")] }
-    //dispatch(prepareFinalObject("nocApplicationCertificateDetail", get(response, "nocApplicationDetail", [])));
+    if(get(response0SELLMEAT, "ResposneInfo.status", "")==""){
+      let errorMessage = {
+        labelName: "No Certificate Information Found",
+        labelKey: "" //UPLOAD_FILE_TOAST
+      };
+      dispatch(toggleSnackbar(true, errorMessage, "error"));
+    }else{
+    let getFileStoreIdForSELLMEAT = { "Booking": [get(response0SELLMEAT, "Booking[0]", "")] }
 
-    const response1ROADCUT = await getSearchResultsForNocCretificate([
+    const response1SELLMEAT = await getSearchResultsForNocCretificate([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateDataFileStoreId", value: getFileStoreIdForROADCUT },
-      { key: "requestUrl", value: "/pdf-service/v1/_create?key=road-noc&tenantId=" + tenantId }
+      { key: "getCertificateDataFileStoreId", value: getFileStoreIdForSELLMEAT },
+      { key: "requestUrl", value: "/pdf-service/v1/_create?key=sellmeat-noc&tenantId="+tenantId }
     ]);
 
-    const response2ROADCUT = await getSearchResultsForNocCretificateDownload([
+    const response2SELLMEAT = await getSearchResultsForNocCretificateDownload([
       { key: "tenantId", value: tenantId },
       { key: "applicationNumber", value: applicationNumber },
-      { key: "filestoreIds", value: get(response1ROADCUT, "filestoreIds[0]", "") },
-      { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
+      { key: "filestoreIds", value: get(response1SELLMEAT, "filestoreIds[0]", "") },
+      { key: "requestUrl", value: "/filestore/v1/files/url?tenantId="+tenantId+"&fileStoreIds=" }
     ]);
-    httpLinkROADCUT = get(response2ROADCUT, get(response1ROADCUT, "filestoreIds[0]", ""), "")
-
-    //Object creation for NOC's
-    certificateDownloadObjectROADCUT = {
-      label: { labelName: "NOC Certificate ROADCUT", labelKey: "NOC_CERTIFICATE_ROADCUT" },
-      link: () => {
-        if (httpLinkROADCUT != "")
-          window.location.href = httpLinkROADCUT;
-        //// generatePdf(state, dispatch, "certificate_download");
-      },
-      leftIcon: "book"
-    };
-
-    //Receipts
-    let getCertificateDataForROADCUT_RECEIPT = { "applicationType": "ROADCUTNOC", "tenantId": tenantId, "applicationId": applicationNumber, "dataPayload": { "requestDocumentType": "receiptData" } };
-
-    //ROADCUTNOC_Receipts
-    const response0ROADCUT_RECEIPT = await getSearchResultsForNocCretificate([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateData", value: getCertificateDataForROADCUT_RECEIPT },
-      { key: "requestUrl", value: "/pm-services/noc/_getCertificateData" }
-    ]);
-
-    let getFileStoreIdForROADCUT_RECEIPT = { "nocApplicationDetail": [get(response0ROADCUT_RECEIPT, "nocApplicationDetail[0]", "")] }
-
-    const response1ROADCUT_RECEIPT = await getSearchResultsForNocCretificate([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "getCertificateDataFileStoreId", value: getFileStoreIdForROADCUT_RECEIPT },
-      { key: "requestUrl", value: "/pdf-service/v1/_create?key=roadcut-receipt&tenantId=" + tenantId }
-    ]);
-
-    const response2ROADCUT_RECEIPT = await getSearchResultsForNocCretificateDownload([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-      { key: "filestoreIds", value: get(response1ROADCUT_RECEIPT, "filestoreIds[0]", "") },
-      { key: "requestUrl", value: "/filestore/v1/files/url?tenantId=" + tenantId + "&fileStoreIds=" }
-    ]);
-    httpLinkROADCUT_RECEIPT = get(response2ROADCUT_RECEIPT, get(response1ROADCUT_RECEIPT, "filestoreIds[0]", ""), "")
-
-    //Object creation for Receipt's
-    certificateDownloadObjectROADCUT_RECEIPT = {
-      label: { labelName: "NOC Receipt ROADCUT", labelKey: "NOC_RECEIPT_ROADCUT" },
-      link: () => {
-        if (httpLinkROADCUT_RECEIPT != "")
-          window.location.href = httpLinkROADCUT_RECEIPT;
-        //// generatePdf(state, dispatch, "certificate_download");
-      },
-      leftIcon: "book"
-    };
-
+    httpLinkSELLMEAT = get(response2SELLMEAT, get(response1SELLMEAT, "filestoreIds[0]", ""), "")
   }
+    //Object creation for NOC's
+    let certificateDownloadObjectSELLMEAT = {
+      label: { labelName: "NOC Certificate SELLMEAT", labelKey: "NOC_CERTIFICATE_SELLMEAT" },
+      link: () => {
+        if (httpLinkSELLMEAT != "")
+          window.location.href = httpLinkSELLMEAT;
+      },
+      leftIcon: "book"
+    };
 
-  if (nocRemark == "PAID") {
     downloadMenu = [
-      certificateDownloadObjectROADCUT,
-      certificateDownloadObjectROADCUT_RECEIPT
+      certificateDownloadObjectSELLMEAT
     ];
   }
+
+
+
   dispatch(
     handleField(
-      "roadcutnoc-search-preview",
+      "sellmeatnoc-search-preview",
       "components.div.children.headerDiv.children.header.children.downloadMenu",
       "props.data.menu",
       downloadMenu
     )
   );
-
   //setDownloadMenu(state, dispatch);
 };
 
 
 const screenConfig = {
   uiFramework: "material-ui",
-  name: "roadcutnoc-search-preview",
+  name: "sellmeatnoc-search-preview",
   beforeInitScreen: (action, state, dispatch) => {
     const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     setapplicationNumber(applicationNumber); //localStorage.setItem('ApplicationNumber', applicationNumber); , applicationNumber)
-
+	 //localStorageSet('applicationsellmeatNumber',applicationNumber);
     const tenantId = getQueryArg(window.location.href, "tenantId");
     dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
+   // searchBill(dispatch, applicationNumber, tenantId);
+    setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
 
-    //setSearchResponseForNocCretificate(state, dispatch, applicationNumber, tenantId);
-    setSearchResponse(state, action, dispatch, applicationNumber, tenantId)
-    // searchBill(dispatch, applicationNumber, tenantId);
     const queryObject = [
       { key: "tenantId", value: tenantId },
-      { key: "businessServices", value: "ROADCUTNOC" }
+      { key: "businessServices", value: "OSBM" }
     ];
     setBusinessServiceDataToLocalStorage(queryObject, dispatch);
 
-    if (role_name == 'JE') {
-      set(
-        action,
-        "screenConfig.components.adhocDialogForward.children.popup",
-        adhocPopupForJeRoadCutForward
-      );
-    }
-    else {
-      set(
-        action,
-        "screenConfig.components.adhocDialogForward.children.popup",
-        adhocPopupForSeRoadCutForward
-      );
-    }
+    
     getMdmsData(action, state, dispatch).then(response => {
-      prepareDocumentsUploadData(state, dispatch, 'popup_rodcut');
+      prepareDocumentsUploadData(state, dispatch, 'apply_osb');
+      // prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');      
     });
+    // preparepopupDocumentsSellMeatUploadData(state, dispatch, 'apply_osb');
 
     // Set Documents Data (TEMP)
-    preparepopupDocumentsRoadCutUploadData(state, dispatch, 'ROADCUTNOC');
-
     return action;
   },
   components: {
@@ -619,42 +460,47 @@ const screenConfig = {
             }
           }
         },
-        taskStatus: {
-          uiFramework: "custom-containers-local",
-          componentPath: "WorkFlowContainer",
-          moduleName: "egov-workflow",
-          visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
-          props: {
-            dataPath: "Licenses",
-            moduleName: "ROADCUTNOC",
-          }
+        // taskStatus: {
+        //   uiFramework: "custom-containers-local",
+        //   componentPath: "WorkFlowContainer",
+        //   moduleName: "egov-workflow",
+        //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+        //   props: {
+        //     dataPath: "Licenses",
+        //     moduleName: "SELLMEATNOC",
+        //   }
+        // },
 
-        },
         body: role_name !== 'CITIZEN' ? getCommonCard({
-          // estimateSummary: estimateSummary,
-          roadcutapplicantSummary: roadcutapplicantSummary,
+          sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary
         }) : getCommonCard({
-          estimateSummary: estimateSummary,
-          roadcutapplicantSummary: roadcutapplicantSummary,
+         
+          sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
-          taskStatusSummary: taskStatusSummary,
-          ReassignButton
+		  // taskStatusSummary: taskStatusSummary,
+          undertakingButton1
         }),
+        break: getBreak(),
+		
+		
+        // undertakingButton,
         // citizenFooter:
         //   process.env.REACT_APP_NAME === "Citizen" ? citizenFooter : {}
         footer: footer
 
       }
     },
+
     adhocDialog: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-services",
       componentPath: "DialogContainer",
+
       props: {
         open: false,
         maxWidth: "sm",
-        screenKey: "roadcutnoc-search-preview"
+        screenKey: "sellmeatnoc-search-preview"
       },
       children: {
 
@@ -663,8 +509,6 @@ const screenConfig = {
 
       }
     },
-
-
     adhocDialogForward: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-services",
@@ -672,11 +516,11 @@ const screenConfig = {
       props: {
         open: false,
         maxWidth: "sm",
-        screenKey: "roadcutnoc-search-preview"
+        screenKey: "sellmeatnoc-search-preview"
       },
       children: {
 
-        popup: {}
+        popup: SellMeatForward
 
       }
     },
@@ -687,12 +531,10 @@ const screenConfig = {
       props: {
         open: false,
         maxWidth: "sm",
-        screenKey: "roadcutnoc-search-preview"
+        screenKey: "sellmeatnoc-search-preview"
       },
       children: {
-
-        popup: adhocPopupForCeRoadCutApprove
-
+        popup: SellMeatApprove
       }
     },
     adhocDialog3: {
@@ -702,10 +544,12 @@ const screenConfig = {
       props: {
         open: false,
         maxWidth: "sm",
-        screenKey: "roadcutnoc-search-preview"
+        screenKey: "sellmeatnoc-search-preview"
       },
       children: {
-        popup: adhocPopupForCeRoadCutReject
+
+        popup: SellMeatReject
+
       }
     },
     adhocDialog2: {
@@ -715,11 +559,11 @@ const screenConfig = {
       props: {
         open: false,
         maxWidth: "sm",
-        screenKey: "roadcutnoc-search-preview"
+        screenKey: "sellmeatnoc-search-preview"
       },
       children: {
 
-        popup: adhocPopupForJeRoadCutReassign
+        popup: SellMeatReassign
 
       }
     },

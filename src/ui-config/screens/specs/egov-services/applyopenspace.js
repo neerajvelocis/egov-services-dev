@@ -9,10 +9,10 @@ import {
   personalDetails,
   bookingDetails,
 } from "./applyResourceOpenSpace/nocDetails";
-import { immunizationDetails } from "./applyResourceOpenSpace/immunization";
 import jp from "jsonpath";
 
 import { documentDetails } from "./applyResourceOpenSpace/documentDetails";
+import { summaryDetails } from "./applyResourceOpenSpace/summaryDetails";
 import {
   getFileUrlFromAPI,
   getQueryArg,
@@ -80,10 +80,9 @@ const applicationNumberContainer = () => {
 
 export const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Apply New Booking`, //later use getFinancialYearDates
+    labelName: `Apply for open space`,
     labelKey: "BK_OSB_APPLY",
   }),
-  //applicationNumber: applicationNumberContainer()
   applicationNumber: {
     uiFramework: "custom-atoms-local",
     moduleName: "egov-services",
@@ -137,15 +136,13 @@ export const formwizardFourthStep = {
     id: "apply_form4",
   },
   children: {
-    //documentuploadDetails
+    summaryDetails
   },
   visible: false,
 };
 
 const getMdmsData = async (action, state, dispatch) => {
-  // let tenantId = getOPMSTenantId();
-  let tenantId = getOPMSTenantId().split('.')[0];
-  alert(tenantId)
+  let tenantId = getOPMSTenantId().split(".")[0];
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -197,9 +194,6 @@ const getMdmsData = async (action, state, dispatch) => {
       [],
       mdmsBody
     );
-
-    
-    console.log(payload.MdmsRes, "payload.MdmsRes1");
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
     console.log(e);
@@ -212,7 +206,6 @@ export const prepareEditFlow = async (
   applicationNumber,
   tenantId
 ) => {
-  // alert("In Edit")
   if (applicationNumber) {
     let response = await getSearchResultsView([
       { key: "tenantId", value: tenantId },
@@ -298,34 +291,34 @@ const screenConfig = {
     !applicationNumber ? clearlocalstorageAppDetails(state) : "";
     setapplicationType("Booking");
     const tenantId = getQueryArg(window.location.href, "tenantId");
-    // alert(getQueryArg(window.location.href, "tenantId"), "id")
-    // console.log(getQueryArg(window.location.href, "tenantId"), "id")
-    // const tenantId = "CH";
     const step = getQueryArg(window.location.href, "step");
-    dispatch(
-      prepareFinalObject(
-        "Booking.ApplicantName",
-        JSON.parse(getUserInfo()).name
-      )
-    ),
-      dispatch(prepareFinalObject("Booking.Email", "HELLO@GMAIL.COM"));
-    dispatch(
-      prepareFinalObject(
-        "Booking.MobileNumber",
-        JSON.parse(getUserInfo()).mobileNumber
-      )
-    );
+    // dispatch(
+    //   prepareFinalObject(
+    //     "Booking.bkApplicantName",
+    //     JSON.parse(getUserInfo()).name
+    //   )
+    // ),
+    //   dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+    // dispatch(
+    //   prepareFinalObject(
+    //     "Booking.bkMobileNumber",
+    //     JSON.parse(getUserInfo()).mobileNumber
+    //   )
+    // );
 
-    dispatch(prepareFinalObject("Booking.HouseNo", "2"));
-    dispatch(prepareFinalObject("Booking.CompleteAddress", "hello address"));
+    // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
+    // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
+    // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
+    // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
+    // dispatch(prepareFinalObject("Booking.bkAreaRequired", "more_than_1000"));
+    // dispatch(prepareFinalObject("Booking.bkDuration", "2_months"));
+    // dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
     //Set Module Name
     set(state, "screenConfiguration.moduleName", "services");
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then((response) => {
-      // alert(response, "documentupload");
       prepareDocumentsUploadData(state, dispatch, "apply_osb");
-      // alert(response, "documentuploaded");
     });
 
     // Search in case of EDIT flow

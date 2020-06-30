@@ -10,7 +10,7 @@ import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
 import {
-  createUpdateNocApplication,
+  createUpdateOsbApplication,
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
 import { localStorageGet, localStorageSet, getOPMSTenantId, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
@@ -144,43 +144,47 @@ const callBackForNext = async (state, dispatch) => {
 
   isFormValid = validatestepformflag[0];
   hasFieldToaster = validatestepformflag[1];
-  if (activeStep === 1) {
-    let isapplicantnamevalid = validateFields(
-      "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
-      state, dispatch);
-  }
-  if (activeStep === 2 && isFormValid != false) {
-    isFormValid = moveToReview(state, dispatch);
-  }
+  // if (activeStep === 1) {
+  //   let isapplicantnamevalid = validateFields(
+  //     "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
+  //     state, dispatch);
+  // }
+  // if (activeStep === 2 && isFormValid != false) {
+  //   isFormValid = moveToReview(state, dispatch);
+  // }
   
-  // console.log(activeStep);
-  
-  if (activeStep !== 3) {
-    // console.log(activeStep)
-    // console.log(isFormValid)
+  if (activeStep !== 4) {
     if (isFormValid) {
 
       let responseStatus = "success";
+      
       // if (activeStep === 1) {
       // }
-      if (activeStep === 2) {
-
+      if (activeStep === 3) {
         prepareDocumentsUploadData(state, dispatch);
         //getMdmsData(state, dispatch);
         let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "RESENT" : "INITIATED";
-        let response = await createUpdateNocApplication(state, dispatch, statuss);
+        let response = await createUpdateOsbApplication(state, dispatch, statuss);
         responseStatus = get(response, "status", "");
         let applicationId = get(response, "applicationId", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
-          isFormValid = moveToReview(state, dispatch, applicationId);
-          if (isFormValid) {
-            setReviewPageRoute(state, dispatch, applicationId);
-          }
-          let errorMessage = {
+          // isFormValid = moveToReview(state, dispatch, applicationId);
+          // if (isFormValid) {
+            
+          // }
+          let successMessage = {
             labelName: 'APPLICATION ' + statuss + ' SUCCESSFULLY! ',
             labelKey: "" //UPLOAD_FILE_TOAST
           };
-          dispatch(toggleSnackbar(true, errorMessage, "success"));
+          dispatch(toggleSnackbar(true, successMessage, "success"));
+
+          setTimeout(() => {
+            const appendUrl =
+            process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+             const reviewUrl = `${appendUrl}/egov-services/my-applications`;
+                dispatch(setRoute(reviewUrl));  
+          }, 2000);
+          
          
         }
         else {
@@ -191,11 +195,10 @@ const callBackForNext = async (state, dispatch) => {
           dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
       }
-
-      if (isFormValid != false) {
+     
+      if (isFormValid) {
         responseStatus === "success" && changeStep(state, dispatch);
-      }
-      else {
+      } else {
         errorMessage = {
           labelName:
             "Please fill all mandatory fields for Applicant Details, then proceed!",
@@ -251,8 +254,8 @@ export const changeStep = (
   }
 
   const isPreviousButtonVisible = activeStep > 0 ? true : false;
-  const isNextButtonVisible = activeStep < 2 ? true : false;
-  const isPayButtonVisible = activeStep === 2 ? true : false;
+  const isNextButtonVisible = activeStep < 3 ? true : false;
+  const isPayButtonVisible = activeStep === 3 ? true : false;
   const actionDefination = [
     {
       path: "components.div.children.stepper.props",

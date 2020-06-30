@@ -110,7 +110,7 @@ if (role_name === "CITIZEN") {
           report_problem
         </i>
       ),
-      route: "apply",
+      route: "applywaterbooking",
       // {
       //   screenKey: "home",
       //   jsonPath: "components.adhocDialog"

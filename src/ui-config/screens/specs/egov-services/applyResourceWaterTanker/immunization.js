@@ -18,7 +18,7 @@ import "./index.css";
 let previousUoms = [];
 
 
-const immunizationData = buildingType => {
+const commonBuildingData = buildingType => {
   
   return {
     VerterinaryDocName: {
@@ -32,7 +32,7 @@ const immunizationData = buildingType => {
           labelKey: "NOC_PET_DETAILS_NAME_OF_VETERINARY_DOCTOR_PLACEHOLDER"
         },
         required: true,
-        pattern: getPattern("VillageName"),
+        pattern: getPattern("TradeName"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "PETNOC.immunizationNameVeterinaryDoctor",
         // props: {
@@ -62,7 +62,7 @@ const immunizationData = buildingType => {
           labelKey: "NOC_PET_DETAILS_VETERINARY_COUNCIL_REGISTRATION_NO_PLACEHOLDER"
         },
         required: true,
-        pattern: getPattern("VeterinaryRegistrationNo"),
+        pattern: getPattern("TradeName"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "PETNOC.veterinaryCouncilRegistrationNo",
          
@@ -88,7 +88,7 @@ const immunizationData = buildingType => {
           labelKey: "NOC_PET_DETAILS_VETERINARY_CONTACT_NO_PLACEHOLDER"
         },
         required: true,
-        pattern: getPattern("MobileNo"),
+        pattern: getPattern("TradeName"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "PETNOC.immunizationContactDetail",
          
@@ -114,7 +114,7 @@ const immunizationData = buildingType => {
           labelKey: "NOC_PET_DETAILS_VETERINARY_CLINIC_NO_PLACEHOLDER"
         },
         required: true,
-        pattern: getPattern("DoorHouseNo"),
+        pattern: getPattern("TradeName"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "PETNOC.immunizationClinicNo",
          
@@ -134,16 +134,16 @@ const immunizationData = buildingType => {
           label: { 
 		  labelName: "Sector", 
 		  labelKey: "NOC_PET_DETAILS_VETERINARY_SECTOR_LABEL" },
-          // localePrefix: {
-          //   moduleName: "egpm",
-          //   masterName: "sector"
-          // },
+          localePrefix: {
+            moduleName: "TENANT",
+            masterName: "TENANTS"
+          },
           optionLabel: "name",
           placeholder: {
             labelName: "Select Sector",
             labelKey: "NOC_PET_DETAILS_VETERINARY_SECTOR_PLACEHOLDER"
           },
-          sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+          sourceJsonPath: "applyScreenMdmsData.tenant.tenants",
           jsonPath: "PETNOC.immunizationSector",
           required: true,
 		  gridDefination: {
@@ -185,10 +185,47 @@ export const immunizationDetails = getCommonCard({
         },
         children: {
           singleBuilding: getCommonGrayCard({
-            singleBuildingCard: getCommonContainer(immunizationData("SINGLE"))
+            singleBuildingCard: getCommonContainer(commonBuildingData("SINGLE"))
           })
         }
-      }      
+      },
+      multipleBuildingContainer: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        props: {
+          className:"applicant-details-error",
+          style: {
+            display: "none"
+          }
+        },
+        gridDefination: {
+          xs: 12
+        },
+        children: {
+          multipleBuilding: {
+            uiFramework: "custom-containers",
+            componentPath: "MultiItem",
+            props: {
+              scheama: getCommonGrayCard({
+                multipleBuildingCard: getCommonContainer(
+                  commonBuildingData("MULTIPLE")
+                )
+              }),
+              items: [],
+              addItemLabel: {
+                labelKey: "NOC_PROPERTY_DETAILS_ADD_BUILDING_LABEL",
+                labelName: "ADD BUILDING"
+              },
+              sourceJsonPath: "PetNOCs[0].PetNOCsDetails.buildings",
+              // prefixSourceJsonPath:
+              //   "children.cardContent.children.buildingDataCard.children.multipleBuildingContainer.children",
+              prefixSourceJsonPath:
+                "children.cardContent.children.multipleBuildingCard.children"
+            },
+            type: "array"
+          }
+        }
+      }
     })
   })
 });

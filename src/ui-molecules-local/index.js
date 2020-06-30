@@ -32,6 +32,11 @@ const DocumentList = Loadable({
   loading: () => <Loading />
 });
 
+const SummaryDetails = Loadable({
+  loader: () => import("./SummaryDetails"),
+  loading: () => <Loading />
+});
+
 const DividerWithLabel = Loadable({
   loader: () => import("./DividerWithLabel"),
   loading: () => <Loading />
@@ -59,6 +64,7 @@ export {
   CustomTab,
   UploadSingleFile,
   DocumentList,
+  SummaryDetails,
   MapLocator,
   FeesEstimateCard,
   DividerWithLabel,

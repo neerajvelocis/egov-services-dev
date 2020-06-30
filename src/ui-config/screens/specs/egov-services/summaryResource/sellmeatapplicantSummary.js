@@ -76,7 +76,7 @@ export const sellmeatapplicantSummary = getCommonGrayCard({
             },
             {
               jsonPath:
-                "nocApplicationDetail[0].nocnumber"
+                "Booking[0].bkApplicationNumber"
 
             }
           ),
@@ -87,127 +87,127 @@ export const sellmeatapplicantSummary = getCommonGrayCard({
             },
             {
               jsonPath:
-                "nocApplicationDetail[0].applicantname"
+                "Booking[0].bkApplicantName"
 
             }
           ),
-          applicantFatherHusbandName: getLabelWithValue(
-            {
-              labelName: "fatherHusbandName",
-              labelKey: "NOC_FATHER_HUSBAND_NAME"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].applicationdetail",
-              callBack: value => {
-                if (value != undefined) {
-                  let applicantFatherHusbandName = JSON.parse(value).hasOwnProperty('fatherHusbandName') ? JSON.parse(value)['fatherHusbandName'] : '';
-                  return applicantFatherHusbandName;
-                } else {
-                  return '';
-                }
-              }
-            }
-          ),
-          applicantHouseNo: getLabelWithValue(
-            {
-              labelName: "House No.",
-              labelKey: "NOC_HOUSE_NO_LABEL"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].housenumber"
-            }
-          ),
-          applicantShopNumber: getLabelWithValue(
-            {
-              labelName: "Shop Number",
-              labelKey: "NOC_APPLICANT_SHOPNO_LABEL"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].applicationdetail",
-              callBack: value => {
-                if (value != undefined) {
-                  let shopNumber = JSON.parse(value).hasOwnProperty('shopNumber') ? JSON.parse(value)['shopNumber'] : '';
-                  return shopNumber;
-                } else {
-                  return '';
-                }
-              }
-            }
-          ),
-          wardDetails: getLabelWithValue(
-            {
-              labelName: "Ward Details",
-              labelKey: "NOC_APPLICANT_WARD_LABEL"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].applicationdetail",
-              callBack: value => {
-                if (value != undefined) {
-                  let wardDetails = JSON.parse(value).hasOwnProperty('ward') ? JSON.parse(value)['ward'] : '';
-                  return wardDetails;
-                } else {
-                  return '';
-                }
-              }
-            }
-          ),
-          applicantDivision: getLabelWithValue(
-            {
-              labelName: "Division",
-              labelKey: "NOC_APPLICANT_DIVISION_LABEL"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].applicationdetail",
-              callBack: value => {
-                if (value != undefined) {
-                  let division = JSON.parse(value).hasOwnProperty('division') ? JSON.parse(value)['division'] : '';
-                  return division;
-                } else {
-                  return '';
-                }
-              }
-            }
-          ),
+          // applicantFatherHusbandName: getLabelWithValue(
+          //   {
+          //     labelName: "fatherHusbandName",
+          //     labelKey: "NOC_FATHER_HUSBAND_NAME"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].applicationdetail",
+          //     callBack: value => {
+          //       if (value != undefined) {
+          //         let applicantFatherHusbandName = JSON.parse(value).hasOwnProperty('fatherHusbandName') ? JSON.parse(value)['fatherHusbandName'] : '';
+          //         return applicantFatherHusbandName;
+          //       } else {
+          //         return '';
+          //       }
+          //     }
+          //   }
+          // ),
+          // applicantHouseNo: getLabelWithValue(
+          //   {
+          //     labelName: "House No.",
+          //     labelKey: "NOC_HOUSE_NO_LABEL"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].bkHouseNo"
+          //   }
+          // ),
+          // applicantShopNumber: getLabelWithValue(
+          //   {
+          //     labelName: "Shop Number",
+          //     labelKey: "NOC_APPLICANT_SHOPNO_LABEL"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].applicationdetail",
+          //     callBack: value => {
+          //       if (value != undefined) {
+          //         let shopNumber = JSON.parse(value).hasOwnProperty('shopNumber') ? JSON.parse(value)['shopNumber'] : '';
+          //         return shopNumber;
+          //       } else {
+          //         return '';
+          //       }
+          //     }
+          //   }
+          // ),
+          // wardDetails: getLabelWithValue(
+          //   {
+          //     labelName: "Ward Details",
+          //     labelKey: "NOC_APPLICANT_WARD_LABEL"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].applicationdetail",
+          //     callBack: value => {
+          //       if (value != undefined) {
+          //         let wardDetails = JSON.parse(value).hasOwnProperty('ward') ? JSON.parse(value)['ward'] : '';
+          //         return wardDetails;
+          //       } else {
+          //         return '';
+          //       }
+          //     }
+          //   }
+          // ),
+          // applicantDivision: getLabelWithValue(
+          //   {
+          //     labelName: "Division",
+          //     labelKey: "NOC_APPLICANT_DIVISION_LABEL"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].applicationdetail",
+          //     callBack: value => {
+          //       if (value != undefined) {
+          //         let division = JSON.parse(value).hasOwnProperty('division') ? JSON.parse(value)['division'] : '';
+          //         return division;
+          //       } else {
+          //         return '';
+          //       }
+          //     }
+          //   }
+          // ),
 
-          applicatantSector: getLabelWithValue(
-            {
-              labelName: "Sector",
-              labelKey: "NOC_DIVISION_LABEL"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].sector"              
-            }
-          ),
-          applicantEmail: getLabelWithValue(
-            {
-              labelName: "Noc Sought For",
-              labelKey: "NOC_SOUGHT_FOR_LABEL"
-            },
-            {
-              jsonPath:
-                "nocApplicationDetail[0].applicationdetail",
-              callBack: value => {
-                if (value != undefined) {
-                  let applicantEmail = JSON.parse(value).hasOwnProperty('nocSought') ? JSON.parse(value)['nocSought'] : '';
-                  return applicantEmail;
-                } else {
-                  return '';
-                }
-              }
-            }
-          )
+          // applicatantSector: getLabelWithValue(
+          //   {
+          //     labelName: "Sector",
+          //     labelKey: "NOC_DIVISION_LABEL"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].bkSector"              
+          //   }
+          // ),
+          // applicantEmail: getLabelWithValue(
+          //   {
+          //     labelName: "Noc Sought For",
+          //     labelKey: "NOC_SOUGHT_FOR_LABEL"
+          //   },
+          //   {
+          //     jsonPath:
+          //       "Booking[0].bkEmail",
+          //     // callBack: value => {
+          //     //   if (value != undefined) {
+          //     //     let applicantEmail = JSON.parse(value).hasOwnProperty('nocSought') ? JSON.parse(value)['nocSought'] : '';
+          //     //     return applicantEmail;
+          //     //   } else {
+          //     //     return '';
+          //     //   }
+          //     // }
+          //   }
+          // )
         })
       }),
       items: [],
       hasAddItem: false,
       isReviewPage: true,
-      sourceJsonPath: "nocApplicationDetail",
+      sourceJsonPath: "Booking",
       prefixSourceJsonPath:
         "children.cardContent.children.applicantContainer.children",
       afterPrefixJsonPath: "children.value.children.key"

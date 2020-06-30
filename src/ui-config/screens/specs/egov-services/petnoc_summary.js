@@ -37,10 +37,10 @@ import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { showHideAdhocPopup, showHideAdhocPopups } from "../utils";
 
 export const stepsData = [
-  { labelName: "PET NOC Details", labelKey: "Applicant_DETAILS" },
-  { labelName: "Verternariy Details", labelKey: "STEP_PET_NOC_VETERINARY_DETAILS" },
-  { labelName: "Documents", labelKey: "STEP_PET_NOC_DOCUMENTS" },
-  { labelName: "Summary", labelKey: "ADV_SUMMARY_NOC" }
+  { labelName: "Applicant Details", labelKey: "BK_OSB_APPLICANT_DETAILS" },
+  { labelName: "Booking Details", labelKey: "BK_OSB_BOOKING_DETAILS" },
+  { labelName: "Documents", labelKey: "BK_OSB_DOCUMENTS" },
+  { labelName: "Summary", labelKey: "BK_OSB_SUMMARY" },
 ];
 export const stepper = getStepperObject(
   { props: { activeStep: 3 } },
@@ -144,8 +144,8 @@ const undertakingButton1 = getCommonContainer({
 });
 const titlebar = getCommonContainer({
   header: getCommonHeader({
-    labelName: "Application for PET NOC",
-    labelKey: "PET_NOC_APPLICATION_Detail"
+    labelName: `Apply for open space`, 
+    labelKey: "BK_OSB_APPLY",
   }),
   applicationNumber: {
     uiFramework: "custom-atoms-local",
@@ -341,32 +341,23 @@ var titlebarfooter = getCommonContainer({
 });
 
 const prepareDocumentsView = async (state, dispatch) => {
-  //alert('prepare')
+  console.log('prepare', state)
   let documentsPreview = [];
 
   // Get all documents from response
   let petnocdetail = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail[0].applicationdetail", {});
 
   if (petnocdetail) {
-    let uploadVaccinationCertificate = JSON.parse(petnocdetail).hasOwnProperty('uploadVaccinationCertificate') ?
-      JSON.parse(petnocdetail).uploadVaccinationCertificate[0]['fileStoreId'] : '';
-
-    let uploadPetPicture = JSON.parse(petnocdetail).hasOwnProperty('uploadPetPicture') ?
-      JSON.parse(petnocdetail).uploadPetPicture[0]['fileStoreId'] : '';
-
+    let uploadBookingDocument = JSON.parse(petnocdetail).hasOwnProperty('uploadBookingDocument') ?
+      JSON.parse(petnocdetail).uploadBookingDocument[0]['fileStoreId'] : '';
     let allDocuments = [];
-    allDocuments.push(uploadVaccinationCertificate)
-    allDocuments.push(uploadPetPicture)
+    allDocuments.push(uploadBookingDocument)
 
 
-    if (uploadVaccinationCertificate !== '' && uploadPetPicture !== '') {
+    if (uploadBookingDocument !== '') {
       documentsPreview.push({
-        title: "uploadVaccinationCertificate",
-        fileStoreId: uploadVaccinationCertificate,
-        linkText: "View"
-      }, {
-        title: "uploadPetPicture",
-        fileStoreId: uploadPetPicture,
+        title: "uploadBookingDocument",
+        fileStoreId: uploadBookingDocument,
         linkText: "View"
       });
       let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
@@ -503,7 +494,7 @@ const setSearchResponse = async (state, dispatch, applicationNumber, tenantId) =
 
   dispatch(prepareFinalObject("nocApplicationDetail", get(response, "nocApplicationDetail", [])));
 
-  prepareDocumentsView(state, dispatch);
+  // prepareDocumentsView(state, dispatch);
   setDownloadMenu(state, dispatch);
 };
 
@@ -600,14 +591,14 @@ const screenConfig = {
           estimateSummary: estimateSummary,
           applicantSummary: applicantSummary,
           nocSummary: nocSummary,
-          immunizationSummary: immunizationSummary,
+          // immunizationSummary: immunizationSummary,
           documentsSummary: documentsSummary
         }) : getCommonCard({
 
           estimateSummary: estimateSummary,
           applicantSummary: applicantSummary,
           nocSummary: nocSummary,
-          immunizationSummary: immunizationSummary,
+          // immunizationSummary: immunizationSummary,
           documentsSummary: documentsSummary,
           undertakingButton1
           //taskStatusSummary: taskStatusSummary,
@@ -617,7 +608,8 @@ const screenConfig = {
         citizenFooter:
           process.env.REACT_APP_NAME === "Citizen" ? citizenFooter : citizenFooter
       }
-    }, undertakingdialog: {
+    },
+     undertakingdialog: {
       uiFramework: "custom-containers-local",
       moduleName: "egov-services",
       componentPath: "UnderTakingContainer",

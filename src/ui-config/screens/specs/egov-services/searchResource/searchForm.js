@@ -1,112 +1,90 @@
 import {
-  getBreak,
   getCommonCard,
   getCommonContainer,
   getCommonTitle,
   getTextField,
   getSelectField,
   getPattern,
+  getCommonSubHeader,
+  getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {
-  handleScreenConfigurationFieldChange as handleField,
-  prepareFinalObject,
-} from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import get from "lodash/get";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {
-  furnishNocResponse,
-  getSearchResults,
-} from "../../../../../ui-utils/commons";
 
-export const personalDetails = getCommonCard({
-  // header: getCommonTitle(
-  //   {
-  //     labelName: "Applicant Details",
-  //     labelKey: "BK_OSB_HEADER_STEP_1",
-  //   },
-  //   {
-  //     style: {
-  //       marginBottom: 18,
-  //     },
-  //   }
-  // ),
-  // break: getBreak(),
-  nocDetailsContainer: getCommonContainer({
-    bkApplicantName: {
-      ...getTextField({
-        label: {
-          labelName: "Applicant Name",
-          labelKey: "BK_OSB_NAME_LABEL",
-        },
-        placeholder: {
-          labelName: "Enter Applicant Name",
-          labelKey: "BK_OSB_NAME_PLACEHOLDER",
-        },
-        required: true,
-        pattern: getPattern("Name"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "Booking.bkApplicantName",
-      }),
-    },
-    bkEmail: {
-      ...getTextField({
-        label: {
-          labelName: "Email Address",
-          labelKey: "BK_OSB_EMAIL_LABEL",
-        },
-        placeholder: {
-          labelName: "Enter Email Address",
-          labelKey: "BK_OSB_EMAIL_PLACEHOLDER",
-        },
-        required: true,
-        pattern: getPattern("Email"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "Booking.bkEmail",
-      }),
-    },
-    bkMobileNumber: {
-      ...getTextField({
-        label: {
-          labelName: "Contact Number",
-          labelKey: "BK_OSB_MOBILE_NO_LABEL",
-        },
-        placeholder: {
-          labelName: "Enter Contact Number",
-          labelKey: "BK_OSB_MOBILE_NO_PLACEHOLDER",
-        },
-        required: true,
-        pattern: getPattern("MobileNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "Booking.bkMobileNumber",
-      }),
-    },
-    dummyDiv: {
-      uiFramework: "custom-atoms",
-      componentPath: "Div",
-      gridDefination: {
-        xs: 12,
-        sm: 12,
-        md: 6,
-      },
-      props: {
-        disabled: true,
-      },
-    },
-  }),
-});
 
-export const bookingDetails = getCommonCard({
-  // header: getCommonTitle(
-  //   {
-  //     labelName: "Applicant Details",
-  //     labelKey: "BK_OSB_HEADER_STEP_2",
+export const callBackForPrevious = (state, dispatch) => {
+  alert("in previous")
+};
+export const callBackForNext = (state, dispatch) => {
+  alert("in next")
+  let payload = get(
+    state.screenConfiguration.preparedFinalObject,
+    "Booking",
+    []
+  );
+  console.log("newdata", payload);
+  
+};
+
+export const searchDetails = getCommonCard({
+  header: getCommonTitle(
+    {
+      labelName: "Applicant Details",
+      labelKey: "BK_OSB_HEADER_STEP_2",
+    },
+    {
+      style: {
+        marginBottom: 18,
+      },
+    }
+  ),
+  // header: {
+  //   uiFramework: "custom-atoms",
+  //   componentPath: "Container",
+  //   props: {
+  //     style: { marginBottom: "10px" }
   //   },
-  //   {
-  //     style: {
-  //       marginBottom: 18,
+  //   children: {
+  //     header: {
+  //       gridDefination: {
+  //         xs: 8
+  //       },
+  //       ...getCommonSubHeader({
+  //         labelName: "Summary",
+  //         labelKey: "BK_OSB_HEADER_STEP_4"
+  //       })
   //     },
+  //     editSection: {
+  //       componentPath: "Button",
+  //       props: {
+  //         color: "primary",
+  //         style: {
+  //           marginTop: "-10px",
+  //           marginRight: "-18px"
+  //         }
+  //       },
+  //       gridDefination: {
+  //         xs: 4,
+  //         align: "right"
+  //       },
+  //       children: {
+  //         editIcon: {
+  //           uiFramework: "custom-atoms",
+  //           componentPath: "Icon",
+  //           props: {
+  //             iconName: "edit"
+  //           }
+  //         },
+  //         buttonLabel: getLabel({
+  //           labelName: "Edit",
+  //           labelKey: "NOC_SUMMARY_EDIT"
+  //         })
+  //       },
+  //       onClickDefination: {
+  //         action: "condition",
+  //         callBack: callBackForPrevious
+  //       }
+  //     }
   //   }
-  // ),
+  // },
 
   applicationDetailsConatiner: getCommonContainer({
     bkHouseNo: {
@@ -297,5 +275,97 @@ export const bookingDetails = getCommonCard({
         },
       }),
     },
+    // submitButton: {
+    //   componentPath: "Button",
+    //   props: {
+    //     color: "primary",
+    //     style: {
+    //       marginTop: "-10px",
+    //       marginRight: "-18px"
+    //     }
+    //   },
+    //   gridDefination: {
+    //     xs: 4,
+    //     align: "right"
+    //   },
+    //   children: {
+    //     editIcon: {
+    //       uiFramework: "custom-atoms",
+    //       componentPath: "Icon",
+    //       props: {
+    //         iconName: "edit"
+    //       }
+    //     },
+    //     buttonLabel: getLabel({
+    //       labelName: "Edit",
+    //       labelKey: "NOC_SUMMARY_EDIT"
+    //     })
+    //   },
+    //   onClickDefination: {
+    //     action: "condition",
+    //     callBack: callBackForPrevious
+    //   }
+    // },
+    previousButton: {
+      componentPath: "Button",
+      props: {
+        variant: "outlined",
+        color: "primary",
+        style: {
+          // minWidth: "200px",
+          height: "48px",
+          marginRight: "16px"
+        }
+      },
+      children: {
+        // previousButtonIcon: {
+        //   uiFramework: "custom-atoms",
+        //   componentPath: "Icon",
+        //   props: {
+        //     iconName: "keyboard_arrow_left"
+        //   }
+        // },
+        previousButtonLabel: getLabel({
+          labelName: "Cancel",
+          labelKey: "NOC_COMMON_BUTTON_PREV_STEP"
+        })
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: callBackForPrevious
+      },
+      visible: true
+    },
+    payButton: {
+      componentPath: "Button",
+      props: {
+        variant: "contained",
+        color: "primary",
+        style: {
+          //minWidth: "200px",
+          height: "48px",
+          marginRight: "45px"
+        }
+      },
+      children: {
+        submitButtonLabel: getLabel({
+          labelName: "Submit",
+          labelKey: "NOC_COMMON_BUTTON_SUBMIT"
+        }),
+        // submitButtonIcon: {
+        //   uiFramework: "custom-atoms",
+        //   componentPath: "Icon",
+        //   props: {
+        //     iconName: "keyboard_arrow_right"
+        //   }
+        // }
+      },
+      onClickDefination: {
+        action: "condition",
+        callBack: callBackForNext
+      },
+      visible: true
+    }
+
   }),
 });

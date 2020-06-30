@@ -6,18 +6,18 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 export const documentDetails = getCommonCard({
-  header: getCommonTitle(
-    {
-      labelName: "Required Documents",
-      labelKey: "BK_OSB_DOCUMENT_HEADER",
-      // labelKey: "NOC_DOCUMENT_DETAILS_HEADER_POPUP"
-    },
-    {
-      style: {
-        marginBottom: 18
-      }
-    }
-  ),
+  // header: getCommonTitle(
+  //   {
+  //     labelName: "Required Documents",
+  //     labelKey: "BK_OSB_HEADER_STEP_3",
+  //     // labelKey: "NOC_DOCUMENT_DETAILS_HEADER_POPUP"
+  //   },
+  //   {
+  //     style: {
+  //       marginBottom: 18
+  //     }
+  //   }
+  // ),
   subText: getCommonParagraph({
     labelName:
       "Only one file can be uploaded for one document. If multiple files need to be uploaded then please combine all files in a pdf and then upload",

@@ -1,19 +1,51 @@
-
-import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getFileUrlFromAPI, getMultiUnits, getQueryArg, getTransformedLocale, setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
-import { getapplicationNumber, getapplicationType, getOPMSTenantId, getUserInfo, setapplicationNumber, lSRemoveItemlocal, lSRemoveItem, localStorageGet, setapplicationMode, localStorageSet } from "egov-ui-kit/utils/localStorageUtils";
+import {
+  handleScreenConfigurationFieldChange as handleField,
+  prepareFinalObject,
+  toggleSnackbar,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import {
+  getFileUrlFromAPI,
+  getMultiUnits,
+  getQueryArg,
+  getTransformedLocale,
+  setBusinessServiceDataToLocalStorage,
+} from "egov-ui-framework/ui-utils/commons";
+import {
+  getapplicationNumber,
+  getapplicationType,
+  getOPMSTenantId,
+  getUserInfo,
+  setapplicationNumber,
+  lSRemoveItemlocal,
+  lSRemoveItem,
+  localStorageGet,
+  setapplicationMode,
+  localStorageSet,
+} from "egov-ui-kit/utils/localStorageUtils";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import store from "redux/store";
-import { convertDateToEpoch, getCheckBoxJsonpath, getCurrentFinancialYear, getHygeneLevelJson, getLocalityHarmedJson, getSafetyNormsJson, getTradeTypeDropdownData, getTranslatedLabel, ifUserRoleExists, setFilteredTradeTypes, updateDropDowns, searchBill, createDemandForAdvNOC } from "../ui-config/screens/specs/utils";
+import {
+  convertDateToEpoch,
+  getCheckBoxJsonpath,
+  getCurrentFinancialYear,
+  getHygeneLevelJson,
+  getLocalityHarmedJson,
+  getSafetyNormsJson,
+  getTradeTypeDropdownData,
+  getTranslatedLabel,
+  ifUserRoleExists,
+  setFilteredTradeTypes,
+  updateDropDowns,
+  searchBill,
+  createDemandForAdvNOC,
+} from "../ui-config/screens/specs/utils";
 import { httpRequest } from "./api";
 
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 
-
-const role_name = JSON.parse(getUserInfo()).roles[0].code
-
+const role_name = JSON.parse(getUserInfo()).roles[0].code;
 
 // export const updateTradeDetails = async requestBody => {
 //   try {
@@ -43,28 +75,28 @@ const role_name = JSON.parse(getUserInfo()).roles[0].code
 //   }
 // };
 
-export const getSearchResults = async queryObject => {
-
+export const getSearchResults = async (queryObject) => {
   let data = {
-    "tenantId": getOPMSTenantId(),
-    "applicationType": getapplicationType(),
-    "applicationStatus": "INITIATED",
-    "dataPayload": {
-      "createdBy": JSON.parse(getUserInfo()).uuid,
-      "applicationType": getapplicationType()
-    }
+    tenantId: getOPMSTenantId().split(".")[0],
+    applicationNumber: "",
+    applicationStatus: "",
+    mobileNumber: "",
+    fromDate: "",
+    toDate: "",
+    bookingType: "OSBM",
+    uuid: JSON.parse(getUserInfo()).uuid,
+    // "applicationType": getapplicationType()
   };
   try {
     const response = await httpRequest(
       "post",
-      "/pm-services/noc/_get",
+      "/bookings/api/_citizen/_search",
       "",
       [],
       data
     );
-    //alert(JSON.stringify(response));
+    console.log(response, "all-application");
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -74,39 +106,57 @@ export const getSearchResults = async queryObject => {
       )
     );
   }
-
 };
 
 //view
-export const getSearchResultsView = async queryObject => {
+export const getSearchResultsView = async (queryObject) => {
+  console.log(queryObject, "myquery");
+  
   try {
     const response = await httpRequest(
-      "post", "/pm-services/noc/_view", "",
+      "post",
+      "/bookings/api/_citizen/_search",
+      "",
       [],
       {
-        "tenantId": queryObject[0]["value"],
-        "applicationId": queryObject[1]["value"],
-        "applicationType": getapplicationType(),
-        "dataPayload": {
-          "createdBy": JSON.parse(getUserInfo()).uuid,
-          "applicationType": getapplicationType()
-        }
+        tenantId:queryObject[0]["value"],
+        applicationNumber:queryObject[1]["value"],
+        applicationStatus: "",
+        mobileNumber: "",
+        fromDate: "",
+        toDate: "",
+        bookingType: "OSBM",
+        uuid: JSON.parse(getUserInfo()).uuid,
       }
+      // {
+      //   "tenantId": queryObject[0]["value"].split(".")[0],
+      //   "applicationNumber":queryObject[1]["value"],
+      //   "applicationStatus": "",
+      //   "mobileNumber":"",
+      //   "fromDate":"",
+      //   "toDate":"",
+      //   "bookingType":"OSBM",
+      //   "uuid": JSON.parse(getUserInfo()).uuid
+      // }
     );
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
-        true, { labelName: error.message, labelCode: error.message }, "error"
+        true,
+        { labelName: error.message, labelCode: error.message },
+        "error"
       )
     );
   }
   //alert(JSON.stringify(response));
 };
 
-export const preparepopupDocumentsUploadData = (state, dispatch, applicationtype = 'PETNOC') => {
-
+export const preparepopupDocumentsUploadData = (
+  state,
+  dispatch,
+  applicationtype = "PETNOC"
+) => {
   // if(applicationtype == 'PETNOC')
   // {
   let documents = get(
@@ -114,13 +164,13 @@ export const preparepopupDocumentsUploadData = (state, dispatch, applicationtype
     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.PetNOC.RemarksDocuments",
     []
   );
-  // }	
-  documents = documents.filter(item => {
+  // }
+  documents = documents.filter((item) => {
     return item.active;
   });
   let documentsContract = [];
   let tempDoc = {};
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     let card = {};
     card["code"] = doc.documentType;
     card["title"] = doc.documentType;
@@ -128,21 +178,26 @@ export const preparepopupDocumentsUploadData = (state, dispatch, applicationtype
     tempDoc[doc.documentType] = card;
   });
 
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     // Handle the case for multiple muildings
-    if (doc.code === "PET.REMARK_DOCUMENT_SI" && doc.hasMultipleRows && doc.options) {
-      let buildingsData = get(state,
+    if (
+      doc.code === "PET.REMARK_DOCUMENT_SI" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -159,10 +214,10 @@ export const preparepopupDocumentsUploadData = (state, dispatch, applicationtype
         let dropdown = {};
         dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
         dropdown.required = true;
-        dropdown.menu = doc.dropdownData.filter(item => {
+        dropdown.menu = doc.dropdownData.filter((item) => {
           return item.active;
         });
-        dropdown.menu = dropdown.menu.map(item => {
+        dropdown.menu = dropdown.menu.map((item) => {
           return { code: item.code, label: getTransformedLocale(item.code) };
         });
         card["dropdown"] = dropdown;
@@ -171,15 +226,18 @@ export const preparepopupDocumentsUploadData = (state, dispatch, applicationtype
     }
   });
 
-  Object.keys(tempDoc).forEach(key => {
+  Object.keys(tempDoc).forEach((key) => {
     documentsContract.push(tempDoc[key]);
   });
 
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
-export const preparepopupDocumentsADVUploadData = (state, dispatch, applicationtype = 'ADVERTISEMENTNOC') => {
-
+export const preparepopupDocumentsADVUploadData = (
+  state,
+  dispatch,
+  applicationtype = "ADVERTISEMENTNOC"
+) => {
   // if(applicationtype == 'PETNOC')
   // {
   let documents = get(
@@ -187,13 +245,13 @@ export const preparepopupDocumentsADVUploadData = (state, dispatch, applicationt
     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.AdvertisementNOC.AdvertisementNOCRemarksDocuments",
     []
   );
-  // }	
-  documents = documents.filter(item => {
+  // }
+  documents = documents.filter((item) => {
     return item.active;
   });
   let documentsContract = [];
   let tempDoc = {};
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     let card = {};
     card["code"] = doc.documentType;
     card["title"] = doc.documentType;
@@ -201,21 +259,26 @@ export const preparepopupDocumentsADVUploadData = (state, dispatch, applicationt
     tempDoc[doc.documentType] = card;
   });
 
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     // Handle the case for multiple muildings
-    if (doc.code === "AdvertisementNOC.REMARK_DOCUMENT" && doc.hasMultipleRows && doc.options) {
-      let buildingsData = get(state,
+    if (
+      doc.code === "AdvertisementNOC.REMARK_DOCUMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -232,10 +295,10 @@ export const preparepopupDocumentsADVUploadData = (state, dispatch, applicationt
         let dropdown = {};
         dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
         dropdown.required = true;
-        dropdown.menu = doc.dropdownData.filter(item => {
+        dropdown.menu = doc.dropdownData.filter((item) => {
           return item.active;
         });
-        dropdown.menu = dropdown.menu.map(item => {
+        dropdown.menu = dropdown.menu.map((item) => {
           return { code: item.code, label: getTransformedLocale(item.code) };
         });
         card["dropdown"] = dropdown;
@@ -244,15 +307,18 @@ export const preparepopupDocumentsADVUploadData = (state, dispatch, applicationt
     }
   });
 
-  Object.keys(tempDoc).forEach(key => {
+  Object.keys(tempDoc).forEach((key) => {
     documentsContract.push(tempDoc[key]);
   });
 
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
-export const preparepopupDocumentsSellMeatUploadData = (state, dispatch, applicationtype = 'SELLMEATNOC') => {
-
+export const preparepopupDocumentsSellMeatUploadData = (
+  state,
+  dispatch,
+  applicationtype = "SELLMEATNOC"
+) => {
   // if(applicationtype == 'PETNOC')
   // {
   let documents = get(
@@ -260,13 +326,13 @@ export const preparepopupDocumentsSellMeatUploadData = (state, dispatch, applica
     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.SellMeatNOC.SellMeatNOCRemarksDocuments",
     []
   );
-  // }	
-  documents = documents.filter(item => {
+  // }
+  documents = documents.filter((item) => {
     return item.active;
   });
   let documentsContract = [];
   let tempDoc = {};
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     let card = {};
     card["code"] = doc.documentType;
     card["title"] = doc.documentType;
@@ -274,21 +340,26 @@ export const preparepopupDocumentsSellMeatUploadData = (state, dispatch, applica
     tempDoc[doc.documentType] = card;
   });
 
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     // Handle the case for multiple muildings
-    if (doc.code === "SellMeatNOC.REMARK_DOCUMENT" && doc.hasMultipleRows && doc.options) {
-      let buildingsData = get(state,
+    if (
+      doc.code === "SellMeatNOC.REMARK_DOCUMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -305,10 +376,10 @@ export const preparepopupDocumentsSellMeatUploadData = (state, dispatch, applica
         let dropdown = {};
         dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
         dropdown.required = true;
-        dropdown.menu = doc.dropdownData.filter(item => {
+        dropdown.menu = doc.dropdownData.filter((item) => {
           return item.active;
         });
-        dropdown.menu = dropdown.menu.map(item => {
+        dropdown.menu = dropdown.menu.map((item) => {
           return { code: item.code, label: getTransformedLocale(item.code) };
         });
         card["dropdown"] = dropdown;
@@ -317,14 +388,17 @@ export const preparepopupDocumentsSellMeatUploadData = (state, dispatch, applica
     }
   });
 
-  Object.keys(tempDoc).forEach(key => {
+  Object.keys(tempDoc).forEach((key) => {
     documentsContract.push(tempDoc[key]);
   });
 
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
-export const preparepopupDocumentsRoadCutUploadData = (state, dispatch, applicationtype = 'ROADCUTNOC') => {
-
+export const preparepopupDocumentsRoadCutUploadData = (
+  state,
+  dispatch,
+  applicationtype = "ROADCUTNOC"
+) => {
   // if(applicationtype == 'PETNOC')
   // {
   let documents = get(
@@ -332,13 +406,13 @@ export const preparepopupDocumentsRoadCutUploadData = (state, dispatch, applicat
     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.RoadCutNOC.RoadCutNOCRemarksDocuments",
     []
   );
-  // }	
-  documents = documents.filter(item => {
+  // }
+  documents = documents.filter((item) => {
     return item.active;
   });
   let documentsContract = [];
   let tempDoc = {};
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     let card = {};
     card["code"] = doc.documentType;
     card["title"] = doc.documentType;
@@ -346,21 +420,26 @@ export const preparepopupDocumentsRoadCutUploadData = (state, dispatch, applicat
     tempDoc[doc.documentType] = card;
   });
 
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     // Handle the case for multiple muildings
-    if (doc.code === "RoadCutNOC.REMARK_DOCUMENT" && doc.hasMultipleRows && doc.options) {
-      let buildingsData = get(state,
+    if (
+      doc.code === "RoadCutNOC.REMARK_DOCUMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -377,10 +456,10 @@ export const preparepopupDocumentsRoadCutUploadData = (state, dispatch, applicat
         let dropdown = {};
         dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
         dropdown.required = true;
-        dropdown.menu = doc.dropdownData.filter(item => {
+        dropdown.menu = doc.dropdownData.filter((item) => {
           return item.active;
         });
-        dropdown.menu = dropdown.menu.map(item => {
+        dropdown.menu = dropdown.menu.map((item) => {
           return { code: item.code, label: getTransformedLocale(item.code) };
         });
         card["dropdown"] = dropdown;
@@ -389,7 +468,7 @@ export const preparepopupDocumentsRoadCutUploadData = (state, dispatch, applicat
     }
   });
 
-  Object.keys(tempDoc).forEach(key => {
+  Object.keys(tempDoc).forEach((key) => {
     documentsContract.push(tempDoc[key]);
   });
 
@@ -397,71 +476,62 @@ export const preparepopupDocumentsRoadCutUploadData = (state, dispatch, applicat
 };
 
 export const prepareDocumentsUploadData = (state, dispatch, type) => {
-  let documents = '';
+  let documents = "";
   if (type == "popup_pet") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.PetNOC.RemarksDocuments",
       []
     );
-  }
-  else if (type == "popup_adv") {
+  } else if (type == "popup_adv") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.AdvertisementNOC.AdvertisementNOCRemarksDocuments",
       []
     );
-  }
-  else if (type == "popup_sellmeat") {
+  } else if (type == "popup_sellmeat") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.SellMeatNOC.SellMeatNOCRemarksDocuments",
       []
     );
-  }
-  else if (type == "popup_rodcut") {
+  } else if (type == "popup_rodcut") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.RoadCutNOC.RoadCutNOCRemarksDocuments",
       []
     );
-  }
-  else if (type == "apply_pet") {
+  } else if (type == "apply_pet") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.PetNOC.Documents",
       []
     );
-  }
-  else if (type == "apply_sellmeat") {
+  } else if (type == "apply_sellmeat") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.SellMeatNOC.SellMeatDocuments",
       []
     );
-  }
-  else if (type == "apply_Advt") {
+  } else if (type == "apply_Advt") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.AdvNOC.AdvNOCDocuments",
       []
     );
-  }
-  else if (type == "apply_roadcut") {
+  } else if (type == "apply_roadcut") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.RoadCutNOC.RoadCutDocuments",
       []
     );
-  }
-  else if (type == "apply_osb") {
+  } else if (type == "apply_osb") {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
       []
     );
-  }
-  else {
+  } else {
     documents = get(
       state,
       "screenConfiguration.preparedFinalObject.applyScreenMdmsData.PetNOC.Documents",
@@ -470,14 +540,13 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
   }
 
   // console.log(documents, "documents");
-  
 
-  documents = documents.filter(item => {
+  documents = documents.filter((item) => {
     return item.active;
   });
   let documentsContract = [];
   let tempDoc = {};
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     let card = {};
     card["code"] = doc.documentType;
     card["title"] = doc.documentType;
@@ -485,22 +554,23 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     tempDoc[doc.documentType] = card;
   });
 
-  documents.forEach(doc => {
+  documents.forEach((doc) => {
     // Handle the case for multiple muildings
     if (doc.code === "DOC.PICTURE" && doc.hasMultipleRows && doc.options) {
-      alert("multiple")
-      let buildingsData = get(state,
+      alert("multiple");
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -508,21 +578,24 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         });
         tempDoc[doc.documentType].cards.push(card);
       });
-    }
-    else if (doc.code === "PET.REMARK_DOCUMENT_SI" && doc.hasMultipleRows && doc.options) {
-
-      let buildingsData = get(state,
+    } else if (
+      doc.code === "PET.REMARK_DOCUMENT_SI" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -530,21 +603,24 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         });
         tempDoc[doc.documentType].cards.push(card);
       });
-    }
-    else if (doc.code === "ADV.ADV_PHOTOCOPY_HOARDING" && doc.hasMultipleRows && doc.options) {
-
-      let buildingsData = get(state,
+    } else if (
+      doc.code === "ADV.ADV_PHOTOCOPY_HOARDING" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.AdvNOC.AdvNOCDocuments",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -552,21 +628,24 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         });
         tempDoc[doc.documentType].cards.push(card);
       });
-    }
-    else if (doc.code === "SellMeatNOC.REMARK_DOCUMENT" && doc.hasMultipleRows && doc.options) {
-
-      let buildingsData = get(state,
+    } else if (
+      doc.code === "SellMeatNOC.REMARK_DOCUMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -574,21 +653,24 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         });
         tempDoc[doc.documentType].cards.push(card);
       });
-    }
-    else if (doc.code === "RoadCutNOC.REMARK_DOCUMENT" && doc.hasMultipleRows && doc.options) {
-
-      let buildingsData = get(state,
+    } else if (
+      doc.code === "RoadCutNOC.REMARK_DOCUMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -596,21 +678,24 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         });
         tempDoc[doc.documentType].cards.push(card);
       });
-    }
-    else if (doc.code === "AdvertisementNOC.REMARK_DOCUMENT" && doc.hasMultipleRows && doc.options) {
-
-      let buildingsData = get(state,
+    } else if (
+      doc.code === "AdvertisementNOC.REMARK_DOCUMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -618,21 +703,24 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         });
         tempDoc[doc.documentType].cards.push(card);
       });
-    }
-    else if (doc.code === "SELLMEAT.PROOF_POSSESSION_RENT_AGREEMENT" && doc.hasMultipleRows && doc.options) {
-
-      let buildingsData = get(state,
+    } else if (
+      doc.code === "SELLMEAT.PROOF_POSSESSION_RENT_AGREEMENT" &&
+      doc.hasMultipleRows &&
+      doc.options
+    ) {
+      let buildingsData = get(
+        state,
         "screenConfiguration.preparedFinalObject.applyScreenMdmsData.SellMeatNOC.SellMeatDocuments",
         []
       );
 
-      buildingsData.forEach(building => {
+      buildingsData.forEach((building) => {
         let card = {};
         card["name"] = building.name;
         card["code"] = doc.code;
         card["hasSubCards"] = true;
         card["subCards"] = [];
-        doc.options.forEach(subDoc => {
+        doc.options.forEach((subDoc) => {
           let subCard = {};
           subCard["name"] = subDoc.code;
           subCard["required"] = subDoc.required ? true : false;
@@ -644,12 +732,10 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
       // previewdocu = get(state, "screenConfiguration.preparedFinalObject.nocApplicationDetail", {});
       // if(!previewdocu) {
       //   reduxDocuments = previewdocu;
-      // } else  {      
+      // } else  {
       //   reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
       // }
-
-    }
-    else {
+    } else {
       let card = {};
       card["name"] = doc.code;
       card["code"] = doc.code;
@@ -658,10 +744,10 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
         let dropdown = {};
         dropdown.label = "NOC_SELECT_DOC_DD_LABEL";
         dropdown.required = true;
-        dropdown.menu = doc.dropdownData.filter(item => {
+        dropdown.menu = doc.dropdownData.filter((item) => {
           return item.active;
         });
-        dropdown.menu = dropdown.menu.map(item => {
+        dropdown.menu = dropdown.menu.map((item) => {
           return { code: item.code, label: getTransformedLocale(item.code) };
         });
         card["dropdown"] = dropdown;
@@ -670,39 +756,41 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     }
   });
 
-  Object.keys(tempDoc).forEach(key => {
+  Object.keys(tempDoc).forEach((key) => {
     documentsContract.push(tempDoc[key]);
   });
 
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
-
-export const createUpdateNocApplication = async (state, dispatch, status) => {
-  alert("Create Noc")
-  
-  let response = '';
-  let response_updatestatus = '';
-  let nocId = getapplicationNumber() === 'null' ? '' : getapplicationNumber(); // get(state, "screenConfiguration.preparedFinalObject.PETNOC.applicationId");
-  let method = nocId ? "UPDATE" : "CREATE";
+export const createUpdateOsbApplication = async (state, dispatch, status) => {
+  let response = "";
+  let tenantId = getOPMSTenantId().split(".")[0];
   try {
-    let payload = get(state.screenConfiguration.preparedFinalObject, "PETNOC", []);
-    let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
-    // Set owners & other documents
-    let ownerDocuments = [];
+    let payload = get(
+      state.screenConfiguration.preparedFinalObject,
+      "Booking",
+      []
+    );
+    let reduxDocuments = get(
+      state,
+      "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+      {}
+    );
+    let bookingDocuments = [];
     let otherDocuments = [];
-    let Remarks = "";
 
-    jp.query(reduxDocuments, "$.*").forEach(doc => {
+    jp.query(reduxDocuments, "$.*").forEach((doc) => {
+      console.log(doc, "documents");
       if (doc.documents && doc.documents.length > 0) {
-        if (doc.documentCode === "PET.PET_VACCINATION_CERTIFICATE") {
-          ownerDocuments = [
-            ...ownerDocuments,
+        if (doc.documentCode === "DOC.DOC_PICTURE") {
+          bookingDocuments = [
+            ...bookingDocuments,
             {
               //tenantId: 'ch',
               //documentType: doc.documentSubCode ? doc.documentSubCode : doc.documentCode,
-              fileStoreId: doc.documents[0].fileStoreId
-            }
+              fileStoreId: doc.documents[0].fileStoreId,
+            },
           ];
         } else if (!doc.documentSubCode) {
           // SKIP BUILDING PLAN DOCS
@@ -711,65 +799,49 @@ export const createUpdateNocApplication = async (state, dispatch, status) => {
             {
               //tenantId: 'ch',
               //documentType: doc.documentCode,
-              fileStoreId: doc.documents[0].fileStoreId
-            }
+              fileStoreId: doc.documents[0].fileStoreId,
+            },
           ];
         }
       }
     });
 
-    set(payload, "uploadVaccinationCertificate", ownerDocuments);
-    set(payload, "uploadPetPicture", otherDocuments);
-    set(payload, "remarks", Remarks);
-    // Set Channel and Financial Year
-    // process.env.REACT_APP_NAME === "Citizen"
-    //   ? set(payload, "channel", "CITIZEN")
-    //   : set(payload, "channel", "COUNTER");
-    // set(payload, "financialYear", "2020-21");
-    console.log('payload : ', payload)
+    set(payload, "wfDocuments", bookingDocuments);
+    set(payload, "bkBookingType", "OSBM");
+    set(payload, "tenantId", tenantId);
+    set(payload, "bkAction", "APPLY");
+    set(payload, "businessService", "OSBM");
+
     setapplicationMode(status);
 
-    if (method === "CREATE") {
-      response = await httpRequest("post", "/pm-services/noc/_create", "", [], { dataPayload: payload });
-      console.log('pet response : ', response)
-      if (response.applicationId !== 'null' || response.applicationId !== '') {
-        setapplicationNumber(response.applicationId);
-        dispatch(prepareFinalObject("PETNOC", response));
-        setApplicationNumberBox(state, dispatch);
-        return { status: "success", message: response };
-      } else {
-        return { status: "fail", message: response };
-      }
-    } else if (method === "UPDATE") {
-      response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
-      if (status === 'RESENT') {
-        response_updatestatus = await httpRequest("post", "/pm-services/noc/_updateappstatus", "", [], { dataPayload: {} });
-      }
+    response = await httpRequest("post", "/bookings/api/_create", "", [], {
+      Booking: payload,
+    });
+    if (response.applicationId !== "null" || response.applicationId !== "") {
       setapplicationNumber(response.applicationId);
-      // response = furnishNocResponse(response);
-      dispatch(prepareFinalObject("PETNOC", response));
+      dispatch(prepareFinalObject("Booking", response));
+      setApplicationNumberBox(state, dispatch);
       return { status: "success", message: response };
+    } else {
+      return { status: "fail", message: response };
     }
-
   } catch (error) {
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
     // Revert the changed pfo in case of request failure
     let fireNocData = get(
       state,
-      "screenConfiguration.preparedFinalObject.PETNOC",
+      "screenConfiguration.preparedFinalObject.Booking",
       []
     );
     // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
-    dispatch(prepareFinalObject("PetNOC", fireNocData));
+    dispatch(prepareFinalObject("Booking", fireNocData));
 
     return { status: "failure", message: error };
   }
 };
 
-
 export const setDocsForEditFlow = async (state, dispatch) => {
-
   const applicationDocuments = get(
     state.screenConfiguration.preparedFinalObject,
     "SELLMEATNOC.uploadDocuments",
@@ -778,7 +850,7 @@ export const setDocsForEditFlow = async (state, dispatch) => {
   let uploadedDocuments = {};
   let fileStoreIds =
     applicationDocuments &&
-    applicationDocuments.map(item => item.fileStoreId).join(",");
+    applicationDocuments.map((item) => item.fileStoreId).join(",");
   const fileUrlPayload =
     fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
   applicationDocuments &&
@@ -801,8 +873,8 @@ export const setDocsForEditFlow = async (state, dispatch) => {
           fileUrl: Object.values(fileUrlPayload)[index],
           documentType: item.documentType,
           tenantId: item.tenantId,
-          id: item.id
-        }
+          id: item.id,
+        },
       ];
     });
   dispatch(
@@ -888,9 +960,9 @@ export const getBoundaryData = async (
     const tenantId =
       process.env.REACT_APP_NAME === "Employee"
         ? get(
-          state.screenConfiguration.preparedFinalObject,
-          "Licenses[0].tradeLicenseDetail.address.city"
-        )
+            state.screenConfiguration.preparedFinalObject,
+            "Licenses[0].tradeLicenseDetail.address.city"
+          )
         : getQueryArg(window.location.href, "tenantId");
 
     const mohallaData =
@@ -903,8 +975,8 @@ export const getBoundaryData = async (
           name: `${tenantId
             .toUpperCase()
             .replace(/[.]/g, "_")}_REVENUE_${item.code
-              .toUpperCase()
-              .replace(/[._:-\s\/]/g, "_")}`
+            .toUpperCase()
+            .replace(/[._:-\s\/]/g, "_")}`,
         });
         return result;
       }, []);
@@ -929,7 +1001,7 @@ export const getBoundaryData = async (
       let data = payload.TenantBoundary[0].boundary;
       let messageObject =
         data &&
-        data.find(item => {
+        data.find((item) => {
           return item.code == code;
         });
       if (messageObject)
@@ -1200,18 +1272,18 @@ export const getBoundaryData = async (
 //   return updatedOwners;
 // };
 
-export const getImageUrlByFile = file => {
-  return new Promise(resolve => {
+export const getImageUrlByFile = (file) => {
+  return new Promise((resolve) => {
     var reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = e => {
+    reader.onload = (e) => {
       const fileurl = e.target.result;
       resolve(fileurl);
     };
   });
 };
 
-export const getFileSize = file => {
+export const getFileSize = (file) => {
   const size = parseFloat(file.size / 1024).toFixed(2);
   return size;
 };
@@ -1226,14 +1298,20 @@ export const isFileValid = (file, acceptedFiles) => {
   );
 };
 
-
-export const furnishNocResponse = response => {
+export const furnishNocResponse = (response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
-  let applicationdetail = response.nocApplicationDetail[0].applicationdetail.length > 0 ? JSON.parse(response.nocApplicationDetail[0].applicationdetail) : '';
+  let applicationdetail =
+    response.nocApplicationDetail[0].applicationdetail.length > 0
+      ? JSON.parse(response.nocApplicationDetail[0].applicationdetail)
+      : "";
 
   //set(refurnishresponse, "applicationId", response.nocApplicationDetail[0].nocnumber);
-  set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
+  set(
+    refurnishresponse,
+    "applicantName",
+    response.nocApplicationDetail[0].applicantname
+  );
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
 
   set(refurnishresponse, "nameOfPetDog", applicationdetail.nameOfPetDog);
@@ -1242,16 +1320,52 @@ export const furnishNocResponse = response => {
   set(refurnishresponse, "breed", applicationdetail.breed);
   set(refurnishresponse, "color", applicationdetail.color);
 
-  set(refurnishresponse, "identificationMark", applicationdetail.identificationMark);
-  set(refurnishresponse, "immunizationNameVeterinaryDoctor", applicationdetail.immunizationNameVeterinaryDoctor);
-  set(refurnishresponse, "veterinaryCouncilRegistrationNo", applicationdetail.veterinaryCouncilRegistrationNo);
-  set(refurnishresponse, "immunizationContactDetail", applicationdetail.immunizationContactDetail);
-  set(refurnishresponse, "immunizationClinicNo", applicationdetail.immunizationClinicNo);
-  set(refurnishresponse, "immunizationSector", applicationdetail.immunizationSector);
-  set(refurnishresponse, "uploadVaccinationCertificate", applicationdetail.uploadVaccinationCertificate);
-  set(refurnishresponse, "uploadPetPicture", applicationdetail.uploadPetPicture);
+  set(
+    refurnishresponse,
+    "identificationMark",
+    applicationdetail.identificationMark
+  );
+  set(
+    refurnishresponse,
+    "immunizationNameVeterinaryDoctor",
+    applicationdetail.immunizationNameVeterinaryDoctor
+  );
+  set(
+    refurnishresponse,
+    "veterinaryCouncilRegistrationNo",
+    applicationdetail.veterinaryCouncilRegistrationNo
+  );
+  set(
+    refurnishresponse,
+    "immunizationContactDetail",
+    applicationdetail.immunizationContactDetail
+  );
+  set(
+    refurnishresponse,
+    "immunizationClinicNo",
+    applicationdetail.immunizationClinicNo
+  );
+  set(
+    refurnishresponse,
+    "immunizationSector",
+    applicationdetail.immunizationSector
+  );
+  set(
+    refurnishresponse,
+    "uploadVaccinationCertificate",
+    applicationdetail.uploadVaccinationCertificate
+  );
+  set(
+    refurnishresponse,
+    "uploadPetPicture",
+    applicationdetail.uploadPetPicture
+  );
 
-  set(refurnishresponse, "houseNo", response.nocApplicationDetail[0].housenumber);
+  set(
+    refurnishresponse,
+    "houseNo",
+    response.nocApplicationDetail[0].housenumber
+  );
   set(refurnishresponse, "applieddate", applicationdetail.applieddate);
   set(refurnishresponse, "remarks", response.nocApplicationDetail[0].remarks);
 
@@ -1262,18 +1376,33 @@ export const furnishNocResponse = response => {
   return refurnishresponse;
 };
 
-export const furnishSellMeatNocResponse = response => {
+export const furnishSellMeatNocResponse = (response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
-  let applicationdetail = response.nocApplicationDetail[0].applicationdetail.length > 0 ? JSON.parse(response.nocApplicationDetail[0].applicationdetail) : '';
+  let applicationdetail =
+    response.nocApplicationDetail[0].applicationdetail.length > 0
+      ? JSON.parse(response.nocApplicationDetail[0].applicationdetail)
+      : "";
 
   //set(refurnishresponse, "applicationId", response.nocApplicationDetail[0].nocnumber);
-  set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
-  set(refurnishresponse, "houseNo", response.nocApplicationDetail[0].housenumber);
+  set(
+    refurnishresponse,
+    "applicantName",
+    response.nocApplicationDetail[0].applicantname
+  );
+  set(
+    refurnishresponse,
+    "houseNo",
+    response.nocApplicationDetail[0].housenumber
+  );
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
 
-  set(refurnishresponse, "fatherHusbandName", applicationdetail.fatherHusbandName);
+  set(
+    refurnishresponse,
+    "fatherHusbandName",
+    applicationdetail.fatherHusbandName
+  );
   set(refurnishresponse, "division", applicationdetail.division);
   set(refurnishresponse, "shopNumber", applicationdetail.shopNumber);
   set(refurnishresponse, "ward", applicationdetail.ward);
@@ -1285,23 +1414,38 @@ export const furnishSellMeatNocResponse = response => {
   return refurnishresponse;
 };
 
-export const furnishRoadcutNocResponse = response => {
+export const furnishRoadcutNocResponse = (response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
-  let applicationdetail = response.nocApplicationDetail[0].applicationdetail.length > 0 ? JSON.parse(response.nocApplicationDetail[0].applicationdetail) : '';
+  let applicationdetail =
+    response.nocApplicationDetail[0].applicationdetail.length > 0
+      ? JSON.parse(response.nocApplicationDetail[0].applicationdetail)
+      : "";
 
   //set(refurnishresponse, "applicationId", response.nocApplicationDetail[0].nocnumber);
-  set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
+  set(
+    refurnishresponse,
+    "applicantName",
+    response.nocApplicationDetail[0].applicantname
+  );
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
 
   set(refurnishresponse, "typeOfApplicant", applicationdetail.typeOfApplicant);
   set(refurnishresponse, "length", applicationdetail.length);
   set(refurnishresponse, "ward", applicationdetail.ward);
-  set(refurnishresponse, "requestedLocation", applicationdetail.requestedLocation);
+  set(
+    refurnishresponse,
+    "requestedLocation",
+    applicationdetail.requestedLocation
+  );
   set(refurnishresponse, "landmark", applicationdetail.landmark);
   set(refurnishresponse, "width", applicationdetail.width);
-  set(refurnishresponse, "purposeOfRoadCutting", applicationdetail.purposeOfRoadCutting);
+  set(
+    refurnishresponse,
+    "purposeOfRoadCutting",
+    applicationdetail.purposeOfRoadCutting
+  );
   set(refurnishresponse, "division", applicationdetail.division);
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
   set(refurnishresponse, "remarks", applicationdetail.remarks);
@@ -1309,50 +1453,111 @@ export const furnishRoadcutNocResponse = response => {
   return refurnishresponse;
 };
 
-export const furnishAdvertisementNocResponse = response => {
+export const furnishAdvertisementNocResponse = (response) => {
   // Handle applicant ownership dependent dropdowns
   let refurnishresponse = {};
 
-  let applicationdetail = response.nocApplicationDetail[0].applicationdetail.length > 0 ? JSON.parse(response.nocApplicationDetail[0].applicationdetail) : '';
+  let applicationdetail =
+    response.nocApplicationDetail[0].applicationdetail.length > 0
+      ? JSON.parse(response.nocApplicationDetail[0].applicationdetail)
+      : "";
 
   //set(refurnishresponse, "applicationId", response.nocApplicationDetail[0].nocnumber);
-  set(refurnishresponse, "applicantName", response.nocApplicationDetail[0].applicantname);
+  set(
+    refurnishresponse,
+    "applicantName",
+    response.nocApplicationDetail[0].applicantname
+  );
   set(refurnishresponse, "typeOfApplicant", applicationdetail.typeOfApplicant);
   set(refurnishresponse, "tan", applicationdetail.tan);
   set(refurnishresponse, "pan", applicationdetail.pan);
   set(refurnishresponse, "cin", applicationdetail.cin);
   set(refurnishresponse, "gstin", applicationdetail.gstin);
-  set(refurnishresponse, "applicantAddress", applicationdetail.applicantAddress);
-  set(refurnishresponse, "applicantLandmark", applicationdetail.applicantLandmark);
-  set(refurnishresponse, "applicantDivision", applicationdetail.applicantDivision);
+  set(
+    refurnishresponse,
+    "applicantAddress",
+    applicationdetail.applicantAddress
+  );
+  set(
+    refurnishresponse,
+    "applicantLandmark",
+    applicationdetail.applicantLandmark
+  );
+  set(
+    refurnishresponse,
+    "applicantDivision",
+    applicationdetail.applicantDivision
+  );
   set(refurnishresponse, "applicantWard", applicationdetail.applicantWard);
   set(refurnishresponse, "sector", response.nocApplicationDetail[0].sector);
-  set(refurnishresponse, "applicantVillageSuSector", applicationdetail.applicantVillageSuSector);
+  set(
+    refurnishresponse,
+    "applicantVillageSuSector",
+    applicationdetail.applicantVillageSuSector
+  );
   set(refurnishresponse, "mobileNo", applicationdetail.mobileNo);
   set(refurnishresponse, "emailId", applicationdetail.emailId);
-  set(refurnishresponse, "typeOfAdvertisement", applicationdetail.typeOfAdvertisement);
-  set(refurnishresponse, "subTypeOfAdvertisement", applicationdetail.subTypeOfAdvertisement);
-  set(refurnishresponse, "fromDateToDisplay", applicationdetail.fromDateToDisplay);
+  set(
+    refurnishresponse,
+    "typeOfAdvertisement",
+    applicationdetail.typeOfAdvertisement
+  );
+  set(
+    refurnishresponse,
+    "subTypeOfAdvertisement",
+    applicationdetail.subTypeOfAdvertisement
+  );
+  set(
+    refurnishresponse,
+    "fromDateToDisplay",
+    applicationdetail.fromDateToDisplay
+  );
   set(refurnishresponse, "toDateToDisplay", applicationdetail.toDateToDisplay);
   set(refurnishresponse, "duration", applicationdetail.duration);
-  set(refurnishresponse, "locationOfAdvertisement", applicationdetail.locationOfAdvertisement);
-  set(refurnishresponse, "advertisementLandmark", applicationdetail.advertisementLandmark);
-  set(refurnishresponse, "advertisementSector", applicationdetail.advertisementSector);
-  set(refurnishresponse, "advertisementVillageSubSector", applicationdetail.advertisementVillageSubSector);
-  set(refurnishresponse, "advertisementMatterDescription", applicationdetail.advertisementMatterDescription);
+  set(
+    refurnishresponse,
+    "locationOfAdvertisement",
+    applicationdetail.locationOfAdvertisement
+  );
+  set(
+    refurnishresponse,
+    "advertisementLandmark",
+    applicationdetail.advertisementLandmark
+  );
+  set(
+    refurnishresponse,
+    "advertisementSector",
+    applicationdetail.advertisementSector
+  );
+  set(
+    refurnishresponse,
+    "advertisementVillageSubSector",
+    applicationdetail.advertisementVillageSubSector
+  );
+  set(
+    refurnishresponse,
+    "advertisementMatterDescription",
+    applicationdetail.advertisementMatterDescription
+  );
   set(refurnishresponse, "space", applicationdetail.space);
   set(refurnishresponse, "date", applicationdetail.date);
-  set(refurnishresponse, "exemptedCategory", applicationdetail.exemptedCategory);
+  set(
+    refurnishresponse,
+    "exemptedCategory",
+    applicationdetail.exemptedCategory
+  );
   set(refurnishresponse, "uploadDocuments", applicationdetail.uploadDocuments);
   set(refurnishresponse, "remarks", applicationdetail.remarks);
 
   return refurnishresponse;
 };
 
-
 export const setApplicationNumberBox = (state, dispatch) => {
-
-  let applicationNumber = get(state, "state.screenConfiguration.preparedFinalObject.PETNOC.applicationId", null);
+  let applicationNumber = get(
+    state,
+    "state.screenConfiguration.preparedFinalObject.PETNOC.applicationId",
+    null
+  );
 
   if (applicationNumber) {
     dispatch(
@@ -1382,14 +1587,10 @@ export const findItemInArrayOfObject = (arr, conditionCheckerFn) => {
   }
 };
 
-
-
 export const getOPMSCards = async () => {
   // //alert('aaaaaaaaaa')
   let queryObject = [];
-  var requestBody = {
-
-  }
+  var requestBody = {};
 
   try {
     const payload = await httpRequest(
@@ -1403,27 +1604,24 @@ export const getOPMSCards = async () => {
   } catch (error) {
     store.dispatch(toggleSnackbar(true, error.message, "error"));
   }
-
-
-
-
 };
 
-
 export const getCitizenGridData = async () => {
-
   let queryObject = [];
   var requestBody = {
-    "tenantId": `${getOPMSTenantId()}`,
-    "applicationType": 'PETNOC',
+    tenantId: `${getOPMSTenantId()}`,
+    applicationType: "PETNOC",
 
-    "dataPayload": {
-      "applicationType": 'PETNOC',
-      "applicationStatus": JSON.parse(getUserInfo()).roles[0].code == 'SI' ? 'INITIATED,REASSIGNTOSI,PAID,RESENT' : JSON.parse(getUserInfo()).roles[0].code == "MOH" ? 'FORWARD' : ''
-
-    }
-
-  }
+    dataPayload: {
+      applicationType: "PETNOC",
+      applicationStatus:
+        JSON.parse(getUserInfo()).roles[0].code == "SI"
+          ? "INITIATED,REASSIGNTOSI,PAID,RESENT"
+          : JSON.parse(getUserInfo()).roles[0].code == "MOH"
+          ? "FORWARD"
+          : "",
+    },
+  };
 
   try {
     const payload = await httpRequest(
@@ -1437,16 +1635,17 @@ export const getCitizenGridData = async () => {
   } catch (error) {
     //  store.dispatch(toggleSnackbar(true, error.message, "error"));
   }
-
-
-
-
 };
 
-export const getSearchResultsForNocCretificate = async queryObject => {
-
+export const getSearchResultsForNocCretificate = async (queryObject) => {
   try {
-    const response = await httpRequest("post", get(queryObject[3], "value"), "", [], get(queryObject[2], "value"));
+    const response = await httpRequest(
+      "post",
+      get(queryObject[3], "value"),
+      "",
+      [],
+      get(queryObject[2], "value")
+    );
     return response;
   } catch (error) {
     store.dispatch(
@@ -1460,8 +1659,9 @@ export const getSearchResultsForNocCretificate = async queryObject => {
   //alert(JSON.stringify(response));
 };
 
-export const getSearchResultsForNocCretificateDownload = async queryObject => {
-
+export const getSearchResultsForNocCretificateDownload = async (
+  queryObject
+) => {
   try {
     let filestoreIds = get(queryObject[2], "value");
 
@@ -1472,7 +1672,6 @@ export const getSearchResultsForNocCretificateDownload = async queryObject => {
       []
     );
     return response;
-
   } catch (error) {
     //alert("rrrrr")
     store.dispatch(
@@ -1486,20 +1685,22 @@ export const getSearchResultsForNocCretificateDownload = async queryObject => {
   //alert(JSON.stringify(response));
 };
 
-
 export const getGridDataAdvertisement1 = async () => {
   let queryObject = [];
   var requestBody = {
-    "tenantId": `${getOPMSTenantId()}`,
-    "applicationType": 'ADVERTISEMENTNOC',
+    tenantId: `${getOPMSTenantId()}`,
+    applicationType: "ADVERTISEMENTNOC",
 
-    "dataPayload": {
-      "applicationType": 'ADVERTISEMENTNOC',
-      "applicationStatus": JSON.parse(getUserInfo()).roles[0].code == 'SI' ? 'INITIATE,REASSIGNTOSI,PAID,RESENT' : JSON.parse(getUserInfo()).roles[0].code == "MOH" ? 'FORWARD' : ''
-
-    }
-
-  }
+    dataPayload: {
+      applicationType: "ADVERTISEMENTNOC",
+      applicationStatus:
+        JSON.parse(getUserInfo()).roles[0].code == "SI"
+          ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
+          : JSON.parse(getUserInfo()).roles[0].code == "MOH"
+          ? "FORWARD"
+          : "",
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -1513,22 +1714,23 @@ export const getGridDataAdvertisement1 = async () => {
     //  store.dispatch(toggleSnackbar(true, error.message, "error"));
   }
 };
-
 
 export const getGridDataRoadcut1 = async () => {
   let queryObject = [];
   var requestBody = {
+    tenantId: `${getOPMSTenantId()}`,
+    applicationType: "ROADCUTNOC",
 
-    "tenantId": `${getOPMSTenantId()}`,
-    "applicationType": 'ROADCUTNOC',
-
-    "dataPayload": {
-      "applicationType": 'ROADCUTNOC',
-      "applicationStatus": JSON.parse(getUserInfo()).roles[0].code == 'SI' ? 'INITIATE,REASSIGNTOSI,PAID,RESENT' : JSON.parse(getUserInfo()).roles[0].code == "MOH" ? 'FORWARD' : ''
-
-    }
-
-  }
+    dataPayload: {
+      applicationType: "ROADCUTNOC",
+      applicationStatus:
+        JSON.parse(getUserInfo()).roles[0].code == "SI"
+          ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
+          : JSON.parse(getUserInfo()).roles[0].code == "MOH"
+          ? "FORWARD"
+          : "",
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -1543,21 +1745,22 @@ export const getGridDataRoadcut1 = async () => {
   }
 };
 
-
 export const getGridDataSellMeat1 = async () => {
   let queryObject = [];
   var requestBody = {
+    tenantId: `${getOPMSTenantId()}`,
+    applicationType: "SELLMEATNOC",
 
-    "tenantId": `${getOPMSTenantId()}`,
-    "applicationType": 'SELLMEATNOC',
-
-    "dataPayload": {
-      "applicationType": 'SELLMEATNOC',
-      "applicationStatus": JSON.parse(getUserInfo()).roles[0].code == 'SI' ? 'INITIATE,REASSIGNTOSI,PAID,RESENT' : JSON.parse(getUserInfo()).roles[0].code == "MOH" ? 'FORWARD' : ''
-
-    }
-
-  }
+    dataPayload: {
+      applicationType: "SELLMEATNOC",
+      applicationStatus:
+        JSON.parse(getUserInfo()).roles[0].code == "SI"
+          ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
+          : JSON.parse(getUserInfo()).roles[0].code == "MOH"
+          ? "FORWARD"
+          : "",
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -1572,32 +1775,41 @@ export const getGridDataSellMeat1 = async () => {
   }
 };
 
-export const UpdateMasterPrice = async (
-  state, dispatch,
-  queryObject,
-  code
-) => {
-
+export const UpdateMasterPrice = async (state, dispatch, queryObject, code) => {
   try {
-    const response = await httpRequest("post", "/pm-services/noc/_updatepricebook", "", [], code);
+    const response = await httpRequest(
+      "post",
+      "/pm-services/noc/_updatepricebook",
+      "",
+      [],
+      code
+    );
 
-    if (response.ResposneInfo.status === 'SUCCESS') {
+    if (response.ResposneInfo.status === "SUCCESS") {
       //alert("Price Updated Successfully")
       //  window.location.reload(false);
       store.dispatch(
         toggleSnackbar(
           true,
-          { labelName: 'Price Updated Successfully', labelCode: 'Price Updated Successfully' },
+          {
+            labelName: "Price Updated Successfully",
+            labelCode: "Price Updated Successfully",
+          },
           "success"
         ),
         dispatch(setRoute(`/egov-services/masterAdvertisement?purpose=updated`))
       );
-      return response
-    }
-    else {
+      return response;
+    } else {
       store.dispatch(
         toggleSnackbar(
-          true, { labelName: response.ResponseInfo.msgId, labelCode: response.ResponseInfo.msgId }, "error")
+          true,
+          {
+            labelName: response.ResponseInfo.msgId,
+            labelCode: response.ResponseInfo.msgId,
+          },
+          "error"
+        )
       );
     }
   } catch (error) {
@@ -1611,48 +1823,64 @@ export const UpdateMasterPrice = async (
   }
 };
 
-export const createUpdateSellMeatNocApplication = async (state, dispatch, status) => {
-  let response = '';
-  let response_updatestatus = '';
-  let nocId = getapplicationNumber() === 'null' ? '' : getapplicationNumber(); // get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
+export const createUpdateSellMeatNocApplication = async (
+  state,
+  dispatch,
+  status
+) => {
+  let response = "";
+  let response_updatestatus = "";
+  let nocId = getapplicationNumber() === "null" ? "" : getapplicationNumber(); // get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
   let method = nocId ? "UPDATE" : "CREATE";
 
   try {
-    let payload = get(state.screenConfiguration.preparedFinalObject, "SELLMEATNOC", []);
-    let tenantId = get(state.screenConfiguration.preparedFinalObject, "", getOPMSTenantId());
+    let payload = get(
+      state.screenConfiguration.preparedFinalObject,
+      "SELLMEATNOC",
+      []
+    );
+    let tenantId = get(
+      state.screenConfiguration.preparedFinalObject,
+      "",
+      getOPMSTenantId()
+    );
 
-    let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
-
+    let reduxDocuments = get(
+      state,
+      "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+      {}
+    );
 
     // Set owners & other documents
     let ownerDocuments = [];
     let otherDocuments = [];
     let Remarks = "";
 
-    jp.query(reduxDocuments, "$.*").forEach(doc => {
+    jp.query(reduxDocuments, "$.*").forEach((doc) => {
       if (doc.documents && doc.documents.length > 0) {
         if (doc.documentCode === "SELLMEAT.PROOF_POSSESSION_RENT_AGREEMENT") {
           ownerDocuments = [
             ...ownerDocuments,
             {
-              fileStoreId: doc.documents[0].fileStoreId
-            }
+              fileStoreId: doc.documents[0].fileStoreId,
+            },
           ];
         }
       }
     });
     set(payload, "uploadDocuments", ownerDocuments);
     set(payload, "remarks", Remarks);
-    console.log('payload : ', payload)
+    console.log("payload : ", payload);
     //
-    let response = '';
+    let response = "";
     setapplicationMode(status);
 
     if (method === "CREATE") {
-
-      response = await httpRequest("post", "/pm-services/noc/_create", "", [], { dataPayload: payload });
-      console.log('pet response : ', response)
-      if (response.applicationId !== 'null' || response.applicationId !== '') {
+      response = await httpRequest("post", "/pm-services/noc/_create", "", [], {
+        dataPayload: payload,
+      });
+      console.log("pet response : ", response);
+      if (response.applicationId !== "null" || response.applicationId !== "") {
         dispatch(prepareFinalObject("SELLMEATNOC", response));
         setapplicationNumber(response.applicationId);
         setApplicationNumberBox(state, dispatch);
@@ -1661,16 +1889,23 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
         return { status: "fail", message: response };
       }
     } else if (method === "UPDATE") {
-      response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
-      if (status === 'RESENT') {
-        response_updatestatus = await httpRequest("post", "/pm-services/noc/_updateappstatus", "", [], { dataPayload: {} });
+      response = await httpRequest("post", "/pm-services/noc/_update", "", [], {
+        dataPayload: payload,
+      });
+      if (status === "RESENT") {
+        response_updatestatus = await httpRequest(
+          "post",
+          "/pm-services/noc/_updateappstatus",
+          "",
+          [],
+          { dataPayload: {} }
+        );
       }
       // response = furnishNocResponse(response);
       setapplicationNumber(response.applicationId);
       dispatch(prepareFinalObject("SELLMEATNOC", response));
       return { status: "success", message: response };
     }
-
   } catch (error) {
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
@@ -1686,38 +1921,49 @@ export const createUpdateSellMeatNocApplication = async (state, dispatch, status
   }
 };
 
-
-export const createUpdateRoadCutNocApplication = async (state, dispatch, status) => {
-  let response = '';
-  let response_updatestatus = '';
-  let nocId = getapplicationNumber() === 'null' ? '' : getapplicationNumber();
+export const createUpdateRoadCutNocApplication = async (
+  state,
+  dispatch,
+  status
+) => {
+  let response = "";
+  let response_updatestatus = "";
+  let nocId = getapplicationNumber() === "null" ? "" : getapplicationNumber();
   //  get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC.applicationId");
   let method = nocId ? "UPDATE" : "CREATE";
   try {
-    let payload = get(state.screenConfiguration.preparedFinalObject, "ROADCUTNOC", []);
-    let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
+    let payload = get(
+      state.screenConfiguration.preparedFinalObject,
+      "ROADCUTNOC",
+      []
+    );
+    let reduxDocuments = get(
+      state,
+      "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+      {}
+    );
 
     // Set owners & other documents
     let ownerDocuments = [];
     let otherDocuments = [];
     let Remarks = "";
 
-    jp.query(reduxDocuments, "$.*").forEach(doc => {
+    jp.query(reduxDocuments, "$.*").forEach((doc) => {
       if (doc.documents && doc.documents.length > 0) {
         if (doc.documentCode === "ROADCUT.FILE_NAME") {
           ownerDocuments = [
             ...ownerDocuments,
             {
-              fileStoreId: doc.documents[0].fileStoreId
-            }
+              fileStoreId: doc.documents[0].fileStoreId,
+            },
           ];
         } else if (!doc.documentSubCode) {
           // SKIP BUILDING PLAN DOCS
           otherDocuments = [
             ...otherDocuments,
             {
-              fileStoreId: doc.documents[0].fileStoreId
-            }
+              fileStoreId: doc.documents[0].fileStoreId,
+            },
           ];
         }
       }
@@ -1726,13 +1972,15 @@ export const createUpdateRoadCutNocApplication = async (state, dispatch, status)
     set(payload, "uploadDocuments", ownerDocuments);
     set(payload, "remarks", Remarks);
 
-    console.log('Road CUt payload : ', payload)
+    console.log("Road CUt payload : ", payload);
     setapplicationMode(status);
 
     if (method === "CREATE") {
-      response = await httpRequest("post", "/pm-services/noc/_create", "", [], { dataPayload: payload });
-      console.log('pet response : ', response)
-      if (response.applicationId !== 'null' || response.applicationId !== '') {
+      response = await httpRequest("post", "/pm-services/noc/_create", "", [], {
+        dataPayload: payload,
+      });
+      console.log("pet response : ", response);
+      if (response.applicationId !== "null" || response.applicationId !== "") {
         dispatch(prepareFinalObject("ROADCUTNOC", response));
         setapplicationNumber(response.applicationId);
         setApplicationNumberBox(state, dispatch);
@@ -1741,21 +1989,32 @@ export const createUpdateRoadCutNocApplication = async (state, dispatch, status)
         return { status: "fail", message: response };
       }
     } else if (method === "UPDATE") {
-      response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
+      response = await httpRequest("post", "/pm-services/noc/_update", "", [], {
+        dataPayload: payload,
+      });
       // response = furnishNocResponse(response);
-      if (status === 'RESENT') {
-        response_updatestatus = await httpRequest("post", "/pm-services/noc/_updateappstatus", "", [], { dataPayload: payload });
+      if (status === "RESENT") {
+        response_updatestatus = await httpRequest(
+          "post",
+          "/pm-services/noc/_updateappstatus",
+          "",
+          [],
+          { dataPayload: payload }
+        );
       }
       setapplicationNumber(response.applicationId);
       dispatch(prepareFinalObject("ROADCUTNOC", response));
       return { status: "success", message: response };
     }
-
   } catch (error) {
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
     // Revert the changed pfo in case of request failure
-    let fireNocData = get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC", []);
+    let fireNocData = get(
+      state,
+      "screenConfiguration.preparedFinalObject.ROADCUTNOC",
+      []
+    );
     // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
     dispatch(prepareFinalObject("ROADCUTNOC", fireNocData));
 
@@ -1763,26 +2022,38 @@ export const createUpdateRoadCutNocApplication = async (state, dispatch, status)
   }
 };
 
-export const createUpdateADVNocApplication = async (state, dispatch, status) => {
-  let response = '';
-  let response_updatestatus = '';
-  let nocId = getapplicationNumber() === 'null' ? '' : getapplicationNumber();
+export const createUpdateADVNocApplication = async (
+  state,
+  dispatch,
+  status
+) => {
+  let response = "";
+  let response_updatestatus = "";
+  let nocId = getapplicationNumber() === "null" ? "" : getapplicationNumber();
   let method = nocId ? "UPDATE" : "CREATE";
   //let method = "CREATE";
   try {
-    let payload = get(state.screenConfiguration.preparedFinalObject, "ADVERTISEMENTNOC", []);
-    let reduxDocuments = get(state, "screenConfiguration.preparedFinalObject.documentsUploadRedux", {});
+    let payload = get(
+      state.screenConfiguration.preparedFinalObject,
+      "ADVERTISEMENTNOC",
+      []
+    );
+    let reduxDocuments = get(
+      state,
+      "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+      {}
+    );
     // Set owners & other documents
     let ownerDocuments = [];
     let Remarks = "";
-    jp.query(reduxDocuments, "$.*").forEach(doc => {
+    jp.query(reduxDocuments, "$.*").forEach((doc) => {
       if (doc.documents && doc.documents.length > 0) {
         if (doc.documentCode === "ADV.ADV_PHOTOCOPY_HOARDING") {
           ownerDocuments = [
             ...ownerDocuments,
             {
-              fileStoreId: doc.documents[0].fileStoreId
-            }
+              fileStoreId: doc.documents[0].fileStoreId,
+            },
           ];
         }
       }
@@ -1791,44 +2062,69 @@ export const createUpdateADVNocApplication = async (state, dispatch, status) => 
     set(payload, "remarks", Remarks);
     //set(payload, "exemptedCategory", 0)
 
-    status = payload['exemptedCategory'] === "1" ? 
-                      status==="INITIATED"
-                      ? "INITIATEDEXC" 
-                      : status  
-                  : status;
+    status =
+      payload["exemptedCategory"] === "1"
+        ? status === "INITIATED"
+          ? "INITIATEDEXC"
+          : status
+        : status;
     // localStorageGet(`exemptedCategory`) === null ?
     // set(payload, "exemptedCategory", 0)
     // : set(payload, "exemptedCategory", localStorageGet(`exemptedCategory`)) :
     // set(payload, "exemptedCategory", 0);
 
     setapplicationMode(status);
-    let responsecreateDemand = '';
+    let responsecreateDemand = "";
     if (method === "CREATE") {
       //specially for calculating service
       dispatch(prepareFinalObject("ADVTCALCULATENOC", payload));
 
-      response = await httpRequest("post", "/pm-services/noc/_create", "", [], { dataPayload: payload });
-      if (response.applicationId !== 'null' || response.applicationId !== '') {
+      response = await httpRequest("post", "/pm-services/noc/_create", "", [], {
+        dataPayload: payload,
+      });
+      if (response.applicationId !== "null" || response.applicationId !== "") {
         dispatch(prepareFinalObject("ADVERTISEMENTNOC", response));
         setapplicationNumber(response.applicationId);
         setApplicationNumberBox(state, dispatch);
         //calculate service called
         responsecreateDemand = await createDemandForAdvNOC(state, dispatch);
         //calculate search Bill called
-        responsecreateDemand.Calculations[0].taxHeadEstimates[0].estimateAmount > 0 ?
-          await searchBill(dispatch, response.applicationId, getOPMSTenantId()) : '';
+        responsecreateDemand.Calculations[0].taxHeadEstimates[0]
+          .estimateAmount > 0
+          ? await searchBill(
+              dispatch,
+              response.applicationId,
+              getOPMSTenantId()
+            )
+          : "";
 
         lSRemoveItem(`exemptedCategory`);
         lSRemoveItemlocal(`exemptedCategory`);
-        return { status: "success", message: response, createDemand: responsecreateDemand };
+        return {
+          status: "success",
+          message: response,
+          createDemand: responsecreateDemand,
+        };
       } else {
-        return { status: "fail", message: response, createDemand: responsecreateDemand };
+        return {
+          status: "fail",
+          message: response,
+          createDemand: responsecreateDemand,
+        };
       }
     } else if (method === "UPDATE") {
-      response = await httpRequest("post", "/pm-services/noc/_update", "", [], { dataPayload: payload });
+      response = await httpRequest("post", "/pm-services/noc/_update", "", [], {
+        dataPayload: payload,
+      });
       // response = furnishNocResponse(response);
-      if (status === 'RESENT') {
-        response_updatestatus = await httpRequest("post", "/pm-services/noc/_updateappstatus", "", [], { dataPayload: {} });
+      if (status === "RESENT") {
+        response_updatestatus = await httpRequest(
+          "post",
+          "/pm-services/noc/_updateappstatus",
+          "",
+          [],
+          { dataPayload: {} }
+        );
       }
       setapplicationNumber(response.applicationId);
       setApplicationNumberBox(state, dispatch);
@@ -1846,18 +2142,16 @@ export const createUpdateADVNocApplication = async (state, dispatch, status) => 
   }
 };
 
-
 export const getUpdatePriceBook1 = async (pricebookid) => {
   let queryObject = [];
   var requestBody = {
-
-    "tenantId": getOPMSTenantId(),
-    "applicationType": "ADVERTISEMENTNOC",
-    "applicationStatus": "UPDATE",
-    "dataPayload": {
-      "priceBookId": pricebookid
-    }
-  }
+    tenantId: getOPMSTenantId(),
+    applicationType: "ADVERTISEMENTNOC",
+    applicationStatus: "UPDATE",
+    dataPayload: {
+      priceBookId: pricebookid,
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -1874,8 +2168,16 @@ export const getUpdatePriceBook1 = async (pricebookid) => {
 export const getCategory1 = async () => {
   let queryObject = [];
   var requestBody = {
-    "MdmsCriteria": { "tenantId": getOPMSTenantId(), "moduleDetails": [{ "moduleName": "egpm", "masterDetails": [{ "name": "typeOfAdvertisement" }] }] }
-  }
+    MdmsCriteria: {
+      tenantId: getOPMSTenantId(),
+      moduleDetails: [
+        {
+          moduleName: "egpm",
+          masterDetails: [{ name: "typeOfAdvertisement" }],
+        },
+      ],
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -1893,9 +2195,16 @@ export const getCategory1 = async () => {
 export const getSubCategory1 = async () => {
   let queryObject = [];
   var requestBody = {
-
-    "MdmsCriteria": { "tenantId": getOPMSTenantId(), "moduleDetails": [{ "moduleName": "egpm", "masterDetails": [{ "name": "subTypeOfAdvertisement" }] }] }
-  }
+    MdmsCriteria: {
+      tenantId: getOPMSTenantId(),
+      moduleDetails: [
+        {
+          moduleName: "egpm",
+          masterDetails: [{ name: "subTypeOfAdvertisement" }],
+        },
+      ],
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -1910,20 +2219,16 @@ export const getSubCategory1 = async () => {
   }
 };
 
-
 export const getMasterGridData1 = async () => {
-
   let queryObject = [];
   var requestBody = {
-
-
-    "tenantId": getOPMSTenantId(),
-    "applicationType": "ADVERTISEMENTNOC",
-    "applicationStatus": "UPDATE",
-    "dataPayload": {
-      "priceBookId": ""
-    }
-  }
+    tenantId: getOPMSTenantId(),
+    applicationType: "ADVERTISEMENTNOC",
+    applicationStatus: "UPDATE",
+    dataPayload: {
+      priceBookId: "",
+    },
+  };
 
   try {
     const payload = await httpRequest(
@@ -1937,13 +2242,9 @@ export const getMasterGridData1 = async () => {
   } catch (error) {
     store.dispatch(toggleSnackbar(true, error.message, "error"));
   }
-
-
-
-
 };
 
-export const getMISSummaryReport = async data => {
+export const getMISSummaryReport = async (data) => {
   try {
     const response = await httpRequest(
       "post",
@@ -1954,7 +2255,6 @@ export const getMISSummaryReport = async data => {
     );
     //alert(JSON.stringify(response));
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -1964,10 +2264,9 @@ export const getMISSummaryReport = async data => {
       )
     );
   }
-
 };
 
-export const getMISApplicationTypeReport = async data => {
+export const getMISApplicationTypeReport = async (data) => {
   try {
     const response = await httpRequest(
       "post",
@@ -1978,7 +2277,6 @@ export const getMISApplicationTypeReport = async data => {
     );
     //alert(JSON.stringify(response));
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -1988,10 +2286,9 @@ export const getMISApplicationTypeReport = async data => {
       )
     );
   }
-
 };
 
-export const getMISSectorReport = async data => {
+export const getMISSectorReport = async (data) => {
   try {
     const response = await httpRequest(
       "post",
@@ -2002,7 +2299,6 @@ export const getMISSectorReport = async data => {
     );
     //alert(JSON.stringify(response));
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -2012,35 +2308,34 @@ export const getMISSectorReport = async data => {
       )
     );
   }
-
 };
 
 export const getSectordata1 = async () => {
   let queryObject = [];
   var requestBody = {
-    "applicationType": "PETNOC",
-    "applicationStatus": "Create",
-    "tenantId": getOPMSTenantId(),
-    "auditDetails": {
-      "createdBy": 1,
-      "lastModifiedBy": 1,
-      "createdTime": 1578894136873,
-      "lastModifiedTime": 1578894136873
+    applicationType: "PETNOC",
+    applicationStatus: "Create",
+    tenantId: getOPMSTenantId(),
+    auditDetails: {
+      createdBy: 1,
+      lastModifiedBy: 1,
+      createdTime: 1578894136873,
+      lastModifiedTime: 1578894136873,
     },
-    "MdmsCriteria": {
-      "tenantId": getOPMSTenantId(),
-      "moduleDetails": [
+    MdmsCriteria: {
+      tenantId: getOPMSTenantId(),
+      moduleDetails: [
         {
-          "moduleName": "egpm",
-          "masterDetails": [
+          moduleName: "egpm",
+          masterDetails: [
             {
-              "name": "sector"
-            }
-          ]
-        }
-      ]
-    }
-  }
+              name: "sector",
+            },
+          ],
+        },
+      ],
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -2057,9 +2352,9 @@ export const getSectordata1 = async () => {
 
 export const getrepotforproccessingTime1 = async () => {
   let data = {
-    "tenantId": getOPMSTenantId(),
-    "reportName": "ApplicationProcessingTimeReport"
-  }
+    tenantId: getOPMSTenantId(),
+    reportName: "ApplicationProcessingTimeReport",
+  };
   try {
     const response = await httpRequest(
       "post",
@@ -2070,7 +2365,6 @@ export const getrepotforproccessingTime1 = async () => {
     );
     //alert(JSON.stringify(response));
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -2080,9 +2374,8 @@ export const getrepotforproccessingTime1 = async () => {
       )
     );
   }
-
 };
-export const getMonthwiseReport = async data => {
+export const getMonthwiseReport = async (data) => {
   try {
     const response = await httpRequest(
       "post",
@@ -2093,7 +2386,6 @@ export const getMonthwiseReport = async data => {
     );
     //alert(JSON.stringify(response));
     return response;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -2103,27 +2395,25 @@ export const getMonthwiseReport = async data => {
       )
     );
   }
-
 };
 
 export const getMonth1 = async () => {
   let queryObject = [];
   var requestBody = {
-
-    "MdmsCriteria": {
-      "tenantId": getOPMSTenantId(),
-      "moduleDetails": [
+    MdmsCriteria: {
+      tenantId: getOPMSTenantId(),
+      moduleDetails: [
         {
-          "moduleName": "egpm",
-          "masterDetails": [
+          moduleName: "egpm",
+          masterDetails: [
             {
-              "name": "reportMonth"
-            }
-          ]
-        }
-      ]
-    }
-  }
+              name: "reportMonth",
+            },
+          ],
+        },
+      ],
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -2141,21 +2431,20 @@ export const getMonth1 = async () => {
 export const getYear1 = async () => {
   let queryObject = [];
   var requestBody = {
-
-    "MdmsCriteria": {
-      "tenantId": getOPMSTenantId(),
-      "moduleDetails": [
+    MdmsCriteria: {
+      tenantId: getOPMSTenantId(),
+      moduleDetails: [
         {
-          "moduleName": "egpm",
-          "masterDetails": [
+          moduleName: "egpm",
+          masterDetails: [
             {
-              "name": "reportYear"
-            }
-          ]
-        }
-      ]
-    }
-  }
+              name: "reportYear",
+            },
+          ],
+        },
+      ],
+    },
+  };
   try {
     const payload = await httpRequest(
       "post",
@@ -2170,24 +2459,26 @@ export const getYear1 = async () => {
   }
 };
 
-export const callBackForRefund = async data => {
+export const callBackForRefund = async (data) => {
   const response = await getSearchResultsView([
     { key: "tenantId", value: data.tenantId },
-    { key: "applicationNumber", value: data.applicationId }
+    { key: "applicationNumber", value: data.applicationId },
   ]);
   let nocApplicationDetail = get(response, "nocApplicationDetail", []);
   try {
-    let withdrawType = data.applicationStatus === "APPROVEFORWITHDRAW" ? "partialRefund" : "fullRefund";
+    let withdrawType =
+      data.applicationStatus === "APPROVEFORWITHDRAW"
+        ? "partialRefund"
+        : "fullRefund";
     const response1 = await httpRequest(
       "post",
       "/pm-refund-services/v1/_refund",
       "",
       [{ key: "withdrawType", value: withdrawType }],
-      { "RequestBody": nocApplicationDetail[0] }
+      { RequestBody: nocApplicationDetail[0] }
     );
 
     return response1;
-
   } catch (error) {
     store.dispatch(
       toggleSnackbar(
@@ -2197,32 +2488,36 @@ export const callBackForRefund = async data => {
       )
     );
   }
-
 };
 
 export const UpdateStatus = async (dispatch, url, queryObject, code) => {
   try {
     const response = await httpRequest(
-      "post", "/pm-services/noc/_updateappstatus", "", [], code
+      "post",
+      "/pm-services/noc/_updateappstatus",
+      "",
+      [],
+      code
     );
     // return response;
     if (response.ResponseInfo.status == "success") {
       store.dispatch(
         toggleSnackbar(
           true,
-          { labelName: 'Success', labelCode: 'Success' },
+          { labelName: "Success", labelCode: "Success" },
           "success"
-        ));
-      dispatch(setRoute(url))
-      if (code.applicationStatus == "APPROVEFORWITHDRAW" || code.applicationStatus == "WITHDRAW") {
+        )
+      );
+      dispatch(setRoute(url));
+      if (
+        code.applicationStatus == "APPROVEFORWITHDRAW" ||
+        code.applicationStatus == "WITHDRAW"
+      ) {
         callBackForRefund(code);
       }
-
-    }
-    else {
+    } else {
       dispatch(toggleSnackbar(true, response.ResponseInfo.msgId, "warning"));
       //dispatch(setRoute(url))
-
     }
   } catch (error) {
     store.dispatch(
