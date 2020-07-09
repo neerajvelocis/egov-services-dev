@@ -159,7 +159,7 @@ export const bookingDetails = getCommonCard({
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
         jsonPath: "Booking.bkSector",
-        required: false,
+        required: true,
         props: {
           className: "applicant-details-error",
           required: true,

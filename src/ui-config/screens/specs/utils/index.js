@@ -1130,3 +1130,23 @@ export const clearlocalstorageAppDetails = (state) => {
   lSRemoveItem('this_sub_adv_id');
   lSRemoveItem('undertaking');
 }
+
+export const getTodaysDateInYMD = () => {
+  let date = new Date();
+  //date = date.valueOf();
+  let month = date.getMonth() + 1;
+  let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+  date = `${date.getFullYear()}-${month}-${day}`;
+  // date = epochToYmdDate(date);
+  return date;
+};
+
+export const getNextMonthDateInYMD = () => {
+  //For getting date of same day but of next month
+  let date = getTodaysDateInYMD();
+  date =
+    date.substring(0, 5) +
+    (parseInt(date.substring(5, 7)) + 1) +
+    date.substring(7, 10);
+  return date;
+};

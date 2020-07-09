@@ -76,26 +76,14 @@ const role_name = JSON.parse(getUserInfo()).roles[0].code;
 // };
 
 export const getSearchResults = async (queryObject) => {
-  let data = {
-    tenantId: getOPMSTenantId().split(".")[0],
-    applicationNumber: "",
-    applicationStatus: "",
-    mobileNumber: "",
-    fromDate: "",
-    toDate: "",
-    bookingType: "OSBM",
-    uuid: JSON.parse(getUserInfo()).uuid,
-    // "applicationType": getapplicationType()
-  };
   try {
     const response = await httpRequest(
       "post",
-      "/bookings/api/_citizen/_search",
+      "/bookings/api/citizen/_search",
       "",
       [],
-      data
+      queryObject
     );
-    console.log(response, "all-application");
     return response;
   } catch (error) {
     store.dispatch(
@@ -115,7 +103,7 @@ export const getSearchResultsView = async (queryObject) => {
   try {
     const response = await httpRequest(
       "post",
-      "/bookings/api/_citizen/_search",
+      "/bookings/api/citizen/_search",
       "",
       [],
       {
@@ -125,7 +113,7 @@ export const getSearchResultsView = async (queryObject) => {
         mobileNumber: "",
         fromDate: "",
         toDate: "",
-        bookingType: "OSBM",
+        bookingType: "",
         uuid: JSON.parse(getUserInfo()).uuid,
       }
       // {
@@ -763,9 +751,11 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
   dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
+
 export const createUpdateOsbApplication = async (state, dispatch, status) => {
   let response = "";
   let tenantId = getOPMSTenantId().split(".")[0];
+  
   try {
     let payload = get(
       state.screenConfiguration.preparedFinalObject,
@@ -787,38 +777,32 @@ export const createUpdateOsbApplication = async (state, dispatch, status) => {
           bookingDocuments = [
             ...bookingDocuments,
             {
-              //tenantId: 'ch',
-              //documentType: doc.documentSubCode ? doc.documentSubCode : doc.documentCode,
               fileStoreId: doc.documents[0].fileStoreId,
             },
           ];
         } else if (!doc.documentSubCode) {
-          // SKIP BUILDING PLAN DOCS
           otherDocuments = [
             ...otherDocuments,
             {
-              //tenantId: 'ch',
-              //documentType: doc.documentCode,
               fileStoreId: doc.documents[0].fileStoreId,
             },
           ];
         }
       }
     });
-
+    
     set(payload, "wfDocuments", bookingDocuments);
     set(payload, "bkBookingType", "OSBM");
     set(payload, "tenantId", tenantId);
     set(payload, "bkAction", "APPLY");
     set(payload, "businessService", "OSBM");
 
-    setapplicationMode(status);
-
     response = await httpRequest("post", "/bookings/api/_create", "", [], {
       Booking: payload,
     });
     if (response.applicationId !== "null" || response.applicationId !== "") {
       setapplicationNumber(response.applicationId);
+      setapplicationMode(status);
       dispatch(prepareFinalObject("Booking", response));
       setApplicationNumberBox(state, dispatch);
       return { status: "success", message: response };
@@ -1823,103 +1807,58 @@ export const UpdateMasterPrice = async (state, dispatch, queryObject, code) => {
   }
 };
 
-export const createUpdateSellMeatNocApplication = async (
+export const createUpdateWtbApplication = async (
   state,
   dispatch,
   status
 ) => {
   let response = "";
-  let response_updatestatus = "";
-  let nocId = getapplicationNumber() === "null" ? "" : getapplicationNumber(); // get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
-  let method = nocId ? "UPDATE" : "CREATE";
+  let tenantId = getOPMSTenantId().split(".")[0];
+
 
   try {
     let payload = get(
       state.screenConfiguration.preparedFinalObject,
-      "SELLMEATNOC",
+      "Booking",
       []
     );
-    let tenantId = get(
-      state.screenConfiguration.preparedFinalObject,
-      "",
-      getOPMSTenantId()
-    );
 
-    let reduxDocuments = get(
-      state,
-      "screenConfiguration.preparedFinalObject.documentsUploadRedux",
-      {}
-    );
-
-    // Set owners & other documents
-    let ownerDocuments = [];
-    let otherDocuments = [];
-    let Remarks = "";
-
-    jp.query(reduxDocuments, "$.*").forEach((doc) => {
-      if (doc.documents && doc.documents.length > 0) {
-        if (doc.documentCode === "SELLMEAT.PROOF_POSSESSION_RENT_AGREEMENT") {
-          ownerDocuments = [
-            ...ownerDocuments,
-            {
-              fileStoreId: doc.documents[0].fileStoreId,
-            },
-          ];
-        }
-      }
-    });
-    set(payload, "uploadDocuments", ownerDocuments);
-    set(payload, "remarks", Remarks);
     console.log("payload : ", payload);
-    //
-    let response = "";
+    
+    set(payload, "bkBookingType", "WATER_TANKERS");
+    set(payload, "tenantId", tenantId);
+    set(payload, "bkAction", "FAILUREAPPLY");
+    set(payload, "businessService", "BWT");
     setapplicationMode(status);
 
-    if (method === "CREATE") {
-      response = await httpRequest("post", "/pm-services/noc/_create", "", [], {
-        dataPayload: payload,
+  
+      response = await httpRequest("post", "/bookings/api/_create", "", [], {
+        Booking: payload,
       });
       console.log("pet response : ", response);
       if (response.applicationId !== "null" || response.applicationId !== "") {
-        dispatch(prepareFinalObject("SELLMEATNOC", response));
+        dispatch(prepareFinalObject("Booking", response));
         setapplicationNumber(response.applicationId);
         setApplicationNumberBox(state, dispatch);
         return { status: "success", message: response };
       } else {
         return { status: "fail", message: response };
       }
-    } else if (method === "UPDATE") {
-      response = await httpRequest("post", "/pm-services/noc/_update", "", [], {
-        dataPayload: payload,
-      });
-      if (status === "RESENT") {
-        response_updatestatus = await httpRequest(
-          "post",
-          "/pm-services/noc/_updateappstatus",
-          "",
-          [],
-          { dataPayload: {} }
-        );
-      }
-      // response = furnishNocResponse(response);
-      setapplicationNumber(response.applicationId);
-      dispatch(prepareFinalObject("SELLMEATNOC", response));
-      return { status: "success", message: response };
-    }
   } catch (error) {
     dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
     // Revert the changed pfo in case of request failure
-    let sellMeatNocData = get(
+    let BookingData = get(
       state,
       "screenConfiguration.preparedFinalObject.SELLMEATNOC",
       []
     );
-    dispatch(prepareFinalObject("SELLMEATNOC", sellMeatNocData));
+    dispatch(prepareFinalObject("Booking", BookingData));
 
     return { status: "failure", message: error };
   }
 };
+
 
 export const createUpdateRoadCutNocApplication = async (
   state,

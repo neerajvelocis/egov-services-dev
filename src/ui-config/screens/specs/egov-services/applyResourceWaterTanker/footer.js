@@ -1,7 +1,3 @@
-
-
-
-
 import {
   dispatchMultipleFieldChangeAction,
   getLabel
@@ -13,9 +9,8 @@ import { getCommonApplyFooter, validateFields } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
-
 import {
-  createUpdateSellMeatNocApplication,
+  createUpdateWtbApplication,
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -104,42 +99,6 @@ const moveToReview = (state, dispatch, applnid) => {
   return validateDocumentField;
 };
 
-const getMdmsData = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
-  /** get(
-    state.screenConfiguration.preparedFinalObject,
-    "SELLMEATNOC.tenantId"
-  ); */
-  let mdmsBody = {
-    MdmsCriteria: {
-      tenantId: tenantId,
-      moduleDetails: [
-        { moduleName: "SellMeatNOC", masterDetails: [{ name: "SellMeatDocuments" }] }
-      ]
-    }
-  };
-  try {
-    let payload = await httpRequest(
-      "post", "/egov-mdms-service/v1/_search", "_search", [],
-      mdmsBody
-    );
-
-    dispatch(
-      prepareFinalObject(
-        "applyScreenMdmsData.SELLMEATNOC.SellMeatDocuments",
-        payload.MdmsRes.SELLMEATNOC.SellMeatDocuments
-      )
-    );
-    prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-
-
-
-
 const callBackForNext = async (state, dispatch) => {
   let activeStep = get(
     state.screenConfiguration.screenConfig["applywatertanker"],
@@ -150,53 +109,55 @@ const callBackForNext = async (state, dispatch) => {
   //alert("activestepsss asd : " + (activeStep+1))
   // validatestepform(activeStep+1)
   // console.log(activeStep);
-  let isFormValid = true;
-  let hasFieldToaster = false;
+  let isFormValid = false;
+  let hasFieldToaster = true;
 
   let validatestepformflag = validatestepform(activeStep + 1)
 
   isFormValid = validatestepformflag[0];
   hasFieldToaster = validatestepformflag[1];
   // alert('activeStep final :'+activeStep)
-  if (activeStep === 0) {
-    let isapplicantnamevalid = validateFields(
-      "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
-      state,
-      dispatch
-    );
-  }
-  if (activeStep === 1) {
-    isFormValid = moveToReview(state, dispatch);
-  }
-  if (activeStep !== 2) {
+  // if (activeStep === 0) {
+  //   let isapplicantnamevalid = validateFields(
+  //     "components.div.children.formwizardSecondStep.children.nocDetails.children.cardContent.children",
+  //     state,
+  //     dispatch
+  //   );
+  // }
+  // if (activeStep === 1) {
+  //   isFormValid = moveToReview(state, dispatch);
+  // }
+  if (activeStep !== 3) {
+    // alert(activeStep)
+    // alert(isFormValid)
+    
     if (isFormValid) {
       let responseStatus = "success";
-      if (activeStep === 1) {
-        prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
+      if (activeStep === 2) {
+        // prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
 
-        let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "RESENT" : "INITIATED";
-        let response = await createUpdateSellMeatNocApplication(state, dispatch, statuss);
+        // let statuss = localStorageGet("app_noc_status") == "REASSIGN" ? "RESENT" : "INITIATED";
+        let response = await createUpdateWtbApplication(state, dispatch, "PENDINGAPPROVAL");
         responseStatus = get(response, "status", "");
         let applicationId = get(response, "applicationId", "");
 
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
-          isFormValid = moveToReview(state, dispatch, applicationId);
-          if (isFormValid) {
-            setReviewPageRoute(state, dispatch, applicationId);
-          }
-          let errorMessage = {
-            labelName: 'APPLICATION ' + statuss + ' SUCCESSFULLY! ',
+          // isFormValid = moveToReview(state, dispatch, applicationId);
+          // if (isFormValid) {
+          //   setReviewPageRoute(state, dispatch, applicationId);
+          // }
+          let successMessage = {
+            labelName: 'APPLICATION SUBMITTED SUCCESSFULLY! ',
             labelKey: "" //UPLOAD_FILE_TOAST
           };
-          dispatch(toggleSnackbar(true, errorMessage, "success"));
-
+          dispatch(toggleSnackbar(true, successMessage, "success"));
+          setTimeout(() => {
+            const appendUrl =
+            process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
+             const reviewUrl = `${appendUrl}/egov-services/my-applications`;
+                dispatch(setRoute(reviewUrl));  
+          }, 1000);
         } else {
-          // let errorMessage = {
-          //   labelName:
-          //     "Submission Falied, Try Again!",
-          //   labelKey: "UPLOAD_FILES_TOAST"
-          // };
-          // dispatch(toggleSnackbar(true, errorMessage, "warning"));
           let errorMessage = {
             labelName: "Submission Falied, Try Again later!",
             labelKey: "" //UPLOAD_FILE_TOAST
@@ -204,25 +165,36 @@ const callBackForNext = async (state, dispatch) => {
           dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
       }
-      responseStatus === "success" && changeStep(state, dispatch);
+      // responseStatus === "success" && changeStep(state, dispatch);
+      if (isFormValid) {
+        responseStatus === "success" && changeStep(state, dispatch);
+      } else {
+        errorMessage = {
+          labelName:
+            "Please fill all mandatory fields, then proceed!",
+          labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS"
+        };
+
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
+      }
     } else if (hasFieldToaster) {
       let errorMessage = {
         labelName: "Please fill all mandatory fields !",
-        labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_TOAST"
+        labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS"
       };
       switch (activeStep) {
         case 1:
           errorMessage = {
             labelName:
-              "Please check the Missing/Invalid field for Property Details, then proceed!",
-            labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_PROPERTY_TOAST"
+              "Please check the Missing/Invalid field, then proceed!",
+            labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS"
           };
           break;
         case 2:
           errorMessage = {
             labelName:
-              "Please fill all mandatory fields for Applicant Details, then proceed!",
-            labelKey: "ERR_FILL_ALL_MANDATORY_FIELDS_APPLICANT_TOAST"
+              "Please fill all mandatory fields, then proceed!",
+            labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS"
           };
           break;
       }
@@ -259,8 +231,8 @@ export const changeStep = (
   }
 
   const isPreviousButtonVisible = activeStep > 0 ? true : false;
-  const isNextButtonVisible = activeStep < 4 ? true : false;
-  const isPayButtonVisible = activeStep === 4 ? true : false;
+  const isNextButtonVisible = activeStep < 2 ? true : false;
+  const isPayButtonVisible = activeStep === 2 ? true : false;
   const actionDefination = [
     {
       path: "components.div.children.stepper.props",
@@ -298,11 +270,20 @@ export const renderSteps = (activeStep, dispatch) => {
         dispatch
       );
       break;
-    default:
+      case 1:
       dispatchMultipleFieldChangeAction(
         "applywatertanker",
         getActionDefinationForStepper(
           "components.div.children.formwizardSecondStep"
+        ),
+        dispatch
+      );
+      break;
+    default:
+      dispatchMultipleFieldChangeAction(
+        "applywatertanker",
+        getActionDefinationForStepper(
+          "components.div.children.formwizardThirdStep"
         ),
         dispatch
       );
@@ -322,8 +303,12 @@ export const getActionDefinationForStepper = path => {
       path: "components.div.children.formwizardSecondStep",
       property: "visible",
       value: false
-    }
-
+    },
+    {
+      path: "components.div.children.formwizardThirdStep",
+      property: "visible",
+      value: false
+    },
   ];
   for (var i = 0; i < actionDefination.length; i++) {
     actionDefination[i] = {

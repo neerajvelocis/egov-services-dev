@@ -1,24 +1,24 @@
-import { getBreak, getCommonCard, getCommonContainer, getCommonTitle, getTextField, getSelectField, getPattern } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getBreak, getCommonCard, getCommonContainer, getCommonTitle, getTextField, getDateField, getTimeField, getSelectField, getPattern } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { furnishNocResponse, getSearchResults } from "../../../../../ui-utils/commons";
 
-export const nocDetails = getCommonCard({
-  header: getCommonTitle(
-    {
-      labelName: "Applicant Details",
-      labelKey: "BK_WTB_DETAILS_HEADER",
-    },
-    {
-      style: {
-        marginBottom: 10,
-      },
-    }
-  ),
-  break: getBreak(),
-  nocDetailsContainer: getCommonContainer({
-    applicantName: {
+export const personalDetails = getCommonCard({
+  // header: getCommonTitle(
+  //   {
+  //     labelName: "Applicant Details",
+  //     labelKey: "BK_WTB_DETAILS_HEADER",
+  //   },
+  //   {
+  //     style: {
+  //       marginBottom: 10,
+  //     },
+  //   }
+  // ),
+  // break: getBreak(),
+  personalDetailsContainer: getCommonContainer({
+    bkApplicantName: {
       ...getTextField({
         label: {
           labelName: "Applicant Name",
@@ -31,195 +31,10 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("Name"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "SELLMEATNOC.applicantName",
+        jsonPath: "Booking.bkApplicantName",
       }),
     },
-    // houseNumber: {
-    //   ...getTextField({
-    //     label: {
-    //       labelName: "House/Site No.",
-    //       labelKey: "BK_WTB_HOUSE_NUMBER_LABEL",
-    //     },
-    //     placeholder: {
-    //       labelName: "Enter House No",
-    //       labelKey: "BK_WTB_HOUSE_NUMBER_PLACEHOLDER",
-    //     },
-    //     pattern: getPattern("DoorHouseNo"),
-    //     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-    //     required: true,
-    //     jsonPath: "SELLMEATNOC.houseNo",
-    //   }),
-    // },
-    // completeAddress: {
-    //   ...getTextField({
-    //     label: {
-    //       labelName: "Complete Address",
-    //       labelKey: "BK_WTB_COMPLETE_ADDRESS_LABEL",
-    //     },
-    //     placeholder: {
-    //       labelName: "Enter Complete Address",
-    //       labelKey: "BK_WTB_COMPLETE_ADDRESS_PLACEHOLDER",
-    //     },
-    //     // pattern: getPattern("DoorHouseNo"),
-    //     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-    //     required: true,
-    //     jsonPath: "SELLMEATNOC.completeAddress",
-    //   }),
-    // },
-    // Sector: {
-    //   ...getSelectField({
-    //     label: { labelName: "Sector", labelKey: "BK_WTB_PROPERTY_SECTOR_LABEL" },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Sector",
-    //       labelKey: "BK_WTB_PROPERTY_SECTOR_LABEL",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     jsonPath: "SELLMEATNOC.sector",
-    //     required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //       required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
-    // // City: {
-    // //   ...getSelectField({
-    // //     label: {
-    // //       labelName: "Village/City",
-    // //       labelKey: "BK_WTB_CITY_LABEL",
-    // //     },
-    // //     // localePrefix: {
-    // //     //   moduleName: "egpm",
-    // //     //   masterName: "sector"
-    // //     // },
-    // //     optionLabel: "name",
-    // //     placeholder: {
-    // //       labelName: "Select Village/City",
-    // //       labelKey: "BK_WTB_CITY_LABEL",
-    // //     },
-    // //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    // //     sourceJsonPath: "applyScreenMdmsData.egpm.city",
-    // //     jsonPath: "SELLMEATNOC.city",
-    // //     // required: true,
-    // //     props: {
-    // //       className: "applicant-details-error",
-    // //     //   required: true,
-    // //       // disabled: true
-    // //     },
-    // //   }),
-    // // },
-    // propertyType: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Residential/Commercial",
-    //       labelKey: "BK_WTB_PROPERTY_TYPE_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     // optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Residential/Commercial",
-    //       labelKey: "BK_WTB_PROPERTY_TYPE_LABEL",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.egpm.propertyType",
-    //     jsonPath: "SELLMEATNOC.propertyType",
-    //     required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //       required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
-    // storageArea: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Storage Area",
-    //       labelKey: "BK_WTB_STORAGE_AREA_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Storage Area",
-    //       labelKey: "BK_WTB_STORAGE_AREA_LABEL",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.egpm.storageArea",
-    //     jsonPath: "SELLMEATNOC.storageArea",
-    //     required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //       required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
-    // Duration: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Duration",
-    //       labelKey: "BK_WTB_DURATION_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Duration",
-    //       labelKey: "BK_WTB_DURATION_LABEL",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.egpm.duration",
-    //     jsonPath: "SELLMEATNOC.duration",
-    //     required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //       required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
-    // Category: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Category",
-    //       labelKey: "BK_WTB_CATEGORY_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Category",
-    //       labelKey: "BK_WTB_CATEGORY_LABEL",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.egpm.category",
-    //     jsonPath: "SELLMEATNOC.category",
-    //     required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //       required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
-    Email: {
+    bkEmail: {
       ...getTextField({
         label: {
           labelName: "Email Address",
@@ -232,10 +47,10 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("Email"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "SELLMEATNOC.emailId",
+        jsonPath: "Booking.bkEmail",
       }),
     },
-    Mobile: {
+    bkMobileNumber: {
       ...getTextField({
         label: {
           labelName: "Contact Number",
@@ -248,7 +63,7 @@ export const nocDetails = getCommonCard({
         required: true,
         pattern: getPattern("MobileNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "SELLMEATNOC.mobileNumber",
+        jsonPath: "Booking.bkMobileNumber",
       }),
     },
     dummyDiv: {
@@ -263,6 +78,199 @@ export const nocDetails = getCommonCard({
         disabled: true,
       },
     },
+  }),
+});
+export const bookingDetails = getCommonCard({
+  // header: getCommonTitle(
+  //     {
+  //         labelName: "Booking Details",
+  //         labelKey: "BK_WTB_DETAILS_HEADER",
+  //     },
+  //     {
+  //         style: {
+  //             marginBottom: 10,
+  //         },
+  //     }
+  // ),
+  // break: getBreak(),
+  bookingDetailsContainer: getCommonContainer({
+     
+    bkHouseNo: {
+          ...getTextField({
+              label: {
+                  labelName: "House/Site No.",
+                  labelKey: "BK_WTB_HOUSE_NUMBER_LABEL",
+              },
+              placeholder: {
+                  labelName: "Enter House No",
+                  labelKey: "BK_WTB_HOUSE_NUMBER_PLACEHOLDER",
+              },
+              pattern: getPattern("DoorHouseNo"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              required: true,
+              jsonPath: "Booking.bkHouseNo",
+          }),
+      },
+      bkCompleteAddress: {
+          ...getTextField({
+              label: {
+                  labelName: "Complete Address",
+                  labelKey: "BK_WTB_COMPLETE_ADDRESS_LABEL",
+              },
+              placeholder: {
+                  labelName: "Enter Complete Address",
+                  labelKey: "BK_WTB_COMPLETE_ADDRESS_PLACEHOLDER",
+              },
+              // pattern: getPattern("DoorHouseNo"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              required: true,
+              jsonPath: "Booking.bkCompleteAddress",
+          }),
+      },
+      bkSector: {
+          ...getSelectField({
+              label: { labelName: "Sector", labelKey: "BK_WTB_PROPERTY_SECTOR_LABEL" },
+              // localePrefix: {
+              //   moduleName: "egpm",
+              //   masterName: "sector"
+              // },
+              optionLabel: "name",
+              placeholder: {
+                  labelName: "Select Sector",
+                  labelKey: "BK_WTB_PROPERTY_SECTOR_LABEL",
+              },
+              //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+              sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
+              jsonPath: "Booking.bkSector",
+              required: true,
+              props: {
+                  className: "applicant-details-error",
+                  required: true,
+                  // disabled: true
+              },
+          }),
+      },
+      bkType: {
+          ...getSelectField({
+              label: {
+                  labelName: "Residential/Commercial",
+                  labelKey: "BK_WTB_PROPERTY_TYPE_LABEL",
+              },
+              // localePrefix: {
+              //   moduleName: "egpm",
+              //   masterName: "sector"
+              // },
+              // optionLabel: "name",
+              placeholder: {
+                  labelName: "Select Residential/Commercial",
+                  labelKey: "BK_WTB_PROPERTY_TYPE_LABEL",
+              },
+              //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+              sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
+              jsonPath: "Booking.bkType",
+              required: true,
+              props: {
+                  className: "applicant-details-error",
+                  required: true,
+                  // disabled: true
+              },
+          }),
+      },
+      bkDate: {
+        ...getDateField({
+          label: {
+            labelName: "Booking Date",
+            labelKey: "BK_WTB_DATE_LABEL",
+          },
+          placeholder: {
+            labelName: "Booking Data",
+            labelName: "BK_WTB_DATE_PLACEHOLDER",
+          },
+          // required: true,
+          pattern: getPattern("Date"),
+          jsonPath: "Booking.bkDate",
+          props: {
+            className: "applicant-details-error",
+            // inputProps: {
+            //   min: getTodaysDateInYMD(),
+            //   max: getFinancialYearDates("yyyy-mm-dd").endDate,
+            // },
+          },
+          gridDefination:{
+            xs: 12,
+            sm: 6,
+            md: 6
+          }
+        }),
+        // visible: true,
+      },
+      bkTime: {
+        ...getTimeField({
+          label: {
+            labelName: "Booking Time",
+            labelKey: "BK_WTB_TIME_LABEL",
+          },
+          placeholder: { labelName: "hh:mm", labelKey: "hh:mm" },
+          required: true,
+          pattern: getPattern("Time"),
+          jsonPath: "Booking.bkTime",
+          gridDefination: {
+            xs: 12,
+            sm: 6,
+            md: 6
+          },
+          props: {
+            // inputProps: {
+            //   min: getTodaysDateInYMD(),
+            //   max: getFinancialYearDates("yyyy-mm-dd").endDate,
+            // },
+            defaultValue: "00:00",
+            // iconObj: { position: "end", iconName: " access_time" },
+            // style: { marginBottom: 10, paddingRight: 80 },
+          },
+        }),
+      },
+      bkCase: {
+        ...getSelectField({
+          label: {
+            labelName: "Booking Date",
+            labelKey: "BK_WTB_CASE_LABEL",
+          },
+          placeholder: {
+            labelName: "Booking Data",
+            labelName: "BK_WTB_CASE_PLACEHOLDER",
+          },
+          // required: true,
+          pattern: getPattern("Name"),
+          jsonPath: "Booking.bkCase",
+          sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
+          props: {
+            className: "applicant-details-error",
+            // inputProps: {
+            //   min: getTodaysDateInYMD(),
+            //   max: getFinancialYearDates("yyyy-mm-dd").endDate,
+            // },
+          },
+          gridDefination:{
+            xs: 12,
+            sm: 6,
+            md: 6
+          }
+        }),
+        // visible: true,
+      },
+      dummyDiv: {
+          uiFramework: "custom-atoms",
+          componentPath: "Div",
+          gridDefination: {
+              xs: 12,
+              sm: 12,
+              md: 6,
+          },
+          props: {
+              disabled: true,
+          },
+      },
   }),
 });
 

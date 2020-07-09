@@ -63,14 +63,14 @@ export const taskStatusSummary = getCommonGrayCard({
     Date: getLabelWithValue(
       
       {
-        jsonPath: "Booking[0].bookingsRemarks[0]",
+        jsonPath: "Booking.bookingsRemarks[0]",
         callBack: value => {
           if(value===undefined)
           {
             return '';
           }
           else{
-          let remark = value['bkRemarks'] === '' ? '' :value['bkRemarks'];
+          let remark = value['bkRemarks'] === '' ? 'No Remarks Available.' :value['bkRemarks'];
           return remark;
           }
         }

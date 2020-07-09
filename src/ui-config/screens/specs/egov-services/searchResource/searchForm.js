@@ -3,32 +3,36 @@ import {
   getCommonContainer,
   getCommonTitle,
   getTextField,
+  getDateField,
   getSelectField,
   getPattern,
   getCommonSubHeader,
-  getLabel
+  getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { getTodaysDateInYMD, getNextMonthDateInYMD, getFinancialYearDates  } from "../../utils/index";
+import { fetchData } from "../searchResource/citizenSearchFunctions";
+import {
+  prepareFinalObject,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
-
-export const callBackForPrevious = (state, dispatch) => {
-  alert("in previous")
-};
-export const callBackForNext = (state, dispatch) => {
-  alert("in next")
-  let payload = get(
-    state.screenConfiguration.preparedFinalObject,
-    "Booking",
-    []
+export const callBackForReset = (state, dispatch, action) => {
+  dispatch(
+    prepareFinalObject(
+      "MyBooking",
+      {}
+    )
   );
-  console.log("newdata", payload);
-  
+  fetchData(action, state, dispatch);
+};
+export const callBackForSearch = (state, dispatch, action) => {
+  fetchData(action, state, dispatch);
 };
 
 export const searchDetails = getCommonCard({
   header: getCommonTitle(
     {
-      labelName: "Applicant Details",
-      labelKey: "BK_OSB_HEADER_STEP_2",
+      labelName: "Seach Applications",
+      labelKey: "MY_BK_SEARCH_HEADER",
     },
     {
       style: {
@@ -36,286 +40,156 @@ export const searchDetails = getCommonCard({
       },
     }
   ),
-  // header: {
-  //   uiFramework: "custom-atoms",
-  //   componentPath: "Container",
-  //   props: {
-  //     style: { marginBottom: "10px" }
-  //   },
-  //   children: {
-  //     header: {
-  //       gridDefination: {
-  //         xs: 8
-  //       },
-  //       ...getCommonSubHeader({
-  //         labelName: "Summary",
-  //         labelKey: "BK_OSB_HEADER_STEP_4"
-  //       })
-  //     },
-  //     editSection: {
-  //       componentPath: "Button",
-  //       props: {
-  //         color: "primary",
-  //         style: {
-  //           marginTop: "-10px",
-  //           marginRight: "-18px"
-  //         }
-  //       },
-  //       gridDefination: {
-  //         xs: 4,
-  //         align: "right"
-  //       },
-  //       children: {
-  //         editIcon: {
-  //           uiFramework: "custom-atoms",
-  //           componentPath: "Icon",
-  //           props: {
-  //             iconName: "edit"
-  //           }
-  //         },
-  //         buttonLabel: getLabel({
-  //           labelName: "Edit",
-  //           labelKey: "NOC_SUMMARY_EDIT"
-  //         })
-  //       },
-  //       onClickDefination: {
-  //         action: "condition",
-  //         callBack: callBackForPrevious
-  //       }
-  //     }
-  //   }
-  // },
 
   applicationDetailsConatiner: getCommonContainer({
-    bkHouseNo: {
+    mobileNumber: {
       ...getTextField({
         label: {
-          labelName: "House/Site No.",
-          labelKey: "BK_OSB_HOUSE_NUMBER_LABEL",
+          labelName: "Contact Number",
+          labelKey: "MY_BK_MOBILE_NO_LABEL",
+        },
+        placeholder: {
+          labelName: "Enter Contact Number",
+          labelKey: "MY_BK_MOBILE_NO_PLACEHOLDER",
+        },
+        // required: true,
+        pattern: getPattern("MobileNo"),
+        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        jsonPath: "MyBooking.mobileNumber",
+        gridDefination:{
+          xs: 12,
+          sm: 6,
+          md: 4
+        }
+      }),
+    },
+    applicationNumber: {
+      ...getTextField({
+        label: {
+          labelName: "Application No.",
+          labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
         },
         placeholder: {
           labelName: "Enter House No",
-          labelKey: "BK_OSB_HOUSE_NUMBER_PLACEHOLDER",
+          labelKey: "MY_BK_APPLICATION_NUMBER_PLACEHOLDER",
         },
         pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        required: true,
-        jsonPath: "Booking.bkHouseNo",
+        // required: true,
+        jsonPath: "MyBooking.applicationNumber",
+        gridDefination:{
+          xs: 12,
+          sm: 6,
+          md: 4
+        }
       }),
     },
-    bkCompleteAddress: {
-      ...getTextField({
+    applicationStatus: {
+      ...getSelectField({
         label: {
-          labelName: "Complete Address",
-          labelKey: "BK_OSB_COMPLETE_ADDRESS_LABEL",
+          labelName: "Application No.",
+          labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
         },
         placeholder: {
-          labelName: "Enter Complete Address",
-          labelKey: "BK_OSB_COMPLETE_ADDRESS_PLACEHOLDER",
+          labelName: "Enter House No",
+          labelKey: "MY_BK_APPLICATION_STATUS_PLACEHOLDER",
         },
         // pattern: getPattern("DoorHouseNo"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        required: true,
-        jsonPath: "Booking.bkCompleteAddress",
+        // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        // required: true,
+        sourceJsonPath: "applyScreenMdmsData.Booking.applicationStatus",
+        jsonPath: "MyBooking.applicationStatus",
+        gridDefination:{
+          xs: 12,
+          sm: 6,
+          md: 4
+        }
       }),
     },
-    bkSector: {
+    applicationType: {
       ...getSelectField({
         label: {
-          labelName: "Sector",
-          labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
+          labelName: "Application No.",
+          labelKey: "MY_BK_APPLICATION_TYPE_LABEL",
         },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        optionLabel: "name",
         placeholder: {
-          labelName: "Select Sector",
-          labelKey: "BK_OSB_PROPERTY_SECTOR_PLACEHOLDER",
+          labelName: "Enter House No",
+          labelKey: "MY_BK_APPLICATION_TYPE_PLACEHOLDER",
         },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
-        jsonPath: "Booking.bkSector",
-        required: false,
-        props: {
-          className: "applicant-details-error",
-          required: true,
-          // disabled: true
-        },
+        // pattern: getPattern("DoorHouseNo"),
+        // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        // required: true,
+        sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
+        jsonPath: "MyBooking.bookingType",
+        gridDefination:{
+          xs: 12,
+          sm: 6,
+          md: 4
+        }
       }),
     },
-    // bkVillCity: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Village/City",
-    //       labelKey: "BK_OSB_CITY_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Village/City",
-    //       labelKey: "BK_OSB_CITY_PLACEHOLDER",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.Booking.City",
-    //     jsonPath: "Booking.bkVillCity",
-    //     // required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //     //   required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
-    bkType: {
-      ...getSelectField({
+    fromDate: {
+      ...getDateField({
         label: {
-          labelName: "Residential/Commercial",
-          labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
+          labelName: "From Date",
+          labelKey: "MY_BK_FROM_DATE_LABEL",
         },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        // optionLabel: "name",
         placeholder: {
-          labelName: "Select Residential/Commercial",
-          labelKey: "BK_OSB_PROPERTY_TYPE_PLACEHOLDER",
+          labelName: "Trade License From Date",
+          labelName: "MY_BK_FROM_DATE_PLACEHOLDER",
         },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
-        jsonPath: "Booking.bkType",
-        required: true,
+        // required: true,
+        pattern: getPattern("Date"),
+        jsonPath: "MyBooking.fromDate",
         props: {
           className: "applicant-details-error",
-          required: true,
-          // disabled: true
+          inputProps: {
+            min: getTodaysDateInYMD(),
+            max: getFinancialYearDates("yyyy-mm-dd").endDate,
+          },
         },
+        gridDefination:{
+          xs: 12,
+          sm: 6,
+          md: 4
+        }
       }),
+      // visible: true,
     },
-    bkAreaRequired: {
-      ...getSelectField({
-        label: {
-          labelName: "Storage Area",
-          labelKey: "BK_OSB_STORAGE_AREA_LABEL",
-        },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        optionLabel: "name",
+    toDate: {
+      ...getDateField({
+        label: { labelName: "To Date", labelKey: "MY_BK_TO_DATE_LABEL" },
         placeholder: {
-          labelName: "Select Storage Area",
-          labelKey: "BK_OSB_STORAGE_AREA_PLACEHOLDER",
+          labelName: "Trade License From Date",
+          labelKey: "MY_BK_TO_DATE_PLACEHOLDER",
         },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.Booking.Area",
-        jsonPath: "Booking.bkAreaRequired",
-        required: true,
+        // required: true,
+        pattern: getPattern("Date"),
+        jsonPath: "MyBooking.toDate",
         props: {
-          className: "applicant-details-error",
-          required: true,
-          // disabled: true
+          inputProps: {
+            min: getNextMonthDateInYMD(),
+            max: getFinancialYearDates("yyyy-mm-dd").endDate,
+          },
         },
+        gridDefination:{
+          xs: 12,
+          sm: 6,
+          md: 4
+        }
       }),
+      // visible: true,
     },
-    bkDuration: {
-      ...getSelectField({
-        label: {
-          labelName: "Duration",
-          labelKey: "BK_OSB_DURATION_LABEL",
-        },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        optionLabel: "name",
-        placeholder: {
-          labelName: "Select Duration",
-          labelKey: "BK_OSB_DURATION_PLACEHOLDER",
-        },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.Booking.Duration",
-        jsonPath: "Booking.bkDuration",
-        required: true,
-        props: {
-          className: "applicant-details-error",
-          required: true,
-          // disabled: true
-        },
-      }),
-    },
-    bkCategory: {
-      ...getSelectField({
-        label: {
-          labelName: "Category",
-          labelKey: "BK_OSB_CATEGORY_LABEL",
-        },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
-        optionLabel: "name",
-        placeholder: {
-          labelName: "Select Category",
-          labelKey: "BK_OSB_CATEGORY_PLACEHOLDER",
-        },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.Booking.Category",
-        jsonPath: "Booking.bkCategory",
-        required: true,
-        props: {
-          className: "applicant-details-error",
-          required: true,
-          // disabled: true
-        },
-      }),
-    },
-    // submitButton: {
-    //   componentPath: "Button",
-    //   props: {
-    //     color: "primary",
-    //     style: {
-    //       marginTop: "-10px",
-    //       marginRight: "-18px"
-    //     }
-    //   },
-    //   gridDefination: {
-    //     xs: 4,
-    //     align: "right"
-    //   },
-    //   children: {
-    //     editIcon: {
-    //       uiFramework: "custom-atoms",
-    //       componentPath: "Icon",
-    //       props: {
-    //         iconName: "edit"
-    //       }
-    //     },
-    //     buttonLabel: getLabel({
-    //       labelName: "Edit",
-    //       labelKey: "NOC_SUMMARY_EDIT"
-    //     })
-    //   },
-    //   onClickDefination: {
-    //     action: "condition",
-    //     callBack: callBackForPrevious
-    //   }
-    // },
-    previousButton: {
+    resetButton: {
       componentPath: "Button",
       props: {
         variant: "outlined",
         color: "primary",
         style: {
-          // minWidth: "200px",
+          minWidth: "200px",
           height: "48px",
-          marginRight: "16px"
-        }
+          marginRight: "16px",
+        },
       },
       children: {
         // previousButtonIcon: {
@@ -325,16 +199,16 @@ export const searchDetails = getCommonCard({
         //     iconName: "keyboard_arrow_left"
         //   }
         // },
-        previousButtonLabel: getLabel({
+        resetButtonLabel: getLabel({
           labelName: "Cancel",
-          labelKey: "NOC_COMMON_BUTTON_PREV_STEP"
-        })
+          labelKey: "MY_BK_BUTTON_RESET",
+        }),
       },
       onClickDefination: {
         action: "condition",
-        callBack: callBackForPrevious
+        callBack: callBackForReset,
       },
-      visible: true
+      visible: true,
     },
     payButton: {
       componentPath: "Button",
@@ -342,15 +216,15 @@ export const searchDetails = getCommonCard({
         variant: "contained",
         color: "primary",
         style: {
-          //minWidth: "200px",
+          minWidth: "200px",
           height: "48px",
-          marginRight: "45px"
-        }
+          marginRight: "45px",
+        },
       },
       children: {
         submitButtonLabel: getLabel({
           labelName: "Submit",
-          labelKey: "NOC_COMMON_BUTTON_SUBMIT"
+          labelKey: "MY_BK_BUTTON_SEARCH",
         }),
         // submitButtonIcon: {
         //   uiFramework: "custom-atoms",
@@ -362,10 +236,9 @@ export const searchDetails = getCommonCard({
       },
       onClickDefination: {
         action: "condition",
-        callBack: callBackForNext
+        callBack: callBackForSearch,
       },
-      visible: true
-    }
-
+      visible: true,
+    },
   }),
 });

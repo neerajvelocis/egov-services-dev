@@ -73,15 +73,7 @@ const getMdmsData = async (action, state, dispatch) => {
       mdmsBody
     );
     console.log(payload.MdmsRes, "mdmsRes");
-    payload.MdmsRes.Booking.bookingType = [
-      {id : 1, code:'OSBM', tenantId : 'ch.chandigarh', name : "Open Space", active : true},
-      {id : 2, code:'WATER_TANKERS', tenantId : 'ch.chandigarh', name : 'Water Tankers', active : true}
-    ]
-    payload.MdmsRes.Booking.applicationStatus = [
-      {id : 1, code:'PENDINGAPPROVAL', tenantId : 'ch.chandigarh', name : "Pending Approval", active : true},
-      {id : 2, code:'PENDINGPAYMENT', tenantId : 'ch.chandigarh', name : 'Pending Payment', active : true},
-      {id : 3, code:'REJECTED', tenantId : 'ch.chandigarh', name : 'Rejected', active : true}
-    ]
+    
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
     console.log(e);

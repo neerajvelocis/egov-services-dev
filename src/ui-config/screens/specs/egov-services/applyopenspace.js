@@ -322,7 +322,7 @@ const screenConfig = {
     });
 
     // Search in case of EDIT flow
-    prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+    // prepareEditFlow(state, dispatch, applicationNumber, tenantId);
 
     // Code to goto a specific step through URL
     if (step && step.match(/^\d+$/)) {
