@@ -292,7 +292,7 @@ export const footerReviewTop = (
 	applicationNumber,
 	tenantId,
   ) => {
-	/** MenuButton data based on status */
+
 	let downloadMenu = [];
 	let printMenu = [];
 	// let licenseNumber= get(state.screenConfiguration.preparedFinalObject.Licenses[0], "licenseNumber")
@@ -388,14 +388,6 @@ export const footerReviewTop = (
 		downloadMenu = [applicationDownloadObject];
 		printMenu = [applicationPrintObject];
 		break;
-	  case "pending_approval":
-		downloadMenu = [receiptDownloadObject, applicationDownloadObject];
-		printMenu = [receiptPrintObject, applicationPrintObject];
-		break;
-	  case "CANCELLED":
-		downloadMenu = [applicationDownloadObject];
-		printMenu = [applicationPrintObject];
-		break;
 	  case "REJECTED":
 		downloadMenu = [applicationDownloadObject];
 		printMenu = [applicationPrintObject];
@@ -415,7 +407,7 @@ export const footerReviewTop = (
 		children: {
 		  downloadMenu: {
 			uiFramework: "custom-atoms-local",
-			moduleName: "egov-tradelicence",
+			moduleName: "egov-services",
 			componentPath: "MenuButton",
 			props: {
 			  data: {

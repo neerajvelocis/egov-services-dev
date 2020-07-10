@@ -366,7 +366,7 @@ const setSearchResponse = async (
 
     bookingStatus = get(
         state,
-        "screenConfiguration.preparedFinalObject.Booking[0].bkApplicationStatus",
+        "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
     localStorageSet("bookingStatus", bookingStatus);
@@ -379,7 +379,7 @@ const setSearchResponse = async (
         action,
         state,
         dispatch,
-        status,
+        bookingStatus,
         applicationNumber,
         tenantId
       );
@@ -388,7 +388,7 @@ const setSearchResponse = async (
         action,
         state,
         dispatch,
-        status,
+        bookingStatus,
         applicationNumber,
         tenantId,
       );
@@ -422,10 +422,10 @@ const setSearchResponseForNocCretificate = async (
     tenantId
 ) => {
     let downloadMenu = [];
-    //bookingStatus = get(state, "screenConfiguration.preparedFinalObject.Booking[0].applicationstatus", {});
+    //bookingStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.applicationstatus", {});
     let nocRemarks = get(
         state,
-        "screenConfiguration.preparedFinalObject.Booking[0].bookingsRemarks",
+        "screenConfiguration.preparedFinalObject.Booking.bookingsRemarks",
         {}
     );
     console.log(nocRemarks, "nocRemarks");
@@ -465,7 +465,7 @@ const setSearchResponseForNocCretificate = async (
             dispatch(toggleSnackbar(true, errorMessage, "error"));
         } else {
             let getFileStoreIdForSELLMEAT = {
-                Booking: [get(response0SELLMEAT, "Booking[0]", "")],
+                Booking: [get(response0SELLMEAT, "Booking", "")],
             };
 
             const response1SELLMEAT = await getSearchResultsForNocCretificate([
@@ -554,13 +554,6 @@ const screenConfig = {
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
 
-        // getMdmsData(action, state, dispatch).then((response) => {
-        //   prepareDocumentsUploadData(state, dispatch, "apply_osb");
-        //   // prepareDocumentsUploadData(state, dispatch, 'apply_sellmeat');
-        // });
-        // preparepopupDocumentsSellMeatUploadData(state, dispatch, 'apply_osb');
-
-        // Set Documents Data (TEMP)
         return action;
     },
     components: {
@@ -578,7 +571,7 @@ const screenConfig = {
                         header: {
                             gridDefination: {
                                 xs: 12,
-                                sm: 10,
+                                sm: 8,
                             },
                             ...titlebar,
                         },
