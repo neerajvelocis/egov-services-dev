@@ -13,7 +13,6 @@ import {
   getUserInfo,
   getapplicationMode,
   getapplicationNumber,
-  getOPMSTenantId  
 } from "egov-ui-kit/utils/localStorageUtils";
 
 const instance = axios.create({
@@ -45,7 +44,7 @@ const wrapRequestBody = (requestBody, action, customRequestInfo) => {
     applicationType: getapplicationType(),// 'PETNOC',
     applicationStatus: getapplicationMode(),  //'INITIATED',
     applicationId: applicationnumber === 'null' ? '' : applicationnumber,
-    tenantId: getOPMSTenantId().split(".")[0],
+    tenantId: getTenantId().split(".")[0],
 
     auditDetails: {
       createdBy: JSON.parse(getUserInfo()).id,

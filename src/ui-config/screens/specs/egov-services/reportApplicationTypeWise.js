@@ -12,7 +12,7 @@ import {
   import { searchResultsReports2 } from "./searchResource/searchResults";
   import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
   import {
-    getOPMSTenantId,
+    getTenantId,
     localStorageGet
   } from "egov-ui-kit/utils/localStorageUtils";
   import find from "lodash/find";

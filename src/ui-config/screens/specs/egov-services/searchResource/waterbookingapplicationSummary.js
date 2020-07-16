@@ -10,7 +10,7 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
-export const openSpaceApplicationSummary = getCommonGrayCard({
+export const waterBookingApplicationSummary = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",
         componentPath: "Container",
@@ -69,6 +69,24 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
             className: "sellmeatapplicant-summary",
             scheama: getCommonGrayCard({
                 applicantContainer: getCommonContainer({
+                    applicationNumber: getLabelWithValue(
+                        {
+                            labelName: "Application Number",
+                            labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkApplicationNumber",
+                        }
+                    ),
+                    applicationStatus: getLabelWithValue(
+                        {
+                            labelName: "Application Status",
+                            labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkApplicationStatus",
+                        }
+                    ),
                     applicantName: getLabelWithValue(
                         {
                             labelName: "Name",
@@ -132,34 +150,34 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkType",
                         }
                     ),
-                    StorageArea: getLabelWithValue(
+                    BookingDate: getLabelWithValue(
                         {
-                            labelName: "Storage Area",
-                            labelKey: "MY_BK_STORAGE_AREA_LABEL",
+                          labelName: "Booking Date",
+                          labelKey: "MY_BK_DATE_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkAreaRequired",
+                          jsonPath: "Booking.bkDate",
                         }
-                    ),
-                    DurationLabel: getLabelWithValue(
+                      ),
+                      BookingTime: getLabelWithValue(
                         {
-                            labelName: "Duration",
-                            labelKey: "MY_BK_DURATION_LABEL",
+                          labelName: "Booking Time",
+                          labelKey: "MY_BK_TIME_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkDuration",
+                          jsonPath: "Booking.bkTime",
                         }
-                    ),
-                    Category: getLabelWithValue(
+                      ),
+                      BookingCase: getLabelWithValue(
                         {
-                            labelName: "Category",
-                            labelKey: "MY_BK_CATEGORY_LABEL",
+                          labelName: "Case",
+                          labelKey: "MY_BK_CASE_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkCategory",
+                          jsonPath: "Booking.bkCase",
                         }
-                    ),
-                }),
+                      )
+                    }),
             }),
             items: [],
             hasAddItem: false,

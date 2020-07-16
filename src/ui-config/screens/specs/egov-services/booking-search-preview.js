@@ -17,30 +17,29 @@ import {
     setapplicationNumber,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
-import { gotoApplyWithStep } from "../utils/index";
 import {
     getFileUrlFromAPI,
     getQueryArg,
-    getTransformedLocale,
     setBusinessServiceDataToLocalStorage,
 } from "egov-ui-framework/ui-utils/commons";
 import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
-import { searchBill } from "../utils/index";
-import  generatePdf from "../utils/receiptPdf";
-
-// import { footer } from "./applyResource/employeeSellMeatFooter";
-import { adhocPopup1, adhocPopup2 } from "./payResource/adhocPopup";
-import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
-import { openSpaceApplicationSummary } from "./searchResource/openspaceapplicationSummary";
+import { openSpacePaymentGatewaySelectionPopup } from "./payResource/adhocPopup";
+import {
+    generateOpenSpaceBill,
+} from "../utils";
+import { openSpaceSummary } from "./searchResource/openSpaceSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/documentsSummary";
 import { taskStatusSummary } from "./searchResource/taskStatusSummary";
-import { footer } from "./searchResource/citizenFooter";
-import { showHideAdhocPopup } from "../utils";
-import { footerReview, downloadPrintContainer,footerReviewTop  } from "./searchResource/footer";
+import { opmsFooter } from "./searchResource/citizenFooter";
+import {
+    footerReview,
+    downloadPrintContainer,
+    footerReviewTop,
+} from "./searchResource/footer";
 import {
     SellMeatReassign,
     SellMeatReject,
@@ -48,148 +47,16 @@ import {
     SellMeatApprove,
 } from "./payResource/adhocPopup";
 import {
-    getAccessToken,
-    getOPMSTenantId,
     getLocale,
     getUserInfo,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
-    getSearchResultsView,
-    getSearchResultsForNocCretificate,
-    getSearchResultsForNocCretificateDownload,
-} from "../../../../ui-utils/commons";
-import {
-    preparepopupDocumentsSellMeatUploadData,
-    prepareDocumentsUploadData,
+    getSearchResultsView
 } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
-
-const undertakingButton1 = getCommonContainer({
-    resendButton: {
-        componentPath: "Button",
-        props: {
-            variant: "contained",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "45px",
-                borderRadius: "inherit",
-                align: "right",
-            },
-        },
-        children: {
-            submitButtonLabel: getLabel({
-                labelName: "Resend",
-                labelKey: "PM_COMMON_BUTTON_RESEND",
-            }),
-            submitButtonIcon: {
-                uiFramework: "custom-atoms",
-                componentPath: "Icon",
-                props: {
-                    iconName: "keyboard_arrow_right",
-                },
-            },
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: (state, dispatch) => {
-                gotoApplyWithStep(state, dispatch, 0);
-            },
-        },
-        visible: bookingStatus === "REASSIGN" ? true : false,
-    },
-});
-
-// const undertakingButton = getCommonContainer({
-//   addPenaltyRebateButton: {
-//     componentPath: "Button",
-//     props: {
-//       variant: "contained",
-//       color: "primary",
-//       style: {
-//         minWidth: "200px",
-//         height: "48px",
-//         marginRight: "40px",
-//       },
-//     },
-//     children: {
-//       previousButtonLabel: getLabel({
-//         labelName: "Undertaking",
-//         labelKey: "NOC_UNDERTAKING",
-//       }),
-//     },
-//     onClickDefination: {
-//       action: "condition",
-//       callBack: (state, dispatch) =>
-//         showHideAdhocPopup(state, dispatch, "booking-search-preview"),
-//     },
-//   },
-// });
-
-const getMdmsData = async (action, state, dispatch) => {
-    let tenantId = getOPMSTenantId();
-    let mdmsBody = {
-        MdmsCriteria: {
-            tenantId: tenantId,
-            moduleDetails: [
-                {
-                    moduleName: "tenant",
-                    masterDetails: [
-                        {
-                            name: "tenants",
-                        },
-                    ],
-                },
-                {
-                    moduleName: "Booking",
-                    masterDetails: [
-                        {
-                            name: "Sector",
-                        },
-                        {
-                            name: "CityType",
-                        },
-                        {
-                            name: "PropertyType",
-                        },
-                        {
-                            name: "Area",
-                        },
-                        {
-                            name: "Duration",
-                        },
-                        {
-                            name: "Category",
-                        },
-                        {
-                            name: "Documents",
-                        },
-                    ],
-                },
-                // { moduleName: "SellMeatNOC", masterDetails: [{ name: "SellMeatNOCRemarksDocuments" }] }
-            ],
-        },
-    };
-    try {
-        let payload = null;
-        // alert('in payload')
-        payload = await httpRequest(
-            "post",
-            "/egov-mdms-service/v1/_search",
-            "_search",
-            [],
-            mdmsBody
-        );
-
-        dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
-    } catch (e) {
-        console.log(e);
-    }
-};
 
 const titlebar = getCommonContainer({
     header: getCommonHeader({
@@ -203,20 +70,7 @@ const titlebar = getCommonContainer({
         props: {
             number: getapplicationNumber(), //localStorage.getItem('applicationsellmeatNumber')
         },
-    },
-    // downloadMenu: {
-    //   uiFramework: "custom-atoms",
-    //   componentPath: "MenuButton",
-    //   props: {
-    //     data: {
-    //       label: "Download",
-    //       leftIcon: "cloud_download",
-    //       rightIcon: "arrow_drop_down",
-    //       props: { variant: "outlined", style: { marginLeft: 10 } },
-    //       menu: [],
-    //     },
-    //   },
-    // },
+    }
 });
 
 const prepareDocumentsView = async (state, dispatch) => {
@@ -268,79 +122,20 @@ const prepareDocumentsView = async (state, dispatch) => {
     }
 };
 
-const setDownloadMenu = (state, dispatch) => {
-    /** MenuButton data based on status */
-    let downloadMenu = [];
-
-    //Object creation for NOC's
-    let certificateDownloadObjectPET = {
-        label: {
-            labelName: "NOC Certificate PET",
-            labelKey: "NOC_CERTIFICATE_PET",
-        },
-        link: () => {
-            window.location.href = httpLinkPET;
-            generatePdf(state, dispatch, "certificate_download");
-        },
-        leftIcon: "book",
-    };
-
-    downloadMenu = [certificateDownloadObjectPET];
-
-    dispatch(
-        handleField(
-            "booking-search-preview",
-            "components.div.children.headerDiv.children.header.children.downloadMenu",
-            "props.data.menu",
-            downloadMenu
-        )
-    );
-    /** END */
-};
-
-const HideshowEdit = (action, bookingStatus) => {
-    // Hide edit buttons
-    let showEdit = false;
-    if (bookingStatus === "REASSIGN") {
-        showEdit = true;
-    }
-    set(
-        action,
-        "screenConfig.components.div.children.body.children.cardContent.children.openSpaceApplicationSummary.children.cardContent.children.header.children.editSection.visible",
-        role_name === "CITIZEN" ? (showEdit === true ? true : false) : false
-    );
-    set(
-        action,
-        "screenConfig.components.div.children.body.children.cardContent.children.documentsSummary.children.cardContent.children.header.children.editSection.visible",
-        role_name === "CITIZEN" ? (showEdit === true ? true : false) : false
-    );
-
-    set(
-        action,
-        "screenConfig.components.div.children.body.children.cardContent.children.taskStatusSummary.children.cardContent.children.header.children.editSection.visible",
-        false
-    );
-
-    set(
-        action,
-        "screenConfig.components.adhocDialog.children.popup",
-        getRequiredDocuments()
-    );
-};
 const HideshowFooter = (action, bookingStatus) => {
     // Hide edit Footer
     let showFooter = false;
     if (bookingStatus === "PENDINGPAYMENT") {
         showFooter = true;
     }
+    // set(
+    //     action,
+    //     "screenConfig.components.div.children.footer.children.cancelButton.visible",
+    //     role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+    // );
     set(
         action,
-        "screenConfig.components.div.children.footer.children.cancelButton.visible",
-        role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-    );
-    set(
-        action,
-        "screenConfig.components.div.children.footer.children.submitButton.visible",
+        "screenConfig.components.div.children.opmsFooter.children.submitButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
 };
@@ -364,6 +159,9 @@ const setSearchResponse = async (
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
 
+    await generateOpenSpaceBill(state, dispatch, applicationNumber, tenantId);
+    
+
     bookingStatus = get(
         state,
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
@@ -374,7 +172,6 @@ const setSearchResponse = async (
 
     prepareDocumentsView(state, dispatch);
 
-
     const printCont = downloadPrintContainer(
         action,
         state,
@@ -382,7 +179,7 @@ const setSearchResponse = async (
         bookingStatus,
         applicationNumber,
         tenantId
-      );
+    );
 
     const CitizenprintCont = footerReviewTop(
         action,
@@ -390,148 +187,73 @@ const setSearchResponse = async (
         dispatch,
         bookingStatus,
         applicationNumber,
-        tenantId,
-      );
+        tenantId
+    );
 
-      process.env.REACT_APP_NAME === "Citizen"
-      ? set(
-          action,
-          "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-          CitizenprintCont
-        )
-      : set(
-          action,
-          "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-          printCont
-        );
-    if (role_name == "CITIZEN") {
-        //   console.log("in Citizen");
-
-        //   // setSearchResponseForNocCretificate(state,  dispatch, applicationNumber, tenantId);
-        setDownloadMenu(state, dispatch);
-    }
+    process.env.REACT_APP_NAME === "Citizen"
+        ? set(
+              action,
+              "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+              CitizenprintCont
+          )
+        : set(
+              action,
+              "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+              printCont
+          );
 };
 
-let httpLinkPET;
-let httpLinkSELLMEAT = "";
 
-const setSearchResponseForNocCretificate = async (
-    state,
-    dispatch,
-    applicationNumber,
-    tenantId
-) => {
-    let downloadMenu = [];
-    //bookingStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.applicationstatus", {});
-    let nocRemarks = get(
-        state,
-        "screenConfiguration.preparedFinalObject.Booking.bookingsRemarks",
+// const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
+//     await generateOpenSpaceBill(state, dispatch, applicationNumber, tenantId);
+//     // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
+
+//     // console.log("payloadnewpay");
+
+//     //Collection Type Added in CS v1.1
+//     // payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
+
+//     // if (get(payload, "totalAmount") != undefined) {
+//     //   //set amount paid as total amount from bill - destination changed in CS v1.1
+//     //   dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
+//     //   //set total amount in instrument
+//     //   dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
+//     // }
+
+//     // //Initially select instrument type as Cash
+//     // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
+
+//     // //set tenantId
+//     // dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
+
+//     // //set tenantId in instrument
+//     // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
+// };
+const getPaymentGatwayList = async (action, state, dispatch) => {
+    try {
+      let payload = null;
+      payload = await httpRequest(
+        "post",
+        "/pg-service/gateway/v1/_search",
+        "_search",
+        [],
         {}
-    );
-    console.log(nocRemarks, "nocRemarks");
-
-    let bookingStatus = "";
-
-    var resApproved = nocRemarks.filter(function (item) {
-        return item.bkApplicationStatus == "APPROVED";
-    });
-
-    if (resApproved.length != 0) bookingStatus = "APPROVED";
-
-    if (bookingStatus == "APPROVED") {
-        let getCertificateDataForSELLMEAT = {
-            applicationType: "SELLMEATNOC",
-            tenantId: tenantId,
-            applicationId: applicationNumber,
-            dataPayload: { requestDocumentType: "certificateData" },
-        };
-
-        //SELLMEAT
-        const response0SELLMEAT = await getSearchResultsForNocCretificate([
-            { key: "tenantId", value: tenantId },
-            { key: "applicationNumber", value: applicationNumber },
-            { key: "getCertificateData", value: getCertificateDataForSELLMEAT },
-            {
-                key: "requestUrl",
-                value: "/pm-services/noc/_getCertificateData",
-            },
-        ]);
-
-        if (get(response0SELLMEAT, "ResposneInfo.status", "") == "") {
-            let errorMessage = {
-                labelName: "No Certificate Information Found",
-                labelKey: "", //UPLOAD_FILE_TOAST
-            };
-            dispatch(toggleSnackbar(true, errorMessage, "error"));
-        } else {
-            let getFileStoreIdForSELLMEAT = {
-                Booking: [get(response0SELLMEAT, "Booking", "")],
-            };
-
-            const response1SELLMEAT = await getSearchResultsForNocCretificate([
-                { key: "tenantId", value: tenantId },
-                { key: "applicationNumber", value: applicationNumber },
-                {
-                    key: "getCertificateDataFileStoreId",
-                    value: getFileStoreIdForSELLMEAT,
-                },
-                {
-                    key: "requestUrl",
-                    value:
-                        "/pdf-service/v1/_create?key=sellmeat-noc&tenantId=" +
-                        tenantId,
-                },
-            ]);
-
-            const response2SELLMEAT = await getSearchResultsForNocCretificateDownload(
-                [
-                    { key: "tenantId", value: tenantId },
-                    { key: "applicationNumber", value: applicationNumber },
-                    {
-                        key: "filestoreIds",
-                        value: get(response1SELLMEAT, "filestoreIds[0]", ""),
-                    },
-                    {
-                        key: "requestUrl",
-                        value:
-                            "/filestore/v1/files/url?tenantId=" +
-                            tenantId +
-                            "&fileStoreIds=",
-                    },
-                ]
-            );
-            httpLinkSELLMEAT = get(
-                response2SELLMEAT,
-                get(response1SELLMEAT, "filestoreIds[0]", ""),
-                ""
-            );
+      );
+        let payloadprocess = [];
+        for (let index = 0; index < payload.length; index++) {
+          const element = payload[index];
+          let pay = {
+            element : element
+          }
+          payloadprocess.push(pay);
         }
-        //Object creation for NOC's
-        let certificateDownloadObjectSELLMEAT = {
-            label: {
-                labelName: "NOC Certificate SELLMEAT",
-                labelKey: "NOC_CERTIFICATE_SELLMEAT",
-            },
-            link: () => {
-                if (httpLinkSELLMEAT != "")
-                    window.location.href = httpLinkSELLMEAT;
-            },
-            leftIcon: "book",
-        };
-
-        downloadMenu = [certificateDownloadObjectSELLMEAT];
+  
+      dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
+    } catch (e) {
+      console.log(e);
     }
+  };
 
-    dispatch(
-        handleField(
-            "booking-search-preview",
-            "components.div.children.headerDiv.children.header.children.downloadMenu",
-            "props.data.menu",
-            downloadMenu
-        )
-    );
-    //setDownloadMenu(state, dispatch);
-};
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -541,13 +263,13 @@ const screenConfig = {
             window.location.href,
             "applicationNumber"
         );
-        setapplicationNumber(applicationNumber); //localStorage.setItem('ApplicationNumber', applicationNumber); , applicationNumber)
-        //localStorageSet('applicationsellmeatNumber',applicationNumber);
+        setapplicationNumber(applicationNumber);
         const tenantId = getQueryArg(window.location.href, "tenantId");
         dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-        // searchBill(dispatch, applicationNumber, tenantId);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
-
+        // fetchBill(state, dispatch, applicationNumber, tenantId);
+        getPaymentGatwayList(action, state, dispatch).then(response => {
+        });
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "OSBM" },
@@ -579,15 +301,15 @@ const screenConfig = {
                             uiFramework: "custom-atoms",
                             componentPath: "Container",
                             props: {
-                              color: "primary",
-                              style: { justifyContent: "flex-end" }
+                                color: "primary",
+                                style: { justifyContent: "flex-end" },
                             },
                             gridDefination: {
-                              xs: 12,
-                              sm: 4,
-                              align: "right"
-                            }
-                          }
+                                xs: 12,
+                                sm: 4,
+                                align: "right",
+                            },
+                        },
                     },
                 },
                 // taskStatus: {
@@ -600,105 +322,18 @@ const screenConfig = {
                 //     moduleName: "SELLMEATNOC",
                 //   },
                 // },
-
-                // body:
-                //   role_name !== "CITIZEN"
-                //     ? getCommonCard({
-                //         estimateSummary: estimateSummary,
-                //         openSpaceApplicationSummary: openSpaceApplicationSummary,
-                //         documentsSummary: documentsSummary,
-                //       })
-                //     : getCommonCard({
-                //         estimateSummary: estimateSummary,
-                //         openSpaceApplicationSummary: openSpaceApplicationSummary,
-                //         documentsSummary: documentsSummary,
-                //         taskStatusSummary: taskStatusSummary,
-                //         undertakingButton1,
-                //       }),
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    openSpaceApplicationSummary: openSpaceApplicationSummary,
+                    openSpaceSummary: openSpaceSummary,
                     documentsSummary: documentsSummary,
                     taskStatusSummary: taskStatusSummary,
                     // undertakingButton1,
                 }),
                 break: getBreak(),
-
-                // undertakingButton,
-                // citizenFooter:
-                //   process.env.REACT_APP_NAME === "Citizen" ? citizenFooter : {}
-                footer: footer,
-            },
-        },
-
-        adhocDialog: {
-            uiFramework: "custom-containers-local",
-            moduleName: "egov-services",
-            componentPath: "DialogContainer",
-
-            props: {
-                open: false,
-                maxWidth: "sm",
-                screenKey: "booking-search-preview",
-            },
-            children: {
-                popup: {},
-                //popup:adhocPopup1
-            },
-        },
-        adhocDialogForward: {
-            uiFramework: "custom-containers-local",
-            moduleName: "egov-services",
-            componentPath: "ForwardContainer",
-            props: {
-                open: false,
-                maxWidth: "sm",
-                screenKey: "booking-search-preview",
-            },
-            children: {
-                popup: SellMeatForward,
-            },
-        },
-        adhocDialog1: {
-            uiFramework: "custom-containers-local",
-            moduleName: "egov-services",
-            componentPath: "ApproveContainer",
-            props: {
-                open: false,
-                maxWidth: "sm",
-                screenKey: "booking-search-preview",
-            },
-            children: {
-                popup: SellMeatApprove,
-            },
-        },
-        adhocDialog3: {
-            uiFramework: "custom-containers-local",
-            moduleName: "egov-services",
-            componentPath: "RejectContainer",
-            props: {
-                open: false,
-                maxWidth: "sm",
-                screenKey: "booking-search-preview",
-            },
-            children: {
-                popup: SellMeatReject,
-            },
-        },
-        adhocDialog2: {
-            uiFramework: "custom-containers-local",
-            moduleName: "egov-services",
-            componentPath: "ReassignContainer",
-            props: {
-                open: false,
-                maxWidth: "sm",
-                screenKey: "booking-search-preview",
-            },
-            children: {
-                popup: SellMeatReassign,
-            },
-        },
-    },
+                footer: opmsFooter,
+            }
+        }
+    }
 };
 
 export default screenConfig;

@@ -8,6 +8,8 @@ import {
   getLabel,
   dispatchMultipleFieldChangeAction
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { waterTankerSummary } from "../summaryResource/waterTankerSummary";
+import { estimateSummary } from "../summaryResource/estimateSummary";
 import get from "lodash/get";
 
 export const callBackForPrevious = (state, dispatch) => {
@@ -126,107 +128,57 @@ export const getActionDefinationForStepper = path => {
 
 export const summaryDetails = getCommonCard({
   header: {
-    uiFramework: "custom-atoms",
-    componentPath: "Container",
-    props: {
-      style: { marginBottom: "10px" }
-    },
-    children: {
-      header: {
-        gridDefination: {
-          xs: 8
-        },
-        // ...getCommonSubHeader({
-        //   labelName: "Summary",
-        //   labelKey: "BK_WTB_HEADER_STEP_4"
-        // })
+      uiFramework: "custom-atoms",
+      componentPath: "Container",
+      props: {
+          // style: { marginBottom: "10px" },
       },
-      editSection: {
-        componentPath: "Button",
-        props: {
-          color: "primary",
-          style: {
-            marginTop: "-10px",
-            marginRight: "-18px"
-          }
-        },
-        gridDefination: {
-          xs: 4,
-          align: "right"
-        },
-        children: {
-          editIcon: {
-            uiFramework: "custom-atoms",
-            componentPath: "Icon",
-            props: {
-              iconName: "edit"
-            }
+      children: {
+          header: {
+              gridDefination: {
+                  xs: 8,
+              },
+              // ...getCommonSubHeader({
+              //   labelName: "Summary",
+              //   labelKey: "BK_OSB_HEADER_STEP_4"
+              // })
           },
-          buttonLabel: getLabel({
-            labelName: "Edit",
-            labelKey: "NOC_SUMMARY_EDIT"
-          })
-        },
-        onClickDefination: {
-          action: "condition",
-          callBack: callBackForPrevious
-          // callBack: (state, dispatch) => {
-          //   gotoApplyWithStep(state, dispatch, 0);
-          // }
-        }
-      }
-    }
+          editSection: {
+              componentPath: "Button",
+              props: {
+                  color: "primary",
+                  style: {
+                      marginTop: "-10px",
+                      marginRight: "-18px",
+                  },
+              },
+              gridDefination: {
+                  xs: 4,
+                  align: "right",
+              },
+              children: {
+                  editIcon: {
+                      uiFramework: "custom-atoms",
+                      componentPath: "Icon",
+                      props: {
+                          iconName: "edit",
+                      },
+                  },
+                  buttonLabel: getLabel({
+                      labelName: "Edit",
+                      labelKey: "NOC_SUMMARY_EDIT",
+                  }),
+              },
+              onClickDefination: {
+                  action: "condition",
+                  callBack: callBackForPrevious,
+                  // callBack: (state, dispatch) => {
+                  //   gotoApplyWithStep(state, dispatch, 0);
+                  // }
+              },
+          },
+      },
   },
-  break: getBreak(),
-  SummaryDetails: {
-    uiFramework: "custom-containers-local",
-    moduleName: "egov-services",
-    componentPath: "SummaryDetailsContainer",
-    props: {
-      contents: [
-        {
-          label: "BK_WTB_NAME_LABEL",
-          jsonPath: "bkApplicantName",
-        },
-        {
-          label: "BK_WTB_EMAIL_LABEL",
-          jsonPath: "bkEmail",
-        },
-        {
-          label: "BK_WTB_MOBILE_NO_LABEL",
-          jsonPath: "bkMobileNumber",
-        },
-        {
-          label: "BK_WTB_HOUSE_NUMBER_LABEL",
-          jsonPath: "bkHouseNo",
-        },
-        {
-          label: "BK_WTB_COMPLETE_ADDRESS_LABEL",
-          jsonPath: "bkCompleteAddress",
-        },
-        {
-          label: "BK_WTB_PROPERTY_SECTOR_LABEL",
-          jsonPath: "bkSector",
-        },
-        {
-          label: "BK_WTB_PROPERTY_TYPE_LABEL",
-          jsonPath: "bkType",
-        },
-        {
-          label: "BK_WTB_DATE_LABEL",
-          jsonPath: "bkDate",
-        },
-        {
-          label: "BK_WTB_TIME_LABEL",
-          jsonPath: "bkTime",
-        },
-        {
-          label: "BK_WTB_CASE_LABEL",
-          jsonPath: "bkCase",
-        },
-      ],
-      moduleName: "egov-services",
-      homeURL: "/egov-services/applyservices",
-    },
-  }
+  estimateSummary : estimateSummary,
+  waterTankerSummary: waterTankerSummary,
 });

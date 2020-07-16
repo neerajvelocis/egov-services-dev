@@ -6,7 +6,7 @@ import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-fra
 import { textToLocalMapping } from "./searchResults";
 import { validateFields, getTextToLocalMapping } from "../../utils";
 import {
-  getOPMSTenantId,
+  getTenantId,
   getUserInfo,
 } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
@@ -19,22 +19,41 @@ export const fetchData = async (action, state, dispatch) => {
   let newData = {}
   if(data == undefined){
     newData = {
+      applicationNumber:"",
+      mobileNumber:"",
+      fromDate:"",
+      toDate:"",
       applicationStatus : "",
       bookingType : "",
-      tenantId : getOPMSTenantId().split(".")[0],
+      tenantId : getTenantId().split(".")[0],
       uuid : JSON.parse(getUserInfo()).uuid
     }
   } else {
+    if(data.applicationNumber == undefined){
+      data.applicationNumber = ""
+    }
+    if(data.mobileNumber == undefined){
+      data.mobileNumber = ""
+    }
+    if(data.fromDate == undefined){
+      data.fromDate = ""
+    }
+    if(data.toDate == undefined){
+      data.toDate = ""
+    }
+    if(data.applicationStatus == undefined){
+      data.applicationStatus = ""
+    }
+    if(data.bookingType == undefined){
+      data.bookingType = ""
+    }
     newData = {
-      applicationStatus : "",
-      tenantId : getOPMSTenantId().split(".")[0],
+      tenantId : getTenantId().split(".")[0],
       uuid : JSON.parse(getUserInfo()).uuid
     }
     newData = Object.assign(newData, data);
   };
-  console.log(newData, "newData");
   const response = await getSearchResults(newData);
-  console.log(response, "response");
   
   try {
 

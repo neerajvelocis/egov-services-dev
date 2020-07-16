@@ -24,7 +24,7 @@ import {
   handleScreenConfigurationFieldChange as handleField,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
-  getOPMSTenantId,
+  getTenantId,
   setapplicationType,
   lSRemoveItem,
   lSRemoveItemlocal,
@@ -142,7 +142,7 @@ export const formwizardFourthStep = {
 };
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId().split(".")[0];
+  let tenantId = getTenantId().split(".")[0];
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -175,6 +175,12 @@ const getMdmsData = async (action, state, dispatch) => {
             },
             {
               name: "Category",
+            },
+            {
+              name : "VillageCity"
+            },
+            {
+              name : "Type_of_Construction"
             },
             {
               name: "Documents",
@@ -292,27 +298,29 @@ const screenConfig = {
     setapplicationType("Booking");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
-    // dispatch(
-    //   prepareFinalObject(
-    //     "Booking.bkApplicantName",
-    //     JSON.parse(getUserInfo()).name
-    //   )
-    // ),
-    //   dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-    // dispatch(
-    //   prepareFinalObject(
-    //     "Booking.bkMobileNumber",
-    //     JSON.parse(getUserInfo()).mobileNumber
-    //   )
-    // );
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkApplicantName",
+        JSON.parse(getUserInfo()).name
+      )
+    ),
+      dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkMobileNumber",
+        JSON.parse(getUserInfo()).mobileNumber
+      )
+    );
 
-    // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
-    // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
-    // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
-    // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
-    // dispatch(prepareFinalObject("Booking.bkAreaRequired", "more_than_1000"));
-    // dispatch(prepareFinalObject("Booking.bkDuration", "2_months"));
-    // dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
+    dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
+    dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
+    dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
+    dispatch(prepareFinalObject("Booking.bkType", "Residential"));
+    dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
+    dispatch(prepareFinalObject("Booking.bkDuration", "2"));
+    dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
+    dispatch(prepareFinalObject("Booking.bkVillCity", "City"));
+    dispatch(prepareFinalObject("Booking.bkConstructionType", "New"));
     //Set Module Name
     set(state, "screenConfiguration.moduleName", "services");
 

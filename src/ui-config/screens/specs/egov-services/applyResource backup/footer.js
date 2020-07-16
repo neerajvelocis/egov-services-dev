@@ -13,14 +13,14 @@ import {
   createUpdateNocApplication,
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
-import { localStorageGet, localStorageSet, getOPMSTenantId, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { localStorageGet, localStorageSet, getTenantId, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const setReviewPageRoute = (state, dispatch, applnid) => {
   const applicationNumber = getapplicationNumber(); //get(state, "screenConfiguration.preparedFinalObject.PETNOC.applicationId");
   
   if (applicationNumber) {
-    let tenantId = getOPMSTenantId();
+    let tenantId = getTenantId();
     const appendUrl =
       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
     const reviewUrl = `${appendUrl}/egov-services/petnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
@@ -31,7 +31,7 @@ const setReviewPageRoute = (state, dispatch, applnid) => {
     // process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
     // const reviewUrl = `${appendUrl}/egov-services/summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
     // dispatch(setRoute(reviewUrl));
-    let tenantId = getOPMSTenantId();
+    let tenantId = getTenantId();
     const appendUrl =
       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
     const reviewUrl = `${appendUrl}/egov-services/petnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;

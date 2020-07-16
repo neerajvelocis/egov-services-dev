@@ -1,6 +1,6 @@
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { validate } from "egov-ui-framework/ui-redux/screen-configuration/utils";
-import { getUserInfo, getOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { getUserInfo, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import {
   getQueryArg,
@@ -682,7 +682,7 @@ export const resetFields = (state, dispatch) => {
 
 export const getRequiredDocData = async (action, state, dispatch) => {
   let tenantId =
-    process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getOPMSTenantId();
+    process.env.REACT_APP_NAME === "Citizen" ? JSON.parse(getUserInfo()).permanentCity : getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

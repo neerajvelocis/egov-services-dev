@@ -30,7 +30,7 @@ import set from "lodash/set";
 import { adhocPopup1 ,adhocPopup2} from "../payResource/adhocPopup";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";

@@ -18,7 +18,7 @@ import {
   import "./index.css";
   import {
     getAccessToken,
-    getOPMSTenantId,
+    getTenantId,
     getLocale,
     getUserInfo,
     localStorageGet
@@ -28,7 +28,7 @@ import {
   let role_name=JSON.parse(getUserInfo()).roles[0].code
 
   const callbackforsummaryactionpay = async (dispatch) => {
-    let tenantId = getOPMSTenantId();
+    let tenantId = getTenantId();
     //alert("enter here")
      const applicationid = getQueryArg(window.location.href, "applicationNumber");
       const appendUrl =

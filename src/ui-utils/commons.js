@@ -13,7 +13,7 @@ import {
 import {
     getapplicationNumber,
     getapplicationType,
-    getOPMSTenantId,
+    getTenantId,
     getUserInfo,
     setapplicationNumber,
     lSRemoveItemlocal,
@@ -95,6 +95,19 @@ export const getSearchResults = async (queryObject) => {
         );
     }
 };
+
+export const getPaymentGateways = async () => {
+    try {
+      const payload = await httpRequest(
+        "post",
+        "/pg-service/gateway/v1/_search",
+        ""
+      );
+      return payload
+    } catch (error) {
+      store.dispatch(toggleSnackbar(true, {labelName: error.message, labelKey: error.message}, "error"))
+    }
+  }
 
 //view
 export const getSearchResultsView = async (queryObject) => {
@@ -766,9 +779,9 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
-export const createUpdateOsbApplication = async (state, dispatch, status) => {
+export const createUpdateOsbApplication = async (state, dispatch) => {
     let response = "";
-    let tenantId = getOPMSTenantId().split(".")[0];
+    let tenantId = getTenantId().split(".")[0];
 
     try {
         let payload = get(
@@ -894,7 +907,7 @@ export const setDocsForEditFlow = async (state, dispatch) => {
 //   let queryObject = [
 //     {
 //       key: "tenantId",
-//       value: tenantId ? tenantId : getOPMSTenantId()
+//       value: tenantId ? tenantId : getTenantId()
 //     },
 //     { key: "applicationNumber", value: queryValue }
 //   ];
@@ -1121,7 +1134,7 @@ export const getBoundaryData = async (
 //       "tradeLicenseDetail.address.tenantId",
 //       ""
 //     );
-//     const tenantId = ifUserRoleExists("CITIZEN") ? cityId : getOPMSTenantId();
+//     const tenantId = ifUserRoleExists("CITIZEN") ? cityId : getTenantId();
 //     const BSqueryObject = [
 //       { key: "tenantId", value: tenantId },
 //       { key: "businessService", value: "newTL" }
@@ -1623,7 +1636,7 @@ export const getOPMSCards = async () => {
     try {
         const payload = await httpRequest(
             "post",
-            "/egov-mdms-service/v1/_get?moduleName=egpm&masterName=ApplicationType&tenantId="`${getOPMSTenantId()}`,
+            "/egov-mdms-service/v1/_get?moduleName=egpm&masterName=ApplicationType&tenantId="`${getTenantId()}`,
             "",
             queryObject,
             requestBody
@@ -1637,7 +1650,7 @@ export const getOPMSCards = async () => {
 export const getCitizenGridData = async () => {
     let queryObject = [];
     var requestBody = {
-        tenantId: `${getOPMSTenantId()}`,
+        tenantId: `${getTenantId()}`,
         applicationType: "PETNOC",
 
         dataPayload: {
@@ -1716,7 +1729,7 @@ export const getSearchResultsForNocCretificateDownload = async (
 export const getGridDataAdvertisement1 = async () => {
     let queryObject = [];
     var requestBody = {
-        tenantId: `${getOPMSTenantId()}`,
+        tenantId: `${getTenantId()}`,
         applicationType: "ADVERTISEMENTNOC",
 
         dataPayload: {
@@ -1746,7 +1759,7 @@ export const getGridDataAdvertisement1 = async () => {
 export const getGridDataRoadcut1 = async () => {
     let queryObject = [];
     var requestBody = {
-        tenantId: `${getOPMSTenantId()}`,
+        tenantId: `${getTenantId()}`,
         applicationType: "ROADCUTNOC",
 
         dataPayload: {
@@ -1776,7 +1789,7 @@ export const getGridDataRoadcut1 = async () => {
 export const getGridDataSellMeat1 = async () => {
     let queryObject = [];
     var requestBody = {
-        tenantId: `${getOPMSTenantId()}`,
+        tenantId: `${getTenantId()}`,
         applicationType: "SELLMEATNOC",
 
         dataPayload: {
@@ -1855,9 +1868,9 @@ export const UpdateMasterPrice = async (state, dispatch, queryObject, code) => {
     }
 };
 
-export const createUpdateWtbApplication = async (state, dispatch, status) => {
+export const createUpdateWtbApplication = async (state, dispatch, bookingAction) => {
     let response = "";
-    let tenantId = getOPMSTenantId().split(".")[0];
+    let tenantId = getTenantId().split(".")[0];
 
     try {
         let payload = get(
@@ -1865,19 +1878,15 @@ export const createUpdateWtbApplication = async (state, dispatch, status) => {
             "Booking",
             []
         );
-
-        console.log("payload : ", payload);
-
         set(payload, "bkBookingType", "WATER_TANKERS");
         set(payload, "tenantId", tenantId);
-        set(payload, "bkAction", "FAILUREAPPLY");
+        set(payload, "bkAction", bookingAction);
         set(payload, "businessService", "BWT");
         setapplicationMode(status);
 
         response = await httpRequest("post", "/bookings/api/_create", "", [], {
             Booking: payload,
         });
-        console.log("pet response : ", response);
         if (
             response.applicationId !== "null" ||
             response.applicationId !== ""
@@ -1895,7 +1904,7 @@ export const createUpdateWtbApplication = async (state, dispatch, status) => {
         // Revert the changed pfo in case of request failure
         let BookingData = get(
             state,
-            "screenConfiguration.preparedFinalObject.SELLMEATNOC",
+            "screenConfiguration.preparedFinalObject.Booking",
             []
         );
         dispatch(prepareFinalObject("Booking", BookingData));
@@ -2104,7 +2113,7 @@ export const createUpdateADVNocApplication = async (
                     ? await searchBill(
                           dispatch,
                           response.applicationId,
-                          getOPMSTenantId()
+                          getTenantId()
                       )
                     : "";
 
@@ -2161,7 +2170,7 @@ export const createUpdateADVNocApplication = async (
 export const getUpdatePriceBook1 = async (pricebookid) => {
     let queryObject = [];
     var requestBody = {
-        tenantId: getOPMSTenantId(),
+        tenantId: getTenantId(),
         applicationType: "ADVERTISEMENTNOC",
         applicationStatus: "UPDATE",
         dataPayload: {
@@ -2185,7 +2194,7 @@ export const getCategory1 = async () => {
     let queryObject = [];
     var requestBody = {
         MdmsCriteria: {
-            tenantId: getOPMSTenantId(),
+            tenantId: getTenantId(),
             moduleDetails: [
                 {
                     moduleName: "egpm",
@@ -2212,7 +2221,7 @@ export const getSubCategory1 = async () => {
     let queryObject = [];
     var requestBody = {
         MdmsCriteria: {
-            tenantId: getOPMSTenantId(),
+            tenantId: getTenantId(),
             moduleDetails: [
                 {
                     moduleName: "egpm",
@@ -2238,7 +2247,7 @@ export const getSubCategory1 = async () => {
 export const getMasterGridData1 = async () => {
     let queryObject = [];
     var requestBody = {
-        tenantId: getOPMSTenantId(),
+        tenantId: getTenantId(),
         applicationType: "ADVERTISEMENTNOC",
         applicationStatus: "UPDATE",
         dataPayload: {
@@ -2331,7 +2340,7 @@ export const getSectordata1 = async () => {
     var requestBody = {
         applicationType: "PETNOC",
         applicationStatus: "Create",
-        tenantId: getOPMSTenantId(),
+        tenantId: getTenantId(),
         auditDetails: {
             createdBy: 1,
             lastModifiedBy: 1,
@@ -2339,7 +2348,7 @@ export const getSectordata1 = async () => {
             lastModifiedTime: 1578894136873,
         },
         MdmsCriteria: {
-            tenantId: getOPMSTenantId(),
+            tenantId: getTenantId(),
             moduleDetails: [
                 {
                     moduleName: "egpm",
@@ -2368,7 +2377,7 @@ export const getSectordata1 = async () => {
 
 export const getrepotforproccessingTime1 = async () => {
     let data = {
-        tenantId: getOPMSTenantId(),
+        tenantId: getTenantId(),
         reportName: "ApplicationProcessingTimeReport",
     };
     try {
@@ -2417,7 +2426,7 @@ export const getMonth1 = async () => {
     let queryObject = [];
     var requestBody = {
         MdmsCriteria: {
-            tenantId: getOPMSTenantId(),
+            tenantId: getTenantId(),
             moduleDetails: [
                 {
                     moduleName: "egpm",
@@ -2448,7 +2457,7 @@ export const getYear1 = async () => {
     let queryObject = [];
     var requestBody = {
         MdmsCriteria: {
-            tenantId: getOPMSTenantId(),
+            tenantId: getTenantId(),
             moduleDetails: [
                 {
                     moduleName: "egpm",

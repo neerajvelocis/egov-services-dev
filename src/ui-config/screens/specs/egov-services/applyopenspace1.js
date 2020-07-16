@@ -13,7 +13,7 @@ import {
   prepareFinalObject,
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, getUserInfo, setapplicationType, IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, getUserInfo, setapplicationType, IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import jp from "jsonpath";
 import set from "lodash/set";
@@ -113,7 +113,7 @@ export const formwizardThirdStep = {
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

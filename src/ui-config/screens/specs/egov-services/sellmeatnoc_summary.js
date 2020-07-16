@@ -24,7 +24,7 @@ import {
 } from "./summaryResource/sellmeatapplicantSummary";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo,
   localStorageGet

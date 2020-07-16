@@ -7,14 +7,14 @@ import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
 import { footer } from "./applyResourceWaterTanker/footer";
 import { personalDetails, bookingDetails } from "./applyResourceWaterTanker/nocDetails";
 import { summaryDetails } from "./applyResourceWaterTanker/summaryDetails";
-
+import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import { getFileUrlFromAPI, getQueryArg, getTransformedLocale, setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 
 import {
   prepareFinalObject,
   handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, getUserInfo, setapplicationType, IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, getUserInfo, setapplicationType, IsRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import jp from "jsonpath";
 import set from "lodash/set";
@@ -114,7 +114,7 @@ export const formwizardThirdStep = {
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId().split(".")[0];
+  let tenantId = getTenantId().split(".")[0];
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -306,7 +306,20 @@ const screenConfig = {
 
         footer
       }
-    }
+    },
+    adhocDialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-services",
+      componentPath: "DialogContainer",
+      props: {
+          open: false,
+          maxWidth: "sm",
+          screenKey: "applywatertanker",
+      },
+      children: {
+          popup: paymentGatewaySelectionPopup,
+      },
+  },
   }
 };
 

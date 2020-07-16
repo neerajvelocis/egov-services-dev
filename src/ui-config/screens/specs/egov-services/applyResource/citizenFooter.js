@@ -6,7 +6,7 @@ import "./index.css";
 import generateReceipt from "../../utils/receiptPdf";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { getOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 
 export const generatePdfFromDiv = (action, applicationNumber) => {
     let target = document.querySelector("#custom-atoms-div");
@@ -57,7 +57,7 @@ export const callBackForNext = (state, dispatch) => {
     dispatch(
         setRoute(
             `/egov-services/pay?applicationNumber=${applicationNumber}&tenantId=${
-                getOPMSTenantId().split(".")[0]
+                getTenantId().split(".")[0]
             }`
         )
     );

@@ -40,7 +40,7 @@ import { showHideAdhocPopup } from "../utils";
 import { SellMeatReassign, SellMeatReject, SellMeatForward, SellMeatApprove } from "./payResource/adhocPopup";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
@@ -117,7 +117,7 @@ const undertakingButton = getCommonContainer({
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

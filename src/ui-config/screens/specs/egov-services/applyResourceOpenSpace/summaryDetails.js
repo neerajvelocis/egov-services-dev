@@ -9,8 +9,9 @@ import {
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { openSpaceApplicationSummary } from "../summaryResource/openspaceapplicationSummary";
+import { openSpaceSummary } from "../summaryResource/openSpaceSummary";
 import { documentsSummary } from "../summaryResource/documentsSummary";
+import { estimateSummary } from "../summaryResource/estimateSummary";
 
 export const callBackForPrevious = (state, dispatch) => {
     changeStep(state, dispatch, "previous");
@@ -194,102 +195,7 @@ export const summaryDetails = getCommonCard({
             },
         },
     },
-    openSpaceApplicationSummary: openSpaceApplicationSummary,
+    estimateSummary: estimateSummary,
+    openSpaceSummary: openSpaceSummary,
     documentsSummary: documentsSummary,
-    // SummaryDetails: {
-    //   uiFramework: "custom-containers-local",
-    //   moduleName: "egov-services",
-    //   componentPath: "SummaryDetailsContainer",
-    //   props: {
-    //     contents: [
-    //       {
-    //         label: "BK_OSB_NAME_LABEL",
-    //         jsonPath: "bkApplicantName",
-    //       },
-    //       {
-    //         label: "BK_OSB_EMAIL_LABEL",
-    //         jsonPath: "bkEmail",
-    //       },
-    //       {
-    //         label: "BK_OSB_MOBILE_NO_LABEL",
-    //         jsonPath: "bkMobileNumber",
-    //       },
-    //       {
-    //         label: "BK_OSB_HOUSE_NUMBER_LABEL",
-    //         jsonPath: "bkHouseNo",
-    //       },
-    //       {
-    //         label: "BK_OSB_COMPLETE_ADDRESS_LABEL",
-    //         jsonPath: "bkCompleteAddress",
-    //       },
-    //       {
-    //         label: "BK_OSB_PROPERTY_SECTOR_LABEL",
-    //         jsonPath: "bkSector",
-    //       },
-    //       {
-    //         label: "BK_OSB_PROPERTY_TYPE_LABEL",
-    //         jsonPath: "bkType",
-    //       },
-    //       {
-    //         label: "BK_OSB_STORAGE_AREA_LABEL",
-    //         jsonPath: "bkAreaRequired",
-    //       },
-    //       {
-    //         label: "BK_OSB_DURATION_LABEL",
-    //         jsonPath: "bkDuration",
-    //       },
-    //       {
-    //         label: "BK_OSB_CATEGORY_LABEL",
-    //         jsonPath: "bkCategory",
-    //       },
-    //       {
-    //         label: "BK_OSB_DOCUMENT_LABEL",
-    //         jsonPath: "wfDocuments",
-    //       },
-    //     ],
-    //     moduleName: "egov-services",
-    //     homeURL: "/egov-services/applyservices",
-    //   },
-    // },
-    // documentsDetails : {
-    //   uiFramework: "custom-containers-local",
-    //     moduleName: "egov-services",
-    //     componentPath: "DownloadFileContainer",
-    //     props: {
-    //       sourceJsonPath: "documentsPreview",
-    //       className: "noc-review-documents"
-    //     }
-    // }
-    // components: {
-    //   div: {
-    //     uiFramework: "custom-atoms",
-    //     componentPath: "Div",
-    //     props: {
-    //       className: "common-div-css"
-    //     },
-    //     children: {
-    //       // headerDiv: {
-    //       //   uiFramework: "custom-atoms",
-    //       //   componentPath: "Container",
-    //       //   children: {
-    //       //     header: {
-    //       //       gridDefination: {
-    //       //         xs: 12,
-    //       //         sm: 10
-    //       //       },
-
-    //       //       ...titlebar
-
-    //       //     }
-    //       //   }
-    //       // },
-    //       body: getCommonCard({
-    //         applicantSummary: applicantSummary,
-    //         // nocSummary: nocSummary,
-    //         documentsSummary: documentsSummary
-    //       }),
-    //     }
-    //   },
-
-    // }
 });

@@ -20,7 +20,7 @@ import {
   import { UpdateMasterPrice } from "../../../../../ui-utils/commons";
   import {
     getAccessToken,
-    getOPMSTenantId,
+    getTenantId,
     getLocale,
     getUserInfo
   } from "egov-ui-kit/utils/localStorageUtils";
@@ -46,7 +46,7 @@ import {
       date=date[2]+'-'+date[1]+'-'+date[0]
       //alert(date)
      let data= { 
-        "tenantId":getOPMSTenantId(),
+        "tenantId":getTenantId(),
         "applicationType":"ADVERTISEMENTNOC",
         "applicationStatus":"UPDATE",
         "dataPayload": {

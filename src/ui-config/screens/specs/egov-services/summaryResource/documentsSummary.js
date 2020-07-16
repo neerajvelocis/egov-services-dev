@@ -23,7 +23,7 @@ export const documentsSummary = getCommonGrayCard({
         },
         ...getCommonSubHeader({
           labelName: "Documents",
-          labelKey: "MY_BK_DOCUMENTS_DETAILS_HEADER"
+          labelKey: "BK_OSB_DOCUMENTS_DETAILS_HEADER"
         }),
       },
     }

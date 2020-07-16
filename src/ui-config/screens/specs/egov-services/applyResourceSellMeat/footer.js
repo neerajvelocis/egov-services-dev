@@ -15,7 +15,7 @@ import {
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 import { UpdateStatus } from "../../../../../ui-utils/commons";
 import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
@@ -25,14 +25,14 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 //   const applicationNumber = get(state, "screenConfiguration.preparedFinalObject.SELLMEATNOC.applicationId");
 
 //   if (applicationNumber) {
-//     tenantId = getOPMSTenantId();
+//     tenantId = getTenantId();
 //     const appendUrl =
 //       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
 //     const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
 //     dispatch(setRoute(reviewUrl));
 //   }
 //   else {
-//     tenantId = getOPMSTenantId();
+//     tenantId = getTenantId();
 //     const appendUrl =
 //       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
 //     const reviewUrl = `${appendUrl}/egov-services/sellmeatnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
@@ -98,7 +98,7 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 // };
 
 const getMdmsData = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   /** get(
     state.screenConfiguration.preparedFinalObject,
     "SELLMEATNOC.tenantId"

@@ -10,7 +10,7 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
-export const openSpaceApplicationSummary = getCommonGrayCard({
+export const openSpaceSummary = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",
         componentPath: "Container",
@@ -24,7 +24,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                 },
                 ...getCommonSubHeader({
                     labelName: "Applicant Details",
-                    labelKey: "MY_BK_APPLICATION_DETAILS_HEADER",
+                    labelKey: "BK_OSB_APPLICATION_DETAILS_HEADER",
                 }),
             },
             // editSection: {
@@ -69,28 +69,10 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
             className: "sellmeatapplicant-summary",
             scheama: getCommonGrayCard({
                 applicantContainer: getCommonContainer({
-                    applicationNumber: getLabelWithValue(
-                        {
-                            labelName: "Application ID",
-                            labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicationNumber",
-                        }
-                    ),
-                    applicationStatus: getLabelWithValue(
-                        {
-                            labelName: "Application Status",
-                            labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicationStatus",
-                        }
-                    ),
                     applicantName: getLabelWithValue(
                         {
                             labelName: "Name",
-                            labelKey: "MY_BK_NAME_LABEL",
+                            labelKey: "BK_OSB_NAME_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkApplicantName",
@@ -99,7 +81,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     applicantEmail: getLabelWithValue(
                         {
                             labelName: "Email Address",
-                            labelKey: "MY_BK_EMAIL_LABEL",
+                            labelKey: "BK_OSB_EMAIL_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkEmail",
@@ -108,7 +90,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     applicantMobile: getLabelWithValue(
                         {
                             labelName: "Mobile Number",
-                            labelKey: "MY_BK_MOBILE_NUMBER_LABEL",
+                            labelKey: "BK_OSB_MOBILE_NO_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkMobileNumber",
@@ -117,7 +99,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     HouseNo: getLabelWithValue(
                         {
                             labelName: "House No.",
-                            labelKey: "MY_BK_HOUSE_NO_LABEL",
+                            labelKey: "BK_OSB_HOUSE_NUMBER_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkHouseNo",
@@ -126,7 +108,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     CompleteAddress: getLabelWithValue(
                         {
                             labelName: "House No.",
-                            labelKey: "MY_BK_COMPLETE_ADDRESS_LABEL",
+                            labelKey: "BK_OSB_COMPLETE_ADDRESS_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkCompleteAddress",
@@ -135,7 +117,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     Sector: getLabelWithValue(
                         {
                             labelName: "Sector",
-                            labelKey: "MY_BK_PROPERTY_SECTOR_LABEL",
+                            labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkSector",
@@ -144,7 +126,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     PropertyType: getLabelWithValue(
                         {
                             labelName: "Residential/Commercial",
-                            labelKey: "MY_BK_PROPERTY_TYPE_LABEL",
+                            labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkType",
@@ -153,7 +135,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     StorageArea: getLabelWithValue(
                         {
                             labelName: "Storage Area",
-                            labelKey: "MY_BK_STORAGE_AREA_LABEL",
+                            labelKey: "BK_OSB_STORAGE_AREA_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkAreaRequired",
@@ -162,7 +144,7 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     DurationLabel: getLabelWithValue(
                         {
                             labelName: "Duration",
-                            labelKey: "MY_BK_DURATION_LABEL",
+                            labelKey: "BK_OSB_DURATION_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkDuration",
@@ -171,10 +153,28 @@ export const openSpaceApplicationSummary = getCommonGrayCard({
                     Category: getLabelWithValue(
                         {
                             labelName: "Category",
-                            labelKey: "MY_BK_CATEGORY_LABEL",
+                            labelKey: "BK_OSB_CATEGORY_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkCategory",
+                        }
+                    ),
+                    VillageCity: getLabelWithValue(
+                        {
+                            labelName: "Village/City",
+                            labelKey: "BK_OSB_CITY_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkVillCity",
+                        }
+                    ),
+                    ConstructionType: getLabelWithValue(
+                        {
+                            labelName: "Construction Type",
+                            labelKey: "BK_OSB_CONSTRUCTION_TYPE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkConstructionType",
                         }
                     ),
                 }),

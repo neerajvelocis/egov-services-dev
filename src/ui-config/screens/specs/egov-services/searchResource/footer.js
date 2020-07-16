@@ -285,165 +285,173 @@ export const generatePdfFromDiv = (action, applicationNumber) => {
 //     });
 // };
 export const footerReviewTop = (
-	action,
-	state,
-	dispatch,
-	status,
-	applicationNumber,
-	tenantId,
-  ) => {
+    action,
+    state,
+    dispatch,
+    status,
+    applicationNumber,
+    tenantId
+) => {
+    let downloadMenu = [];
+    let printMenu = [];
+    // let licenseNumber= get(state.screenConfiguration.preparedFinalObject.Licenses[0], "licenseNumber")
+    // const responseLength = get(
+    //   state.screenConfiguration.preparedFinalObject,
+    //   `licenseCount`,
+    //   1
+    // );
 
-	let downloadMenu = [];
-	let printMenu = [];
-	// let licenseNumber= get(state.screenConfiguration.preparedFinalObject.Licenses[0], "licenseNumber")
-	// const responseLength = get(
-	//   state.screenConfiguration.preparedFinalObject,
-	//   `licenseCount`,
-	//   1
-	// );
-  
-	// const { Licenses } = state.screenConfiguration.preparedFinalObject;
-  
-	  // console.log(Licenses, "LicensesNew");
-	// let renewalMenu=[];
-	let certificateDownloadObject = {
-	  label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
-	  link: () => {
-		const { Booking } = state.screenConfiguration.preparedFinalObject;
-		downloadCertificateForm(Booking);
-	  },
-	  leftIcon: "book"
-	};
-	let certificatePrintObject = {
-	  label: { labelName: "TL Certificate", labelKey: "TL_CERTIFICATE" },
-	  link: () => {
-		const { Booking } = state.screenConfiguration.preparedFinalObject;
-		downloadCertificateForm(Booking,'print');
-	  },
-	  leftIcon: "book"
-	};
-  
-	let receiptDownloadObject = {
-	  label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
-	  link: () => {
-  
-  
-		// const receiptQueryString = [
-		//   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-		//   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
-		// ]
-		// download(receiptQueryString);
-		// generateReceipt(state, dispatch, "receipt_download");
-	  },
-	  leftIcon: "receipt"
-	};
-	let receiptPrintObject = {
-	  label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
-	  link: () => {
-		// const receiptQueryString =  [
-		//   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-		//   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
-		// ]
-		// download(receiptQueryString,"print");
-	   // generateReceipt(state, dispatch, "receipt_print");
-	  },
-	  leftIcon: "receipt"
-	};
-	let applicationDownloadObject = {
-	  label: { labelName: "Application", labelKey: "TL_APPLICATION" },
-	  link: () => {
-		// const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
-		// const documents = LicensesTemp[0].reviewDocData;
-		// set(Licenses[0],"additionalDetails.documents",documents)
-		// downloadAcknowledgementForm(Licenses);
-	  },
-	  leftIcon: "assignment"
-	};
-	let applicationPrintObject = {
-	  label: { labelName: "Application", labelKey: "TL_APPLICATION" },
-	  link: () => {
-		// const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
-		// const documents = LicensesTemp[0].reviewDocData;
-		// set(Licenses[0],"additionalDetails.documents",documents)
-		// downloadAcknowledgementForm(Licenses,'print');
-	  },
-	  leftIcon: "assignment"
-	};
-	
-	switch (status) {
-	  case "APPROVED":
-		downloadMenu = [
-		  certificateDownloadObject,
-		  receiptDownloadObject,
-		  applicationDownloadObject
-		];
-		printMenu = [
-		  certificatePrintObject,
-		  receiptPrintObject,
-		  applicationPrintObject
-		];
-		break;
-	  case "PENDINGAPPROVAL":
-	  case "PENDINGPAYMENT":
-		downloadMenu = [applicationDownloadObject];
-		printMenu = [applicationPrintObject];
-		break;
-	  case "REJECTED":
-		downloadMenu = [applicationDownloadObject];
-		printMenu = [applicationPrintObject];
-		break;
-	  default:
-		break;
-	}
-	/** END */
-  
-	return {
-	  rightdiv: {
-		uiFramework: "custom-atoms",
-		componentPath: "Div",
-		props: {
-		  style: { textAlign: "right", display: "flex" }
-		},
-		children: {
-		  downloadMenu: {
-			uiFramework: "custom-atoms-local",
-			moduleName: "egov-services",
-			componentPath: "MenuButton",
-			props: {
-			  data: {
-				label: {labelName : "DOWNLOAD" , labelKey :"TL_DOWNLOAD"},
-				 leftIcon: "cloud_download",
-				rightIcon: "arrow_drop_down",
-				props: { variant: "outlined", style: { height: "60px", color : "#FE7A51" }, className: "tl-download-button" },
-				menu: downloadMenu
-			  }
-			}
-		  },
-		  printMenu: {
-			uiFramework: "custom-atoms-local",
-			moduleName: "egov-tradelicence",
-			componentPath: "MenuButton",
-			props: {
-			  data: {
-				label: {labelName : "PRINT" , labelKey :"TL_PRINT"},
-				leftIcon: "print",
-				rightIcon: "arrow_drop_down",
-				props: { variant: "outlined", style: { height: "60px", color : "#FE7A51" }, className: "tl-print-button" },
-				menu: printMenu
-			  }
-			}
-		  }
-  
-		},
-		// gridDefination: {
-		//   xs: 12,
-		//   sm: 6
-		// }
-	  } 
-	}
-	
-  };
-  
+    // const { Licenses } = state.screenConfiguration.preparedFinalObject;
+
+    console.log(status, "statusNew");
+    // let renewalMenu=[];
+    let certificateDownloadObject = {
+        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE" },
+        link: () => {
+            const { Booking } = state.screenConfiguration.preparedFinalObject;
+            downloadCertificateForm(Booking);
+        },
+        leftIcon: "book",
+    };
+    let certificatePrintObject = {
+        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE" },
+        link: () => {
+            const { Booking } = state.screenConfiguration.preparedFinalObject;
+            downloadCertificateForm(Booking, "print");
+        },
+        leftIcon: "book",
+    };
+
+    let receiptDownloadObject = {
+        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT" },
+        link: () => {
+            // const receiptQueryString = [
+            //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
+            //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
+            // ]
+            // download(receiptQueryString);
+            // generateReceipt(state, dispatch, "receipt_download");
+        },
+        leftIcon: "receipt",
+    };
+    let receiptPrintObject = {
+        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT" },
+        link: () => {
+            // const receiptQueryString =  [
+            //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
+            //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
+            // ]
+            // download(receiptQueryString,"print");
+            // generateReceipt(state, dispatch, "receipt_print");
+        },
+        leftIcon: "receipt",
+    };
+    let applicationDownloadObject = {
+        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION" },
+        link: () => {
+            // const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
+            // const documents = LicensesTemp[0].reviewDocData;
+            // set(Licenses[0],"additionalDetails.documents",documents)
+            // downloadAcknowledgementForm(Licenses);
+        },
+        leftIcon: "assignment",
+    };
+    let applicationPrintObject = {
+        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION" },
+        link: () => {
+            // const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
+            // const documents = LicensesTemp[0].reviewDocData;
+            // set(Licenses[0],"additionalDetails.documents",documents)
+            // downloadAcknowledgementForm(Licenses,'print');
+        },
+        leftIcon: "assignment",
+    };
+
+    switch (status) {
+        case "APPROVED":
+            downloadMenu = [
+                certificateDownloadObject,
+                receiptDownloadObject,
+                applicationDownloadObject,
+            ];
+            printMenu = [
+                certificatePrintObject,
+                receiptPrintObject,
+                applicationPrintObject,
+            ];
+            break;
+        case "PENDINGAPPROVAL":
+            downloadMenu = [applicationDownloadObject];
+            printMenu = [applicationPrintObject];
+            break;
+        case "PENDINGPAYMENT":
+            downloadMenu = [applicationDownloadObject];
+            printMenu = [applicationPrintObject];
+            break;
+        case "REJECTED":
+            downloadMenu = [applicationDownloadObject];
+            printMenu = [applicationPrintObject];
+            break;
+        default:
+            break;
+    }
+    /** END */
+
+    return {
+        rightdiv: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            props: {
+                style: { textAlign: "right", display: "flex" },
+            },
+            children: {
+                downloadMenu: {
+                    uiFramework: "custom-atoms-local",
+                    moduleName: "egov-services",
+                    componentPath: "MenuButton",
+                    props: {
+                        data: {
+                            label: {
+                                labelName: "DOWNLOAD",
+                                labelKey: "MY_BK_DOWNLOAD",
+                            },
+                            leftIcon: "cloud_download",
+                            rightIcon: "arrow_drop_down",
+                            props: {
+                                variant: "outlined",
+                                style: { height: "60px", color: "#FE7A51" },
+                                className: "tl-download-button",
+                            },
+                            menu: downloadMenu,
+                        },
+                    },
+                },
+                printMenu: {
+                    uiFramework: "custom-atoms-local",
+                    moduleName: "egov-services",
+                    componentPath: "MenuButton",
+                    props: {
+                        data: {
+                            label: { labelName: "PRINT", labelKey: "MY_BK_PRINT" },
+                            leftIcon: "print",
+                            rightIcon: "arrow_drop_down",
+                            props: {
+                                variant: "outlined",
+                                style: { height: "60px", color: "#FE7A51" },
+                                className: "tl-print-button",
+                            },
+                            menu: printMenu,
+                        },
+                    },
+                },
+            },
+            // gridDefination: {
+            //   xs: 12,
+            //   sm: 6
+            // }
+        },
+    };
+};
 
 export const openPopup = (state, dispatch) => {
     dispatch(prepareFinalObject("ResubmitAction", true));
@@ -565,15 +573,11 @@ export const downloadPrintContainer = (
                 applicationPrintObject,
             ];
             break;
-        case "APPLIED":
-        case "CITIZENACTIONREQUIRED":
-        case "FIELDINSPECTION":
         case "PENDINGAPPROVAL":
-        case "PENDINGPAYMENT":
             downloadMenu = [applicationDownloadObject];
             printMenu = [applicationPrintObject];
             break;
-        case "CANCELLED":
+        case "PENDINGPAYMENT":
             downloadMenu = [applicationDownloadObject];
             printMenu = [applicationPrintObject];
             break;
@@ -602,7 +606,7 @@ export const downloadPrintContainer = (
                         data: {
                             label: {
                                 labelName: "DOWNLOAD",
-                                labelKey: "TL_DOWNLOAD",
+                                labelKey: "MY_BK_DOWNLOAD",
                             },
                             leftIcon: "cloud_download",
                             rightIcon: "arrow_drop_down",

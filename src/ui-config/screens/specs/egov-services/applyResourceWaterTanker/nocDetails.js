@@ -142,9 +142,10 @@ export const bookingDetails = getCommonCard({
               //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
               sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
               jsonPath: "Booking.bkSector",
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
               required: true,
               props: {
-                  className: "applicant-details-error",
+                  // className: "applicant-details-error",
                   required: true,
                   // disabled: true
               },
@@ -168,9 +169,10 @@ export const bookingDetails = getCommonCard({
               //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
               sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
               jsonPath: "Booking.bkType",
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
               required: true,
               props: {
-                  className: "applicant-details-error",
+                  // className: "applicant-details-error",
                   required: true,
                   // disabled: true
               },
@@ -189,6 +191,7 @@ export const bookingDetails = getCommonCard({
           // required: true,
           pattern: getPattern("Date"),
           jsonPath: "Booking.bkDate",
+          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
           props: {
             className: "applicant-details-error",
             // inputProps: {
@@ -213,6 +216,7 @@ export const bookingDetails = getCommonCard({
           placeholder: { labelName: "hh:mm", labelKey: "hh:mm" },
           required: true,
           pattern: getPattern("Time"),
+          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
           jsonPath: "Booking.bkTime",
           gridDefination: {
             xs: 12,
@@ -244,8 +248,11 @@ export const bookingDetails = getCommonCard({
           pattern: getPattern("Name"),
           jsonPath: "Booking.bkCase",
           sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
+          errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+          required : true,
           props: {
-            className: "applicant-details-error",
+            required: true
+            // className: "applicant-details-error",
             // inputProps: {
             //   min: getTodaysDateInYMD(),
             //   max: getFinancialYearDates("yyyy-mm-dd").endDate,

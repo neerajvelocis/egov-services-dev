@@ -14,7 +14,7 @@ import {  toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration
 import { UpdateMasterPrice } from "../../../../../ui-utils/commons";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
@@ -129,7 +129,7 @@ export const UpdateMaster = async (state, dispatch) => {
   else {
 
     let data = {      
-      "tenantId": getOPMSTenantId(),
+      "tenantId": getTenantId(),
       "applicationType": "ADVERTISEMENTNOC",
       "applicationStatus": "UPDATE",
       "dataPayload": {

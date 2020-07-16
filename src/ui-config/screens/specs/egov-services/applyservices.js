@@ -13,7 +13,8 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
   {
     labelName: "SERVICES",
-    labelKey: "ACTION_TEST_SERVICES",
+    // labelKey: "BK_APPLY_BOOKINGS_HEADER",
+    labelKey: "BK_APPLY",
   },
   {
     classes: {
@@ -56,7 +57,7 @@ if (role_name === "CITIZEN") {
           font-size="40px"
           class="material-icons module-page-icon"
         >
-          pets
+          deck
         </i>
       ),
       route: "apply",
@@ -70,7 +71,7 @@ if (role_name === "CITIZEN") {
         viewBox="0 -8 35 42"
         color="primary"
         class="material-icons module-page-icon">
-        restaurant
+        beach_access
       </i>,
       route: "apply"
       // {
@@ -87,7 +88,7 @@ if (role_name === "CITIZEN") {
         viewBox="0 -8 35 42"
         color="primary"
         class="material-icons module-page-icon">
-        report_problem
+        picture_in_picture_alt
       </i>,
       route: "apply"
       // {
@@ -106,7 +107,7 @@ if (role_name === "CITIZEN") {
           color="primary"
           class="material-icons module-page-icon"
         >
-          report_problem
+          opacity
         </i>
       ),
       route: "applywatertanker",

@@ -167,32 +167,6 @@ export const bookingDetails = getCommonCard({
         },
       }),
     },
-    // bkVillCity: {
-    //   ...getSelectField({
-    //     label: {
-    //       labelName: "Village/City",
-    //       labelKey: "BK_OSB_CITY_LABEL",
-    //     },
-    //     // localePrefix: {
-    //     //   moduleName: "egpm",
-    //     //   masterName: "sector"
-    //     // },
-    //     optionLabel: "name",
-    //     placeholder: {
-    //       labelName: "Select Village/City",
-    //       labelKey: "BK_OSB_CITY_PLACEHOLDER",
-    //     },
-    //     //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-    //     sourceJsonPath: "applyScreenMdmsData.Booking.City",
-    //     jsonPath: "Booking.bkVillCity",
-    //     // required: true,
-    //     props: {
-    //       className: "applicant-details-error",
-    //     //   required: true,
-    //       // disabled: true
-    //     },
-    //   }),
-    // },
     bkType: {
       ...getSelectField({
         label: {
@@ -289,6 +263,58 @@ export const bookingDetails = getCommonCard({
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
         sourceJsonPath: "applyScreenMdmsData.Booking.Category",
         jsonPath: "Booking.bkCategory",
+        required: true,
+        props: {
+          className: "applicant-details-error",
+          required: true,
+          // disabled: true
+        },
+      }),
+    },
+    bkVillCity: {
+      ...getSelectField({
+        label: {
+          labelName: "Village/City",
+          labelKey: "BK_OSB_CITY_LABEL",
+        },
+        // localePrefix: {
+        //   moduleName: "egpm",
+        //   masterName: "sector"
+        // },
+        optionLabel: "name",
+        placeholder: {
+          labelName: "Select Village/City",
+          labelKey: "BK_OSB_CITY_PLACEHOLDER",
+        },
+        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+        sourceJsonPath: "applyScreenMdmsData.Booking.VillageCity",
+        jsonPath: "Booking.bkVillCity",
+        required: true,
+        props: {
+          className: "applicant-details-error",
+          required: true,
+          // disabled: true
+        },
+      }),
+    },
+    bkConstructionType: {
+      ...getSelectField({
+        label: {
+          labelName: "Construction Type",
+          labelKey: "BK_OSB_CONSTRUCTION_TYPE_LABEL",
+        },
+        // localePrefix: {
+        //   moduleName: "egpm",
+        //   masterName: "sector"
+        // },
+        optionLabel: "name",
+        placeholder: {
+          labelName: "Select Construction Type",
+          labelKey: "BK_OSB_CONSTRUCTION_TYPE_PLACEHOLDER",
+        },
+        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+        sourceJsonPath: "applyScreenMdmsData.Booking.Type_of_Construction",
+        jsonPath: "Booking.bkConstructionType",
         required: true,
         props: {
           className: "applicant-details-error",

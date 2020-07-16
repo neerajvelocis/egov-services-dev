@@ -12,7 +12,7 @@ import {
   prepareFinalObject
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
-  localStorageGet, localStorageSet, setapplicationNumber, getOPMSTenantId, setapplicationType,
+  localStorageGet, localStorageSet, setapplicationNumber, getTenantId, setapplicationType,
   getAccessToken, getLocale, getUserInfo, getapplicationType, getapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
@@ -174,7 +174,7 @@ const titlebar = getCommonContainer({
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

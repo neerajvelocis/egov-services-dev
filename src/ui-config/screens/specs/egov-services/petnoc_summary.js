@@ -31,7 +31,7 @@ import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { nocSummary } from "./summaryResource/nocSummary";
 import { immunizationSummary } from "./summaryResource/immunizationSummary";
-import { getAccessToken, localStorageGet, localStorageSet, getOPMSTenantId, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
+import { getAccessToken, localStorageGet, localStorageSet, getTenantId, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 import { taskStatusSummary } from './summaryResource/taskStatusSummary';
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { showHideAdhocPopup, showHideAdhocPopups } from "../utils";
@@ -52,7 +52,7 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 
 const agree_undertaking = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   event.target.checked === true ? localStorageSet("undertaking", "accept") : localStorageSet("undertaking", "")
   event.target.checked === true ? showHideAdhocPopups(state, dispatch, "petnoc_summary") : '';
 
@@ -160,7 +160,7 @@ const titlebar = getCommonContainer({
 
 
 const callbackforsummaryactionpay = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   //alert("enter here")
 
   const applicationid = getQueryArg(window.location.href, "applicationNumber");

@@ -5,7 +5,7 @@ import {
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
-import { getCommonApplyFooter, validateFields } from "../../utils";
+import { getCommonApplyFooter, validateFields, generateOpenSpaceBill } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
@@ -16,139 +16,10 @@ import {
 import {
     localStorageGet,
     localStorageSet,
-    getOPMSTenantId,
+    getTenantId,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
-const setReviewPageRoute = (state, dispatch, applnid) => {
-    const applicationNumber = getapplicationNumber(); //get(state, "screenConfiguration.preparedFinalObject.PETNOC.applicationId");
-
-    if (applicationNumber) {
-        let tenantId = getOPMSTenantId();
-        const appendUrl =
-            process.env.REACT_APP_SELF_RUNNING === "true"
-                ? "/egov-ui-framework"
-                : "";
-        const reviewUrl = `${appendUrl}/egov-services/petnoc_summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
-        dispatch(setRoute(reviewUrl));
-    } else {
-        // const appendUrl =
-        // process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-        // const reviewUrl = `${appendUrl}/egov-services/summary?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
-        // dispatch(setRoute(reviewUrl));
-        let tenantId = getOPMSTenantId();
-        const appendUrl =
-            process.env.REACT_APP_SELF_RUNNING === "true"
-                ? "/egov-ui-framework"
-                : "";
-        const reviewUrl = `${appendUrl}/egov-services/petnoc_summary?applicationNumber=${applnid}&tenantId=${tenantId}`;
-        dispatch(setRoute(reviewUrl));
-    }
-};
-
-const moveToReview = (state, dispatch, applnid) => {
-    // alert("Review")
-    const documentsFormat = Object.values(
-        get(
-            state.screenConfiguration.preparedFinalObject,
-            "documentsUploadRedux"
-        )
-    );
-
-    let validateDocumentField = false;
-
-    for (let i = 0; i < documentsFormat.length; i++) {
-        let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
-        let isDocumentTypeRequired = get(
-            documentsFormat[i],
-            "isDocumentTypeRequired"
-        );
-
-        let documents = get(documentsFormat[i], "documents");
-        if (isDocumentRequired) {
-            if (documents && documents.length > 0) {
-                if (isDocumentTypeRequired) {
-                    if (get(documentsFormat[i], "dropdown.value")) {
-                        validateDocumentField = true;
-                    } else {
-                        dispatch(
-                            toggleSnackbar(
-                                true,
-                                {
-                                    labelName:
-                                        "Please select type of Document!",
-                                    labelKey: "",
-                                },
-                                "warning"
-                            )
-                        );
-                        validateDocumentField = false;
-                        break;
-                    }
-                } else {
-                    validateDocumentField = true;
-                }
-            } else {
-                dispatch(
-                    toggleSnackbar(
-                        true,
-                        {
-                            labelName: "Please uplaod mandatory documents!",
-                            labelKey: "",
-                        },
-                        "warning"
-                    )
-                );
-                validateDocumentField = false;
-                break;
-            }
-        } else {
-            validateDocumentField = true;
-        }
-    }
-
-    //validateDocumentField = true;
-
-    return validateDocumentField;
-};
-
-const getMdmsData = async (state, dispatch) => {
-    let tenantId = get(
-        state.screenConfiguration.preparedFinalObject,
-        "PETNOC.tenantId"
-    );
-    let mdmsBody = {
-        MdmsCriteria: {
-            tenantId: tenantId,
-            moduleDetails: [
-                {
-                    moduleName: "PETNOC",
-                    masterDetails: [{ name: "Documents" }],
-                },
-            ],
-        },
-    };
-    try {
-        let payload = await httpRequest(
-            "post",
-            "/egov-mdms-service/v1/_search",
-            "_search",
-            [],
-            mdmsBody
-        );
-
-        dispatch(
-            prepareFinalObject(
-                "applyScreenMdmsData.PETNOC.Documents",
-                payload.MdmsRes.PETNOC.Documents
-            )
-        );
-        prepareDocumentsUploadData(state, dispatch, "apply_pet");
-    } catch (e) {
-        console.log(e);
-    }
-};
 
 const callBackForNext = async (state, dispatch) => {
     let errorMessage = "";
@@ -157,8 +28,6 @@ const callBackForNext = async (state, dispatch) => {
         "components.div.children.stepper.props.activeStep",
         0
     );
-    // validatestepform(activeStep+1)
-    // console.log(activeStep);
     let isFormValid = false;
     let hasFieldToaster = true;
 
@@ -166,9 +35,8 @@ const callBackForNext = async (state, dispatch) => {
 
     isFormValid = validatestepformflag[0];
     hasFieldToaster = validatestepformflag[1];
-    if (activeStep === 1) {
-    }
     if (activeStep === 2 && isFormValid != false) {
+        await generateOpenSpaceBill(state, dispatch);
         const uploadedDocData = get(
             state.screenConfiguration.preparedFinalObject,
             "documentsUploadRedux[0].documents",
@@ -202,14 +70,14 @@ const callBackForNext = async (state, dispatch) => {
                 labelKey: "", //UPLOAD_FILE_TOAST
             };
             dispatch(toggleSnackbar(true, successMessage, "success"));
-            setTimeout(() => {
+            // setTimeout(() => {
                 const appendUrl =
                     process.env.REACT_APP_SELF_RUNNING === "true"
                         ? "/egov-ui-framework"
                         : "";
                 const reviewUrl = `${appendUrl}/egov-services/my-applications`;
                 dispatch(setRoute(reviewUrl));
-            }, 1000);
+            // }, 1000);
         } else {
             let errorMessage = {
                 labelName: "Submission Falied, Try Again later!",

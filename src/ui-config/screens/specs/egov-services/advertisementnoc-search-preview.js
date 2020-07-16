@@ -35,7 +35,7 @@ import { estimateSummary } from "./summaryResource/estimateSummary";
 import { taskStatusSummary } from "./summaryResource/taskStatusSummary";
 import { showHideAdhocPopup } from "../utils";
 
-import { getAccessToken, getOPMSTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationType, setapplicationNumber, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getAccessToken, getTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationType, setapplicationNumber, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { getSearchResultsView, getSearchResultsForNocCretificate, getSearchResultsForNocCretificateDownload } from "../../../../ui-utils/commons";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
@@ -68,7 +68,7 @@ const undertakingButton = getCommonContainer({
 
 const getMdmsData = async (action, state, dispatch) => {
   
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

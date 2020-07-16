@@ -1,7 +1,7 @@
 import { fetchData } from "./searchResource/citizenSearchFunctions";
 import { getCommonHeader, getLabel, getCommonSubHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { setapplicationType, getOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import { searchDetails } from "./searchResource/searchForm";
+import { setapplicationType, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { searchForm } from "./searchResource/searchForm";
 import { httpRequest } from "../../../../ui-utils";
 import {
   prepareFinalObject,
@@ -21,7 +21,7 @@ const header = getCommonHeader(
 );
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId().split(".")[0];
+  let tenantId = getTenantId().split(".")[0];
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -118,7 +118,7 @@ const screenConfig = {
             }
           },
           children: {
-            searchDetails,
+            searchForm,
           },
         },
         applicationsCard: {
