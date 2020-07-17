@@ -34,9 +34,9 @@ if(role_name === 'CITIZEN'){
       icon: <i 
       viewBox="0 -8 35 42"
       color="primary"
-      font-size="30px"
+      // font-size="30px"
       class="material-icons module-page-icon">
-      add_business
+      post_add
       </i>,
       route: "applyservices"
       
@@ -49,9 +49,9 @@ if(role_name === 'CITIZEN'){
       icon : <i 
       viewBox="0 -8 35 42"
       color="primary"
-      font-size="30px"
+      // font-size="30px"
       class="material-icons module-page-icon">
-      description
+      list_alt
       </i>,
       // icon: <MyApplicationIcon />,
       route: "my-applications"
@@ -63,12 +63,12 @@ if(role_name === 'CITIZEN'){
 }
 
 
-const tradeLicenseSearchAndResult = {
+const screenConfig = {
   uiFramework: "material-ui",
-  name: "openSpaceBooking",
+  name: "home",
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
-    setapplicationType('OPB');
+    // setapplicationType('OPB');
     
     return action;
   },
@@ -85,28 +85,10 @@ const tradeLicenseSearchAndResult = {
             items: cardItems,
             history: {}
           }
-        },
-        // listCard: {
-        //   uiFramework: "custom-molecules-local",
-        //   moduleName: "egov-services",
-        //   componentPath: "HowItWorks"
-        // }
-      }
-    },
-    adhocDialog: {
-      uiFramework: "custom-containers-local",
-      moduleName: "egov-services",
-      componentPath: "DialogContainer",
-      props: {
-        open: false,
-        maxWidth: false,
-        screenKey: "openSpaceBooking"
-      },
-      children: {
-        popup: {}
+        }
       }
     }
   }
 };
 
-export default tradeLicenseSearchAndResult;
+export default screenConfig;

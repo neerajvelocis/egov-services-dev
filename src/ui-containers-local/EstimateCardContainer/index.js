@@ -77,8 +77,8 @@ const mapStateToProps = (state, ownProps) => {
         fees: [
             {
                 name: {
-                    labelKey: "Label Key key",
-                    labelName: "Label Key Name",
+                    labelKey: "Book Open Space to Store Building Materials",
+                    labelName: "MY_BK_BOOKING_HEAD",
                 },
                 value: fees.amount,
             },

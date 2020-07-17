@@ -30,10 +30,10 @@ import { footer } from "./applyResource/employeeSellMeatFooter";
 import { adhocPopup1, adhocPopup2 } from "./payResource/adhocPopup";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 
-import {
-  sellmeatapplicantSummary
+// import {
+//   sellmeatapplicantSummary
 
-} from "./summaryResource/sellmeatapplicantSummary";
+// } from "./summaryResource/sellmeatapplicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { taskStatusSummary } from "./summaryResource/taskStatusSummary";
 import { showHideAdhocPopup } from "../utils";
@@ -454,11 +454,11 @@ const screenConfig = {
         },
 
         body: role_name !== 'CITIZEN' ? getCommonCard({
-          sellmeatapplicantSummary: sellmeatapplicantSummary,
+          // sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary
         }) : getCommonCard({
          
-          sellmeatapplicantSummary: sellmeatapplicantSummary,
+          // sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
 		  taskStatusSummary: taskStatusSummary,
           undertakingButton1
