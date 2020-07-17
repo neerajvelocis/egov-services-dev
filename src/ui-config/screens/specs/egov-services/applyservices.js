@@ -36,7 +36,7 @@ if (role_name === "CITIZEN") {
           color="primary"
           class="material-icons module-page-icon"
         >
-          picture_in_picture
+          account_balance
         </i>
       ),
       route: "applyopenspace",
@@ -57,7 +57,7 @@ if (role_name === "CITIZEN") {
           font-size="40px"
           class="material-icons module-page-icon"
         >
-          deck
+          event
         </i>
       ),
       route: "apply",
@@ -71,7 +71,7 @@ if (role_name === "CITIZEN") {
         viewBox="0 -8 35 42"
         color="primary"
         class="material-icons module-page-icon">
-        beach_access
+        group_work
       </i>,
       route: "apply"
       // {
@@ -88,7 +88,7 @@ if (role_name === "CITIZEN") {
         viewBox="0 -8 35 42"
         color="primary"
         class="material-icons module-page-icon">
-        picture_in_picture_alt
+        room
       </i>,
       route: "apply"
       // {
@@ -107,7 +107,7 @@ if (role_name === "CITIZEN") {
           color="primary"
           class="material-icons module-page-icon"
         >
-          opacity
+          invert_colors
         </i>
       ),
       route: "applywatertanker",

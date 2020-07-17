@@ -19,9 +19,9 @@ import {
   institutionSummary
 } from "./summaryResource/applicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
-import {
-  sellmeatapplicantSummary
-} from "./summaryResource/sellmeatapplicantSummary";
+// import {
+//   sellmeatapplicantSummary
+// } from "./summaryResource/sellmeatapplicantSummary";
 import {
   getAccessToken,
   getTenantId,
@@ -330,10 +330,10 @@ const screenConfig = {
           }
         },
         body: role_name !== 'CITIZEN' ? getCommonCard({
-          sellmeatapplicantSummary: sellmeatapplicantSummary,
+          // sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary
         }) : getCommonCard({
-          sellmeatapplicantSummary: sellmeatapplicantSummary,
+          // sellmeatapplicantSummary: sellmeatapplicantSummary,
           documentsSummary: documentsSummary,
           //taskStatusSummary:taskStatusSummary
 
