@@ -13,7 +13,7 @@ import { immunizationDetails } from "./advApplyResource/immunization";
 import { documentDetails } from "./advApplyResource/documentDetails";
 import {  prepareFinalObject,  handleScreenConfigurationFieldChange as handleField
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, getUserInfo, setapplicationType,lSRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, getUserInfo, setapplicationType,lSRemoveItem, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import jp from "jsonpath";
 import set from "lodash/set";
@@ -125,7 +125,7 @@ export const formwizardFourthStep = {
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   //alert("call mdmsdata***1")
   let mdmsBody = {
     MdmsCriteria: {

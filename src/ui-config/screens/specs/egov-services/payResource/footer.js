@@ -8,14 +8,14 @@ import set from "lodash/set";
 import { httpRequest } from "../../../../../ui-utils/api";
 import { getSearchResults } from "../../../../../ui-utils/commons";
 import { convertDateToEpoch, getBill, validateFields, showHideAdhocPopup } from "../../utils";
-import { getOPMSTenantId, localStorageSet, getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, localStorageSet, getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 
 
 export const selectPG = async (state, dispatch) => {
   showHideAdhocPopup(state, dispatch, "pay")
 };
-export const callPGService = async (state, dispatch) => {
-  const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.paymentGateway");
+export const callPGService = async (state, dispatch, item) => {
+  // const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.paymentGateway");
   const tenantId = getQueryArg(window.location.href, "tenantId");
   const applicationNumber = getQueryArg(
     window.location.href,
@@ -84,12 +84,109 @@ export const callPGService = async (state, dispatch) => {
           taxAndPayments,
           consumerCode: consumerCode, // get(billPayload, "Bill[0].consumerCode"),
           productInfo: getapplicationType(), // "Property Tax Payment",
+          gateway: item,
+          user: {
+            mobileNumber: userMobileNumber,
+            name: userName,
+            tenantId: getTenantId(),
+            // process.env.REACT_APP_NAME === "Employee" ? getTenantId() : get(state,"auth.userInfo.permanentCity")
+          },
+          callbackUrl
+        }
+      };
+      const goToPaymentGateway = await httpRequest(
+        "post",
+        "pg-service/transaction/v1/_create",
+        "_create",
+        [],
+        requestBody
+      );
+      const redirectionUrl = get(goToPaymentGateway, "Transaction.redirectUrl");
+      window.location = redirectionUrl;
+    } catch (e) {
+      console.log(e);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+export const callPGServiceOpenSpace = async (state, dispatch) => {
+  const gateway = get(state, "screenConfiguration.preparedFinalObject.Booking.paymentGateway");
+  console.log("gatewayNew", gateway);
+  const tenantId = getQueryArg(window.location.href, "tenantId");
+  const applicationNumber = getQueryArg(
+    window.location.href,
+    "applicationNumber"
+  );
+
+  //let callbackUrl=`${window.origin}/egov-services/paymentRedirectPage`;
+  let callbackUrl = `${
+    process.env.NODE_ENV === "production"
+      ? `${window.origin}/citizen`
+      : window.origin
+    }/egov-services/paymentRedirectPage`;
+  try {
+    const queryObj = [
+      { key: "tenantId", value: tenantId },
+      { key: "consumerCode", value: applicationNumber },
+      //value:"PMS-2020-02-21-041823"
+      { key: "businessService", value: "OSBM" }
+      //value: applicationNumber
+    ];
+
+
+    // const billPayload = await getBill(queryObj);
+    // const taxAmount = get(billPayload, "Bill[0].totalAmount")
+    // const billId = get(billPayload, "Bill[0].id")
+
+    const taxAmount = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].totalAmount");
+    const billId = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].id");
+    const consumerCode = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode");
+    const Accountdetails = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails");
+    localStorageSet("amount", 0);
+    localStorageSet("gstAmount", 0);
+    localStorageSet("performanceBankGuaranteeCharges", 0);
+
+    for (let index = 0; index < Accountdetails.length; index++) {
+      const element = Accountdetails[index];
+      if (element.taxHeadCode === `PETNOC_FEE` ||
+        element.taxHeadCode === `ROADCUTNOC_FEE` ||
+        element.taxHeadCode === `ADVERTISEMENTNOC_FEE`) {
+        localStorageSet("amount", element.amount);
+      } else if (element.taxHeadCode === `PETNOC_TAX` ||
+        element.taxHeadCode === `ROADCUTNOC_TAX` ||
+        element.taxHeadCode === `ADVERTISEMENTNOC_TAX`) {
+        localStorageSet("gstAmount", element.amount);
+      } else if (element.taxHeadCode === `ROADCUTNOC_FEE_BANK`) {
+        localStorageSet("performanceBankGuaranteeCharges", element.amount);
+      }
+    }
+
+
+    const taxAndPayments = [{
+      amountPaid: taxAmount,
+      billId: billId
+    }]
+
+    try {
+
+      const userMobileNumber = get(state, "auth.userInfo.mobileNumber")
+      const userName = get(state, "auth.userInfo.name")
+      const requestBody = {
+        Transaction: {
+          tenantId,
+          billId: billId, // get(billPayload, "Bill[0].id"),
+          txnAmount: taxAmount, //get(billPayload, "Bill[0].totalAmount"),
+          module: "Booking",
+          taxAndPayments,
+          consumerCode: consumerCode, // get(billPayload, "Bill[0].consumerCode"),
+          productInfo: getapplicationType(), // "Property Tax Payment",
           gateway: gateway,
           user: {
             mobileNumber: userMobileNumber,
             name: userName,
-            tenantId: getOPMSTenantId(),
-            // process.env.REACT_APP_NAME === "Employee" ? getOPMSTenantId() : get(state,"auth.userInfo.permanentCity")
+            tenantId: getTenantId(),
+            // process.env.REACT_APP_NAME === "Employee" ? getTenantId() : get(state,"auth.userInfo.permanentCity")
           },
           callbackUrl
         }
@@ -384,7 +481,8 @@ export const getCommonApplyFooter = children => {
     uiFramework: "custom-atoms",
     componentPath: "Div",
     props: {
-      className: "apply-wizard-footer"
+      className: "apply-wizard-footer",
+      style: { display: "flex", justifyContent: "flex-end" }
     },
     children
   };
@@ -427,31 +525,46 @@ export const footer = getCommonApplyFooter({
     visible: process.env.REACT_APP_NAME === "Citizen" ? false : true
   },
   makePayment: {
-    componentPath: "Button",
+    uiFramework: "custom-atoms-local",
+    moduleName: "egov-services",
+    componentPath: "MenuButton",
     props: {
-      variant: "contained",
-      color: "primary",
-      style: {
-        //  minWidth: "200px",
-        height: "48px",
-        marginRight: "45px"
+      data: {
+        label: {labelName : "MAKE PAYMENT" , labelKey :"COMMON_MAKE_PAYMENT"},
+        rightIcon: "arrow_drop_down",
+        props: { variant: "outlined", 
+        style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" } },
+        menu: []
       }
     },
-    children: {
-      submitButtonLabel: getLabel({
-        labelName: "MAKE PAYMENT",
-        labelKey: "NOC_COMMON_BUTTON_MAKE_PAYMENT"
-      })
-    },
-    onClickDefination: {
-      action: "condition",
-      callBack: selectPG
-    },
-    roleDefination: {
-      rolePath: "user-info.roles",
-      roles: ["CITIZEN"],
-      action: "PAY"
-    },
-    visible: process.env.REACT_APP_NAME === "Citizen" ? true : false
   }
+  // makePayment: {
+  //   componentPath: "Button",
+  //   props: {
+  //     variant: "contained",
+  //     color: "primary",
+  //     style: {
+  //       //  minWidth: "200px",
+  //       height: "48px",
+  //       marginRight: "45px"
+  //     }
+  //   },
+  //   children: {
+  //     submitButtonLabel: getLabel({
+  //       labelName: "MAKE PAYMENT",
+  //       labelKey: "NOC_COMMON_BUTTON_MAKE_PAYMENT"
+  //     })
+  //   },
+  //   onClickDefination: {
+  //     action: "condition",
+  //     callBack: selectPG
+  //   },
+  //   roleDefination: {
+  //     rolePath: "user-info.roles",
+  //     roles: ["CITIZEN"],
+  //     action: "PAY"
+  //   },
+  //   visible: process.env.REACT_APP_NAME === "Citizen" ? true : false
+  // },
+  
 });

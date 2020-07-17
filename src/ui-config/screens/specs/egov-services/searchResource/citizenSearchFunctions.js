@@ -5,29 +5,67 @@ import { convertEpochToDate, convertDateToEpoch } from "../../utils/index";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { textToLocalMapping } from "./searchResults";
 import { validateFields, getTextToLocalMapping } from "../../utils";
+import {
+  getTenantId,
+  getUserInfo,
+} from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import set from "lodash/set";
 export const fetchData = async (action, state, dispatch) => {
-  const response = await getSearchResults();
-  //const mdmsRes = await getMdmsData(dispatch);
-  // let tenants =
-  // mdmsRes &&
-  // mdmsRes.MdmsRes &&
-  // mdmsRes.MdmsRes.tenant.citymodule.find(item => {
-  // if (item.code === "TL") return true;
-  // });
-  // dispatch(
-  // prepareFinalObject(
-  // "applyScreenMdmsData.common-masters.citiesByModule.TL",
-  // tenants
-  // )
-  // );
+  let data = get(
+    state,
+    "screenConfiguration.preparedFinalObject.MyBooking"
+  );
+  let newData = {}
+  if(data == undefined){
+    newData = {
+      applicationNumber:"",
+      mobileNumber:"",
+      fromDate:"",
+      toDate:"",
+      applicationStatus : "",
+      bookingType : "",
+      tenantId : getTenantId().split(".")[0],
+      uuid : JSON.parse(getUserInfo()).uuid
+    }
+  } else {
+    if(data.applicationNumber == undefined){
+      data.applicationNumber = ""
+    }
+    if(data.mobileNumber == undefined){
+      data.mobileNumber = ""
+    }
+    if(data.fromDate == undefined){
+      data.fromDate = ""
+    }
+    if(data.toDate == undefined){
+      data.toDate = ""
+    }
+    if(data.applicationStatus == undefined){
+      data.applicationStatus = ""
+    }
+    if(data.bookingType == undefined){
+      data.bookingType = ""
+    }
+    newData = {
+      tenantId : getTenantId().split(".")[0],
+      uuid : JSON.parse(getUserInfo()).uuid
+    }
+    newData = Object.assign(newData, data);
+  };
+  const response = await getSearchResults(newData);
+  
   try {
 
-    if (response.nocApplicationDetail.length > 0) {
-      dispatch(prepareFinalObject("searchResults", response.nocApplicationDetail));
+    if (response.bookingsModelList.length > 0) {
+      dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
       dispatch(
-        prepareFinalObject("myApplicationsCount", response.nocApplicationDetail.length)
+        prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
+      );
+    } else {
+      dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
+      dispatch(
+        prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
       );
     }
   } catch (error) {

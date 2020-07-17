@@ -7,7 +7,7 @@ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { searchResultsAdvertisement } from "./searchResource/searchResults";
 import { setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import {
-  getOPMSTenantId,
+  getTenantId,
   localStorageGet
 } from "egov-ui-kit/utils/localStorageUtils";
 import find from "lodash/find";
@@ -37,7 +37,7 @@ const NOCSearchAndResult = {
     getGridDataAdvertisement(action, state, dispatch);
 
 
-    const tenantId = getOPMSTenantId();
+    const tenantId = getTenantId();
     const BSqueryObject = [
       { key: "tenantId", value: tenantId },
       { key: "businessServices", value: "ADVERTISEMENTNOC" }

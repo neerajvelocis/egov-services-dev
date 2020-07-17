@@ -1,11 +1,17 @@
 import { fetchData } from "./searchResource/citizenSearchFunctions";
-import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { setapplicationType } from "egov-ui-kit/utils/localStorageUtils";
+import { getCommonHeader, getLabel, getCommonSubHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { setapplicationType, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { searchForm } from "./searchResource/searchForm";
+import { httpRequest } from "../../../../ui-utils";
+import {
+  prepareFinalObject,
+  handleScreenConfigurationFieldChange as handleField,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 const header = getCommonHeader(
   {
     labelName: "My Applications",
-    labelKey: "NOC_MY_APPLICATIONS_HEADER",
+    labelKey: "MY_BK_APPLICATIONS_HEADER",
   },
   {
     classes: {
@@ -13,20 +19,108 @@ const header = getCommonHeader(
     },
   }
 );
-setapplicationType("PETNOC");
+
+const getMdmsData = async (action, state, dispatch) => {
+  let tenantId = getTenantId().split(".")[0];
+  let mdmsBody = {
+    MdmsCriteria: {
+      tenantId: tenantId,
+      moduleDetails: [
+        {
+          moduleName: "tenant",
+          masterDetails: [
+            {
+              name: "tenants",
+            },
+          ],
+        },
+        {
+          moduleName: "Booking",
+          masterDetails: [
+            {
+              name: "Sector",
+            },
+            {
+              name: "CityType",
+            },
+            {
+              name: "PropertyType",
+            },
+            {
+              name: "Area",
+            },
+            {
+              name: "Duration",
+            },
+            {
+              name: "Category",
+            },
+            {
+              name: "Documents",
+            },
+          ],
+        },
+      ],
+    },
+  };
+  try {
+    let payload = null;
+    payload = await httpRequest(
+      "post",
+      "/egov-mdms-service/v1/_search",
+      "_search",
+      [],
+      mdmsBody
+    );
+    console.log(payload.MdmsRes, "mdmsRes");
+    payload.MdmsRes.Booking.bookingType = [
+      {id : 1, code:'OSBM', tenantId : 'ch.chandigarh', name : "Open Space", active : true},
+      {id : 2, code:'WATER_TANKERS', tenantId : 'ch.chandigarh', name : 'Water Tankers', active : true}
+    ]
+    payload.MdmsRes.Booking.applicationStatus = [
+      {id : 1, code:'PENDINGAPPROVAL', tenantId : 'ch.chandigarh', name : "Pending Approval", active : true},
+      {id : 2, code:'PENDINGPAYMENT', tenantId : 'ch.chandigarh', name : 'Pending Payment', active : true},
+      {id : 3, code:'REJECTED', tenantId : 'ch.chandigarh', name : 'Rejected', active : true}
+    ]
+    dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
   beforeInitScreen: (action, state, dispatch) => {
-    fetchData(action, state, dispatch);
+    setapplicationType("MyBooking");
+    getMdmsData(action, state, dispatch);
+    // .then((response) => {
+      // prepareDocumentsUploadData(state, dispatch, "apply_osb");
+        fetchData(action, state, dispatch);
+    // });
     return action;
   },
   components: {
+    header,
     div: {
       uiFramework: "custom-atoms",
       componentPath: "Div",
       children: {
-        header: header,
+        applicationSearch: {
+          uiFramework: "custom-atoms",
+          componentPath: "Form",
+          props: {
+            id: "apply_form1",
+            style: {
+              marginLeft: 8,
+              marginRight: 8,
+            }
+          },
+          children: {
+            searchForm,
+          },
+        },
         applicationsCard: {
           uiFramework: "custom-molecules",
           componentPath: "SingleApplication",
@@ -34,36 +128,22 @@ const screenConfig = {
           props: {
             contents: [
               {
-                label: "NOC_COMMON_TABLE_COL_PET_COLOR_NAME_LABEL",
-                jsonPath: "color",
+                label: "MY_BK_APPLICATION_NUMBER_LABEL",
+                jsonPath: "bkApplicationNumber",
               },
               {
-                label: "NOC_COMMON_TABLE_COL_APP_NO_LABEL",
-                jsonPath: "applicationId",
+                label: "MY_BK_APPLICATION_STATUS_LABEL",
+                jsonPath: "bkApplicationStatus",
               },
               {
-                label: "NOC_COMMON_TABLE_COL_PET_NAME_LABEL",
-                jsonPath: "nameOfPetDog",
-              },
-              {
-                label: "NOC_COMMON_TABLE_COL_BREED_NAME_LABEL",
-                jsonPath: "breed",
-              },
-              {
-                label: "NOC_COMMON_TABLE_COL_STATUS_LABEL",
-                jsonPath: "applicationStatus",
-                prefix: "WF_PETNOC_",
+                label: "MY_BK_APPLICATION_TYPE_LABEL",
+                jsonPath: "bkBookingType",
               },
             ],
-            moduleName: "PET-NOC",
+            moduleName: "MyBooking",
             homeURL: "/egov-services/applyservices",
           },
         },
-        // listCard: {
-        //   uiFramework: "custom-molecules-local",
-        //   moduleName: "egov-services",
-        //   componentPath: "HowItWorks",
-        // },
       },
     },
   },

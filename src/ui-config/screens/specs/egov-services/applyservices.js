@@ -13,7 +13,8 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
   {
     labelName: "SERVICES",
-    labelKey: "ACTION_TEST_SERVICES",
+    // labelKey: "BK_APPLY_BOOKINGS_HEADER",
+    labelKey: "BK_APPLY",
   },
   {
     classes: {
@@ -56,7 +57,7 @@ if (role_name === "CITIZEN") {
           font-size="40px"
           class="material-icons module-page-icon"
         >
-          pets
+          deck
         </i>
       ),
       route: "apply",
@@ -70,7 +71,7 @@ if (role_name === "CITIZEN") {
         viewBox="0 -8 35 42"
         color="primary"
         class="material-icons module-page-icon">
-        restaurant
+        beach_access
       </i>,
       route: "apply"
       // {
@@ -78,7 +79,6 @@ if (role_name === "CITIZEN") {
       //   jsonPath: "components.adhocDialog"
       // }
     },
-
     {
       label: {
         labelKey: "BK_HOME_OPEN_SPACE_MCC_JURISDICTION",
@@ -88,7 +88,7 @@ if (role_name === "CITIZEN") {
         viewBox="0 -8 35 42"
         color="primary"
         class="material-icons module-page-icon">
-        report_problem
+        picture_in_picture_alt
       </i>,
       route: "apply"
       // {
@@ -107,166 +107,15 @@ if (role_name === "CITIZEN") {
           color="primary"
           class="material-icons module-page-icon"
         >
-          report_problem
+          opacity
         </i>
       ),
-      route: "apply",
+      route: "applywatertanker",
       // {
       //   screenKey: "home",
       //   jsonPath: "components.adhocDialog"
       // }
-    },
-  ];
-  cardItems = cardlist;
-} else if (role_name === "SI" || role_name === "MOH") {
-  const cardlist = [
-    {
-      label: {
-        labelKey: "Permission to Keep Pet Dog",
-        labelName: "Permission to Keep Pet Dog",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          font-size="40px"
-          class="material-icons module-page-icon"
-        >
-          pets
-        </i>
-      ),
-      route: "search",
-    },
-    {
-      label: {
-        labelKey: "Permission to Sell Meat",
-        labelName: "Permission to Sell Meat",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          restaurant
-        </i>
-      ),
-      route: "sellmeat-search",
-    },
-  ];
-  cardItems = cardlist;
-} else if (
-  role_name === "CE" ||
-  role_name === "JE" ||
-  role_name === "SDO" ||
-  role_name === "EE" ||
-  role_name === "SE"
-) {
-  const cardlist = [
-    {
-      label: {
-        labelKey: "Permission for Road Cut",
-        labelName: "Permission for Road Cut",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          report_problem
-        </i>
-      ),
-      route: "roadcut-search",
-      // {
-      //   screenKey: "home",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    },
-  ];
-  cardItems = cardlist;
-} else if (
-  role_name === "OSD" ||
-  role_name === "COMMISSIONER" ||
-  role_name === "AD" ||
-  role_name === "JEX"
-) {
-  const cardlist = [
-    {
-      label: {
-        labelKey: "Permission for Advertisement",
-        labelName: "Permission for Advertisement",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          report_problem
-        </i>
-      ),
-      route: "advertisement-search",
-      // {
-      //   screenKey: "home",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    },
-  ];
-  cardItems = cardlist;
-} else if (role_name === "SUPERINTENDENT") {
-  const cardlist = [
-    // {
-    // label: {
-    // labelKey: "Permission to Keep Pet Dog",
-    // labelName: "Permission to Keep Pet Dog"
-    // },
-    // icon: <i
-    // viewBox="0 -8 35 42"
-    // color="primary"
-    // font-size="40px"
-    // class="material-icons module-page-icon">
-    // pets
-    // </i>,
-    // route: "search"
-
-    // },
-    {
-      label: {
-        labelKey: "Permission to Sell Meat",
-        labelName: "Permission to Sell Meat",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          restaurant
-        </i>
-      ),
-      route: "sellmeat-search",
-    },
-    {
-      label: {
-        labelKey: "Permission for Advertisement",
-        labelName: "Permission for Advertisement",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          picture_in_picture
-        </i>
-      ),
-      route: "advertisement-search",
-      // {
-      //   screenKey: "home",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    },
+    }
   ];
   cardItems = cardlist;
 }

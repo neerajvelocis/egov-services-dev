@@ -9,7 +9,7 @@ import {
 } from "../../utils";
 import {
   getLocalization,
-  getOPMSTenantId,
+  getTenantId,
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
@@ -146,12 +146,12 @@ export const searchResults = {
 const onRowClick = rowData => {
   switch (rowData[5]) {
     case "INITIATED":
-      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${getOPMSTenantId()}`;
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${getTenantId()}`;
       break;
     default:
       window.location.href = `search-preview?applicationNumber=${
         rowData[0]
-        }&tenantId=` + getOPMSTenantId();
+        }&tenantId=` + getTenantId();
       break;
   }
 };
@@ -219,12 +219,12 @@ const onSellmeatRowClick = rowData => {
 
   switch (rowData[5]) {
     case "INITIATED":
-      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${getOPMSTenantId()}`;
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=${getTenantId()}`;
       break;
     default:
       window.location.href = `sellmeatnoc-search-preview?applicationNumber=${
         rowData[0]
-        }&tenantId=` + getOPMSTenantId();
+        }&tenantId=` + getTenantId();
       break;
   }
 };
@@ -293,12 +293,12 @@ const onRoadcutRowClick = rowData => {
 
   switch (rowData[5]) {
     case "INITIATED":
-      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=` + getOPMSTenantId();
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=` + getTenantId();
       break;
     default:
       window.location.href = `roadcutnoc-search-preview?applicationNumber=${
         rowData[0]
-        }&tenantId=` + getOPMSTenantId();
+        }&tenantId=` + getTenantId();
       break;
   }
 };
@@ -367,12 +367,12 @@ const onAdvertisementRowClick = rowData => {
 
   switch (rowData[5]) {
     case "INITIATED":
-      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=` + getOPMSTenantId();
+      window.location.href = `apply?applicationNumber=${rowData[0]}&tenantId=` + getTenantId();
       break;
     default:
       window.location.href = `advertisementnoc-search-preview?applicationNumber=${
         rowData[0]
-        }&tenantId=` + getOPMSTenantId();
+        }&tenantId=` + getTenantId();
       break;
   }
 };

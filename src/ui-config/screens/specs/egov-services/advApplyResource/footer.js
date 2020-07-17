@@ -14,13 +14,13 @@ import {
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, localStorageGet, getUserInfo, setapplicationType, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, localStorageGet, getUserInfo, setapplicationType, lSRemoveItemlocal, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { UpdateStatus } from "../../../../../ui-utils/commons";
 ///import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 const setReviewPageRoute = (state, dispatch, applnid) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   const applicationNumber = get(
     state,
     "screenConfiguration.preparedFinalObject.ADVERTISEMENTNOC.applicationId"
@@ -99,7 +99,7 @@ const moveToReview = (state, dispatch, applnid) => {
 };
 
 const getMdmsData = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

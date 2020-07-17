@@ -6,7 +6,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo,
   setapplicationType
@@ -14,8 +14,8 @@ import {
 let role_name=JSON.parse(getUserInfo()).roles[0].code
 const header = getCommonHeader(
   {
-    labelName: "Services Home",
-    labelKey: "BK_HOME"
+    labelName: "Services",
+    labelKey: "ACTION_TEST_SERVICES"
   },
   {
     classes: {
@@ -29,24 +29,31 @@ if(role_name === 'CITIZEN'){
     {
       label: {
         labelKey: "BK_APPLY",
-        labelName: "Apply Services"
+        labelName: "Apply for Booking"
       },
       icon: <i 
       viewBox="0 -8 35 42"
       color="primary"
-      font-size="40px"
+      font-size="30px"
       class="material-icons module-page-icon">
-      pets
+      add_business
       </i>,
       route: "applyservices"
       
     },
     {
       label: {
-        labelKey: "My Bookings",
+        labelKey: "My Applications",
         labelName: "BK_MY_BOOKINGS"
       },
-      icon: <MyApplicationIcon />,
+      icon : <i 
+      viewBox="0 -8 35 42"
+      color="primary"
+      font-size="30px"
+      class="material-icons module-page-icon">
+      description
+      </i>,
+      // icon: <MyApplicationIcon />,
       route: "my-applications"
     },
    

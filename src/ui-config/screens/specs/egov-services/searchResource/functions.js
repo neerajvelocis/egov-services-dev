@@ -5,7 +5,7 @@ import { convertEpochToDate, convertDateToEpoch } from "../../utils/index";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { textToLocalMapping } from "./searchResults";
 import { validateFields, getTextToLocalMapping } from "../../utils";
-import { getOPMSTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 
 
 const showHideTable = (booleanHideOrShow, dispatch) => {
@@ -68,7 +68,7 @@ export const searchApiCall1 = async (state, dispatch) => {
   }
 else{
   let data1={
-    "tenantId":getOPMSTenantId(),
+    "tenantId":getTenantId(),
     "reportName": "MISSummaryReport",
     "searchParams":[{"name":"fromDate","input":FromDate,
     
@@ -170,7 +170,7 @@ else{
     }
   else{
     let data1={
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "reportName": "RevenueCollectionReportApplicationTypeWise",
       "searchParams":[{"name":"fromDate","input":FromDate
       },{"name":"toDate","input":ToDate}]
@@ -274,7 +274,7 @@ else{
   }
 else{
         let data1={
-            "tenantId":getOPMSTenantId(),
+            "tenantId":getTenantId(),
             "reportName": "RevenueCollectionReportSectorWise",
           "searchParams":[{"name":"fromDate","input":FromDate},
           {"name":"toDate","input":ToDate},{"name":"sector","input":(sector===undefined || sector==='All')?"":sector}]
@@ -355,7 +355,7 @@ else{
             else{
               let year1=year.split('-')
             let data1={
-             "tenantId": getOPMSTenantId(),
+             "tenantId": getTenantId(),
              "reportName": "RevenueCollectionReportMonthWise",
              "searchParams": [
              {

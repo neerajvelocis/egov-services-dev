@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { getSearchResults } from "../../ui-utils/commons";
 import {
-  getAccessToken,  getOPMSTenantId,  getLocale,  getUserInfo,
+  getAccessToken,  getTenantId,  getLocale,  getUserInfo,
   localStorageGet,  setapplicationNumber,  getapplicationNumber,  getapplicationType,
   lSRemoveItem} from "egov-ui-kit/utils/localStorageUtils";
 
@@ -53,7 +53,7 @@ class PaymentRedirect extends Component {
         let data =
         {
           "applicationType": getapplicationType(),
-          "tenantId": getOPMSTenantId(),
+          "tenantId": getTenantId(),
           "applicationStatus": "PAID",
           "applicationId": consumerCode,
           "dataPayload": {

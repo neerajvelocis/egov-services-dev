@@ -79,9 +79,12 @@ function totalAmount(arr) {
 
 function FeesEstimateCard(props) {
   const { classes, estimate } = props;
+  console.log("fees props", estimate);
+  
   const total = totalAmount(estimate.fees);
   const totalHeadClassName = "pm-total-amount-value " + classes.bigheader;
-  return (
+
+    return (
     <Grid container>
       <Grid xs={12} sm={7}>
         <LabelContainer
@@ -140,7 +143,7 @@ function FeesEstimateCard(props) {
               <Typography variant="body2">
                 <LabelContainer
                   labelName="Total Amount"
-                  labelKey="PM_COMMON_TOTAL_AMT"
+                  labelKey="MY_BK_TOTAL_AMT"
                 />
               </Typography>
             </Grid>
@@ -164,7 +167,7 @@ function FeesEstimateCard(props) {
         >
           <LabelContainer
             labelName="Total Amount"
-            labelKey="PM_COMMON_TOTAL_AMT"
+            labelKey="MY_BK_TOTAL_AMT"
           />
         </Typography>
         <Typography className={totalHeadClassName} align="right">

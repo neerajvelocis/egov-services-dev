@@ -25,37 +25,37 @@ export const taskStatusSummary = getCommonGrayCard({
         },
         ...getCommonSubHeader({
           labelName: "NOC_REMARK",
-          labelKey: "NOC_REMARK"
+          labelKey: "MY_BK_REMARKS_DETAILS_HEADER"
         })
       },
-	  editSection: {
-        componentPath: "Button",
-        props: {
-		  className: "pet_resend_btn",	
-		  variant: "contained",
-          color: "primary",
+	  // editSection: {
+    //     componentPath: "Button",
+    //     props: {
+		//   className: "pet_resend_btn",	
+		//   variant: "contained",
+    //       color: "primary",
         
-        },
-        gridDefination: {
-          xs: 4,
-          align: "right"
-        },
-        children: {
+    //     },
+    //     gridDefination: {
+    //       xs: 4,
+    //       align: "right"
+    //     },
+    //     children: {
           
-          buttonLabel: getLabel({
-            labelName: "RESEND",
-            labelKey: "NOC_SUMMARY_RESEND"
-          })
-        },
-        onClickDefination: {
-          action: "condition",
-          callBack: (state, dispatch) => {
-            let applicationType = getapplicationType(); 
+    //       buttonLabel: getLabel({
+    //         labelName: "RESEND",
+    //         labelKey: "NOC_SUMMARY_RESEND"
+    //       })
+    //     },
+    //     onClickDefination: {
+    //       action: "condition",
+    //       callBack: (state, dispatch) => {
+    //         let applicationType = getapplicationType(); 
 			       
-            gotoApplyWithStep(state, dispatch, 0);
-          }
-        }
-      }
+    //         gotoApplyWithStep(state, dispatch, 0);
+    //       }
+    //     }
+    //   }
 
     }
   },
@@ -63,14 +63,14 @@ export const taskStatusSummary = getCommonGrayCard({
     Date: getLabelWithValue(
       
       {
-        jsonPath: "nocApplicationDetail[0].remarks[0]",
+        jsonPath: "Booking[0].bookingsRemarks[0]",
         callBack: value => {
           if(value===undefined)
           {
             return '';
           }
           else{
-          let remark = value['remark'] === '' ? '' :value['remark'];
+          let remark = value['bkRemarks'] === '' ? '' :value['bkRemarks'];
           return remark;
           }
         }

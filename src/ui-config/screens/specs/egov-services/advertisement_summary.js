@@ -26,7 +26,7 @@ import {
 import { taskStatusSummary } from "./summaryResource/taskStatusSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
-import { getAccessToken, setapplicationType, getOPMSTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getAccessToken, setapplicationType, getTenantId, getLocale, getUserInfo, localStorageGet, localStorageSet, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 
 export const stepsData = [
   { labelName: "Applicant Details", labelKey: "ADV_APPLICANT_DETAILS_NOC" },
@@ -45,7 +45,7 @@ let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const getMdmsData = async (action, state, dispatch) => {
 
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,
@@ -108,7 +108,7 @@ const titlebar = getCommonContainer({
 
 
 const callbackforsummaryaction = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let action = "submit";
   if (action == 'submit') {
     const appendUrl =
@@ -131,7 +131,7 @@ const callbackforsummaryaction = async (state, dispatch) => {
 };
 
 const callbackforsummaryactionpay = async (state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   //alert("enter here")
   //Logic implemented as per the discussion that if exempted selected then redirect to my-application page
   const applicationid = getQueryArg(window.location.href, "applicationNumber");

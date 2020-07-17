@@ -14,14 +14,14 @@ import {
   prepareDocumentsUploadData
 } from "../../../../../ui-utils/commons";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { localStorageGet, getOPMSTenantId, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { localStorageGet, getTenantId, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import { UpdateStatus } from "../../../../../ui-utils/commons";
 import { getAccessToken, getLocale, getUserInfo } from "egov-ui-kit/utils/localStorageUtils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
 const setReviewPageRoute = (state, dispatch, applnid) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   const applicationNumber = getapplicationNumber(); //  get(state, "screenConfiguration.preparedFinalObject.ROADCUTNOC.applicationId");
 
   if (applicationNumber) {

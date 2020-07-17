@@ -38,7 +38,7 @@ import { nocSummary } from "./summaryResourceRoadCut/nocSummary";
 //import { propertySummary } from "./summaryResourceRoadCut/propertySummary";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo,
   getapplicationNumber,
@@ -124,7 +124,7 @@ const callbackforSummaryActionResend = async (state, dispatch) => {
 
 //     if(action == 'SUBMIT')
 //     {
-//      // tenantId = getOPMSTenantId;
+//      // tenantId = getTenantId;
 //       const appendUrl =
 //       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
 //       const reviewUrl = `${appendUrl}/egov-services/home`;
@@ -145,7 +145,7 @@ const callbackforSummaryActionResend = async (state, dispatch) => {
 //     }
 //     else
 //     {
-//       //tenantId = getOPMSTenantId;
+//       //tenantId = getTenantId;
 //       const appendUrl =
 //       process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
 //       const reviewUrl = `${appendUrl}/egov-services/home`;

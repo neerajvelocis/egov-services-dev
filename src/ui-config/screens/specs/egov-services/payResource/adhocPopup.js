@@ -10,13 +10,13 @@ import { prepareFinalObject, toggleSnackbar } from "egov-ui-framework/ui-redux/s
 import set from "lodash/set";
 import { UpdateStatus } from "../../../../../ui-utils/commons";
 import { documentDetails } from "./documentDetails";
-import { getAccessToken, getOPMSTenantId, getLocale, getUserInfo, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import { getAccessToken, getTenantId, getLocale, getUserInfo, getapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 import store from "redux/store";
 import { createDemandForRoadCutNOCPOPup } from "../../utils/index";
 import {
   localStorageGet, localStorageSet
 } from "egov-ui-kit/utils/localStorageUtils";
-import { callPGService } from "./footer";
+import { callPGServiceOpenSpace, callPGService } from "./footer";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code
 
@@ -159,7 +159,7 @@ const updateAdhoc1 = (state, dispatch) => {
     UpdateStatus(dispatch, '/egov-services/search', [],
       {
         "applicationType": "PETNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": "FORWARD",
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -230,7 +230,7 @@ const updateAdhocReaasign = (state, dispatch) => {
       {
 
         "applicationType": "PETNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "SI" ? "REASSIGN" : role_name == "MOH" ? "REASSIGNTOSI" : '',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -294,7 +294,7 @@ const updateAdhocReject = (state, dispatch) => {
 
       {
         "applicationType": "PETNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": "REJECTED",
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -334,7 +334,7 @@ const updateAdhocApprove = (state, dispatch) => {
       {
 
         "applicationType": "PETNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": "APPROVED",
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": {
@@ -407,7 +407,7 @@ const updateAdhocAdvForward = (state, dispatch) => {
     UpdateStatus(dispatch, '/egov-services/advertisement-search', [],
     {
         "applicationType": "ADVERTISEMENTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "JEX" ? "REVIEWOFSUPERINTENDENT" : role_name == "SUPERINTENDENT" ? "REVIEWOFOSD" : role_name == "OSD" ? "PENDINGAPPROVAL" : '',
 
         "applicationId": localStorage.getItem('ApplicationNumber'),
@@ -445,7 +445,7 @@ const updateAdhocAdvApprove = (state, dispatch) => {
 
       {
         "applicationType": "ADVERTISEMENTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": localStorageGet('pms_iswithdrawn')==="yes"?'APPROVEFORWITHDRAW':'APPROVED',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": {
@@ -507,7 +507,7 @@ const updateAdhocAdvReject = (state, dispatch) => {
 
       {
         "applicationType": "ADVERTISEMENTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": localStorageGet('pms_iswithdrawn')==="yes"?'REJECTEFORWITHDRAW':'REJECTED',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -570,7 +570,7 @@ const updateAdhocAdvReassign = (state, dispatch) => {
     UpdateStatus(dispatch, '/egov-services/advertisement-search', [],
       {
         "applicationType": "ADVERTISEMENTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "JEX" ? "REASSIGN" : role_name == "SUPERINTENDENT" ? "REASSIGNTOJEX" : role_name == "OSD" ? "REASSIGNTOSUPERINTENDENT": role_name == "COMMISSIONER" ? "REASSIGNTOOSD" : '',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -649,7 +649,7 @@ const updateAdhocAdvWithdrawApp = (state, dispatch) => {
 
         {
           "applicationType": "ADVERTISEMENTNOC",
-          "tenantId": getOPMSTenantId(),
+          "tenantId": getTenantId(),
           "applicationStatus": role_name == "JEX" ? "REVIEWOFSPAFTERWITHDRAW" : role_name == "OSD" ? "PENDINGAPPROVALFORWITHDRAW" : '',
           "applicationId": localStorage.getItem('ApplicationNumber'),
           "dataPayload": data,
@@ -703,7 +703,7 @@ const updateAdhocAdvWithdraw = (state, dispatch) => {
 
       {
         "applicationType": "ADVERTISEMENTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": localStorage.getItem('footerApplicationStatus') == 'APPROVED' ? 'WITHDRAWAFTERAPRROVAL' : 'WITHDRAW',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": {
@@ -774,7 +774,7 @@ const updateAdhocSellMeatForward = (state, dispatch) => {
 
       {
         "applicationType": "SELLMEATNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "SI" ? "REVIEWOFSUPERINTENDENT" : role_name == "SUPERINTENDENT" ? "PENDINGAPPROVAL" : '',
 
         "applicationId": localStorage.getItem('ApplicationNumber'),
@@ -813,7 +813,7 @@ const updateAdhocSellMeatApprove = (state, dispatch) => {
 
       {
         "applicationType": "SELLMEATNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": 'APPROVED',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": {
@@ -879,7 +879,7 @@ const updateAdhocSellMeatReject = (state, dispatch) => {
 
       {
         "applicationType": "SELLMEATNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": 'REJECTED',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload":data,
@@ -944,7 +944,7 @@ const updateAdhocSellMeatReassign = (state, dispatch) => {
       {
 
         "applicationType": "SELLMEATNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "SI" ? "REASSIGN" : role_name == "SUPERINTENDENT" ? "REASSIGNTOSI" : role_name == "MOH" ? "REASSIGNTOSUPERINTENDENT" : '',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -1023,7 +1023,7 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
       }
 
     }
-      // createDemandForRoadCutNOCPOPup(state, dispatch, getapplicationNumber(), getOPMSTenantId());
+      // createDemandForRoadCutNOCPOPup(state, dispatch, getapplicationNumber(), getTenantId());
     }
     else {
       if(file){
@@ -1056,7 +1056,7 @@ const updateAdhocRoadCutForward = (state, dispatch) => {
       {
 
         "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "JE" ? "REVIEWSDO" : role_name == "SDO" ? "REVIEWOFEE" : role_name == "EE" ? "REVIEWOFSE" : role_name == "SE" ? "PENDINGAPRROVAL" : role_name == "CE" ? "PAYMENTPENDING" : '',
 
         "applicationId": localStorage.getItem('ApplicationNumber'),
@@ -1095,7 +1095,7 @@ const updateAdhocRoadCutApprove = (state, dispatch) => {
       {
 
         "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": 'APPROVED',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": {
@@ -1159,7 +1159,7 @@ const updateAdhocRoadCutReject = (state, dispatch) => {
 
       {
         "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": 'REJECTED',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -1224,7 +1224,7 @@ const updateAdhocRoadCutReassign = (state, dispatch) => {
     UpdateStatus(dispatch, '/egov-services/roadcut-search', [],
       {
         "applicationType": "ROADCUTNOC",
-        "tenantId": getOPMSTenantId(),
+        "tenantId": getTenantId(),
         "applicationStatus": role_name == "JE" ? "REASSIGN" : role_name == "SDO" ? "REASSIGNTOJE" : role_name == "EE" ? "REASSIGNTOSDO" : role_name == "SE" ? "REASSIGNTOEE" : role_name == "CE" ? "REASSIGNTOSE" : '',
         "applicationId": localStorage.getItem('ApplicationNumber'),
         "dataPayload": data,
@@ -1353,7 +1353,7 @@ export const paymentGatewaySelectionPopup = getCommonContainer({
           optionValue: "element",
           sourceJsonPath: "applyScreenMdmsData.payment",
           jsonPath:
-            "OPMS.paymentGateway"
+            "Booking.paymentGateway"
         })
       })
     },
@@ -1420,8 +1420,178 @@ export const paymentGatewaySelectionPopup = getCommonContainer({
     }
   }
 });
-
-
+export const openSpacePaymentGatewaySelectionPopup = getCommonContainer({
+  header: {
+    uiFramework: "custom-atoms",
+    componentPath: "Container",
+    props: {
+      style: {
+        width: "100%",
+        float: "right"
+      }
+    },
+    children: {
+      div1: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+          xs: 10,
+          sm: 10
+        },
+        props: {
+          style: {
+            width: "100%",
+            float: "right"
+          }
+        },
+        children: {
+          div: getCommonHeader(
+            {
+              labelName: "Select Gateway"
+             // labelKey: "NOC_SELECT_GATEWAY_BOX"
+            },
+            {
+              style: {
+                fontSize: "16px"
+              }
+            }
+          )
+        }
+      },
+      div2: {
+        uiFramework: "custom-atoms",
+        componentPath: "Div",
+        gridDefination: {
+          xs: 2,
+          sm: 2
+        },
+        props: {
+          style: {
+            width: "100%",
+            float: "right",
+            cursor: "pointer"
+          }
+        },
+        children: {
+          closeButton: {
+            componentPath: "Button",
+            props: {
+              style: {
+                float: "right",
+                color: "rgba(0, 0, 0, 0.60)"
+              }
+            },
+            children: {
+              previousButtonIcon: {
+                uiFramework: "custom-atoms",
+                componentPath: "Icon",
+                props: {
+                  iconName: "close"
+                }
+              }
+            },
+            onClickDefination: {
+              action: "condition",
+              callBack: (state, dispatch) =>
+              showHideAdhocPopup(state, dispatch, "booking-search-preview")
+            }
+          }
+        }
+      }
+    }
+  },
+  adhocPenaltyCard: getCommonContainer(
+    {
+      penaltyAmountAndReasonContainer: getCommonContainer({
+        penaltyReason: getSelectField({
+          label: {
+            labelName: "Select Gateway"
+           // labelKey: "NOC_SELECT_GATEWAY"
+          },
+          placeholder: {
+            labelName: "Select Gateway"
+            //labelKey: "NOC_SELECT_GATEWAY"
+          },
+          gridDefination: {
+            xs: 12,
+            sm: 12
+          },
+          props: {
+            style: {
+              width: "90%"
+            }
+          },
+          optionLabel: "element",
+          optionValue: "element",
+          sourceJsonPath: "applyScreenMdmsData.payment",
+          jsonPath:
+            "Booking.paymentGateway"
+        })
+      })
+    },
+    {
+      style: {
+        marginTop: "12px"
+      }
+    }
+  ),
+  div: {
+    uiFramework: "custom-atoms",
+    componentPath: "Div",
+    props: {
+      style: {
+        width: "100%",
+        textAlign: "right"
+      }
+    },
+    children: {
+      cancelButton: {
+        componentPath: "Button",
+        props: {
+          variant: "outlined",
+          color: "primary",
+          style: {
+            width: "140px",
+            height: "48px",
+            marginRight: "16px"
+          }
+        },
+        children: {
+          previousButtonLabel: getLabel({
+            labelName: "CANCEL",
+            labelKey: "NOC_ADD_HOC_CHARGES_POPUP_BUTTON_CANCEL"
+          })
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: (state, dispatch) =>
+          showHideAdhocPopup(state, dispatch, "booking-search-preview")
+        }
+      },
+      addButton: {
+        componentPath: "Button",
+        props: {
+          variant: "contained",
+          color: "primary",
+          style: {
+            width: "140px",
+            height: "48px"
+          }
+        },
+        children: {
+          previousButtonLabel: getLabel({
+            labelName: "Submit"
+            //labelKey: "NOC_SUBMIT"
+          })
+        },
+        onClickDefination: {
+          action: "condition",
+          callBack: callPGServiceOpenSpace
+        }
+      }
+    }
+  }
+});
 
 export const adhocPopup1 = getCommonContainer({
   header: {

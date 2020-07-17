@@ -23,45 +23,9 @@ export const documentsSummary = getCommonGrayCard({
         },
         ...getCommonSubHeader({
           labelName: "Documents",
-          labelKey: "NOC_SUMMARY_DOCUMENTS_HEADER﻿"
+          labelKey: "BK_OSB_DOCUMENTS_DETAILS_HEADER"
         }),
       },
-      editSection: {
-        componentPath: "Button",
-        props: {
-          color: "primary",
-          style: {
-            marginTop: "-10px",
-            marginRight: "-18px"
-          }
-        },
-        gridDefination: {
-          xs: 4,
-          align: "right"
-        },
-        children: {
-          editIcon: {
-            uiFramework: "custom-atoms",
-            componentPath: "Icon",
-            props: {
-              iconName: "edit"
-            }
-          },
-          buttonLabel: getLabel({
-            labelName: "Edit",
-            labelKey: "NOC_SUMMARY_EDIT"
-          })
-        },
-        onClickDefination: {
-          action: "condition",
-          callBack: (state, dispatch) => {
-            let applicationType = getapplicationType(); 
-            let steplevel = 2;
-            steplevel =  applicationType === 'SELLMEATNOC' ? 1 :  applicationType === 'ROADCUTNOC' ? 1 : applicationType === 'ADVERTISEMENTNOC' ? 2 : steplevel;           
-            gotoApplyWithStep(state, dispatch, steplevel);
-          }
-        }
-      }
     }
   },
   body: {

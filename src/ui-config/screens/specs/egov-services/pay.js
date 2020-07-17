@@ -7,7 +7,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
-import { getCurrentFinancialYear, generateBill, showHideAdhocPopup } from "../utils";
+import { getCurrentFinancialYear, generateWaterTankerBill, showHideAdhocPopup } from "../utils";
 import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import capturePaymentDetails from "./payResource/capture-payment-details";
 import estimateDetails from "./payResource/estimate-details";
@@ -17,12 +17,13 @@ import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configurat
 import { getSearchResults } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
 
-import { getUserInfo, getOPMSTenantId, getapplicationType, localStorageGet, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
+import { getUserInfo, getTenantId, getapplicationType, localStorageGet, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
 const header = getCommonContainer({
   header: getCommonHeader({
     //labelName: `Application for ${getapplicationType()} - (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
     //labelKey: "NOC_COMMON_APPLY_NOC"
-    labelName: `Application for ${getapplicationType().substring(0,getapplicationType().length -3)} NOC - (${getCurrentFinancialYear()})` //later use getFinancialYearDates
+    // labelName: `Application for ${getapplicationType().substring(0,getapplicationType().length -3)} NOC - (${getCurrentFinancialYear()})` //later use getFinancialYearDates
+    labelName: `Application for ${getapplicationType()}` //later use getFinancialYearDates
   }),
   applicationNumber: {
     uiFramework: "custom-atoms-local",
@@ -35,28 +36,30 @@ const header = getCommonContainer({
 });
 
 const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
-  await generateBill(dispatch, applicationNumber, tenantId);
+  await generateWaterTankerBill(state, dispatch, applicationNumber, tenantId);
+  // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
 
-  let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0]");
+  // console.log("payloadnewpay");
+  
 
   //Collection Type Added in CS v1.1
-  payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
+  // payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
 
-  if (get(payload, "totalAmount") != undefined) {
-    //set amount paid as total amount from bill - destination changed in CS v1.1
-    dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
-    //set total amount in instrument
-    dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
-  }
+  // if (get(payload, "totalAmount") != undefined) {
+  //   //set amount paid as total amount from bill - destination changed in CS v1.1
+  //   dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
+  //   //set total amount in instrument
+  //   dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
+  // }
 
-  //Initially select instrument type as Cash
-  dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
+  // //Initially select instrument type as Cash
+  // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
 
-  //set tenantId
-  dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
+  // //set tenantId
+  // dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
 
-  //set tenantId in instrument
-  dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
+  // //set tenantId in instrument
+  // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
 };
 
 const loadNocData = async (dispatch, applicationNumber, tenantId) => {
@@ -81,7 +84,7 @@ const getPaymentGatwayList = async (action, state, dispatch) => {
       [],
       {}
     );
-      debugger
+    console.log(payload, "payloadPay");
       let payloadprocess = [];
       for (let index = 0; index < payload.length; index++) {
         const element = payload[index];
@@ -92,7 +95,6 @@ const getPaymentGatwayList = async (action, state, dispatch) => {
       }
 
     dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
-    debugger
   } catch (e) {
     console.log(e);
   }
@@ -106,10 +108,13 @@ const screenConfig = {
   beforeInitScreen: (action, state, dispatch) => {
     let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
+    console.log(window.location.href, "applicationNumber");
+    console.log(applicationNumber, "applicationNumber");
+    
     getPaymentGatwayList(action, state, dispatch).then(response => {
     });
-    loadNocData(dispatch, applicationNumber, tenantId);
-    fetchBill(state, dispatch, applicationNumber, tenantId);
+    // loadNocData(dispatch, applicationNumber, tenantId);
+    // fetchBill(state, dispatch, applicationNumber, tenantId);
     return action;
   },
   components: {

@@ -4,7 +4,7 @@ import { nocDetails } from "./applyResourceRoadCut/nocDetails";
 import { documentDetails } from "./applyResourceRoadCut/documentDetails";
 import { getFileUrlFromAPI, getQueryArg, getTransformedLocale, setBusinessServiceDataToLocalStorage } from "egov-ui-framework/ui-utils/commons";
 import {  prepareFinalObject, handleScreenConfigurationFieldChange as handleField} from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getOPMSTenantId, setapplicationType, getUserInfo, setapplicationNumber, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId, setapplicationType, getUserInfo, setapplicationNumber, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import set from "lodash/set";
 import get from "lodash/get";
@@ -110,7 +110,7 @@ export const formwizardThirdStep = {
 
 
 const getMdmsData = async (action, state, dispatch) => {
-  let tenantId = getOPMSTenantId();
+  let tenantId = getTenantId();
   let mdmsBody = {
     MdmsCriteria: {
       tenantId: tenantId,

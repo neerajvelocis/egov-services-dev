@@ -12,7 +12,10 @@ import {
   setOwnerShipDropDownFieldChange,
   createEstimateData,
   validateFields,
-  showHideAdhocPopupopms
+  showHideAdhocPopupopms,
+  showHideAdhocPopupopmsReject,
+  showHideAdhocPopupopmsReassign,
+  showHideAdhocPopupopmsApprove
   } from "../../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
@@ -30,11 +33,14 @@ import set from "lodash/set";
 import { adhocPopup1 ,adhocPopup2} from "../payResource/adhocPopup";
 import {
   getAccessToken,
-  getOPMSTenantId,
+  getTenantId,
   getLocale,
   getUserInfo
 } from "egov-ui-kit/utils/localStorageUtils";
+
+let role_name=JSON.parse(getUserInfo()).roles[0].code
 //import { getCurrentFinancialYear, generateBill, showHideAdhocPopup } from "../utils";
+
 
 export const generatePdfFromDiv = (action, applicationNumber) => {
   let target = document.querySelector("#custom-atoms-div");
@@ -133,6 +139,16 @@ export const changeStep = (
     },
     {
       path: "components.div.children.footer.children.reject",
+      property: "visible",
+      value: true
+    },
+    {
+      path: "components.div.children.footer.children.reaasign",
+      property: "visible",
+      value: true
+    },
+    {
+      path: "components.div.children.footer.children.approve",
       property: "visible",
       value: true
     },
@@ -284,7 +300,9 @@ export const footer = getCommonApplyFooter({
     onClickDefination: {
       action: "condition",
       callBack: (state, dispatch) => showHideAdhocPopupopms(state, dispatch, "search-preview","nextButton")
-    }
+    },
+    visible:role_name=="SI"?true:false
+    
   },
   reject: {
     componentPath: "Button",
@@ -317,9 +335,82 @@ export const footer = getCommonApplyFooter({
       callBack: (state, dispatch) =>{
        
    
-        showHideAdhocPopupopms(state, dispatch, "search-preview","reject")
+        showHideAdhocPopupopmsReject(state, dispatch, "search-preview","reject")
     }
+    },
+   visible: role_name=="SI"?false:role_name=="MOH"?true:false
+  },
+  reassign: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "45px",
+        borderRadius:"inherit"
+      }
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "REASSIGN",
+        labelKey: "REASSIGN"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      
+      callBack: (state, dispatch) =>{
+       
+   
+        showHideAdhocPopupopmsReassign(state, dispatch, "search-preview","reject")
     }
+    },
+    visible: role_name=="SI"?true:role_name=="MOH"?true:false
+  },
+  approve: {
+    componentPath: "Button",
+    props: {
+      variant: "contained",
+      color: "primary",
+      style: {
+        minWidth: "180px",
+        height: "48px",
+        marginRight: "45px",
+        borderRadius:"inherit"
+      }
+    },
+    children: {
+      nextButtonLabel: getLabel({
+        labelName: "APPROVE",
+        labelKey: "APPROVE"
+      }),
+      nextButtonIcon: {
+        uiFramework: "custom-atoms",
+        componentPath: "Icon",
+        props: {
+          iconName: "keyboard_arrow_right"
+        }
+      }
+    },
+    onClickDefination: {
+      action: "condition",
+      
+      callBack: (state, dispatch) =>{
+       
+   
+        showHideAdhocPopupopmsApprove(state, dispatch, "search-preview","reject")
+    }
+    },
+    visible: role_name=="SI"?false:role_name=="MOH"?true:false
   }
 });
 
@@ -505,7 +596,6 @@ export const footerReview = (
                   labelKey: "PM_APPROVER_TRADE_APP_BUTTON_APPROVE"
                 })
               },
-              
               visible: getButtonVisibility(status, "APPROVE"),
               roleDefination: {
                 rolePath: "user-info.roles",
@@ -555,7 +645,6 @@ export const footerReview = (
                   labelKey: "PM_COMMON_BUTTON_CANCEL_LICENSE"
                 })
               },
-              
               visible: getButtonVisibility(status, "CANCEL TRADE LICENSE"),
               roleDefination: {
                 rolePath: "user-info.roles",
