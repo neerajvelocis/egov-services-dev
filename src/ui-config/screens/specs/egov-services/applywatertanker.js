@@ -247,19 +247,19 @@ const screenConfig = {
     // prepareEditFlow(state, dispatch, applicationNumber, tenantId);
 
 
-    dispatch(
-      prepareFinalObject(
-        "Booking.bkApplicantName",
-        JSON.parse(getUserInfo()).name
-      )
-    ),
-      dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-    dispatch(
-      prepareFinalObject(
-        "Booking.bkMobileNumber",
-        JSON.parse(getUserInfo()).mobileNumber
-      )
-    );
+    // dispatch(
+    //   prepareFinalObject(
+    //     "Booking.bkApplicantName",
+    //     JSON.parse(getUserInfo()).name
+    //   )
+    // ),
+    //   dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+    // dispatch(
+    //   prepareFinalObject(
+    //     "Booking.bkMobileNumber",
+    //     JSON.parse(getUserInfo()).mobileNumber
+    //   )
+    // );
 
     // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
     // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
