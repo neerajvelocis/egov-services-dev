@@ -69,33 +69,6 @@ export const openSpaceSummary = getCommonGrayCard({
             className: "sellmeatapplicant-summary",
             scheama: getCommonGrayCard({
                 applicantContainer: getCommonContainer({
-                    applicantName: getLabelWithValue(
-                        {
-                            labelName: "Name",
-                            labelKey: "BK_OSB_NAME_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicantName",
-                        }
-                    ),
-                    applicantEmail: getLabelWithValue(
-                        {
-                            labelName: "Email Address",
-                            labelKey: "BK_OSB_EMAIL_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkEmail",
-                        }
-                    ),
-                    applicantMobile: getLabelWithValue(
-                        {
-                            labelName: "Mobile Number",
-                            labelKey: "BK_OSB_MOBILE_NO_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkMobileNumber",
-                        }
-                    ),
                     HouseNo: getLabelWithValue(
                         {
                             labelName: "House No.",

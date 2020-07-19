@@ -123,7 +123,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     labelKey: "BK_WTB_CASE_LABEL",
                   },
                   {
-                    jsonPath: "Booking.bkCase",
+                    jsonPath: "Booking.bkStatus",
                   }
                 )
               }),

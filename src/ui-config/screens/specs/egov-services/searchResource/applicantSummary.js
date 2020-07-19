@@ -24,7 +24,7 @@ export const applicantSummary = getCommonGrayCard({
               },
               ...getCommonSubHeader({
                   labelName: "Applicant Details",
-                  labelKey: "BK_OSB_APPLICANT_DETAILS_HEADER",
+                  labelKey: "MY_BK_APPLICANT_DETAILS_HEADER",
               }),
           },
           // editSection: {

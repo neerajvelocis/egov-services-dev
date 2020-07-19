@@ -5,7 +5,11 @@ import {
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
-import { getCommonApplyFooter, validateFields, generateOpenSpaceBill } from "../../utils";
+import {
+    getCommonApplyFooter,
+    validateFields,
+    generateBill,
+} from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
@@ -36,33 +40,55 @@ const callBackForNext = async (state, dispatch) => {
     isFormValid = validatestepformflag[0];
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
-        await generateOpenSpaceBill(state, dispatch);
-        const uploadedDocData = get(
-            state.screenConfiguration.preparedFinalObject,
-            "documentsUploadRedux[0].documents",
-            []
-        );
-        const documentsPreview =
-            uploadedDocData &&
-            uploadedDocData.map((item) => {
-                return {
-                    title: "DOC_DOC_PICTURE",
-                    link: item.fileUrl && item.fileUrl.split(",")[0],
-                    linkText: "View",
-                    name: item.fileName,
-                    fileStoreId: item.fileStoreId,
-                };
-            });
+        // prepareDocumentsUploadData(state, dispatch);
+        let response = await createUpdateOsbApplication(state, dispatch, "INITIATE");
+        let responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+            
+            // DISPLAY SUCCESS MESSAGE
+            let successMessage = {
+                labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, successMessage, "success"));
 
-        dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+            // GET FEE DETAILS
+            let tenantId = getTenantId().split(".")[0];
+            let applicationNumber = get(response, "data.bkApplicationNumber", "");
+            let bookingType = get(response, "data.bkBookingType", "");
+            await generateBill(state, dispatch, applicationNumber, tenantId, bookingType);
+
+            // GET DOCUMENT DATA FOR DOWNLOAD
+            const uploadedDocData = get(
+                state.screenConfiguration.preparedFinalObject,
+                "documentsUploadRedux[0].documents",
+                []
+            );
+            const documentsPreview =
+                uploadedDocData &&
+                uploadedDocData.map((item) => {
+                    return {
+                        title: "DOC_DOC_PICTURE",
+                        link: item.fileUrl && item.fileUrl.split(",")[0],
+                        linkText: "View",
+                        name: item.fileName,
+                        fileStoreId: item.fileStoreId,
+                    };
+                });
+
+            dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+        } else {
+            let errorMessage = {
+                labelName: "Submission Falied, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "error"));
+        }
     }
     if (activeStep === 3) {
-        prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
-            state,
-            dispatch,
-            "PENDINGAPPROVAL"
-        );
+        // prepareDocumentsUploadData(state, dispatch);
+        let response = await createUpdateOsbApplication(state, dispatch, "APPLY");
+        console.log(response, "step3Response");
         let responseStatus = get(response, "status", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
             let successMessage = {
@@ -71,12 +97,12 @@ const callBackForNext = async (state, dispatch) => {
             };
             dispatch(toggleSnackbar(true, successMessage, "success"));
             // setTimeout(() => {
-                const appendUrl =
-                    process.env.REACT_APP_SELF_RUNNING === "true"
-                        ? "/egov-ui-framework"
-                        : "";
-                const reviewUrl = `${appendUrl}/egov-services/my-applications`;
-                dispatch(setRoute(reviewUrl));
+            const appendUrl =
+                process.env.REACT_APP_SELF_RUNNING === "true"
+                    ? "/egov-ui-framework"
+                    : "";
+            const reviewUrl = `${appendUrl}/egov-services/my-applications`;
+            dispatch(setRoute(reviewUrl));
             // }, 1000);
         } else {
             let errorMessage = {

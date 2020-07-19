@@ -93,12 +93,11 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
   beforeInitScreen: (action, state, dispatch) => {
-    setapplicationType("MyBooking");
-    getMdmsData(action, state, dispatch);
-    // .then((response) => {
-      // prepareDocumentsUploadData(state, dispatch, "apply_osb");
+    // setapplicationType("MyBooking");
+    getMdmsData(action, state, dispatch) .then((response) => {
+      // prepareDocumentsUploadData(state, dispatch, "apply_osbm");
         fetchData(action, state, dispatch);
-    // });
+    });
     return action;
   },
   components: {

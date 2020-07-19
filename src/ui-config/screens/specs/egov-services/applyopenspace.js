@@ -290,12 +290,8 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "applyopenspace",
   beforeInitScreen: (action, state, dispatch) => {
-    const applicationNumber = getQueryArg(
-      window.location.href,
-      "applicationNumber"
-    );
-    !applicationNumber ? clearlocalstorageAppDetails(state) : "";
-    setapplicationType("Booking");
+    clearlocalstorageAppDetails(state);
+    setapplicationType("OSBM");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
     // dispatch(
@@ -326,7 +322,7 @@ const screenConfig = {
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then((response) => {
-      prepareDocumentsUploadData(state, dispatch, "apply_osb");
+      prepareDocumentsUploadData(state, dispatch, "apply_osbm");
     });
 
     // Search in case of EDIT flow

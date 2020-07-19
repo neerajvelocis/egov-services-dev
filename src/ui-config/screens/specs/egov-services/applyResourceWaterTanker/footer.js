@@ -6,21 +6,24 @@ import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 
-import { getCommonApplyFooter, validateFields, generateWaterTankerBill } from "../../utils";
+import {
+    getCommonApplyFooter,
+    validateFields,
+    generateBill,
+} from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
-import {
-    createUpdateWtbApplication,
-} from "../../../../../ui-utils/commons";
+import { createUpdateWtbApplication } from "../../../../../ui-utils/commons";
 import {
     localStorageGet,
     localStorageSet,
     getTenantId,
     getapplicationNumber,
-    setapplicationNumber
+    setapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { set } from "lodash";
 
 const callBackForNext = async (state, dispatch) => {
     let errorMessage = "";
@@ -41,46 +44,92 @@ const callBackForNext = async (state, dispatch) => {
     isFormValid = validatestepformflag[0];
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 1 && isFormValid != false) {
-        // await generateWaterTankerBill(state, dispatch);
+        let isEstimateVisible = bookingData.bkStatus === "Paid" ? true : false;
+        console.log("in active step 1", isEstimateVisible)
+        set(
+            state.screenConfiguration.screenConfig["applywatertanker"],
+            "components.div.children.formwizardThirdStep.children.summaryDetails.children.cardContent.children.div.children.estimateSummary.visible",
+            isEstimateVisible
+        );
+        if (bookingData.bkStatus === "Paid") {
+            let response = await createUpdateWtbApplication(
+                state,
+                dispatch,
+                "INITIATE"
+            );
+            let responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                isFormValid = true;
+
+    
+
+                // DISPLAY SUCCESS MESSAGE
+                let successMessage = {
+                    labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+                    labelKey: "", //UPLOAD_FILE_TOAST
+                };
+                dispatch(toggleSnackbar(true, successMessage, "success"));
+
+                // GET FEE DETAILS
+                let tenantId = getTenantId().split(".")[0];
+                let applicationNumber = get(
+                    response,
+                    "data.bkApplicationNumber",
+                    ""
+                );
+                let bookingType = get(response, "data.bkBookingType", "");
+                await generateBill(
+                    state,
+                    dispatch,
+                    applicationNumber,
+                    tenantId,
+                    "BWT"
+                );
+            } else {
+                isFormValid = false;
+                let errorMessage = {
+                    labelName: "Submission Falied, Try Again later!",
+                    labelKey: "", //UPLOAD_FILE_TOAST
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "error"));
+            }
+        }
     }
     if (activeStep === 2) {
-        let bookingAction = bookingData.bkCase === "Paid" ? "PAIDAPPLY" : "FAILUREAPPLY";
+        let bookingAction =
+            bookingData.bkStatus === "Paid" ? "PAIDAPPLY" : "FAILUREAPPLY";
         let response = await createUpdateWtbApplication(
             state,
             dispatch,
             bookingAction
         );
         let responseStatus = get(response, "status", "");
-        console.log(response, "response");
-        console.log(responseStatus, "responseStatus");
-        
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
-            console.log(response, "response");
             let successMessage = {
                 labelName: "APPLICATION SUBMITTED SUCCESSFULLY! ",
                 labelKey: "", //UPLOAD_FILE_TOAST
             };
             dispatch(toggleSnackbar(true, successMessage, "success"));
-            if(bookingData.bkCase === "Paid") {
-                setapplicationNumber(response.message.data.bkApplicationNumber)
+            if (bookingData.bkStatus === "Paid") {
+                setapplicationNumber(response.data.bkApplicationNumber);
                 setTimeout(() => {
                     const appendUrl =
                         process.env.REACT_APP_SELF_RUNNING === "true"
                             ? "/egov-ui-framework"
                             : "";
-                    const reviewUrl = `${appendUrl}/egov-services/wtb-pay?applicationNumber=${response.message.data.bkApplicationNumber}&tenantId=${response.message.data.tenantId}`;
+                    const reviewUrl = `${appendUrl}/egov-services/pay?applicationNumber=${response.data.bkApplicationNumber}&tenantId=${response.data.tenantId}`;
                     dispatch(setRoute(reviewUrl));
                 }, 1000);
             } else {
-            setTimeout(() => {
-                const appendUrl =
-                    process.env.REACT_APP_SELF_RUNNING === "true"
-                        ? "/egov-ui-framework"
-                        : "";
-                const reviewUrl = `${appendUrl}/egov-services/my-applications`;
-                dispatch(setRoute(reviewUrl));
-            }, 1000);
-        }
+                setTimeout(() => {
+                    const appendUrl =
+                        process.env.REACT_APP_SELF_RUNNING === "true"
+                            ? "/egov-ui-framework"
+                            : "";
+                    const reviewUrl = `${appendUrl}/egov-services/my-applications`;
+                    dispatch(setRoute(reviewUrl));
+                }, 1000);
+            }
         } else {
             let errorMessage = {
                 labelName: "Submission Falied, Try Again later!",
@@ -141,8 +190,10 @@ export const changeStep = (
 
     const isPreviousButtonVisible = activeStep > 0 ? true : false;
     const isNextButtonVisible = activeStep < 2 ? true : false;
-    const isSubmitButtonVisible = activeStep === 2 && bookingData.bkCase !== "Paid" ? true : false;
-    const isPayButtonVisible = activeStep === 2 && bookingData.bkCase === "Paid" ? true : false;
+    const isSubmitButtonVisible =
+        activeStep === 2 && bookingData.bkStatus !== "Paid" ? true : false;
+    const isPayButtonVisible =
+        activeStep === 2 && bookingData.bkStatus === "Paid" ? true : false;
     const actionDefination = [
         {
             path: "components.div.children.stepper.props",
@@ -224,7 +275,7 @@ export const getActionDefinationForStepper = (path) => {
         {
             path: "components.div.children.formwizardThirdStep",
             property: "visible",
-            value: false
+            value: false,
         },
     ];
     for (var i = 0; i < actionDefination.length; i++) {
@@ -350,7 +401,7 @@ export const footer = getCommonApplyFooter({
         children: {
             submitButtonLabel: getLabel({
                 labelName: "Submit",
-                labelKey: "NOC_COMMON_BUTTON_PAY",
+                labelKey: "NOC_COMMON_BUTTON_SUBMIT",
             }),
             submitButtonIcon: {
                 uiFramework: "custom-atoms",
@@ -375,8 +426,6 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
         .getElementById("apply_form" + activeStep)
         .querySelectorAll("[required]")
         .forEach(function (i) {
-            // console.log(i, "fields");
-
             if (!i.value) {
                 i.focus();
                 allAreFilled = false;

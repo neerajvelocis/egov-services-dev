@@ -238,8 +238,8 @@ export const searchForm = getCommonCard({
                 props: {
                     className: "applicant-details-error",
                     inputProps: {
-                        min: getTodaysDateInYMD(),
-                        max: getFinancialYearDates("yyyy-mm-dd").endDate,
+                        // min: getTodaysDateInYMD(),
+                        max: getTodaysDateInYMD(),
                     },
                 },
                 gridDefination: {
@@ -265,8 +265,8 @@ export const searchForm = getCommonCard({
                 jsonPath: "MyBooking.toDate",
                 props: {
                     inputProps: {
-                        min: getNextMonthDateInYMD(),
-                        max: getFinancialYearDates("yyyy-mm-dd").endDate,
+                        // min: getNextMonthDateInYMD(),
+                        max: getTodaysDateInYMD(),
                     },
                 },
                 gridDefination: {

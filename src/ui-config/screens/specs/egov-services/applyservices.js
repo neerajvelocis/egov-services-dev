@@ -8,7 +8,6 @@ import {
   getUserInfo,
   setOPMSTenantId,
 } from "egov-ui-kit/utils/localStorageUtils";
-import "./index.css";
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
   {

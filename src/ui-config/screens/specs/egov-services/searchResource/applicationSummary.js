@@ -10,7 +10,7 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
-export const waterBookingApplicationSummary = getCommonGrayCard({
+export const applicationSummary = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",
         componentPath: "Container",
@@ -174,7 +174,7 @@ export const waterBookingApplicationSummary = getCommonGrayCard({
                           labelKey: "MY_BK_CASE_LABEL",
                         },
                         {
-                          jsonPath: "Booking.bkCase",
+                          jsonPath: "Booking.bkStatus",
                         }
                       )
                     }),

@@ -306,7 +306,7 @@ export const footerReviewTop = (
     console.log(status, "statusNew");
     // let renewalMenu=[];
     let certificateDownloadObject = {
-        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE" },
+        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE_DOWNLOAD" },
         link: () => {
             const { Booking } = state.screenConfiguration.preparedFinalObject;
             downloadCertificateForm(Booking);
@@ -314,7 +314,7 @@ export const footerReviewTop = (
         leftIcon: "book",
     };
     let certificatePrintObject = {
-        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE" },
+        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE_PRINT" },
         link: () => {
             const { Booking } = state.screenConfiguration.preparedFinalObject;
             downloadCertificateForm(Booking, "print");
@@ -323,7 +323,7 @@ export const footerReviewTop = (
     };
 
     let receiptDownloadObject = {
-        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT" },
+        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_DOWNLOAD" },
         link: () => {
             // const receiptQueryString = [
             //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
@@ -335,7 +335,7 @@ export const footerReviewTop = (
         leftIcon: "receipt",
     };
     let receiptPrintObject = {
-        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT" },
+        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_PRINT" },
         link: () => {
             // const receiptQueryString =  [
             //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
@@ -347,7 +347,7 @@ export const footerReviewTop = (
         leftIcon: "receipt",
     };
     let applicationDownloadObject = {
-        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION" },
+        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION_DOWNLOAD" },
         link: () => {
             // const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
             // const documents = LicensesTemp[0].reviewDocData;
@@ -357,7 +357,7 @@ export const footerReviewTop = (
         leftIcon: "assignment",
     };
     let applicationPrintObject = {
-        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION" },
+        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION_PRINT" },
         link: () => {
             // const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
             // const documents = LicensesTemp[0].reviewDocData;

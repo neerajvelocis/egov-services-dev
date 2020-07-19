@@ -538,7 +538,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.RoadCutNOC.RoadCutDocuments",
             []
         );
-    } else if (type == "apply_osb") {
+    } else if (type == "apply_osbm") {
         documents = get(
             state,
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
@@ -569,8 +569,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 
     documents.forEach((doc) => {
         // Handle the case for multiple muildings
-        if (doc.code === "DOC.PICTURE" && doc.hasMultipleRows && doc.options) {
-            alert("multiple");
+        if (doc.code === "DOC_DOC_PICTURE" && doc.hasMultipleRows && doc.options) {
             let buildingsData = get(
                 state,
                 "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
@@ -779,10 +778,11 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     dispatch(prepareFinalObject("documentsContract", documentsContract));
 };
 
-export const createUpdateOsbApplication = async (state, dispatch) => {
+export const createUpdateOsbApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
-
+    let applicationNumber = getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    let method = applicationNumber ? "UPDATE" : "CREATE";
     try {
         let payload = get(
             state.screenConfiguration.preparedFinalObject,
@@ -821,24 +821,62 @@ export const createUpdateOsbApplication = async (state, dispatch) => {
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "OSBM");
         set(payload, "tenantId", tenantId);
-        set(payload, "bkAction", "APPLY");
+        set(payload, "bkAction", action);
         set(payload, "businessService", "OSBM");
 
-        response = await httpRequest("post", "/bookings/api/_create", "", [], {
-            Booking: payload,
-        });
-        if (
-            response.applicationId !== "null" ||
-            response.applicationId !== ""
-        ) {
-            setapplicationNumber(response.applicationId);
-            setapplicationMode(status);
-            dispatch(prepareFinalObject("Booking", response));
-            setApplicationNumberBox(state, dispatch);
-            return { status: "success", message: response };
-        } else {
-            return { status: "fail", message: response };
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_create",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.bkApplicationNumber !== "null" ||
+                response.data.bkApplicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.bkApplicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_update",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response update: ", response);
+            setapplicationNumber(response.data.bkApplicationNumber);
+            dispatch(prepareFinalObject("Booking", response.data));
+            return { status: "success",  data: response.data };
         }
+
+        // response = await httpRequest("post", "/bookings/api/_create", "", [], {
+        //     Booking: payload,
+        // });
+        // if (
+        //     response.applicationId !== "null" ||
+        //     response.applicationId !== ""
+        // ) {
+        //     setapplicationNumber(response.applicationId);
+        //     setapplicationMode(status);
+        //     dispatch(prepareFinalObject("Booking", response));
+        //     setApplicationNumberBox(state, dispatch);
+        //     return { status: "success", message: response };
+        // } else {
+        //     return { status: "fail", message: response };
+        // }
     } catch (error) {
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
@@ -850,6 +888,91 @@ export const createUpdateOsbApplication = async (state, dispatch) => {
         );
         // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
         dispatch(prepareFinalObject("Booking", fireNocData));
+
+        return { status: "failure", message: error };
+    }
+};
+
+export const createUpdateWtbApplication = async (state, dispatch, bookingAction) => {
+    let response = "";
+    let tenantId = getTenantId().split(".")[0];
+    let applicationNumber = getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    let method = applicationNumber ? "UPDATE" : "CREATE";
+
+    try {
+        let payload = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking",
+            []
+        );
+        set(payload, "bkBookingType", "WATER_TANKERS");
+        set(payload, "tenantId", tenantId);
+        set(payload, "bkAction", bookingAction);
+        set(payload, "businessService", "BWT");
+        setapplicationMode(status);
+
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_create",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.bkApplicationNumber !== "null" ||
+                response.data.bkApplicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.bkApplicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_update",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response update: ", response);
+            setapplicationNumber(response.data.bkApplicationNumber);
+            dispatch(prepareFinalObject("Booking", response.data));
+            return { status: "success",  data: response.data };
+        }
+
+        // response = await httpRequest("post", "/bookings/api/_create", "", [], {
+        //     Booking: payload,
+        // });
+        // if (
+        //     response.data.bkApplicationNumber !== "null" ||
+        //     response.data.bkApplicationNumber !== ""
+        // ) {
+        //     dispatch(prepareFinalObject("Booking", response.data));
+        //     setapplicationNumber(response.data.bkApplicationNumber);
+        //     setApplicationNumberBox(state, dispatch);
+        //     return { status: "success", data: response.data };
+        // } else {
+        //     return { status: "fail", data: response.data };
+        // }
+    } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+        // Revert the changed pfo in case of request failure
+        let BookingData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking",
+            []
+        );
+        dispatch(prepareFinalObject("Booking", BookingData));
 
         return { status: "failure", message: error };
     }
@@ -1868,50 +1991,7 @@ export const UpdateMasterPrice = async (state, dispatch, queryObject, code) => {
     }
 };
 
-export const createUpdateWtbApplication = async (state, dispatch, bookingAction) => {
-    let response = "";
-    let tenantId = getTenantId().split(".")[0];
 
-    try {
-        let payload = get(
-            state.screenConfiguration.preparedFinalObject,
-            "Booking",
-            []
-        );
-        set(payload, "bkBookingType", "WATER_TANKERS");
-        set(payload, "tenantId", tenantId);
-        set(payload, "bkAction", bookingAction);
-        set(payload, "businessService", "BWT");
-        setapplicationMode(status);
-
-        response = await httpRequest("post", "/bookings/api/_create", "", [], {
-            Booking: payload,
-        });
-        if (
-            response.applicationId !== "null" ||
-            response.applicationId !== ""
-        ) {
-            dispatch(prepareFinalObject("Booking", response));
-            setapplicationNumber(response.applicationId);
-            setApplicationNumberBox(state, dispatch);
-            return { status: "success", message: response };
-        } else {
-            return { status: "fail", message: response };
-        }
-    } catch (error) {
-        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
-
-        // Revert the changed pfo in case of request failure
-        let BookingData = get(
-            state,
-            "screenConfiguration.preparedFinalObject.Booking",
-            []
-        );
-        dispatch(prepareFinalObject("Booking", BookingData));
-
-        return { status: "failure", message: error };
-    }
-};
 
 export const createUpdateRoadCutNocApplication = async (
     state,

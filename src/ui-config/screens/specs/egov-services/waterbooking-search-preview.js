@@ -30,15 +30,15 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill } from "../utils/index";
 import generatePdf from "../utils/receiptPdf";
-import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import {
-    generateWaterTankerBill,
+    generateBill,
 } from "../utils";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
-import { waterBookingApplicationSummary } from "./searchResource/waterbookingapplicationSummary";
+import { applicantSummary  } from "./searchResource/applicantSummary";
+import { applicationSummary } from "./searchResource/applicationSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
 import { taskStatusSummary } from "./searchResource/taskStatusSummary";
-import { wtbFooter } from "./searchResource/citizenFooter";
+import { footer } from "./searchResource/citizenFooter";
 import {
     footerReview,
     downloadPrintContainer,
@@ -309,7 +309,7 @@ const HideshowEdit = (action, bookingStatus) => {
     }
     set(
         action,
-        "screenConfig.components.div.children.body.children.cardContent.children.waterBookingApplicationSummary.children.cardContent.children.header.children.editSection.visible",
+        "screenConfig.components.div.children.body.children.cardContent.children.applicationSummary.children.cardContent.children.header.children.editSection.visible",
         role_name === "CITIZEN" ? (showEdit === true ? true : false) : false
     );
     set(
@@ -343,7 +343,7 @@ const HideshowFooter = (action, bookingStatus) => {
     // );
     set(
         action,
-        "screenConfig.components.div.children.wtbFooter.children.submitButton.visible",
+        "screenConfig.components.div.children.footer.children.submitButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
 };
@@ -363,11 +363,19 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
-    // dispatch(
-    //     prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
-    // );
 
-    // await generateWaterTankerBill(state, dispatch, applicationNumber, tenantId);
+    if(recData[0].bkStatus == "Paid"){
+        await generateBill(state, dispatch, applicationNumber, tenantId, "BWT");
+    } else {
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.estimateSummary.visible",
+            false
+        );
+    }
+
+
+
 
     bookingStatus = get(
         state,
@@ -397,6 +405,7 @@ const setSearchResponse = async (
         tenantId
     );
 
+
     process.env.REACT_APP_NAME === "Citizen"
         ? set(
               action,
@@ -408,6 +417,9 @@ const setSearchResponse = async (
               "screenConfig.components.div.children.headerDiv.children.helpSection.children",
               printCont
           );
+
+          
+          
     // if (role_name == "CITIZEN") {
     //     //   console.log("in Citizen");
 
@@ -537,31 +549,6 @@ const setSearchResponseForNocCretificate = async (
     //setDownloadMenu(state, dispatch);
 };
 
-const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
-    await generateWaterTankerBill(state, dispatch, applicationNumber, tenantId);
-    // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
-
-    // console.log("payloadnewpay");
-
-    //Collection Type Added in CS v1.1
-    // payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
-
-    // if (get(payload, "totalAmount") != undefined) {
-    //   //set amount paid as total amount from bill - destination changed in CS v1.1
-    //   dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
-    //   //set total amount in instrument
-    //   dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
-    // }
-
-    // //Initially select instrument type as Cash
-    // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
-
-    // //set tenantId
-    // dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
-
-    // //set tenantId in instrument
-    // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
-};
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -573,9 +560,9 @@ const screenConfig = {
         );
         setapplicationNumber(applicationNumber);
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
-        // fetchBill(state, dispatch, applicationNumber, tenantId);
+        dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
+    
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "OSBM" },
@@ -631,12 +618,13 @@ const screenConfig = {
 
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    waterBookingApplicationSummary: waterBookingApplicationSummary,
+                    applicantSummary : applicantSummary,
+                    applicationSummary: applicationSummary,
                     taskStatusSummary: taskStatusSummary,
                 }),
                 break: getBreak(),
 
-                footer: wtbFooter,
+                // footer: footer,
             },
         },
     },
