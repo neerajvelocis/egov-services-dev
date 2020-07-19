@@ -483,14 +483,13 @@ export const getMdmsData = async (queryObject) => {
     }
 };
 
-export const getOpenSpaceBill = async (requestBody) => {
+export const getBill = async (queryObject) => {
     try {
         const response = await httpRequest(
             "post",
-            "/bookings/osbm/fee/_search",
+            "/billing-service/bill/v2/_fetchbill",
             "",
-            [],
-            requestBody
+            queryObject
         );
         return response;
     } catch (error) {
@@ -717,36 +716,30 @@ export const createEstimateData = (billObject) => {
     fees.sort(function (x, y) {
         return x.order - y.order;
     });
-    console.log(fees, "feesnew");
-
     return fees;
 };
 
-export const generateOpenSpaceBill = async (
+export const generateBill = async (
     state,
     dispatch,
     applicationNumber,
-    tenantId
+    tenantId,
+    bookingType
 ) => {
     try {
-        if (state) {
-            let data = get(
-                state,
-                "screenConfiguration.preparedFinalObject.Booking"
-            );
-
-            const requestBody = {
-                constructionType: data.bkConstructionType,
-                durationInMonths: data.bkDuration,
-                residentialCommercial: data.bkType,
-                storage: data.bkAreaRequired,
-                villageCity: data.bkVillCity,
-            };
-            const payload = await getOpenSpaceBill(requestBody);
-            if (payload && payload.data) {
-                dispatch(prepareFinalObject("ReceiptTemp.Bill", payload.data));
-                // const estimateData = createEstimateData(payload.data);
-                const estimateData = [payload.data];
+        if (applicationNumber && tenantId && bookingType) {
+            let queryObject = [
+                { key: "tenantId", value: tenantId },
+                { key: "consumerCode", value: applicationNumber },
+                { key: "businessService", value: bookingType },
+            ];
+            console.log(queryObject, "applicationNumberNew");
+            const payload = await getBill(queryObject);
+            if (payload) {
+                dispatch(
+                    prepareFinalObject("ReceiptTemp[0].Bill", payload.Bill)
+                );
+                const estimateData = createEstimateData(payload.Bill);
                 estimateData &&
                     estimateData.length &&
                     dispatch(
@@ -1303,11 +1296,12 @@ export const clearlocalstorageAppDetails = (state) => {
 
 export const getTodaysDateInYMD = () => {
     let date = new Date();
-    //date = date.valueOf();
-    let month = date.getMonth() + 1;
+    let month =
+        date.getMonth() + 1 < 10
+            ? `0${date.getMonth() + 1}`
+            : date.getMonth() + 1;
     let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
     date = `${date.getFullYear()}-${month}-${day}`;
-    // date = epochToYmdDate(date);
     return date;
 };
 

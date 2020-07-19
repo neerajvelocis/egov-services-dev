@@ -66,7 +66,7 @@ export const header = getCommonContainer({
   //applicationNumber: applicationNumberContainer()
   applicationNumber: {
     uiFramework: "custom-atoms-local",
-    moduleName: "egov-opms",
+    moduleName: "egov-services",
     componentPath: "ApplicationNoContainer",
     props: {
       number: "NA"
@@ -228,9 +228,8 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "applywatertanker",
   beforeInitScreen: (action, state, dispatch) => {
-    const applicationNumber = getQueryArg(window.location.href, "applicationNumber");
-    !applicationNumber ? clearlocalstorageAppDetails(state) : '';
-    setapplicationType('Booking');
+    clearlocalstorageAppDetails(state);
+    setapplicationType('BWT');
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
     //Set Module Name
@@ -247,6 +246,26 @@ const screenConfig = {
     // Search in case of EDIT flow
     // prepareEditFlow(state, dispatch, applicationNumber, tenantId);
 
+
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkApplicantName",
+        JSON.parse(getUserInfo()).name
+      )
+    ),
+      dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkMobileNumber",
+        JSON.parse(getUserInfo()).mobileNumber
+      )
+    );
+
+    // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
+    // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
+    // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
+    // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
+    // dispatch(prepareFinalObject("Booking.bkStatus", "Normal"));
 
     // Code to goto a specific step through URL
     if (step && step.match(/^\d+$/)) {
@@ -303,23 +322,9 @@ const screenConfig = {
         formwizardFirstStep,
         formwizardSecondStep,
         formwizardThirdStep,
-
         footer
       }
-    },
-    adhocDialog: {
-      uiFramework: "custom-containers-local",
-      moduleName: "egov-services",
-      componentPath: "DialogContainer",
-      props: {
-          open: false,
-          maxWidth: "sm",
-          screenKey: "applywatertanker",
-      },
-      children: {
-          popup: paymentGatewaySelectionPopup,
-      },
-  },
+    }
   }
 };
 

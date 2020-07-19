@@ -50,7 +50,6 @@ export const callBackForPrevious = (state, dispatch) => {
 };
 
 export const callBackForNext = (state, dispatch, pathKey) => {
-    console.log("pathKey", pathKey);
     const applicationNumber = getQueryArg(
         window.location.href,
         "applicationNumber"
@@ -63,32 +62,32 @@ export const callBackForNext = (state, dispatch, pathKey) => {
         )
     );
 };
-export const callBackForNextOpms = (state, dispatch, pathKey) => {
-    const applicationNumber = getQueryArg(
-        window.location.href,
-        "applicationNumber"
-    );
-    dispatch(
-        setRoute(
-            `/egov-services/opms-pay?applicationNumber=${applicationNumber}&tenantId=${
-                getTenantId().split(".")[0]
-            }`
-        )
-    );
-};
-export const callBackForNextWtb = (state, dispatch, pathKey) => {
-    const applicationNumber = getQueryArg(
-        window.location.href,
-        "applicationNumber"
-    );
-    dispatch(
-        setRoute(
-            `/egov-services/wtb-pay?applicationNumber=${applicationNumber}&tenantId=${
-                getTenantId().split(".")[0]
-            }`
-        )
-    );
-}
+// export const callBackForNextOpms = (state, dispatch, pathKey) => {
+//     const applicationNumber = getQueryArg(
+//         window.location.href,
+//         "applicationNumber"
+//     );
+//     dispatch(
+//         setRoute(
+//             `/egov-services/opms-pay?applicationNumber=${applicationNumber}&tenantId=${
+//                 getTenantId().split(".")[0]
+//             }`
+//         )
+//     );
+// };
+// export const callBackForNextWtb = (state, dispatch, pathKey) => {
+//     const applicationNumber = getQueryArg(
+//         window.location.href,
+//         "applicationNumber"
+//     );
+//     dispatch(
+//         setRoute(
+//             `/egov-services/wtb-pay?applicationNumber=${applicationNumber}&tenantId=${
+//                 getTenantId().split(".")[0]
+//             }`
+//         )
+//     );
+// }
 
 export const footer = getCommonApplyFooter({
     cancelButton: {
@@ -152,7 +151,7 @@ export const footer = getCommonApplyFooter({
             action: "condition",
             // callBack: callBackForNext,
               callBack: (state, dispatch) =>
-                callBackForNext(state, dispatch, "opms-pay"),
+                callBackForNext(state, dispatch, "pay"),
         },
         // roleDefination: {
         //     rolePath: "user-info.roles",
@@ -161,117 +160,117 @@ export const footer = getCommonApplyFooter({
         // },
     },
 });
-export const opmsFooter = getCommonApplyFooter({
-    cancelButton: {
-        componentPath: "Button",
-        props: {
-            variant: "outlined",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "16px",
-                borderRadius: "inherit",
-            },
-        },
-        children: {
-            // previousButtonIcon: {
-            //     uiFramework: "custom-atoms",
-            //     componentPath: "Icon",
-            //     props: {
-            //         iconName: "keyboard_arrow_left",
-            //     },
-            // },
-            previousButtonLabel: getLabel({
-                labelName: "CANCEL",
-                labelKey: "MY_BK_BUTTON_CANCEL",
-            }),
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: callBackForPrevious,
-        },
-        visible: false
-    },
+// export const opmsFooter = getCommonApplyFooter({
+//     cancelButton: {
+//         componentPath: "Button",
+//         props: {
+//             variant: "outlined",
+//             color: "primary",
+//             style: {
+//                 minWidth: "180px",
+//                 height: "48px",
+//                 marginRight: "16px",
+//                 borderRadius: "inherit",
+//             },
+//         },
+//         children: {
+//             // previousButtonIcon: {
+//             //     uiFramework: "custom-atoms",
+//             //     componentPath: "Icon",
+//             //     props: {
+//             //         iconName: "keyboard_arrow_left",
+//             //     },
+//             // },
+//             previousButtonLabel: getLabel({
+//                 labelName: "CANCEL",
+//                 labelKey: "MY_BK_BUTTON_CANCEL",
+//             }),
+//         },
+//         onClickDefination: {
+//             action: "condition",
+//             callBack: callBackForPrevious,
+//         },
+//         visible: false
+//     },
 
-    submitButton: {
-        componentPath: "Button",
-        props: {
-            variant: "contained",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "45px",
-                borderRadius: "inherit",
-            },
-        },
-        children: {
-            nextButtonLabel: getLabel({
-                labelName: "Make Payment",
-                labelKey: "MY_BK_BUTTON_PAYMENT",
-            }),
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: callBackForNextOpms,
-        },
-    },
-});
-export const wtbFooter = getCommonApplyFooter({
-    cancelButton: {
-        componentPath: "Button",
-        props: {
-            variant: "outlined",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "16px",
-                borderRadius: "inherit",
-            },
-        },
-        children: {
-            // previousButtonIcon: {
-            //     uiFramework: "custom-atoms",
-            //     componentPath: "Icon",
-            //     props: {
-            //         iconName: "keyboard_arrow_left",
-            //     },
-            // },
-            previousButtonLabel: getLabel({
-                labelName: "CANCEL",
-                labelKey: "MY_BK_BUTTON_CANCEL",
-            }),
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: callBackForPrevious,
-        },
-        visible: false
-    },
+//     submitButton: {
+//         componentPath: "Button",
+//         props: {
+//             variant: "contained",
+//             color: "primary",
+//             style: {
+//                 minWidth: "180px",
+//                 height: "48px",
+//                 marginRight: "45px",
+//                 borderRadius: "inherit",
+//             },
+//         },
+//         children: {
+//             nextButtonLabel: getLabel({
+//                 labelName: "Make Payment",
+//                 labelKey: "MY_BK_BUTTON_PAYMENT",
+//             }),
+//         },
+//         onClickDefination: {
+//             action: "condition",
+//             callBack: callBackForNextOpms,
+//         },
+//     },
+// });
+// export const wtbFooter = getCommonApplyFooter({
+//     cancelButton: {
+//         componentPath: "Button",
+//         props: {
+//             variant: "outlined",
+//             color: "primary",
+//             style: {
+//                 minWidth: "180px",
+//                 height: "48px",
+//                 marginRight: "16px",
+//                 borderRadius: "inherit",
+//             },
+//         },
+//         children: {
+//             // previousButtonIcon: {
+//             //     uiFramework: "custom-atoms",
+//             //     componentPath: "Icon",
+//             //     props: {
+//             //         iconName: "keyboard_arrow_left",
+//             //     },
+//             // },
+//             previousButtonLabel: getLabel({
+//                 labelName: "CANCEL",
+//                 labelKey: "MY_BK_BUTTON_CANCEL",
+//             }),
+//         },
+//         onClickDefination: {
+//             action: "condition",
+//             callBack: callBackForPrevious,
+//         },
+//         visible: false
+//     },
 
-    submitButton: {
-        componentPath: "Button",
-        props: {
-            variant: "contained",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "45px",
-                borderRadius: "inherit",
-            },
-        },
-        children: {
-            nextButtonLabel: getLabel({
-                labelName: "Make Payment",
-                labelKey: "MY_BK_BUTTON_PAYMENT",
-            }),
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: callBackForNextWtb,
-        },
-    },
-});
+//     submitButton: {
+//         componentPath: "Button",
+//         props: {
+//             variant: "contained",
+//             color: "primary",
+//             style: {
+//                 minWidth: "180px",
+//                 height: "48px",
+//                 marginRight: "45px",
+//                 borderRadius: "inherit",
+//             },
+//         },
+//         children: {
+//             nextButtonLabel: getLabel({
+//                 labelName: "Make Payment",
+//                 labelKey: "MY_BK_BUTTON_PAYMENT",
+//             }),
+//         },
+//         onClickDefination: {
+//             action: "condition",
+//             callBack: callBackForNextWtb,
+//         },
+//     },
+// });

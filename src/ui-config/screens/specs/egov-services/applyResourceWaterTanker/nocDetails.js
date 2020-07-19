@@ -3,6 +3,10 @@ import { handleScreenConfigurationFieldChange as handleField, prepareFinalObject
 import get from "lodash/get";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { furnishNocResponse, getSearchResults } from "../../../../../ui-utils/commons";
+import {
+  getTodaysDateInYMD,
+  getFinancialYearDates,
+} from "../../utils";
 
 export const personalDetails = getCommonCard({
   // header: getCommonTitle(
@@ -194,10 +198,10 @@ export const bookingDetails = getCommonCard({
           errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
           props: {
             className: "applicant-details-error",
-            // inputProps: {
-            //   min: getTodaysDateInYMD(),
-            //   max: getFinancialYearDates("yyyy-mm-dd").endDate,
-            // },
+            inputProps: {
+              min: getTodaysDateInYMD(),
+              max: getFinancialYearDates("yyyy-mm-dd").endDate,
+            },
           },
           gridDefination:{
             xs: 12,
@@ -234,7 +238,7 @@ export const bookingDetails = getCommonCard({
           },
         }),
       },
-      bkCase: {
+      bkStatus: {
         ...getSelectField({
           label: {
             labelName: "Booking Date",
@@ -246,7 +250,7 @@ export const bookingDetails = getCommonCard({
           },
           // required: true,
           pattern: getPattern("Name"),
-          jsonPath: "Booking.bkCase",
+          jsonPath: "Booking.bkStatus",
           sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
           errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
           required : true,

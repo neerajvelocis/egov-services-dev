@@ -28,13 +28,14 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { openSpacePaymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import {
-    generateOpenSpaceBill,
+    generateBill,
 } from "../utils";
+import { applicantSummary } from "./searchResource/applicantSummary";
 import { openSpaceSummary } from "./searchResource/openSpaceSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/documentsSummary";
 import { taskStatusSummary } from "./searchResource/taskStatusSummary";
-import { opmsFooter } from "./searchResource/citizenFooter";
+import { footer } from "./searchResource/citizenFooter";
 import {
     footerReview,
     downloadPrintContainer,
@@ -124,6 +125,7 @@ const prepareDocumentsView = async (state, dispatch) => {
 
 const HideshowFooter = (action, bookingStatus) => {
     // Hide edit Footer
+    console.log("actionnew", action);
     let showFooter = false;
     if (bookingStatus === "PENDINGPAYMENT") {
         showFooter = true;
@@ -135,7 +137,7 @@ const HideshowFooter = (action, bookingStatus) => {
     // );
     set(
         action,
-        "screenConfig.components.div.children.opmsFooter.children.submitButton.visible",
+        "screenConfig.components.div.children.footer.children.submitButton.visible",
         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
     );
 };
@@ -159,7 +161,7 @@ const setSearchResponse = async (
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
 
-    await generateOpenSpaceBill(state, dispatch, applicationNumber, tenantId);
+    await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].bkBookingType);
     
 
     bookingStatus = get(
@@ -205,7 +207,7 @@ const setSearchResponse = async (
 
 
 // const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
-//     await generateOpenSpaceBill(state, dispatch, applicationNumber, tenantId);
+//     await generateBill(state, dispatch, applicationNumber, tenantId);
 //     // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
 
 //     // console.log("payloadnewpay");
@@ -324,13 +326,14 @@ const screenConfig = {
                 // },
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
+                    applicantSummary : applicantSummary,
                     openSpaceSummary: openSpaceSummary,
                     documentsSummary: documentsSummary,
                     taskStatusSummary: taskStatusSummary,
                     // undertakingButton1,
                 }),
                 break: getBreak(),
-                footer: opmsFooter,
+                footer: footer,
             }
         }
     }

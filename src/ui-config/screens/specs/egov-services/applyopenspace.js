@@ -290,43 +290,39 @@ const screenConfig = {
   uiFramework: "material-ui",
   name: "applyopenspace",
   beforeInitScreen: (action, state, dispatch) => {
-    const applicationNumber = getQueryArg(
-      window.location.href,
-      "applicationNumber"
-    );
-    !applicationNumber ? clearlocalstorageAppDetails(state) : "";
-    setapplicationType("Booking");
+    clearlocalstorageAppDetails(state);
+    setapplicationType("OSBM");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
-    // dispatch(
-    //   prepareFinalObject(
-    //     "Booking.bkApplicantName",
-    //     JSON.parse(getUserInfo()).name
-    //   )
-    // ),
-    //   dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-    // dispatch(
-    //   prepareFinalObject(
-    //     "Booking.bkMobileNumber",
-    //     JSON.parse(getUserInfo()).mobileNumber
-    //   )
-    // );
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkApplicantName",
+        JSON.parse(getUserInfo()).name
+      )
+    ),
+      dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkMobileNumber",
+        JSON.parse(getUserInfo()).mobileNumber
+      )
+    );
 
-    // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
-    // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
-    // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
-    // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
-    // dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
-    // dispatch(prepareFinalObject("Booking.bkDuration", "2"));
-    // dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
-    // dispatch(prepareFinalObject("Booking.bkVillCity", "City"));
-    // dispatch(prepareFinalObject("Booking.bkConstructionType", "New"));
+    dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
+    dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
+    dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
+    dispatch(prepareFinalObject("Booking.bkType", "Residential"));
+    dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
+    dispatch(prepareFinalObject("Booking.bkDuration", "2"));
+    dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
+    dispatch(prepareFinalObject("Booking.bkVillCity", "City"));
+    dispatch(prepareFinalObject("Booking.bkConstructionType", "New"));
     //Set Module Name
     set(state, "screenConfiguration.moduleName", "services");
 
     // Set MDMS Data
     getMdmsData(action, state, dispatch).then((response) => {
-      prepareDocumentsUploadData(state, dispatch, "apply_osb");
+      prepareDocumentsUploadData(state, dispatch, "apply_osbm");
     });
 
     // Search in case of EDIT flow

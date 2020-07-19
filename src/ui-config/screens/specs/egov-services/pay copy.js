@@ -7,15 +7,14 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
-import set from "lodash/set";
-import { getCurrentFinancialYear, generateBill, showHideAdhocPopup } from "../utils";
+import { getCurrentFinancialYear, generateWaterTankerBill, showHideAdhocPopup } from "../utils";
 import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import capturePaymentDetails from "./payResource/capture-payment-details";
 import estimateDetails from "./payResource/estimate-details";
-import { footer, callPGService } from "./payResource/footer";
+import { footer } from "./payResource/footer";
 import g8Details from "./payResource/g8-details";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getSearchResults, getPaymentGateways, getSearchResultsView } from "../../../../ui-utils/commons";
+import { getSearchResults } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
 
 import { getUserInfo, getTenantId, getapplicationType, localStorageGet, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
@@ -36,53 +35,31 @@ const header = getCommonContainer({
   }
 });
 
-// const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
-//   await generateBill(state, dispatch, applicationNumber, tenantId);
-//   // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
+const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
+  await generateWaterTankerBill(state, dispatch, applicationNumber, tenantId);
+  // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
 
-//   // console.log("payloadnewpay");
+  // console.log("payloadnewpay");
   
 
-//   //Collection Type Added in CS v1.1
-//   // payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
+  //Collection Type Added in CS v1.1
+  // payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
 
-//   // if (get(payload, "totalAmount") != undefined) {
-//   //   //set amount paid as total amount from bill - destination changed in CS v1.1
-//   //   dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
-//   //   //set total amount in instrument
-//   //   dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
-//   // }
+  // if (get(payload, "totalAmount") != undefined) {
+  //   //set amount paid as total amount from bill - destination changed in CS v1.1
+  //   dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
+  //   //set total amount in instrument
+  //   dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
+  // }
 
-//   // //Initially select instrument type as Cash
-//   // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
+  // //Initially select instrument type as Cash
+  // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
 
-//   // //set tenantId
-//   // dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
+  // //set tenantId
+  // dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
 
-//   // //set tenantId in instrument
-//   // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
-// };
-
-const setSearchResponse = async (
-  state,
-  action,
-  dispatch,
-  applicationNumber,
-  tenantId
-) => {
-  const response = await getSearchResultsView([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
-  ]);
-  let recData = get(response, "bookingsModelList", []);
-  dispatch(
-      prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
-  );
-  dispatch(
-      prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
-  );
-
-  await generateBill(state, dispatch, applicationNumber, tenantId);
+  // //set tenantId in instrument
+  // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
 };
 
 const loadNocData = async (dispatch, applicationNumber, tenantId) => {
@@ -97,26 +74,45 @@ const loadNocData = async (dispatch, applicationNumber, tenantId) => {
   dispatch(prepareFinalObject("OpmsNOCs", get(response, "OpmsNOCs", [])));
 };
 
-const setPaymentMethods = async (action, state, dispatch) => {
-  const response = await getPaymentGateways();
-  if(!!response.length) {
-    const paymentMethods = response.map(item => ({
-      label: { labelName: item,
-      labelKey: item},
-      link: () => callPGService(state, dispatch, item)
-    }))
-    set(action, "screenConfig.components.div.children.footer.children.makePayment.props.data.menu", paymentMethods)
+const getPaymentGatwayList = async (action, state, dispatch) => {
+  try {
+    let payload = null;
+    payload = await httpRequest(
+      "post",
+      "/pg-service/gateway/v1/_search",
+      "_search",
+      [],
+      {}
+    );
+    console.log(payload, "payloadPay");
+      let payloadprocess = [];
+      for (let index = 0; index < payload.length; index++) {
+        const element = payload[index];
+        let pay = {
+          element : element
+        }
+        payloadprocess.push(pay);
+      }
+
+    dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
+  } catch (e) {
+    console.log(e);
   }
-}
+};
+
+
 
 const screenConfig = {
   uiFramework: "material-ui",
-  name: "opms-pay",
+  name: "pay",
   beforeInitScreen: (action, state, dispatch) => {
     let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
-    setPaymentMethods(action, state, dispatch)
-    setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+    console.log(window.location.href, "applicationNumber");
+    console.log(applicationNumber, "applicationNumber");
+    
+    getPaymentGatwayList(action, state, dispatch).then(response => {
+    });
     // loadNocData(dispatch, applicationNumber, tenantId);
     // fetchBill(state, dispatch, applicationNumber, tenantId);
     return action;
@@ -127,7 +123,7 @@ const screenConfig = {
       componentPath: "Form",
       props: {
         className: "common-div-css",
-        id: "opms-pay"
+        id: "pay"
       },
       children: {
         headerDiv: {
@@ -156,23 +152,23 @@ const screenConfig = {
               //   labelName: ""
               // }),
               estimateDetails,
-              // addPenaltyRebateButton: {
-              //   componentPath: "Button",
-              //   props: {
-              //     color: "primary",
-              //     style: {}
-              //   },
-              //   // children: {
-              //   //   previousButtonLabel: getLabel({
-              //   //     labelName: "ADD REBATE/PENALTY",
-              //   //     labelKey: "NOC_PAYMENT_ADD_RBT_PEN"
-              //   //   })
-              //   // },
-              //   onClickDefination: {
-              //     action: "condition",
-              //     callBack: (state, dispatch) => showHideAdhocPopup(state, dispatch, "opms-pay")
-              //   }
-              // },
+              addPenaltyRebateButton: {
+                componentPath: "Button",
+                props: {
+                  color: "primary",
+                  style: {}
+                },
+                // children: {
+                //   previousButtonLabel: getLabel({
+                //     labelName: "ADD REBATE/PENALTY",
+                //     labelKey: "NOC_PAYMENT_ADD_RBT_PEN"
+                //   })
+                // },
+                onClickDefination: {
+                  action: "condition",
+                  callBack: (state, dispatch) => showHideAdhocPopup(state, dispatch, "pay")
+                }
+              },
               // viewBreakupButton: getDialogButton(
               //   "VIEW BREAKUP",
               //   "PM_PAYMENT_VIEW_BREAKUP",
@@ -185,7 +181,30 @@ const screenConfig = {
         },
         footer
       }
+    },
+    adhocDialog: {
+      uiFramework: "custom-containers-local",
+      moduleName: "egov-services",
+      componentPath: "DialogContainer",
+      props: {
+        open: false,
+        maxWidth: "sm",
+        screenKey: "pay"
+      },
+      children: {
+        popup: paymentGatewaySelectionPopup
+      }
     }
+    // breakUpDialog: {
+    //   uiFramework: "custom-containers-local",
+    //   moduleName: "egov-services",
+    //   componentPath: "ViewBreakupContainer",
+    //   props: {
+    //     open: false,
+    //     maxWidth: "md",
+    //     screenKey: "pay"
+    //   }
+    // }
   }
 };
 

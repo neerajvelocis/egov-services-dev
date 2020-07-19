@@ -10,6 +10,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import { openSpaceSummary } from "../summaryResource/openSpaceSummary";
+import { applicantSummary } from "../summaryResource/applicantSummary";
 import { documentsSummary } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
@@ -196,6 +197,7 @@ export const summaryDetails = getCommonCard({
         },
     },
     estimateSummary: estimateSummary,
+    applicantSummary: applicantSummary,
     openSpaceSummary: openSpaceSummary,
-    documentsSummary: documentsSummary,
+    documentsSummary: documentsSummary
 });

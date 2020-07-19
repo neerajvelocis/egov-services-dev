@@ -87,33 +87,6 @@ export const openSpaceSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkApplicationStatus",
                         }
                     ),
-                    applicantName: getLabelWithValue(
-                        {
-                            labelName: "Name",
-                            labelKey: "MY_BK_NAME_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicantName",
-                        }
-                    ),
-                    applicantEmail: getLabelWithValue(
-                        {
-                            labelName: "Email Address",
-                            labelKey: "MY_BK_EMAIL_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkEmail",
-                        }
-                    ),
-                    applicantMobile: getLabelWithValue(
-                        {
-                            labelName: "Mobile Number",
-                            labelKey: "MY_BK_MOBILE_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkMobileNumber",
-                        }
-                    ),
                     HouseNo: getLabelWithValue(
                         {
                             labelName: "House No.",
@@ -202,7 +175,7 @@ export const openSpaceSummary = getCommonGrayCard({
             isReviewPage: true,
             sourceJsonPath: "Booking",
             prefixSourceJsonPath:
-                "children.cardContent.children.applicantContainer.children",
+                "children.cardContent.children.applicationContainer.children",
             afterPrefixJsonPath: "children.value.children.key",
         },
         type: "array",
