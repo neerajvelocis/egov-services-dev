@@ -24,6 +24,7 @@ import {
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { set } from "lodash";
 
 const callBackForNext = async (state, dispatch) => {
     let errorMessage = "";
@@ -42,20 +43,25 @@ const callBackForNext = async (state, dispatch) => {
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
         let response = await createUpdateOsbApplication(state, dispatch, "INITIATE");
+        console.log(response, "myResponse");
         let responseStatus = get(response, "status", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
             
             // DISPLAY SUCCESS MESSAGE
-            let successMessage = {
-                labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-                labelKey: "", //UPLOAD_FILE_TOAST
-            };
-            dispatch(toggleSnackbar(true, successMessage, "success"));
+            // let successMessage = {
+            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+            //     labelKey: "", //UPLOAD_FILE_TOAST
+            // };
+            // dispatch(toggleSnackbar(true, successMessage, "success"));
 
             // GET FEE DETAILS
             let tenantId = getTenantId().split(".")[0];
             let applicationNumber = get(response, "data.bkApplicationNumber", "");
             let bookingType = get(response, "data.bkBookingType", "");
+
+            set(state.screenConfiguration.screenConfig["applyopenspace"], "components.div.children.headerDiv.children.header.children.applicationNumber.props.number", applicationNumber)
+            set(state.screenConfiguration.screenConfig["applyopenspace"], "components.div.children.headerDiv.children.header.children.applicationNumber.visible", true)
+
             await generateBill(state, dispatch, applicationNumber, tenantId, bookingType);
 
             // GET DOCUMENT DATA FOR DOWNLOAD

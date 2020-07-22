@@ -45,7 +45,6 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 1 && isFormValid != false) {
         let isEstimateVisible = bookingData.bkStatus === "Paid" ? true : false;
-        console.log("in active step 1", isEstimateVisible)
         set(
             state.screenConfiguration.screenConfig["applywatertanker"],
             "components.div.children.formwizardThirdStep.children.summaryDetails.children.cardContent.children.div.children.estimateSummary.visible",
@@ -64,11 +63,11 @@ const callBackForNext = async (state, dispatch) => {
     
 
                 // DISPLAY SUCCESS MESSAGE
-                let successMessage = {
-                    labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                dispatch(toggleSnackbar(true, successMessage, "success"));
+                // let successMessage = {
+                //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+                //     labelKey: "", //UPLOAD_FILE_TOAST
+                // };
+                // dispatch(toggleSnackbar(true, successMessage, "success"));
 
                 // GET FEE DETAILS
                 let tenantId = getTenantId().split(".")[0];

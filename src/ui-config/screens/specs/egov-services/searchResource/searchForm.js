@@ -139,11 +139,11 @@ export const searchForm = getCommonCard({
         mobileNumber: {
             ...getTextField({
                 label: {
-                    labelName: "Contact Number",
+                    labelName: "Contact",
                     labelKey: "MY_BK_MOBILE_NO_LABEL",
                 },
                 placeholder: {
-                    labelName: "Enter Contact Number",
+                    labelName: "Contact",
                     labelKey: "MY_BK_MOBILE_NO_PLACEHOLDER",
                 },
                 // required: true,
@@ -200,7 +200,7 @@ export const searchForm = getCommonCard({
                 },
             }),
         },
-        applicationType: {
+        bookingType: {
             ...getSelectField({
                 label: {
                     labelName: "Application Type",

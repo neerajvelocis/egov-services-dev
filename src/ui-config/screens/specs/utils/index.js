@@ -713,9 +713,9 @@ export const createEstimateData = (billObject) => {
                 },
             };
         });
-    fees.sort(function (x, y) {
-        return x.order - y.order;
-    });
+    // fees.sort(function (x, y) {
+    //     return x.order - y.order;
+    // });
     return fees;
 };
 
@@ -1293,6 +1293,14 @@ export const clearlocalstorageAppDetails = (state) => {
     lSRemoveItem("this_sub_adv_id");
     lSRemoveItem("undertaking");
 };
+
+export const convertDateInDMY = (inputDate) => {
+    console.log(inputDate, "inputDate");
+    var datePart = inputDate.split("-");
+    console.log(datePart, "datePart");
+    let year = datePart[0], month = datePart[1], day = datePart[2];
+    return day+'/'+month+'/'+year;
+  }
 
 export const getTodaysDateInYMD = () => {
     let date = new Date();
