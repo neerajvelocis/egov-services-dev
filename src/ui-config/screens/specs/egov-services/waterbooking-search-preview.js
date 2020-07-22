@@ -37,6 +37,7 @@ import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { applicantSummary  } from "./searchResource/applicantSummary";
 import { waterTankerSummary } from "./searchResource/waterTankerSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
+import { driverSummary } from "./searchResource/driverSummary";
 import { taskStatusSummary } from "./searchResource/taskStatusSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
@@ -364,15 +365,6 @@ const setSearchResponse = async (
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
 
-    if(recData[0].bkStatus == "Paid"){
-        await generateBill(state, dispatch, applicationNumber, tenantId, "BWT");
-    } else {
-        set(
-            action,
-            "screenConfig.components.div.children.body.children.cardContent.children.estimateSummary.visible",
-            false
-        );
-    }
 
     let bookingCase = get(
         state,
@@ -385,8 +377,47 @@ const setSearchResponse = async (
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
+    console.log("bookingStatus", bookingStatus);
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
+
+    // HideshowFooter(action, bookingStatus);
+
+    if(bookingCase == "Paid"){
+        await generateBill(state, dispatch, applicationNumber, tenantId, "BWT");
+    } else {
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.estimateSummary.visible",
+            false
+        );
+    }
+
+    if(bookingStatus !== "PENDINGUPDATE"){
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.driverSummary.visible",
+            false
+        );
+    } else {
+        if(bookingCase === "Paid"){
+            alert("paid show")
+            set(
+                action,
+                "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.paidCase.visible",
+                true
+            );            
+        } else {
+            alert("normal show")
+            set(
+                action,
+                "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.normalCase.visible",
+                true
+            );
+        }
+    }
+
+
+    
 
     prepareDocumentsView(state, dispatch);
 
@@ -625,6 +656,7 @@ const screenConfig = {
                     estimateSummary: estimateSummary,
                     applicantSummary : applicantSummary,
                     waterTankerSummary: waterTankerSummary,
+                    driverSummary : driverSummary,
                     taskStatusSummary: taskStatusSummary,
                 }),
                 break: getBreak(),

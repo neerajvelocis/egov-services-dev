@@ -189,10 +189,7 @@ export const changeStep = (
 
     const isPreviousButtonVisible = activeStep > 0 ? true : false;
     const isNextButtonVisible = activeStep < 2 ? true : false;
-    const isSubmitButtonVisible =
-        activeStep === 2 && bookingData.bkStatus !== "Paid" ? true : false;
-    const isPayButtonVisible =
-        activeStep === 2 && bookingData.bkStatus === "Paid" ? true : false;
+    const isPayButtonVisible = activeStep === 2 ? true : false;
     const actionDefination = [
         {
             path: "components.div.children.stepper.props",
@@ -208,11 +205,6 @@ export const changeStep = (
             path: "components.div.children.footer.children.nextButton",
             property: "visible",
             value: isNextButtonVisible,
-        },
-        {
-            path: "components.div.children.footer.children.submitButton",
-            property: "visible",
-            value: isSubmitButtonVisible,
         },
         {
             path: "components.div.children.footer.children.payButton",
@@ -355,36 +347,6 @@ export const footer = getCommonApplyFooter({
             action: "condition",
             callBack: callBackForNext,
         },
-    },
-    submitButton: {
-        componentPath: "Button",
-        props: {
-            variant: "contained",
-            color: "primary",
-            style: {
-                //minWidth: "200px",
-                height: "48px",
-                marginRight: "45px",
-            },
-        },
-        children: {
-            submitButtonLabel: getLabel({
-                labelName: "Submit",
-                labelKey: "NOC_COMMON_BUTTON_SUBMIT",
-            }),
-            submitButtonIcon: {
-                uiFramework: "custom-atoms",
-                componentPath: "Icon",
-                props: {
-                    iconName: "keyboard_arrow_right",
-                },
-            },
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: callBackForNext,
-        },
-        visible: false,
     },
     payButton: {
         componentPath: "Button",

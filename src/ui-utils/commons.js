@@ -779,13 +779,13 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 export const createUpdateOsbApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
-    let applicationNumber =
-        getapplicationNumber() !== "null" && action === "INITIATE"
-            ? false
-            : getapplicationNumber() === "null" && action === "INITIATE"
-            ? false
-            : true;
-    let method = applicationNumber ? "UPDATE" : "CREATE";
+    // let applicationNumber =
+    //     getapplicationNumber() !== "null" && action === "INITIATE"
+    //         ? false
+    //         : getapplicationNumber() === "null" && action === "INITIATE"
+    //         ? false
+    //         : true;
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
     try {
         let payload = get(
             state.screenConfiguration.preparedFinalObject,
@@ -899,13 +899,13 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
 export const createUpdateWtbApplication = async (
     state,
     dispatch,
-    bookingAction
+    action
 ) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
-    let applicationNumber =
-        getapplicationNumber() === "null" ? "" : getapplicationNumber();
-    let method = applicationNumber ? "UPDATE" : "CREATE";
+    // let applicationNumber =
+    //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    let method =  action === "PAIDAPPLY" ? "UPDATE" : "CREATE";
 
     try {
         let payload = get(
@@ -915,7 +915,7 @@ export const createUpdateWtbApplication = async (
         );
         set(payload, "bkBookingType", "WATER_TANKERS");
         set(payload, "tenantId", tenantId);
-        set(payload, "bkAction", bookingAction);
+        set(payload, "bkAction", action);
         set(payload, "businessService", "BWT");
         setapplicationMode(status);
 
