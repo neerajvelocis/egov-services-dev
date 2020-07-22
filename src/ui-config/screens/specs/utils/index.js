@@ -1295,12 +1295,16 @@ export const clearlocalstorageAppDetails = (state) => {
 };
 
 export const convertDateInDMY = (inputDate) => {
-    console.log(inputDate, "inputDate");
-    var datePart = inputDate.split("-");
-    console.log(datePart, "datePart");
-    let year = datePart[0], month = datePart[1], day = datePart[2];
-    return day+'/'+month+'/'+year;
-  }
+    if (inputDate) {
+        var datePart = inputDate.split("-");
+        let year = datePart[0],
+            month = datePart[1],
+            day = datePart[2];
+        return day + "/" + month + "/" + year;
+    } else {
+        return "";
+    }
+};
 
 export const getTodaysDateInYMD = () => {
     let date = new Date();

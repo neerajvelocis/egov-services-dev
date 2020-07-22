@@ -400,10 +400,10 @@ export const footerReviewTop = (
     } else if (status === "REJECTED" && bookingCase === "") {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
-    } else if (status === "PENDINGASSIGNMENTDRIVER" && bookingCase === "Paid") {
+    } else if ((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE") && bookingCase === "Paid") {
         downloadMenu = [receiptDownloadObject, applicationDownloadObject];
         printMenu = [receiptPrintObject, applicationPrintObject];
-    } else if(status === "PENDINGASSIGNMENTDRIVER" && bookingCase !== "Paid"){
+    } else if((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE") && bookingCase !== "Paid"){
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
     }
@@ -609,10 +609,10 @@ export const downloadPrintContainer = (
     } else if (status === "REJECTED" && bookingCase === "") {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
-    } else if (status === "PENDINGASSIGNMENTDRIVER" && bookingCase === "Paid") {
+    } else if ((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE") && bookingCase === "Paid") {
         downloadMenu = [receiptDownloadObject, applicationDownloadObject];
         printMenu = [receiptPrintObject, applicationPrintObject];
-    }else if(status === "PENDINGASSIGNMENTDRIVER" && bookingCase !== "Paid"){
+    }else if((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE") && bookingCase !== "Paid"){
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
     }

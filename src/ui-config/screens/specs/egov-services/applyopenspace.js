@@ -300,17 +300,16 @@ const screenConfig = {
         JSON.parse(getUserInfo()).name
       )
     ),
-    //   dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
     dispatch(
       prepareFinalObject(
         "Booking.bkMobileNumber",
         JSON.parse(getUserInfo()).mobileNumber
       )
     );
-
+    // dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
     // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
     // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
-    // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-1"));
+    // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-2"));
     // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
     // dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
     // dispatch(prepareFinalObject("Booking.bkDuration", "2"));

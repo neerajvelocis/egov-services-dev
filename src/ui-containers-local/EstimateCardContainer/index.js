@@ -23,12 +23,12 @@ const formatTaxHeaders = (billDetail = {}) => {
   formattedFees = billAccountDetails.map((taxHead) => {
     return {
       info: {
-        labelKey: taxHead.taxHeadCode,
-        labelName: taxHead.taxHeadCode
+        labelKey: `BK_FEE_HEAD_${taxHead.taxHeadCode}`,
+        labelName: `BK_FEE_HEAD_${taxHead.taxHeadCode}`
       },
       name: {
-        labelKey: taxHead.taxHeadCode,
-        labelName: taxHead.taxHeadCode
+        labelKey: `BK_FEE_HEAD_${taxHead.taxHeadCode}`,
+        labelName: `BK_FEE_HEAD_${taxHead.taxHeadCode}`
       },
       value: taxHead.amount,
       order: taxHead.order

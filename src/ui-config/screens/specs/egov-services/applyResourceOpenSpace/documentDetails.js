@@ -34,11 +34,12 @@ export const documentDetails = getCommonCard({
         labelName: "UPLOAD FILE",
         labelKey: "BK_OSB_DOCUMENT_UPLOAD_BUTTON"
       },
-      description: "Only .jpg and .pdf files. 1MB max file size.",
+      description: "Only .jpg, .jpeg, .png and .pdf files. 1MB max file size.",
       inputProps: {
-        accept: ".pdf,.png,.jpeg"
+        accept: ".pdf,.png,.jpg,.jpeg"
       },
-      maxFileSize: 1025
+      maxFileSize: 1025,
+      moduleName : "OSBM"
     },
     type: "array"
   } 
