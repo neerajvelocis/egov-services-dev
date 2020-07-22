@@ -5,10 +5,8 @@ import {
   getCommonSubHeader,
   getLabel,
   getLabelWithValue,
-  convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
-import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import {convertDateInDMY} from "../../utils"
 
 export const waterTankerSummary = getCommonGrayCard({
   header: {
@@ -57,7 +55,7 @@ export const waterTankerSummary = getCommonGrayCard({
                 applicantMobile: getLabelWithValue(
                   {
                     labelName: "Mobile Number",
-                    labelKey: "BK_WTB_MOBILE_NUMBER_LABEL",
+                    labelKey: "BK_WTB_MOBILE_NO_LABEL",
                   },
                   {
                     jsonPath: "Booking.bkMobileNumber",
@@ -66,7 +64,7 @@ export const waterTankerSummary = getCommonGrayCard({
                 HouseNo: getLabelWithValue(
                   {
                     labelName: "House No.",
-                    labelKey: "BK_WTB_HOUSE_NO_LABEL",
+                    labelKey: "BK_WTB_HOUSE_NUMBER_LABEL",
                   },
                   {
                     jsonPath: "Booking.bkHouseNo",
@@ -106,6 +104,7 @@ export const waterTankerSummary = getCommonGrayCard({
                   },
                   {
                     jsonPath: "Booking.bkDate",
+                    callBack: convertDateInDMY
                   }
                 ),
                 BookingTime: getLabelWithValue(

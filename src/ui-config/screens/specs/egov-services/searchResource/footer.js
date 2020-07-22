@@ -290,7 +290,8 @@ export const footerReviewTop = (
     dispatch,
     status,
     applicationNumber,
-    tenantId
+    tenantId,
+    bookingCase
 ) => {
     let downloadMenu = [];
     let printMenu = [];
@@ -303,10 +304,13 @@ export const footerReviewTop = (
 
     // const { Licenses } = state.screenConfiguration.preparedFinalObject;
 
-    console.log(status, "statusNew");
+    console.log(bookingCase, "statusNew");
     // let renewalMenu=[];
     let certificateDownloadObject = {
-        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE_DOWNLOAD" },
+        label: {
+            labelName: "Booking Certificate",
+            labelKey: "MY_BK_CERTIFICATE_DOWNLOAD",
+        },
         link: () => {
             const { Booking } = state.screenConfiguration.preparedFinalObject;
             downloadCertificateForm(Booking);
@@ -314,7 +318,10 @@ export const footerReviewTop = (
         leftIcon: "book",
     };
     let certificatePrintObject = {
-        label: { labelName: "Booking Certificate", labelKey: "MY_BK_CERTIFICATE_PRINT" },
+        label: {
+            labelName: "Booking Certificate",
+            labelKey: "MY_BK_CERTIFICATE_PRINT",
+        },
         link: () => {
             const { Booking } = state.screenConfiguration.preparedFinalObject;
             downloadCertificateForm(Booking, "print");
@@ -347,7 +354,10 @@ export const footerReviewTop = (
         leftIcon: "receipt",
     };
     let applicationDownloadObject = {
-        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION_DOWNLOAD" },
+        label: {
+            labelName: "Application",
+            labelKey: "MY_BK_APPLICATION_DOWNLOAD",
+        },
         link: () => {
             // const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
             // const documents = LicensesTemp[0].reviewDocData;
@@ -357,7 +367,10 @@ export const footerReviewTop = (
         leftIcon: "assignment",
     };
     let applicationPrintObject = {
-        label: { labelName: "Application", labelKey: "MY_BK_APPLICATION_PRINT" },
+        label: {
+            labelName: "Application",
+            labelKey: "MY_BK_APPLICATION_PRINT",
+        },
         link: () => {
             // const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
             // const documents = LicensesTemp[0].reviewDocData;
@@ -367,34 +380,66 @@ export const footerReviewTop = (
         leftIcon: "assignment",
     };
 
-    switch (status) {
-        case "APPROVED":
-            downloadMenu = [
-                certificateDownloadObject,
-                receiptDownloadObject,
-                applicationDownloadObject,
-            ];
-            printMenu = [
-                certificatePrintObject,
-                receiptPrintObject,
-                applicationPrintObject,
-            ];
-            break;
-        case "PENDINGAPPROVAL":
-            downloadMenu = [applicationDownloadObject];
-            printMenu = [applicationPrintObject];
-            break;
-        case "PENDINGPAYMENT":
-            downloadMenu = [applicationDownloadObject];
-            printMenu = [applicationPrintObject];
-            break;
-        case "REJECTED":
-            downloadMenu = [applicationDownloadObject];
-            printMenu = [applicationPrintObject];
-            break;
-        default:
-            break;
+    if (status === "APPROVED" && bookingCase === "") {
+        downloadMenu = [
+            tlCertificateDownloadObject,
+            receiptDownloadObject,
+            applicationDownloadObject,
+        ];
+        printMenu = [
+            tlCertificatePrintObject,
+            receiptPrintObject,
+            applicationPrintObject,
+        ];
+    } else if (status === "PENDINGAPPROVAL" && bookingCase === "") {
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
+    } else if (status === "PENDINGPAYMENT" && bookingCase === "") {
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
+    } else if (status === "REJECTED" && bookingCase === "") {
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
+    } else if (status === "PENDINGASSIGNMENTDRIVER" && bookingCase === "Paid") {
+        downloadMenu = [receiptDownloadObject, applicationDownloadObject];
+        printMenu = [receiptPrintObject, applicationPrintObject];
+    } else if(status === "PENDINGASSIGNMENTDRIVER" && bookingCase !== "Paid"){
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
     }
+
+    // switch (status) {
+    //     case "APPROVED":
+    //         downloadMenu = [
+    //             certificateDownloadObject,
+    //             receiptDownloadObject,
+    //             applicationDownloadObject,
+    //         ];
+    //         printMenu = [
+    //             certificatePrintObject,
+    //             receiptPrintObject,
+    //             applicationPrintObject,
+    //         ];
+    //         break;
+    //     case "PENDINGASSIGNMENTDRIVER":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     case "PENDINGAPPROVAL":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     case "PENDINGPAYMENT":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     case "REJECTED":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     default:
+    //         break;
+    // }
     /** END */
 
     return {
@@ -432,7 +477,10 @@ export const footerReviewTop = (
                     componentPath: "MenuButton",
                     props: {
                         data: {
-                            label: { labelName: "PRINT", labelKey: "MY_BK_PRINT" },
+                            label: {
+                                labelName: "PRINT",
+                                labelKey: "MY_BK_PRINT",
+                            },
                             leftIcon: "print",
                             rightIcon: "arrow_drop_down",
                             props: {
@@ -463,131 +511,143 @@ export const downloadPrintContainer = (
     dispatch,
     status,
     applicationNumber,
-    tenantId
+    tenantId,
+    bookingCase
 ) => {
     /** MenuButton data based on status */
     let downloadMenu = [];
     let printMenu = [];
-    let tlCertificateDownloadObject = {
-        label: { labelName: "Booking Certificate", labelKey: "BK_CERTIFICATE" },
+    let certificateDownloadObject = {
+        label: {
+            labelName: "Booking Certificate",
+            labelKey: "MY_BK_CERTIFICATE_DOWNLOAD",
+        },
         link: () => {
-            const { Licenses } = state.screenConfiguration.preparedFinalObject;
-            downloadCertificateForm(Licenses);
+            const { Booking } = state.screenConfiguration.preparedFinalObject;
+            downloadCertificateForm(Booking);
         },
         leftIcon: "book",
     };
-    let tlCertificatePrintObject = {
-        label: { labelName: "Booking Certificate", labelKey: "BK_CERTIFICATE" },
+    let certificatePrintObject = {
+        label: {
+            labelName: "Booking Certificate",
+            labelKey: "MY_BK_CERTIFICATE_PRINT",
+        },
         link: () => {
-            const { Licenses } = state.screenConfiguration.preparedFinalObject;
-            downloadCertificateForm(Licenses, "print");
+            const { Booking } = state.screenConfiguration.preparedFinalObject;
+            downloadCertificateForm(Booking, "print");
         },
         leftIcon: "book",
     };
     let receiptDownloadObject = {
-        label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_DOWNLOAD" },
         link: () => {
-            const receiptQueryString = [
-                {
-                    key: "consumerCodes",
-                    value: get(
-                        state.screenConfiguration.preparedFinalObject
-                            .Licenses[0],
-                        "applicationNumber"
-                    ),
-                },
-                {
-                    key: "tenantId",
-                    value: get(
-                        state.screenConfiguration.preparedFinalObject
-                            .Licenses[0],
-                        "tenantId"
-                    ),
-                },
-            ];
-            download(receiptQueryString);
+            // const receiptQueryString = [
+            //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
+            //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
+            // ]
+            // download(receiptQueryString);
+            // generateReceipt(state, dispatch, "receipt_download");
         },
         leftIcon: "receipt",
     };
     let receiptPrintObject = {
-        label: { labelName: "Receipt", labelKey: "TL_RECEIPT" },
+        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_PRINT" },
         link: () => {
-            const receiptQueryString = [
-                {
-                    key: "consumerCodes",
-                    value: get(
-                        state.screenConfiguration.preparedFinalObject
-                            .Licenses[0],
-                        "applicationNumber"
-                    ),
-                },
-                {
-                    key: "tenantId",
-                    value: get(
-                        state.screenConfiguration.preparedFinalObject
-                            .Licenses[0],
-                        "tenantId"
-                    ),
-                },
-            ];
-            download(receiptQueryString, "print");
+            // const receiptQueryString =  [
+            //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
+            //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
+            // ]
+            // download(receiptQueryString,"print");
+            // generateReceipt(state, dispatch, "receipt_print");
         },
         leftIcon: "receipt",
     };
     let applicationDownloadObject = {
-        label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+        label: {
+            labelName: "Application",
+            labelKey: "MY_BK_APPLICATION_DOWNLOAD",
+        },
         link: () => {
-            const {
-                Licenses,
-                LicensesTemp,
-            } = state.screenConfiguration.preparedFinalObject;
-            const documents = LicensesTemp[0].reviewDocData;
-            set(Licenses[0], "additionalDetails.documents", documents);
-            downloadAcknowledgementForm(Licenses);
+            // const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
+            // const documents = LicensesTemp[0].reviewDocData;
+            // set(Licenses[0],"additionalDetails.documents",documents)
+            // downloadAcknowledgementForm(Licenses);
         },
         leftIcon: "assignment",
     };
     let applicationPrintObject = {
-        label: { labelName: "Application", labelKey: "TL_APPLICATION" },
+        label: {
+            labelName: "Application",
+            labelKey: "MY_BK_APPLICATION_PRINT",
+        },
         link: () => {
-            const {
-                Licenses,
-                LicensesTemp,
-            } = state.screenConfiguration.preparedFinalObject;
-            const documents = LicensesTemp[0].reviewDocData;
-            set(Licenses[0], "additionalDetails.documents", documents);
-            downloadAcknowledgementForm(Licenses, "print");
+            // const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
+            // const documents = LicensesTemp[0].reviewDocData;
+            // set(Licenses[0],"additionalDetails.documents",documents)
+            // downloadAcknowledgementForm(Licenses,'print');
         },
         leftIcon: "assignment",
     };
-    switch (status) {
-        case "APPROVED":
-            downloadMenu = [
-                tlCertificateDownloadObject,
-                receiptDownloadObject,
-                applicationDownloadObject,
-            ];
-            printMenu = [
-                tlCertificatePrintObject,
-                receiptPrintObject,
-                applicationPrintObject,
-            ];
-            break;
-        case "PENDINGAPPROVAL":
-            downloadMenu = [applicationDownloadObject];
-            printMenu = [applicationPrintObject];
-            break;
-        case "PENDINGPAYMENT":
-            downloadMenu = [applicationDownloadObject];
-            printMenu = [applicationPrintObject];
-            break;
-        case "REJECTED":
-            downloadMenu = [applicationDownloadObject];
-            printMenu = [applicationPrintObject];
-            break;
-        default:
-            break;
+    if (status === "APPROVED" && bookingCase === "") {
+        downloadMenu = [
+            tlCertificateDownloadObject,
+            receiptDownloadObject,
+            applicationDownloadObject,
+        ];
+        printMenu = [
+            tlCertificatePrintObject,
+            receiptPrintObject,
+            applicationPrintObject,
+        ];
+    } else if (status === "PENDINGAPPROVAL" && bookingCase === "") {
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
+    } else if (status === "PENDINGPAYMENT" && bookingCase === "") {
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
+    } else if (status === "REJECTED" && bookingCase === "") {
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
+    } else if (status === "PENDINGASSIGNMENTDRIVER" && bookingCase === "Paid") {
+        downloadMenu = [receiptDownloadObject, applicationDownloadObject];
+        printMenu = [receiptPrintObject, applicationPrintObject];
+    }else if(status === "PENDINGASSIGNMENTDRIVER" && bookingCase !== "Paid"){
+        downloadMenu = [applicationDownloadObject];
+        printMenu = [applicationPrintObject];
     }
+    // switch (status) {
+    //     case "APPROVED":
+    //         downloadMenu = [
+    //             tlCertificateDownloadObject,
+    //             receiptDownloadObject,
+    //             applicationDownloadObject,
+    //         ];
+    //         printMenu = [
+    //             tlCertificatePrintObject,
+    //             receiptPrintObject,
+    //             applicationPrintObject,
+    //         ];
+    //         break;
+    //     case "PENDINGASSIGNMENTDRIVER":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     case "PENDINGAPPROVAL":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     case "PENDINGPAYMENT":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     case "REJECTED":
+    //         downloadMenu = [applicationDownloadObject];
+    //         printMenu = [applicationPrintObject];
+    //         break;
+    //     default:
+    //         break;
+    // }
     /** END */
 
     return {

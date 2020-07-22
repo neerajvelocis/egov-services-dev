@@ -98,21 +98,25 @@ export const getSearchResults = async (queryObject) => {
 
 export const getPaymentGateways = async () => {
     try {
-      const payload = await httpRequest(
-        "post",
-        "/pg-service/gateway/v1/_search",
-        ""
-      );
-      return payload
+        const payload = await httpRequest(
+            "post",
+            "/pg-service/gateway/v1/_search",
+            ""
+        );
+        return payload;
     } catch (error) {
-      store.dispatch(toggleSnackbar(true, {labelName: error.message, labelKey: error.message}, "error"))
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelKey: error.message },
+                "error"
+            )
+        );
     }
-  }
+};
 
 //view
 export const getSearchResultsView = async (queryObject) => {
-    console.log(queryObject, "myquery");
-
     try {
         const response = await httpRequest(
             "post",
@@ -129,16 +133,6 @@ export const getSearchResultsView = async (queryObject) => {
                 bookingType: "",
                 uuid: JSON.parse(getUserInfo()).uuid,
             }
-            // {
-            //   "tenantId": queryObject[0]["value"].split(".")[0],
-            //   "applicationNumber":queryObject[1]["value"],
-            //   "applicationStatus": "",
-            //   "mobileNumber":"",
-            //   "fromDate":"",
-            //   "toDate":"",
-            //   "bookingType":"OSBM",
-            //   "uuid": JSON.parse(getUserInfo()).uuid
-            // }
         );
         return response;
     } catch (error) {
@@ -569,7 +563,11 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 
     documents.forEach((doc) => {
         // Handle the case for multiple muildings
-        if (doc.code === "DOC_DOC_PICTURE" && doc.hasMultipleRows && doc.options) {
+        if (
+            doc.code === "DOC_DOC_PICTURE" &&
+            doc.hasMultipleRows &&
+            doc.options
+        ) {
             let buildingsData = get(
                 state,
                 "screenConfiguration.preparedFinalObject.FireNOCs[0].fireNOCDetails.buildings",
@@ -781,7 +779,12 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
 export const createUpdateOsbApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
-    let applicationNumber = getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    let applicationNumber =
+        getapplicationNumber() !== "null" && action === "INITIATE"
+            ? false
+            : getapplicationNumber() === "null" && action === "INITIATE"
+            ? false
+            : true;
     let method = applicationNumber ? "UPDATE" : "CREATE";
     try {
         let payload = get(
@@ -859,7 +862,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
             console.log("pet response update: ", response);
             setapplicationNumber(response.data.bkApplicationNumber);
             dispatch(prepareFinalObject("Booking", response.data));
-            return { status: "success",  data: response.data };
+            return { status: "success", data: response.data };
         }
 
         // response = await httpRequest("post", "/bookings/api/_create", "", [], {
@@ -893,10 +896,15 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
     }
 };
 
-export const createUpdateWtbApplication = async (state, dispatch, bookingAction) => {
+export const createUpdateWtbApplication = async (
+    state,
+    dispatch,
+    bookingAction
+) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
-    let applicationNumber = getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    let applicationNumber =
+        getapplicationNumber() === "null" ? "" : getapplicationNumber();
     let method = applicationNumber ? "UPDATE" : "CREATE";
 
     try {
@@ -946,7 +954,7 @@ export const createUpdateWtbApplication = async (state, dispatch, bookingAction)
             console.log("pet response update: ", response);
             setapplicationNumber(response.data.bkApplicationNumber);
             dispatch(prepareFinalObject("Booking", response.data));
-            return { status: "success",  data: response.data };
+            return { status: "success", data: response.data };
         }
 
         // response = await httpRequest("post", "/bookings/api/_create", "", [], {
@@ -1990,8 +1998,6 @@ export const UpdateMasterPrice = async (state, dispatch, queryObject, code) => {
         // );
     }
 };
-
-
 
 export const createUpdateRoadCutNocApplication = async (
     state,

@@ -5,12 +5,10 @@ import {
     getCommonSubHeader,
     getLabel,
     getLabelWithValue,
-    convertEpochToDate,
-} from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
-import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+    a} from "egov-ui-framework/ui-config/screens/specs/utils";
+import { convertDateInDMY } from "../../utils";
 
-export const applicationSummary = getCommonGrayCard({
+export const waterTankerSummary = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",
         componentPath: "Container",
@@ -87,33 +85,33 @@ export const applicationSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkApplicationStatus",
                         }
                     ),
-                    applicantName: getLabelWithValue(
-                        {
-                            labelName: "Name",
-                            labelKey: "MY_BK_NAME_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicantName",
-                        }
-                    ),
-                    applicantEmail: getLabelWithValue(
-                        {
-                            labelName: "Email Address",
-                            labelKey: "MY_BK_EMAIL_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkEmail",
-                        }
-                    ),
-                    applicantMobile: getLabelWithValue(
-                        {
-                            labelName: "Mobile Number",
-                            labelKey: "MY_BK_MOBILE_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkMobileNumber",
-                        }
-                    ),
+                    // applicantName: getLabelWithValue(
+                    //     {
+                    //         labelName: "Name",
+                    //         labelKey: "MY_BK_NAME_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkApplicantName",
+                    //     }
+                    // ),
+                    // applicantEmail: getLabelWithValue(
+                    //     {
+                    //         labelName: "Email Address",
+                    //         labelKey: "MY_BK_EMAIL_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkEmail",
+                    //     }
+                    // ),
+                    // applicantMobile: getLabelWithValue(
+                    //     {
+                    //         labelName: "Mobile Number",
+                    //         labelKey: "MY_BK_MOBILE_NUMBER_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkMobileNumber",
+                    //     }
+                    // ),
                     HouseNo: getLabelWithValue(
                         {
                             labelName: "House No.",
@@ -152,32 +150,33 @@ export const applicationSummary = getCommonGrayCard({
                     ),
                     BookingDate: getLabelWithValue(
                         {
-                          labelName: "Booking Date",
-                          labelKey: "MY_BK_DATE_LABEL",
+                            labelName: "Booking Date",
+                            labelKey: "MY_BK_DATE_LABEL",
                         },
                         {
-                          jsonPath: "Booking.bkDate",
+                            jsonPath: "Booking.bkDate",
+                            callBack: convertDateInDMY
                         }
-                      ),
-                      BookingTime: getLabelWithValue(
+                    ),
+                    BookingTime: getLabelWithValue(
                         {
-                          labelName: "Booking Time",
-                          labelKey: "MY_BK_TIME_LABEL",
+                            labelName: "Booking Time",
+                            labelKey: "MY_BK_TIME_LABEL",
                         },
                         {
-                          jsonPath: "Booking.bkTime",
+                            jsonPath: "Booking.bkTime",
                         }
-                      ),
-                      BookingCase: getLabelWithValue(
+                    ),
+                    BookingCase: getLabelWithValue(
                         {
-                          labelName: "Case",
-                          labelKey: "MY_BK_CASE_LABEL",
+                            labelName: "Case",
+                            labelKey: "MY_BK_CASE_LABEL",
                         },
                         {
-                          jsonPath: "Booking.bkStatus",
+                            jsonPath: "Booking.bkStatus",
                         }
-                      )
-                    }),
+                    ),
+                }),
             }),
             items: [],
             hasAddItem: false,

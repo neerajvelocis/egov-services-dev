@@ -53,6 +53,7 @@ export const fetchData = async (action, state, dispatch) => {
     }
     newData = Object.assign(newData, data);
   };
+  console.log(newData, "newData");
   const response = await getSearchResults(newData);
   
   try {
@@ -62,12 +63,13 @@ export const fetchData = async (action, state, dispatch) => {
       dispatch(
         prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
       );
-    } else {
-      dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
-      dispatch(
-        prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
-      );
-    }
+    } 
+    // else {
+    //   dispatch(prepareFinalObject("searchResults", response.bookingsModelList));
+    //   dispatch(
+    //     prepareFinalObject("myApplicationsCount", response.bookingsModelList.length)
+    //   );
+    // }
   } catch (error) {
     console.log(error);
   }

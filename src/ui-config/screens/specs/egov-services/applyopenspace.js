@@ -294,19 +294,19 @@ const screenConfig = {
     setapplicationType("OSBM");
     const tenantId = getQueryArg(window.location.href, "tenantId");
     const step = getQueryArg(window.location.href, "step");
-    // dispatch(
-    //   prepareFinalObject(
-    //     "Booking.bkApplicantName",
-    //     JSON.parse(getUserInfo()).name
-    //   )
-    // ),
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkApplicantName",
+        JSON.parse(getUserInfo()).name
+      )
+    ),
     //   dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-    // dispatch(
-    //   prepareFinalObject(
-    //     "Booking.bkMobileNumber",
-    //     JSON.parse(getUserInfo()).mobileNumber
-    //   )
-    // );
+    dispatch(
+      prepareFinalObject(
+        "Booking.bkMobileNumber",
+        JSON.parse(getUserInfo()).mobileNumber
+      )
+    );
 
     // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
     // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));

@@ -180,7 +180,8 @@ const setSearchResponse = async (
         dispatch,
         bookingStatus,
         applicationNumber,
-        tenantId
+        tenantId,
+        ""
     );
 
     const CitizenprintCont = footerReviewTop(
@@ -189,7 +190,8 @@ const setSearchResponse = async (
         dispatch,
         bookingStatus,
         applicationNumber,
-        tenantId
+        tenantId,
+        ""
     );
 
     process.env.REACT_APP_NAME === "Citizen"

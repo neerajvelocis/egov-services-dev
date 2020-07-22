@@ -141,7 +141,7 @@ export const bookingDetails = getCommonCard({
               optionLabel: "name",
               placeholder: {
                   labelName: "Select Sector",
-                  labelKey: "BK_WTB_PROPERTY_SECTOR_LABEL",
+                  labelKey: "BK_WTB_PROPERTY_SECTOR_PLACEHOLDER",
               },
               //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
               sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
@@ -168,7 +168,7 @@ export const bookingDetails = getCommonCard({
               // optionLabel: "name",
               placeholder: {
                   labelName: "Select Residential/Commercial",
-                  labelKey: "BK_WTB_PROPERTY_TYPE_LABEL",
+                  labelKey: "BK_WTB_PROPERTY_TYPE_PLACEHOLDER",
               },
               //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
               sourceJsonPath: "applyScreenMdmsData.Booking.CityType",

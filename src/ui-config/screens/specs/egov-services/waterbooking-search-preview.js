@@ -35,7 +35,7 @@ import {
 } from "../utils";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { applicantSummary  } from "./searchResource/applicantSummary";
-import { applicationSummary } from "./searchResource/applicationSummary";
+import { waterTankerSummary } from "./searchResource/waterTankerSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
 import { taskStatusSummary } from "./searchResource/taskStatusSummary";
 import { footer } from "./searchResource/citizenFooter";
@@ -309,7 +309,7 @@ const HideshowEdit = (action, bookingStatus) => {
     }
     set(
         action,
-        "screenConfig.components.div.children.body.children.cardContent.children.applicationSummary.children.cardContent.children.header.children.editSection.visible",
+        "screenConfig.components.div.children.body.children.cardContent.children.waterTankerSummary.children.cardContent.children.header.children.editSection.visible",
         role_name === "CITIZEN" ? (showEdit === true ? true : false) : false
     );
     set(
@@ -374,8 +374,11 @@ const setSearchResponse = async (
         );
     }
 
-
-
+    let bookingCase = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.bkStatus",
+        {}
+    );
 
     bookingStatus = get(
         state,
@@ -393,7 +396,8 @@ const setSearchResponse = async (
         dispatch,
         bookingStatus,
         applicationNumber,
-        tenantId
+        tenantId,
+        bookingCase
     );
 
     const CitizenprintCont = footerReviewTop(
@@ -402,7 +406,8 @@ const setSearchResponse = async (
         dispatch,
         bookingStatus,
         applicationNumber,
-        tenantId
+        tenantId,
+        bookingCase
     );
 
 
@@ -619,7 +624,7 @@ const screenConfig = {
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     applicantSummary : applicantSummary,
-                    applicationSummary: applicationSummary,
+                    waterTankerSummary: waterTankerSummary,
                     taskStatusSummary: taskStatusSummary,
                 }),
                 break: getBreak(),
