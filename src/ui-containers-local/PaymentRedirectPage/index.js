@@ -46,17 +46,9 @@ class PaymentRedirect extends Component {
 			let transactionId = "hldsfiwfodflkadpffd";
 
             if (transactionStatus === "FAILURE") {
-                if (getapplicationType() === "PETNOC") {
+                if (getapplicationType() === "OSBM") {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}`
-                    );
-                } else if (getapplicationType() === "SELLMEATNOC") {
-                    this.props.setRoute(
-                        `/egov-services/acknowledgement-sellmeat?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}`
-                    );
-                } else if (getapplicationType() === "ROADCUTNOC") {
-                    this.props.setRoute(
-                        `/egov-services/acknowledgement-roadcut?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}`
                     );
                 } else {
                     this.props.setRoute(
@@ -64,7 +56,6 @@ class PaymentRedirect extends Component {
                     );
                 }
             } else {
-				alert("in success")
                 // let data = {
                 //     bkBookingType: getapplicationType(),
                 //     tenantId: getTenantId(),

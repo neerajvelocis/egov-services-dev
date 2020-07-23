@@ -31,7 +31,7 @@ export const personalDetails = getCommonCard({
   //   }
   // ),
   // break: getBreak(),
-  nocDetailsContainer: getCommonContainer({
+  personalDetailsContainer: getCommonContainer({
     bkApplicantName: {
       ...getTextField({
         label: {
@@ -60,8 +60,13 @@ export const personalDetails = getCommonCard({
         },
         required: true,
         pattern: getPattern("Email"),
-        errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        errorMessage: "custom error message",
+        requiredMessage : "required Message",
         jsonPath: "Booking.bkEmail",
+        props : {
+          required : true,
+
+        }
       }),
     },
     bkMobileNumber: {
@@ -121,8 +126,13 @@ export const bookingDetails = getCommonCard({
         },
         pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        helperText : "new helper outside",
         required: true,
         jsonPath: "Booking.bkHouseNo",
+        props : {
+          required : true,
+          helperText : "custom helper text"
+        }
       }),
     },
     bkCompleteAddress: {
@@ -135,7 +145,7 @@ export const bookingDetails = getCommonCard({
           labelName: "Enter Complete Address",
           labelKey: "BK_OSB_COMPLETE_ADDRESS_PLACEHOLDER",
         },
-        // pattern: getPattern("DoorHouseNo"),
+        pattern: getPattern("Address"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
         jsonPath: "Booking.bkCompleteAddress",
@@ -160,6 +170,7 @@ export const bookingDetails = getCommonCard({
         sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
         jsonPath: "Booking.bkSector",
         required: true,
+        requiredMessage : "required Message",
         props: {
           className: "applicant-details-error",
           required: true,

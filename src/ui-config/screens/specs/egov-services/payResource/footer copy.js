@@ -14,7 +14,7 @@ import { getTenantId, localStorageSet, getapplicationType } from "egov-ui-kit/ut
 export const selectPG = async (state, dispatch) => {
   showHideAdhocPopup(state, dispatch, "pay")
 };
-export const callPGServicetest = async (state, dispatch, item) => {
+export const callPGService = async (state, dispatch, item) => {
   // const gateway = get(state, "screenConfiguration.preparedFinalObject.OPMS.paymentGateway");
   const tenantId = getQueryArg(window.location.href, "tenantId");
   const applicationNumber = getQueryArg(
@@ -110,8 +110,9 @@ export const callPGServicetest = async (state, dispatch, item) => {
     console.log(e);
   }
 };
-export const callPGService = async (state, dispatch, item) => {
-  const businessService = get(state, "screenConfiguration.preparedFinalObject.Booking.businessService");
+export const callPGServiceOpenSpace = async (state, dispatch) => {
+  const gateway = get(state, "screenConfiguration.preparedFinalObject.Booking.paymentGateway");
+  console.log("gatewayNew", gateway);
   const tenantId = getQueryArg(window.location.href, "tenantId");
   const applicationNumber = getQueryArg(
     window.location.href,
@@ -124,13 +125,13 @@ export const callPGService = async (state, dispatch, item) => {
       ? `${window.origin}/citizen`
       : window.origin
     }/egov-services/paymentRedirectPage`;
-
-    console.log(callbackUrl, "callbackUrl");
   try {
     const queryObj = [
       { key: "tenantId", value: tenantId },
       { key: "consumerCode", value: applicationNumber },
-      { key: "businessService", value: businessService}
+      //value:"PMS-2020-02-21-041823"
+      { key: "businessService", value: "OSBM" }
+      //value: applicationNumber
     ];
 
 
@@ -142,14 +143,15 @@ export const callPGService = async (state, dispatch, item) => {
     const billId = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].id");
     const consumerCode = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode");
     const Accountdetails = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails");
-    console.log("Accountdetails", Accountdetails);
     localStorageSet("amount", 0);
     localStorageSet("gstAmount", 0);
     localStorageSet("performanceBankGuaranteeCharges", 0);
 
     for (let index = 0; index < Accountdetails.length; index++) {
       const element = Accountdetails[index];
-      if (element.taxHeadCode === `OSBM` || element.taxHeadCode === `WTB`) {
+      if (element.taxHeadCode === `PETNOC_FEE` ||
+        element.taxHeadCode === `ROADCUTNOC_FEE` ||
+        element.taxHeadCode === `ADVERTISEMENTNOC_FEE`) {
         localStorageSet("amount", element.amount);
       } else if (element.taxHeadCode === `PETNOC_TAX` ||
         element.taxHeadCode === `ROADCUTNOC_TAX` ||
@@ -179,13 +181,16 @@ export const callPGService = async (state, dispatch, item) => {
           taxAndPayments,
           consumerCode: consumerCode, // get(billPayload, "Bill[0].consumerCode"),
           productInfo: getapplicationType(), // "Property Tax Payment",
-          gateway: item,
-          user: get(state, "auth.userInfo"),
+          gateway: gateway,
+          user: {
+            mobileNumber: userMobileNumber,
+            name: userName,
+            tenantId: getTenantId(),
+            // process.env.REACT_APP_NAME === "Employee" ? getTenantId() : get(state,"auth.userInfo.permanentCity")
+          },
           callbackUrl
         }
       };
-
-      console.log(requestBody, "myrequestBody");
       const goToPaymentGateway = await httpRequest(
         "post",
         "pg-service/transaction/v1/_create",
@@ -193,9 +198,6 @@ export const callPGService = async (state, dispatch, item) => {
         [],
         requestBody
       );
-      
-      // let data = {...goToPaymentGateway}
-      console.log(goToPaymentGateway, "goToPaymentGateway");
       const redirectionUrl = get(goToPaymentGateway, "Transaction.redirectUrl");
       window.location = redirectionUrl;
     } catch (e) {

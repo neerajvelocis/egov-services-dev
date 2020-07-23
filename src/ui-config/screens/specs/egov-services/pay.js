@@ -56,7 +56,7 @@ const setSearchResponse = async (
       prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
   );
 
-  await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].bkBookingType);
+  await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
 };
 
 
