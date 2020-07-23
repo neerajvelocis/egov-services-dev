@@ -383,7 +383,7 @@ const setSearchResponse = async (
     // HideshowFooter(action, bookingStatus);
 
     if(bookingCase == "Paid"){
-        await generateBill(state, dispatch, applicationNumber, tenantId, "BWT");
+        await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     } else {
         set(
             action,
@@ -400,14 +400,12 @@ const setSearchResponse = async (
         );
     } else {
         if(bookingCase === "Paid"){
-            alert("paid show")
             set(
                 action,
                 "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.paidCase.visible",
                 true
             );            
         } else {
-            alert("normal show")
             set(
                 action,
                 "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.normalCase.visible",

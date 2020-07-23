@@ -72,7 +72,7 @@ export const validateFields = (
     objectJsonPath,
     state,
     dispatch,
-    screen = "apply"
+    screen
 ) => {
     const fields = get(
         state.screenConfiguration.screenConfig[screen],
@@ -1293,6 +1293,46 @@ export const clearlocalstorageAppDetails = (state) => {
     lSRemoveItem("this_sub_adv_id");
     lSRemoveItem("undertaking");
 };
+
+
+// export const validateFields = (
+//     objectJsonPath,
+//     state,
+//     dispatch,
+//     screen = "apply"
+//   ) => {
+//     const fields = get(
+//       state.screenConfiguration.screenConfig[screen],
+//       objectJsonPath,
+//       {}
+//     );
+//     let isFormValid = true;
+//     for (var variable in fields) {
+//       if (fields.hasOwnProperty(variable)) {
+//         if (
+//           fields[variable] &&
+//           fields[variable].props &&
+//           (fields[variable].props.disabled === undefined ||
+//             !fields[variable].props.disabled) &&
+//           !validate(
+//             screen,
+//             {
+//               ...fields[variable],
+//               value: get(
+//                 state.screenConfiguration.preparedFinalObject,
+//                 fields[variable].jsonPath
+//               )
+//             },
+//             dispatch,
+//             true
+//           )
+//         ) {
+//           isFormValid = false;
+//         }
+//       }
+//     }
+//     return isFormValid;
+//   };
 
 export const convertDateInDMY = (inputDate) => {
     if (inputDate) {
