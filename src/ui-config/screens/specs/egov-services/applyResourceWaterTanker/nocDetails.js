@@ -249,9 +249,9 @@ export const bookingDetails = getCommonCard({
             labelName: "BK_WTB_CASE_PLACEHOLDER",
           },
           // required: true,
-          pattern: getPattern("Name"),
+          pattern: getPattern("typeOfRequest"),
           jsonPath: "Booking.bkStatus",
-          sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
+          sourceJsonPath: "applyScreenMdmsData.Booking.TypesofRequest",
           errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
           required : true,
           props: {

@@ -63,102 +63,52 @@ export const openSpaceSummary = getCommonGrayCard({
         },
     },
     cardOne: {
-        uiFramework: "custom-containers",
-        componentPath: "MultiItem",
-        props: {
-            className: "sellmeatapplicant-summary",
-            scheama: getCommonGrayCard({
-                applicantContainer: getCommonContainer({
-                    HouseNo: getLabelWithValue(
-                        {
-                            labelName: "House No.",
-                            labelKey: "BK_OSB_HOUSE_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkHouseNo",
-                        }
-                    ),
-                    CompleteAddress: getLabelWithValue(
-                        {
-                            labelName: "House No.",
-                            labelKey: "BK_OSB_COMPLETE_ADDRESS_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkCompleteAddress",
-                        }
-                    ),
-                    Sector: getLabelWithValue(
-                        {
-                            labelName: "Sector",
-                            labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkSector",
-                        }
-                    ),
-                    PropertyType: getLabelWithValue(
-                        {
-                            labelName: "Residential/Commercial",
-                            labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkType",
-                        }
-                    ),
-                    StorageArea: getLabelWithValue(
-                        {
-                            labelName: "Storage Area",
-                            labelKey: "BK_OSB_STORAGE_AREA_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkAreaRequired",
-                        }
-                    ),
-                    DurationLabel: getLabelWithValue(
-                        {
-                            labelName: "Duration",
-                            labelKey: "BK_OSB_DURATION_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkDuration",
-                        }
-                    ),
-                    Category: getLabelWithValue(
-                        {
-                            labelName: "Category",
-                            labelKey: "BK_OSB_CATEGORY_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkCategory",
-                        }
-                    ),
-                    VillageCity: getLabelWithValue(
-                        {
-                            labelName: "Village/City",
-                            labelKey: "BK_OSB_CITY_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkVillCity",
-                        }
-                    ),
-                    ConstructionType: getLabelWithValue(
-                        {
-                            labelName: "Construction Type",
-                            labelKey: "BK_OSB_CONSTRUCTION_TYPE_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkConstructionType",
-                        }
-                    ),
-                }),
-            }),
-            items: [],
-            hasAddItem: false,
-            isReviewPage: true,
-            sourceJsonPath: "Booking",
-            prefixSourceJsonPath:
-                "children.cardContent.children.applicantContainer.children",
-            afterPrefixJsonPath: "children.value.children.key",
+        uiFramework: "custom-containers-local",
+        componentPath: "MultiItemsWithImageContainer",
+        moduleName : "egov-services",
+        props : {
+            contents: [
+                {
+                  label: "MY_BK_APPLICATION_NUMBER_LABEL",
+                  jsonPath: "bkApplicationNumber"
+                }, 
+                {
+                  label: "MY_BK_APPLICATION_STATUS_LABEL",
+                  jsonPath: "bkApplicationStatus"
+                },
+                {
+                  label: "MY_BK_HOUSE_NO_LABEL",
+                  jsonPath: "bkHouseNo"
+                },              {
+                  label: "MY_BK_COMPLETE_ADDRESS_LABEL",
+                  jsonPath: "bkCompleteAddress"
+                },
+                {
+                  label: "MY_BK_PROPERTY_SECTOR_LABEL",
+                  jsonPath: "bkSector",
+                },
+                {
+                  label: "MY_BK_PROPERTY_TYPE_LABEL",
+                  jsonPath: "bkType",
+                },
+                {
+                  label: "MY_BK_STORAGE_AREA_LABEL",
+                  jsonPath: "bkAreaRequired",
+                },               
+                {
+                  label: "MY_BK_CITY_LABEL",
+                  jsonPath: "bkVillCity",
+                },
+                {
+                  label: "MY_BK_CONSTRUCTION_TYPE_LABEL",
+                  jsonPath: "bkConstructionType",
+                },
+                {
+                  label: "MY_BK_CATEGORY_LABEL",
+                  jsonPath: "bkCategory",
+                }
+              ],
+              moduleName: "egov-services",
         },
         type: "array",
     },

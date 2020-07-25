@@ -373,51 +373,98 @@ export const footer = getCommonApplyFooter({
 
 export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
     let allAreFilled = true;
-
-    document
-        .getElementById("apply_form" + activeStep)
-        .querySelectorAll("[required]")
-        .forEach(function (i) {
-            // console.log(i, "fields");
-
-            if (!i.value) {
-                i.focus();
-                allAreFilled = false;
-                i.parentNode.classList.add("MuiInput-error-853");
-                i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-            }
-            if (i.getAttribute("aria-invalid") === "true" && allAreFilled) {
-                i.parentNode.classList.add("MuiInput-error-853");
-                i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-                allAreFilled = false;
-                isFormValid = false;
-                hasFieldToaster = true;
-            }
-        });
-
-    document
-        .getElementById("apply_form" + activeStep)
-        .querySelectorAll("input[type='hidden']")
-        .forEach(function (i) {
-            if (i.value == i.placeholder) {
-                i.focus();
-                allAreFilled = false;
-                i.parentNode.classList.add("MuiInput-error-853");
-                i.parentNode.parentNode.parentNode.classList.add(
-                    "MuiFormLabel-error-844"
-                );
-                allAreFilled = false;
-                isFormValid = false;
-                hasFieldToaster = true;
-            }
-        });
-    //
-    if (allAreFilled == false) {
+    document.getElementById("apply_form" + activeStep).querySelectorAll("[required]").forEach(function (i) {
+      i.parentNode.classList.remove("MuiInput-error-853");
+      i.parentNode.parentNode.classList.remove("MuiFormLabel-error-844");
+      if (!i.value) {
+        i.focus();
+        allAreFilled = false;
+        i.parentNode.classList.add("MuiInput-error-853");
+        i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+      }
+      if (i.getAttribute("aria-invalid") === 'true' && allAreFilled) {
+        i.parentNode.classList.add("MuiInput-error-853");
+        i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+        allAreFilled = false;
         isFormValid = false;
         hasFieldToaster = true;
-    } else {
-        isFormValid = true;
-        hasFieldToaster = false;
+      }
+    })
+  
+    document.getElementById("apply_form" + activeStep).querySelectorAll("input[type='hidden']").forEach(function (i) {
+      i.parentNode.classList.remove("MuiInput-error-853");
+      i.parentNode.parentNode.parentNode.classList.remove("MuiFormLabel-error-844");
+      if (i.value == i.placeholder) {
+        i.focus();
+        allAreFilled = false;
+        i.parentNode.classList.add("MuiInput-error-853");
+        i.parentNode.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+        allAreFilled = false;
+        isFormValid = false;
+        hasFieldToaster = true;
+      }
+  
+    })
+    if (!allAreFilled) {
+      //alert('Fill all fields')
+      isFormValid = false;
+      hasFieldToaster = true;
     }
-    return [isFormValid, hasFieldToaster];
-};
+    else {
+      //alert('Submit')
+      isFormValid = true;
+      hasFieldToaster = false;
+    }
+    return [isFormValid, hasFieldToaster]
+  }; 
+
+// export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
+//     let allAreFilled = true;
+
+//     document
+//         .getElementById("apply_form" + activeStep)
+//         .querySelectorAll("[required]")
+//         .forEach(function (i) {
+//             // console.log(i, "fields");
+
+//             if (!i.value) {
+//                 i.focus();
+//                 allAreFilled = false;
+//                 i.parentNode.classList.add("MuiInput-error-853");
+//                 i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+//             }
+//             if (i.getAttribute("aria-invalid") === "true" && allAreFilled) {
+//                 i.parentNode.classList.add("MuiInput-error-853");
+//                 i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+//                 allAreFilled = false;
+//                 isFormValid = false;
+//                 hasFieldToaster = true;
+//             }
+//         });
+
+//     document
+//         .getElementById("apply_form" + activeStep)
+//         .querySelectorAll("input[type='hidden']")
+//         .forEach(function (i) {
+//             if (i.value == i.placeholder) {
+//                 i.focus();
+//                 allAreFilled = false;
+//                 i.parentNode.classList.add("MuiInput-error-853");
+//                 i.parentNode.parentNode.parentNode.classList.add(
+//                     "MuiFormLabel-error-844"
+//                 );
+//                 allAreFilled = false;
+//                 isFormValid = false;
+//                 hasFieldToaster = true;
+//             }
+//         });
+//     //
+//     if (allAreFilled == false) {
+//         isFormValid = false;
+//         hasFieldToaster = true;
+//     } else {
+//         isFormValid = true;
+//         hasFieldToaster = false;
+//     }
+//     return [isFormValid, hasFieldToaster];
+// };

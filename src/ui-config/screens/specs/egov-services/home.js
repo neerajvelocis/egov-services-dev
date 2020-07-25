@@ -83,7 +83,8 @@ const screenConfig = {
           componentPath: "LandingPage",
           props: {
             items: cardItems,
-            history: {}
+            history: {},
+            module:"SERVICES"
           }
         }
       }

@@ -382,7 +382,7 @@ const setSearchResponse = async (
 
     // HideshowFooter(action, bookingStatus);
 
-    if(bookingCase == "Paid"){
+    if(bookingCase.includes("Paid")){
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     } else {
         set(
@@ -399,19 +399,24 @@ const setSearchResponse = async (
             false
         );
     } else {
-        if(bookingCase === "Paid"){
-            set(
-                action,
-                "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.paidCase.visible",
-                true
-            );            
-        } else {
-            set(
-                action,
-                "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.normalCase.visible",
-                true
-            );
-        }
+        console.log("in it")
+        console.log("in it")
+
+        set(
+            action,
+            "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.bookingCaseContainer.props.items[0].item0.children.cardContent.children.driverContainer.children.approverName",
+            bookingCase.includes("Paid") ? false : true
+        ); 
+
+        // if(bookingCase === "Paid"){
+                      
+        // } else {
+        //     set(
+        //         action,
+        //         "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.normalCase.visible",
+        //         true
+        //     );
+        // }
     }
 
 

@@ -63,121 +63,167 @@ export const openSpaceSummary = getCommonGrayCard({
         },
     },
     cardOne: {
-        uiFramework: "custom-containers",
-        componentPath: "MultiItem",
-        props: {
-            className: "sellmeatapplicant-summary",
-            scheama: getCommonGrayCard({
-                applicantContainer: getCommonContainer({
-                    applicationNumber: getLabelWithValue(
-                        {
-                            labelName: "Application ID",
-                            labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicationNumber",
-                        }
-                    ),
-                    applicationStatus: getLabelWithValue(
-                        {
-                            labelName: "Application Status",
-                            labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkApplicationStatus",
-                        }
-                    ),
-                    HouseNo: getLabelWithValue(
-                        {
-                            labelName: "House No.",
-                            labelKey: "MY_BK_HOUSE_NO_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkHouseNo",
-                        }
-                    ),
-                    CompleteAddress: getLabelWithValue(
-                        {
-                            labelName: "House No.",
-                            labelKey: "MY_BK_COMPLETE_ADDRESS_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkCompleteAddress",
-                        }
-                    ),
-                    Sector: getLabelWithValue(
-                        {
-                            labelName: "Sector",
-                            labelKey: "MY_BK_PROPERTY_SECTOR_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkSector",
-                        }
-                    ),
-                    PropertyType: getLabelWithValue(
-                        {
-                            labelName: "Residential/Commercial",
-                            labelKey: "MY_BK_PROPERTY_TYPE_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkType",
-                        }
-                    ),
-                    StorageArea: getLabelWithValue(
-                        {
-                            labelName: "Storage Area",
-                            labelKey: "MY_BK_STORAGE_AREA_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkAreaRequired",
-                        }
-                    ),
-                    DurationLabel: getLabelWithValue(
-                        {
-                            labelName: "Duration",
-                            labelKey: "MY_BK_DURATION_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkDuration",
-                        }
-                    ),
-                    Category: getLabelWithValue(
-                        {
-                            labelName: "Category",
-                            labelKey: "MY_BK_CATEGORY_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkCategory",
-                        }
-                    ),
-                    VillageCity: getLabelWithValue(
-                        {
-                            labelName: "Village/City",
-                            labelKey: "MY_BK_CITY_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkVillCity",
-                        }
-                    ),
-                    ConstructionType: getLabelWithValue(
-                        {
-                            labelName: "Construction Type",
-                            labelKey: "MY_BK_CONSTRUCTION_TYPE_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkConstructionType",
-                        }
-                    ),
-                }),
-            }),
-            items: [],
-            hasAddItem: false,
-            isReviewPage: true,
-            sourceJsonPath: "Booking",
-            prefixSourceJsonPath:
-                "children.cardContent.children.applicationContainer.children",
-            afterPrefixJsonPath: "children.value.children.key",
+        uiFramework: "custom-containers-local",
+        componentPath: "MultiItemsWithImageContainer",
+        moduleName : "egov-services",
+        props : {
+            contents: [
+                {
+                  label: "MY_BK_APPLICATION_NUMBER_LABEL",
+                  jsonPath: "bkApplicationNumber"
+                }, 
+                {
+                  label: "MY_BK_APPLICATION_STATUS_LABEL",
+                  jsonPath: "bkApplicationStatus"
+                },
+                {
+                  label: "MY_BK_HOUSE_NO_LABEL",
+                  jsonPath: "bkHouseNo"
+                },              {
+                  label: "MY_BK_COMPLETE_ADDRESS_LABEL",
+                  jsonPath: "bkCompleteAddress"
+                },
+                {
+                  label: "MY_BK_PROPERTY_SECTOR_LABEL",
+                  jsonPath: "bkSector",
+                },
+                {
+                  label: "MY_BK_PROPERTY_TYPE_LABEL",
+                  jsonPath: "bkType",
+                },
+                {
+                  label: "MY_BK_STORAGE_AREA_LABEL",
+                  jsonPath: "bkAreaRequired",
+                },
+                {
+                  label: "MY_BK_CITY_LABEL",
+                  jsonPath: "bkVillCity",
+                },
+                {
+                  label: "MY_BK_CONSTRUCTION_TYPE_LABEL",
+                  jsonPath: "bkConstructionType",
+                },
+                {
+                  label: "MY_BK_CATEGORY_LABEL",
+                  jsonPath: "bkCategory",
+                }
+              ],
+              moduleName: "egov-services",
         },
         type: "array",
+        // props: {
+        //     className: "sellmeatapplicant-summary",
+        //     scheama: getCommonGrayCard({
+        //         applicantContainer: getCommonContainer({
+        //             applicationNumber: getLabelWithValue(
+        //                 {
+        //                     labelName: "Application ID",
+        //                     labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkApplicationNumber",
+        //                 }
+        //             ),
+        //             applicationStatus: getLabelWithValue(
+        //                 {
+        //                     labelName: "Application Status",
+        //                     labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkApplicationStatus",
+        //                 }
+        //             ),
+        //             HouseNo: getLabelWithValue(
+        //                 {
+        //                     labelName: "House No.",
+        //                     labelKey: "MY_BK_HOUSE_NO_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkHouseNo",
+        //                 }
+        //             ),
+        //             CompleteAddress: getLabelWithValue(
+        //                 {
+        //                     labelName: "House No.",
+        //                     labelKey: "MY_BK_COMPLETE_ADDRESS_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkCompleteAddress",
+        //                 }
+        //             ),
+        //             Sector: getLabelWithValue(
+        //                 {
+        //                     labelName: "Sector",
+        //                     labelKey: "MY_BK_PROPERTY_SECTOR_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkSector",
+        //                 }
+        //             ),
+        //             PropertyType: getLabelWithValue(
+        //                 {
+        //                     labelName: "Residential/Commercial",
+        //                     labelKey: "MY_BK_PROPERTY_TYPE_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkType",
+        //                 }
+        //             ),
+        //             StorageArea: getLabelWithValue(
+        //                 {
+        //                     labelName: "Storage Area",
+        //                     labelKey: "MY_BK_STORAGE_AREA_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkAreaRequired",
+        //                 }
+        //             ),
+        //             DurationLabel: getLabelWithValue(
+        //                 {
+        //                     labelName: "Duration",
+        //                     labelKey: "MY_BK_DURATION_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkDuration",
+        //                 }
+        //             ),
+        //             Category: getLabelWithValue(
+        //                 {
+        //                     labelName: "Category",
+        //                     labelKey: "MY_BK_CATEGORY_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkCategory",
+        //                 }
+        //             ),
+        //             VillageCity: getLabelWithValue(
+        //                 {
+        //                     labelName: "Village/City",
+        //                     labelKey: "MY_BK_CITY_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkVillCity",
+        //                 }
+        //             ),
+        //             ConstructionType: getLabelWithValue(
+        //                 {
+        //                     labelName: "Construction Type",
+        //                     labelKey: "MY_BK_CONSTRUCTION_TYPE_LABEL",
+        //                 },
+        //                 {
+        //                     jsonPath: "Booking.bkConstructionType",
+        //                 }
+        //             ),
+        //         }),
+        //     }),
+        //     items: [],
+        //     hasAddItem: false,
+        //     isReviewPage: true,
+        //     sourceJsonPath: "Booking",
+        //     prefixSourceJsonPath:
+        //         "children.cardContent.children.applicationContainer.children",
+        //     afterPrefixJsonPath: "children.value.children.key",
+        // },
+        
     },
 });
