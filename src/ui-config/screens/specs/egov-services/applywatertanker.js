@@ -148,6 +148,9 @@ const getMdmsData = async (action, state, dispatch) => {
             {
               name: "Category",
             },
+            {
+              name: "TypesofRequest"
+            }
           ]
         }
       ]

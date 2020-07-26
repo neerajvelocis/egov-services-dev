@@ -6,7 +6,7 @@ import set from "lodash/set";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import {
   getUserInfo,
-  setOPMSTenantId,
+  setTenantId,
 } from "egov-ui-kit/utils/localStorageUtils";
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
@@ -124,7 +124,7 @@ const PermissionManagementSearchAndResult = {
   name: "home",
   beforeInitScreen: (action, state, dispatch) => {
     let UsertenantInfo = JSON.parse(getUserInfo()).permanentCity;
-    setOPMSTenantId(UsertenantInfo);
+    setTenantId(UsertenantInfo);
     return action;
   },
   components: {
@@ -139,6 +139,7 @@ const PermissionManagementSearchAndResult = {
           props: {
             items: cardItems,
             history: {},
+            module:"SERVICES"
           },
         },
         // listCard: {

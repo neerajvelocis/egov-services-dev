@@ -56,6 +56,10 @@ const HowItWorks = Loadable({
   loader: () => import("./HowItWorks"),
   loading: () => <Loading />
 });
+const MultiItemsWithImage = Loadable({
+  loader: () => import("./MultiItemsWithImage"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -68,5 +72,6 @@ export {
   MapLocator,
   FeesEstimateCard,
   DividerWithLabel,
-  HowItWorks
+  HowItWorks,
+  MultiItemsWithImage
 };

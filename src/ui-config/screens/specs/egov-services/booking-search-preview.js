@@ -256,7 +256,7 @@ const getPaymentGatwayList = async (action, state, dispatch) => {
     } catch (e) {
       console.log(e);
     }
-  };
+};
 
 
 const screenConfig = {

@@ -4,6 +4,10 @@ import LinearProgress from "egov-ui-framework/ui-atoms/LinearSpinner";
 
 const Loading = () => <LinearProgress />;
 
+const RadioGroupWithIconContainer = Loadable({
+  loader: () => import("./RadioGroupWithIconContainer"),
+  loading: () => <Loading />
+});
 const CustomTabContainer = Loadable({
   loader: () => import("./CustomTabContainer"),
   loading: () => <Loading />
@@ -70,9 +74,15 @@ const UnderTakingContainer = Loadable({
   loader: () => import("./UnderTakingContainer"),
   loading: () => <Loading />
 });
+const MultiItemsWithImageContainer = Loadable({
+  loader: () => import("./MultiItemsWithImageContainer"),
+  loading: () => <Loading />
+});
+
 
 
 export {
+  RadioGroupWithIconContainer,
   CustomTabContainer,
   LabelContainer,
   CheckboxContainer,
@@ -88,5 +98,6 @@ export {
   RejectContainer,
   ReassignContainer,
   ForwardContainer,
-  UnderTakingContainer
+  UnderTakingContainer,
+  MultiItemsWithImageContainer
 };
