@@ -2,7 +2,7 @@ import {
     getLabel,
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { download } from "egov-common/ui-utils/commons";
+import { download } from "../../utils";
 import {
     applyTradeLicense,
     getNextFinancialYearForRenewal,
@@ -301,6 +301,10 @@ export const footerReviewTop = (
     //   `licenseCount`,
     //   1
     // );
+    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
+    let paymentData = get(state.screenConfiguration.preparedFinalObject, "ReceiptTemp[0].Bill[0]")
+    console.log(applicationData, "myData");
+    console.log(paymentData, "myData");
 
     // const { Licenses } = state.screenConfiguration.preparedFinalObject;
 
@@ -336,7 +340,7 @@ export const footerReviewTop = (
             //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
             //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
             // ]
-            // download(receiptQueryString);
+            download(applicationData, paymentData);
             // generateReceipt(state, dispatch, "receipt_download");
         },
         leftIcon: "receipt",
@@ -382,21 +386,29 @@ export const footerReviewTop = (
 
     if (status === "APPROVED" && bookingCase === "") {
         downloadMenu = [
-            tlCertificateDownloadObject,
-            receiptDownloadObject,
             applicationDownloadObject,
+            receiptDownloadObject,
+            certificateDownloadObject,
         ];
         printMenu = [
-            tlCertificatePrintObject,
-            receiptPrintObject,
             applicationPrintObject,
+            receiptPrintObject,
+            certificatePrintObject,
         ];
     } else if (status === "PENDINGAPPROVAL" && bookingCase === "") {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
     } else if (status === "PENDINGPAYMENT" && bookingCase === "") {
-        downloadMenu = [applicationDownloadObject];
-        printMenu = [applicationPrintObject];
+        downloadMenu = [
+            applicationDownloadObject,
+            receiptDownloadObject,
+            // certificateDownloadObject,
+        ];
+        printMenu = [
+            applicationPrintObject,
+            receiptPrintObject,
+            // certificatePrintObject,
+        ];
     } else if (status === "REJECTED" && bookingCase === "") {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
@@ -591,12 +603,12 @@ export const downloadPrintContainer = (
     };
     if (status === "APPROVED" && bookingCase === "") {
         downloadMenu = [
-            tlCertificateDownloadObject,
+            applicationDownloadObject,
             receiptDownloadObject,
             applicationDownloadObject,
         ];
         printMenu = [
-            tlCertificatePrintObject,
+            applicationPrintObject,
             receiptPrintObject,
             applicationPrintObject,
         ];
@@ -619,12 +631,12 @@ export const downloadPrintContainer = (
     // switch (status) {
     //     case "APPROVED":
     //         downloadMenu = [
-    //             tlCertificateDownloadObject,
+    //             applicationDownloadObject,
     //             receiptDownloadObject,
     //             applicationDownloadObject,
     //         ];
     //         printMenu = [
-    //             tlCertificatePrintObject,
+    //             applicationPrintObject,
     //             receiptPrintObject,
     //             applicationPrintObject,
     //         ];

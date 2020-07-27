@@ -16,6 +16,7 @@ import {
     getQueryArg,
     getTransformedLocalStorgaeLabels,
     getLocaleLabels,
+    getFileUrlFromAPI
 } from "egov-ui-framework/ui-utils/commons";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -68,12 +69,7 @@ export const getTranslatedLabel = (labelKey, localizationLabels) => {
     return translatedLabel || labelKey;
 };
 
-export const validateFields = (
-    objectJsonPath,
-    state,
-    dispatch,
-    screen
-) => {
+export const validateFields = (objectJsonPath, state, dispatch, screen) => {
     const fields = get(
         state.screenConfiguration.screenConfig[screen],
         objectJsonPath,
@@ -1294,7 +1290,6 @@ export const clearlocalstorageAppDetails = (state) => {
     lSRemoveItem("undertaking");
 };
 
-
 // export const validateFields = (
 //     objectJsonPath,
 //     state,
@@ -1366,3 +1361,198 @@ export const getNextMonthDateInYMD = () => {
         date.substring(7, 10);
     return date;
 };
+
+export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
+    getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
+        if (mode === "download") {
+            var win = window.open(fileRes[fileStoreId], "_blank");
+            if (win) {
+                win.focus();
+            }
+        } else {
+            // printJS(fileRes[fileStoreId])
+            var response = await axios.get(fileRes[fileStoreId], {
+                //responseType: "blob",
+                responseType: "arraybuffer",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/pdf",
+                },
+            });
+            console.log("responseData---", response);
+            const file = new Blob([response.data], { type: "application/pdf" });
+            const fileURL = URL.createObjectURL(file);
+            var myWindow = window.open(fileURL);
+            if (myWindow != undefined) {
+                myWindow.addEventListener("load", (event) => {
+                    myWindow.focus();
+                    myWindow.print();
+                });
+            }
+        }
+    });
+};
+
+export const download = ( applicationData, paymentData, mode = "download") => {
+    console.log("applicationData", applicationData);
+    console.log("applicationData", paymentData);
+    // const FETCHRECEIPT = {
+    //   GET: {
+    //     URL: "/collection-services/payments/_search",
+    //     ACTION: "_get",
+    //   },
+    // };
+    const DOWNLOADRECEIPT = {
+        GET: {
+            URL: "/pdf-service/v1/_create",
+            // ACTION: "_get",
+        },
+    };
+    try {
+        //   httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
+        const queryStr = [
+            { key: "key", value: "bk-payment-receipt" },
+            {
+                key: "tenantId",
+                value: "ch",
+            },
+        ];
+        // if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
+        //   console.log("Could not find any receipts");
+        //   return;
+        // }
+        // DOWNLOADRECEIPT.GET.ACTION
+        let receiptData = [
+            {
+                applicantDetail: {
+                    name: paymentData.payerName,
+                    mobileNumber: paymentData.mobileNumber,
+                    houseNo: applicationData.bkSector,
+                    permanentAddress: paymentData.payerAddress,
+                    permanentCity: paymentData.tenantId,
+                    sector: applicationData.bkHouseNo,
+                },
+                booking: {
+                    bkApplicationNumber: paymentData.consumerCode,
+                },
+                paymentInfo: {
+                    paymentDate: "13th Augest 2020",
+                    transactionId: "EDR654GF35",
+                    bookingPeriod: "13th Aug 2020 to 12th Sep 2020",
+                    bookingItem:
+                        "Online Payment Against Booking of Open Space for Building Material",
+                    amount: paymentData.billDetails[0].billAccountDetails[1].amount,
+                    tax: paymentData.billDetails[0].billAccountDetails[0].amount,
+                    grandTotal: paymentData.totalAmount,
+                    amountInWords: "",
+                },
+            },
+        ];
+        console.log(receiptData, "receiptData");
+        httpRequest(
+            "post",
+            DOWNLOADRECEIPT.GET.URL,
+            "",
+            queryStr,
+            { BookingInfo: receiptData },
+            { Accept: "application/json" },
+            { responseType: "arraybuffer" }
+        ).then((res) => {
+            res.filestoreIds[0];
+            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+                console.log("resMY", res);
+                res.filestoreIds.map((fileStoreId) => {
+                    downloadReceiptFromFilestoreID(fileStoreId, mode);
+                });
+            } else {
+                console.log("Error In Receipt Download");
+            }
+        });
+        //   })
+    } catch (exception) {
+        console.log(exception, "exception");
+        alert("Some Error Occured while downloading Receipt!");
+    }
+};
+
+// const convertNumberToWords = (amount) => {
+//     var words = new Array();
+//     words[0] = '';
+//     words[1] = 'One';
+//     words[2] = 'Two';
+//     words[3] = 'Three';
+//     words[4] = 'Four';
+//     words[5] = 'Five';
+//     words[6] = 'Six';
+//     words[7] = 'Seven';
+//     words[8] = 'Eight';
+//     words[9] = 'Nine';
+//     words[10] = 'Ten';
+//     words[11] = 'Eleven';
+//     words[12] = 'Twelve';
+//     words[13] = 'Thirteen';
+//     words[14] = 'Fourteen';
+//     words[15] = 'Fifteen';
+//     words[16] = 'Sixteen';
+//     words[17] = 'Seventeen';
+//     words[18] = 'Eighteen';
+//     words[19] = 'Nineteen';
+//     words[20] = 'Twenty';
+//     words[30] = 'Thirty';
+//     words[40] = 'Forty';
+//     words[50] = 'Fifty';
+//     words[60] = 'Sixty';
+//     words[70] = 'Seventy';
+//     words[80] = 'Eighty';
+//     words[90] = 'Ninety';
+//     amount = amount.toString();
+//     var atemp = amount.split(".");
+//     var number = atemp[0].split(",").join("");
+//     var n_length = number.length;
+//     var words_string = "";
+//     if (n_length <= 9) {
+//         var n_array = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0);
+//         var received_n_array = new Array();
+//         for (var i = 0; i < n_length; i++) {
+//             received_n_array[i] = number.substr(i, 1);
+//         }
+//         for (var i = 9 - n_length, j = 0; i < 9; i++, j++) {
+//             n_array[i] = received_n_array[j];
+//         }
+//         for (var i = 0, j = 1; i < 9; i++, j++) {
+//             if (i == 0 || i == 2 || i == 4 || i == 7) {
+//                 if (n_array[i] == 1) {
+//                     n_array[j] = 10 + parseInt(n_array[j]);
+//                     n_array[i] = 0;
+//                 }
+//             }
+//         }
+//         value = "";
+//         for (var i = 0; i < 9; i++) {
+//             if (i == 0 || i == 2 || i == 4 || i == 7) {
+//                 value = n_array[i] * 10;
+//             } else {
+//                 value = n_array[i];
+//             }
+//             if (value != 0) {
+//                 words_string += words[value] + " ";
+//             }
+//             if ((i == 1 && value != 0) || (i == 0 && value != 0 && n_array[i + 1] == 0)) {
+//                 words_string += "Crores ";
+//             }
+//             if ((i == 3 && value != 0) || (i == 2 && value != 0 && n_array[i + 1] == 0)) {
+//                 words_string += "Lakhs ";
+//             }
+//             if ((i == 5 && value != 0) || (i == 4 && value != 0 && n_array[i + 1] == 0)) {
+//                 words_string += "Thousand ";
+//             }
+//             if (i == 6 && value != 0 && (n_array[i + 1] != 0 && n_array[i + 2] != 0)) {
+//                 words_string += "Hundred and ";
+//             } else if (i == 6 && value != 0) {
+//                 words_string += "Hundred ";
+//             }
+//         }
+//         words_string = words_string.split("  ").join(" ");
+//     }
+//     return words_string;
+// }
