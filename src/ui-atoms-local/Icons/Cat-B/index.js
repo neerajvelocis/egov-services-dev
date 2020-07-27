@@ -4,7 +4,7 @@ import "../index.css";
 
 class CatBIcon extends React.Component {
     render() {
-        return <img src={CatB} alt="Cat-A" width={100}/>
+        return <img src={CatB} alt="Cat-A" width={135}/>
 	}
 }
 

@@ -399,9 +399,6 @@ const setSearchResponse = async (
             false
         );
     } else {
-        console.log("in it")
-        console.log("in it")
-
         set(
             action,
             "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.bookingCaseContainer.props.items[0].item0.children.cardContent.children.driverContainer.children.approverName",

@@ -180,80 +180,6 @@ export const bookingDetails = getCommonCard({
                 },
             }),
         },
-        bkType: {
-            ...getSelectField({
-                label: {
-                    labelName: "Residential/Commercial",
-                    labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
-                },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
-                // optionLabel: "name",
-                placeholder: {
-                    labelName: "Select Residential/Commercial",
-                    labelKey: "BK_OSB_PROPERTY_TYPE_PLACEHOLDER",
-                },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-                sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
-                jsonPath: "Booking.bkType",
-                required: true,
-                props: {
-                    className: "applicant-details-error",
-                    required: true,
-                    // disabled: true
-                },
-            }),
-            beforeFieldChange: (action, state, dispatch) => {
-                dispatch(
-                    handleField(
-                        "applyopenspace",
-                        "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
-                        "visible",
-                        action.value !== "" || action.value !== null
-                            ? true
-                            : false
-                    )
-                );
-                dispatch(
-                    handleField(
-                        "applyopenspace",
-                        "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
-                        "props.value",
-                        action.value === "Residential" ? "Cat-A" : "Cat-B"
-                    )
-                );
-                dispatch(
-                    handleField(
-                        "applyopenspace",
-                        "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
-                        "props.buttons",
-                        action.value === "Residential"
-                            ? [
-                                  {
-                                      labelName: "Cat-A",
-                                      labelKey: "Cat-A",
-                                      value: "Cat-A",
-                                  },
-                              ]
-                            : [
-                                  {
-                                      label: "Cat-B",
-                                      labelKey: "Cat-B",
-                                      value: "Cat-B",
-                                  },
-                                  {
-                                      label: "Cat-C",
-                                      labelKey: "Cat-C",
-                                      value: "Cat-C",
-                                  },
-                              ]
-                    )
-                );
-            },
-        },
-
         bkAreaRequired: {
             ...getSelectField({
                 label: {
@@ -280,7 +206,6 @@ export const bookingDetails = getCommonCard({
                 },
             }),
         },
-
         bkVillCity: {
             ...getSelectField({
                 label: {
@@ -358,6 +283,79 @@ export const bookingDetails = getCommonCard({
                         "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkDuration",
                         "props.disabled",
                         action.value === "New" ? true : false
+                    )
+                );
+            },
+        },
+        bkType: {
+            ...getSelectField({
+                label: {
+                    labelName: "Residential/Commercial",
+                    labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
+                },
+                // localePrefix: {
+                //   moduleName: "egpm",
+                //   masterName: "sector"
+                // },
+                // optionLabel: "name",
+                placeholder: {
+                    labelName: "Select Residential/Commercial",
+                    labelKey: "BK_OSB_PROPERTY_TYPE_PLACEHOLDER",
+                },
+                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+                sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
+                jsonPath: "Booking.bkType",
+                required: true,
+                props: {
+                    className: "applicant-details-error",
+                    required: true,
+                    // disabled: true
+                },
+            }),
+            beforeFieldChange: (action, state, dispatch) => {
+                dispatch(
+                    handleField(
+                        "applyopenspace",
+                        "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
+                        "visible",
+                        action.value !== "" || action.value !== null
+                            ? true
+                            : false
+                    )
+                );
+                dispatch(
+                    handleField(
+                        "applyopenspace",
+                        "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
+                        "props.value",
+                        action.value === "Residential" ? "Cat-A" : "Cat-B"
+                    )
+                );
+                dispatch(
+                    handleField(
+                        "applyopenspace",
+                        "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
+                        "props.buttons",
+                        action.value === "Residential"
+                            ? [
+                                  {
+                                      labelName: "Cat-A",
+                                      labelKey: "Cat-A",
+                                      value: "Cat-A",
+                                  },
+                              ]
+                            : [
+                                  {
+                                      label: "Cat-B",
+                                      labelKey: "Cat-B",
+                                      value: "Cat-B",
+                                  },
+                                  {
+                                      label: "Cat-C",
+                                      labelKey: "Cat-C",
+                                      value: "Cat-C",
+                                  },
+                              ]
                     )
                 );
             },
