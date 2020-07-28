@@ -241,11 +241,11 @@ export const bookingDetails = getCommonCard({
       bkStatus: {
         ...getSelectField({
           label: {
-            labelName: "Booking Date",
+            labelName: "Type of Request",
             labelKey: "BK_WTB_CASE_LABEL",
           },
           placeholder: {
-            labelName: "Booking Data",
+            labelName: "Type of Request",
             labelName: "BK_WTB_CASE_PLACEHOLDER",
           },
           // required: true,

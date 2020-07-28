@@ -22,17 +22,12 @@ class PaymentRedirect extends Component {
     componentDidMount = async () => {
         let { search } = this.props.location;
         console.log(search, "search");
+        const txnQuery=search.split('&')[0].replace('eg_pg_txnid','transactionId');
         try {
-
-
-            // let response = await getSearchResultsView([
-            //     { key: "tenantId", value: tenantId },
-            //     { key: "applicationNumber", value: consumerCode },
-            // ]);
 
             let pgUpdateResponse = await httpRequest(
                 "post",
-                "pg-service/transaction/v1/_update" + search,
+                "pg-service/transaction/v1/_update" + txnQuery,
                 "_update",
                 [],
                 {}

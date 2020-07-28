@@ -6,7 +6,7 @@ import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
 import { httpRequest } from "../../../../../ui-utils/api";
-import { getSearchResults } from "../../../../../ui-utils/commons";
+import { getSearchResults, getSearchResultsView } from "../../../../../ui-utils/commons";
 import { convertDateToEpoch, getBill, validateFields, showHideAdhocPopup } from "../../utils";
 import { getTenantId, localStorageSet, getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 
@@ -147,6 +147,7 @@ export const callPGService = async (state, dispatch, item) => {
     localStorageSet("gstAmount", 0);
     localStorageSet("performanceBankGuaranteeCharges", 0);
 
+
     for (let index = 0; index < Accountdetails.length; index++) {
       const element = Accountdetails[index];
       if (element.taxHeadCode === `OSBM` || element.taxHeadCode === `WTB`) {
@@ -194,28 +195,30 @@ export const callPGService = async (state, dispatch, item) => {
         requestBody
       );
 
-    //    let response = await getSearchResultsView([
-    //                 { key: "tenantId", value: tenantId },
-    //                 { key: "applicationNumber", value: consumerCode },
-	// 			]);
+	//   Manually update workflow
+				let response = await getSearchResultsView([
+                    { key: "tenantId", value: tenantId },
+                    { key: "applicationNumber", value: consumerCode },
+				]);
+				let payload = response.bookingsModelList[0];
+				set(payload, "businessService", "OSBM");
+				set(payload, "bkAction", "PAY");
+				set(payload, "bkAmount", taxAmount);
+				// set(payload, "bkCgst", "360");
 				
-	// 			let payload = response.bookingsModelList[0];
-	// 			set(payload, "businessService", "OSBM");
-	// 			set(payload, "bkAction", "PAY");
-	// 			set(payload, "bkAmount", "2360");
-	// 			set(payload, "bkCgst", "360");
-				
-	// 			console.log("payload", payload);
+				console.log("payloadNew", payload);
 
-    //             response = await httpRequest(
-    //                 "post",
-    //                 "/bookings/api/_update",
-    //                 "",
-    //                 [],
-    //                 {
-	// 					Booking: payload,
-	// 				}
-    //             );
+                response = await httpRequest(
+                    "post",
+                    "/bookings/api/_update",
+                    "",
+                    [],
+                    {
+						Booking: payload,
+					}
+				);
+				
+				//   Manually update workflow Ends
       
       // let data = {...goToPaymentGateway}
       console.log(goToPaymentGateway, "goToPaymentGateway");

@@ -4,165 +4,174 @@ import { getRequiredDocData } from "../utils";
 import get from "lodash/get";
 import set from "lodash/set";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
-import {
-  getUserInfo,
-  setTenantId,
-} from "egov-ui-kit/utils/localStorageUtils";
+import { getUserInfo, setTenantId } from "egov-ui-kit/utils/localStorageUtils";
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
-  {
-    labelName: "SERVICES",
-    // labelKey: "BK_APPLY_BOOKINGS_HEADER",
-    labelKey: "BK_APPLY",
-  },
-  {
-    classes: {
-      root: "common-header-cont",
+    {
+        labelName: "SERVICES",
+        // labelKey: "BK_APPLY_BOOKINGS_HEADER",
+        labelKey: "BK_APPLY",
     },
-  }
+    {
+        classes: {
+            root: "common-header-cont",
+        },
+    }
 );
 let cardItems = [];
 if (role_name === "CITIZEN") {
-  const cardlist = [
-    {
-      label: {
-        labelKey: "BK_HOME_OPEN_SPACE_BOOKING",
-        labelName: "Book Open Space to Store Building Materials",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          account_balance
-        </i>
-      ),
-      route: "applyopenspace",
-      // {
-      //   screenKey: "home",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    },
-    {
-      label: {
-        labelKey: "BK_HOME_COMMUNITY_CENTRE_BOOKING",
-        labelName: "Book Parks & Community Center/Banquet Halls",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          font-size="40px"
-          class="material-icons module-page-icon"
-        >
-          event
-        </i>
-      ),
-      route: "",
-    },
-    {
-      label: {
-        labelKey: "BK_HOME_GROUND_BOOKING",
-        labelName: "Book Ground for Commercial Purpose"
-      },
-      icon: <i
-        viewBox="0 -8 35 42"
-        color="primary"
-        class="material-icons module-page-icon">
-        group_work
-      </i>,
-      route: ""
-      // {
-      //   screenKey: "citizenMainLanding",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    },
-    {
-      label: {
-        labelKey: "BK_HOME_OPEN_SPACE_MCC_JURISDICTION",
-        labelName: "Book Open Space within MCC jurisdiction"
-      },
-      icon: <i
-        viewBox="0 -8 35 42"
-        color="primary"
-        class="material-icons module-page-icon">
-        room
-      </i>,
-      route: ""
-      // {
-      //   screenKey: "home",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    },
-    {
-      label: {
-        labelKey: "BK_HOME_WATER_TANKER_BOOKING",
-        labelName: "Book Water Tanker",
-      },
-      icon: (
-        <i
-          viewBox="0 -8 35 42"
-          color="primary"
-          class="material-icons module-page-icon"
-        >
-          invert_colors
-        </i>
-      ),
-      route: "applywatertanker",
-      // {
-      //   screenKey: "home",
-      //   jsonPath: "components.adhocDialog"
-      // }
-    }
-  ];
-  cardItems = cardlist;
+    const cardlist = [
+        {
+            label: {
+                labelKey: "BK_HOME_OPEN_SPACE_BOOKING",
+                labelName: "Book Open Space to Store Building Materials",
+            },
+            icon: (
+                <i
+                    viewBox="0 -8 35 42"
+                    color="primary"
+                    class="material-icons module-page-icon"
+                    style={{ fontSize: "50px" }}
+                >
+					store
+                    {/* account_balance */}
+                </i>
+            ),
+            route: "applyopenspace",
+            // {
+            //   screenKey: "home",
+            //   jsonPath: "components.adhocDialog"
+            // }
+        },
+        {
+            label: {
+                labelKey: "BK_HOME_COMMUNITY_CENTRE_BOOKING",
+                labelName: "Book Parks & Community Center/Banquet Halls",
+            },
+            icon: (
+                <i
+                    viewBox="0 -8 35 42"
+                    color="primary"
+                    font-size="40px"
+                    class="material-icons module-page-icon"
+                    style={{ fontSize: "50px" }}
+                >
+                    event
+                </i>
+            ),
+            route: "",
+        },
+        {
+            label: {
+                labelKey: "BK_HOME_GROUND_BOOKING",
+                labelName: "Book Ground for Commercial Purpose",
+            },
+            icon: (
+                <i
+                    viewBox="0 -8 35 42"
+                    color="primary"
+                    class="material-icons module-page-icon"
+                    style={{ fontSize: "50px" }}
+                >
+                    group_work
+                </i>
+            ),
+            route: "",
+            // {
+            //   screenKey: "citizenMainLanding",
+            //   jsonPath: "components.adhocDialog"
+            // }
+        },
+        {
+            label: {
+                labelKey: "BK_HOME_OPEN_SPACE_MCC_JURISDICTION",
+                labelName: "Book Open Space within MCC jurisdiction",
+            },
+            icon: (
+                <i
+                    viewBox="0 -8 35 42"
+                    color="primary"
+                    class="material-icons module-page-icon"
+                    style={{ fontSize: "50px" }}
+                >
+                    room
+                </i>
+            ),
+            route: "",
+            // {
+            //   screenKey: "home",
+            //   jsonPath: "components.adhocDialog"
+            // }
+        },
+        {
+            label: {
+                labelKey: "BK_HOME_WATER_TANKER_BOOKING",
+                labelName: "Book Water Tanker",
+            },
+            icon: (
+                <i
+                    viewBox="0 -8 35 42"
+                    color="primary"
+                    class="material-icons module-page-icon"
+                    style={{ fontSize: "50px" }}
+                >
+                    invert_colors
+                </i>
+            ),
+            route: "applywatertanker",
+            // {
+            //   screenKey: "home",
+            //   jsonPath: "components.adhocDialog"
+            // }
+        },
+    ];
+    cardItems = cardlist;
 }
 
 const PermissionManagementSearchAndResult = {
-  uiFramework: "material-ui",
-  name: "home",
-  beforeInitScreen: (action, state, dispatch) => {
-    let UsertenantInfo = JSON.parse(getUserInfo()).permanentCity;
-    setTenantId(UsertenantInfo);
-    return action;
-  },
-  components: {
-    div: {
-      uiFramework: "custom-atoms",
-      componentPath: "Div",
-      children: {
-        header: header,
-        applyCard: {
-          uiFramework: "custom-molecules",
-          componentPath: "LandingPage",
-          props: {
-            items: cardItems,
-            history: {},
-            module:"SERVICES"
-          },
+    uiFramework: "material-ui",
+    name: "home",
+    beforeInitScreen: (action, state, dispatch) => {
+        let UsertenantInfo = JSON.parse(getUserInfo()).permanentCity;
+        setTenantId(UsertenantInfo);
+        return action;
+    },
+    components: {
+        div: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            children: {
+                header: header,
+                applyCard: {
+                    uiFramework: "custom-molecules",
+                    componentPath: "LandingPage",
+                    props: {
+                        items: cardItems,
+                        history: {},
+                        module: "SERVICES",
+                    },
+                },
+                // listCard: {
+                //   uiFramework: "custom-molecules-local",
+                //   moduleName: "egov-services",
+                //   componentPath: "HowItWorks",
+                // },
+            },
         },
-        // listCard: {
-        //   uiFramework: "custom-molecules-local",
-        //   moduleName: "egov-services",
-        //   componentPath: "HowItWorks",
-        // },
-      },
+        adhocDialog: {
+            uiFramework: "custom-containers-local",
+            moduleName: "egov-services",
+            componentPath: "DialogContainer",
+            props: {
+                open: false,
+                maxWidth: false,
+                screenKey: "home",
+            },
+            children: {
+                popup: {},
+            },
+        },
     },
-    adhocDialog: {
-      uiFramework: "custom-containers-local",
-      moduleName: "egov-services",
-      componentPath: "DialogContainer",
-      props: {
-        open: false,
-        maxWidth: false,
-        screenKey: "home",
-      },
-      children: {
-        popup: {},
-      },
-    },
-  },
 };
 
 export default PermissionManagementSearchAndResult;

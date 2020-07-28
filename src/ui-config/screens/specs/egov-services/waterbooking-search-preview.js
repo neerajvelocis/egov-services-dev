@@ -382,6 +382,22 @@ const setSearchResponse = async (
 
     // HideshowFooter(action, bookingStatus);
 
+    // const CitizenprintCont = footerReviewTop(
+    //     action,
+    //     state,
+    //     dispatch,
+    //     bookingStatus,
+    //     applicationNumber,
+    //     tenantId,
+    //     ""
+    // );
+
+    // set(
+    //     action,
+    //     "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+    //     CitizenprintCont
+    // )
+
     if(bookingCase.includes("Paid")){
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     } else {
@@ -417,11 +433,9 @@ const setSearchResponse = async (
     }
 
 
-    
+    // prepareDocumentsView(state, dispatch);
 
-    prepareDocumentsView(state, dispatch);
-
-    const printCont = downloadPrintContainer(
+      const CitizenprintCont = footerReviewTop(
         action,
         state,
         dispatch,
@@ -431,28 +445,11 @@ const setSearchResponse = async (
         bookingCase
     );
 
-    const CitizenprintCont = footerReviewTop(
+    set(
         action,
-        state,
-        dispatch,
-        bookingStatus,
-        applicationNumber,
-        tenantId,
-        bookingCase
-    );
-
-
-    process.env.REACT_APP_NAME === "Citizen"
-        ? set(
-              action,
-              "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-              CitizenprintCont
-          )
-        : set(
-              action,
-              "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-              printCont
-          );
+        "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+        CitizenprintCont
+    )
 
           
           
