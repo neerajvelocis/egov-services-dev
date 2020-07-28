@@ -21,29 +21,38 @@ import {
 class PaymentRedirect extends Component {
     componentDidMount = async () => {
         let { search } = this.props.location;
+        console.log(search, "search");
         try {
-            // let pgUpdateResponse = await httpRequest(
-            //     "post",
-            //     "pg-service/transaction/v1/_update" + search,
-            //     "_update",
-            //     [],
-            //     {}
-            // );
 
-            // let consumerCode = get(
-            //     pgUpdateResponse,
-            //     "Transaction[0].consumerCode"
-            // );
-			// let tenantId = get(pgUpdateResponse, "Transaction[0].tenantId");
-			// let transactionStatus = get(pgUpdateResponse, "Transaction[0].txnStatus")
-			// let transactionId = get(pgUpdateResponse,"Transaction[0].txnId");
+
+            // let response = await getSearchResultsView([
+            //     { key: "tenantId", value: tenantId },
+            //     { key: "applicationNumber", value: consumerCode },
+            // ]);
+
+            let pgUpdateResponse = await httpRequest(
+                "post",
+                "pg-service/transaction/v1/_update" + search,
+                "_update",
+                [],
+                {}
+            );
+
+            console.log("pgUpdateResponse", pgUpdateResponse);
+            let consumerCode = get(
+                pgUpdateResponse,
+                "Transaction[0].consumerCode"
+            );
+			let tenantId = get(pgUpdateResponse, "Transaction[0].tenantId");
+			let transactionStatus = get(pgUpdateResponse, "Transaction[0].txnStatus")
+			let transactionId = get(pgUpdateResponse,"Transaction[0].txnId");
 
 
 			
-			let consumerCode = "CH-BK-2020-07-20-000493";
-			let tenantId = "ch";
-			let transactionStatus = "SUCCESS";
-			let transactionId = "hldsfiwfodflkadpffd";
+			// let consumerCode = "CH-BK-2020-07-20-000493";
+			// let tenantId = "ch";
+			// let transactionStatus = "SUCCESS";
+			// let transactionId = "hldsfiwfodflkadpffd";
 
             if (transactionStatus === "FAILURE") {
                 if (getapplicationType() === "OSBM") {

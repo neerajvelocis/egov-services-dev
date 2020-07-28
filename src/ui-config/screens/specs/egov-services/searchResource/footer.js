@@ -2,7 +2,7 @@ import {
     getLabel,
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { download } from "../../utils";
+import { downloadReceipt, downloadCertificate } from "../../utils";
 import {
     applyTradeLicense,
     getNextFinancialYearForRenewal,
@@ -295,20 +295,12 @@ export const footerReviewTop = (
 ) => {
     let downloadMenu = [];
     let printMenu = [];
-    // let licenseNumber= get(state.screenConfiguration.preparedFinalObject.Licenses[0], "licenseNumber")
-    // const responseLength = get(
-    //   state.screenConfiguration.preparedFinalObject,
-    //   `licenseCount`,
-    //   1
-    // );
+
     let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
     let paymentData = get(state.screenConfiguration.preparedFinalObject, "ReceiptTemp[0].Bill[0]")
     console.log(applicationData, "myData");
     console.log(paymentData, "myData");
 
-    // const { Licenses } = state.screenConfiguration.preparedFinalObject;
-
-    console.log(bookingCase, "statusNew");
     // let renewalMenu=[];
     let certificateDownloadObject = {
         label: {
@@ -316,8 +308,7 @@ export const footerReviewTop = (
             labelKey: "MY_BK_CERTIFICATE_DOWNLOAD",
         },
         link: () => {
-            const { Booking } = state.screenConfiguration.preparedFinalObject;
-            downloadCertificateForm(Booking);
+            downloadCertificate(applicationData, paymentData);
         },
         leftIcon: "book",
     };
@@ -327,8 +318,7 @@ export const footerReviewTop = (
             labelKey: "MY_BK_CERTIFICATE_PRINT",
         },
         link: () => {
-            const { Booking } = state.screenConfiguration.preparedFinalObject;
-            downloadCertificateForm(Booking, "print");
+            downloadCertificate(applicationData, paymentData, "print");
         },
         leftIcon: "book",
     };
@@ -340,20 +330,14 @@ export const footerReviewTop = (
             //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
             //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
             // ]
-            download(applicationData, paymentData);
-            // generateReceipt(state, dispatch, "receipt_download");
+            downloadReceipt(applicationData, paymentData);
         },
         leftIcon: "receipt",
     };
     let receiptPrintObject = {
         label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_PRINT" },
         link: () => {
-            // const receiptQueryString =  [
-            //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-            //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
-            // ]
-            // download(receiptQueryString,"print");
-            // generateReceipt(state, dispatch, "receipt_print");
+            downloadReceipt(applicationData, paymentData, "print");
         },
         leftIcon: "receipt",
     };

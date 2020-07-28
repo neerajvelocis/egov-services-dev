@@ -174,15 +174,15 @@ const setSearchResponse = async (
 
     prepareDocumentsView(state, dispatch);
 
-    const printCont = downloadPrintContainer(
-        action,
-        state,
-        dispatch,
-        bookingStatus,
-        applicationNumber,
-        tenantId,
-        ""
-    );
+    // const printCont = footerReviewTop(
+    //     action,
+    //     state,
+    //     dispatch,
+    //     bookingStatus,
+    //     applicationNumber,
+    //     tenantId,
+    //     ""
+    // );
 
     const CitizenprintCont = footerReviewTop(
         action,
@@ -194,17 +194,22 @@ const setSearchResponse = async (
         ""
     );
 
-    process.env.REACT_APP_NAME === "Citizen"
-        ? set(
-              action,
-              "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-              CitizenprintCont
-          )
-        : set(
-              action,
-              "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-              printCont
-          );
+    set(
+        action,
+        "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+        CitizenprintCont
+    )
+    // process.env.REACT_APP_NAME === "Citizen"
+    //     ? set(
+    //           action,
+    //           "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+    //           CitizenprintCont
+    //       )
+    //     : set(
+    //           action,
+    //           "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+    //           printCont
+    //       );
 };
 
 

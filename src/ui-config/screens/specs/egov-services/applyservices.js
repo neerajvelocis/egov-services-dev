@@ -59,7 +59,7 @@ if (role_name === "CITIZEN") {
           event
         </i>
       ),
-      route: "apply",
+      route: "",
     },
     {
       label: {
@@ -72,7 +72,7 @@ if (role_name === "CITIZEN") {
         class="material-icons module-page-icon">
         group_work
       </i>,
-      route: "apply"
+      route: ""
       // {
       //   screenKey: "citizenMainLanding",
       //   jsonPath: "components.adhocDialog"
@@ -81,7 +81,7 @@ if (role_name === "CITIZEN") {
     {
       label: {
         labelKey: "BK_HOME_OPEN_SPACE_MCC_JURISDICTION",
-        labelName: "Book Open Space within MCC jurisdiction "
+        labelName: "Book Open Space within MCC jurisdiction"
       },
       icon: <i
         viewBox="0 -8 35 42"
@@ -89,7 +89,7 @@ if (role_name === "CITIZEN") {
         class="material-icons module-page-icon">
         room
       </i>,
-      route: "apply"
+      route: ""
       // {
       //   screenKey: "home",
       //   jsonPath: "components.adhocDialog"
