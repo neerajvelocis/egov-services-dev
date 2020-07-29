@@ -28,6 +28,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { openSpacePaymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import {
+    getReceipt,
     generateBill,
 } from "../utils";
 import { applicantSummary } from "./searchResource/applicantSummary";
@@ -160,15 +161,22 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
-
-    await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
-    
+  
+    let isPaid = false;
 
     bookingStatus = get(
         state,
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
+    if(bookingStatus === "APPROVED"){
+        await getReceipt(state, dispatch, applicationNumber, tenantId)
+    } else {
+        await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
+    }
+    
+
+    
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
 

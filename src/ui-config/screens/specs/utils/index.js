@@ -736,6 +736,7 @@ export const generateBill = async (
                 dispatch(
                     prepareFinalObject("ReceiptTemp[0].Bill", payload.Bill)
                 );
+                console.log("payload.Bill", payload.Bill);
                 const estimateData = createEstimateData(payload.Bill);
                 estimateData &&
                     estimateData.length &&
@@ -751,33 +752,34 @@ export const generateBill = async (
         console.log(e);
     }
 };
-export const generateWaterTankerBill = async (
+
+export const getReceipt = async (
     state,
     dispatch,
     applicationNumber,
     tenantId
 ) => {
     try {
-        if (state) {
-            let data = get(
-                state,
-                "screenConfiguration.preparedFinalObject.Booking"
+        if (applicationNumber && tenantId) {
+            let queryObject = [
+                { key: "tenantId", value: tenantId },
+                { key: "consumerCode", value: applicationNumber },
+            ];
+            const payload = await httpRequest(
+                "post",
+                "/collection-services/payments/_search",
+                "",
+                queryObject
             );
-            console.log(data, "myData");
-            const requestBody = {
-                constructionType: data.bkConstructionType,
-                durationInMonths: data.bkDuration,
-                residentialCommercial: data.bkType,
-                storage: data.bkAreaRequired,
-                villageCity: data.bkVillCity,
-            };
-            console.log(requestBody, "myBody");
-            const payload = await getWaterTankerBill(requestBody);
-            console.log(payload, "myBody");
-            if (payload && payload.data) {
-                dispatch(prepareFinalObject("ReceiptTemp.Bill", payload.data));
-                // const estimateData = createEstimateData(payload.data);
-                const estimateData = [payload.data];
+            if (payload) {
+                dispatch(
+                    prepareFinalObject("ReceiptTemp[0].Bill", [
+                        payload.Payments[0].paymentDetails[0].bill,
+                    ])
+                );
+                const estimateData = createEstimateData(
+                    payload.Payments[0].paymentDetails[0].bill.billDetails
+                );
                 estimateData &&
                     estimateData.length &&
                     dispatch(
@@ -788,8 +790,8 @@ export const generateWaterTankerBill = async (
                     );
             }
         }
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
+        console.log(error);
     }
 };
 
@@ -1363,6 +1365,9 @@ export const getNextMonthDateInYMD = () => {
     return date;
 };
 
+
+
+
 export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
     getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
         if (mode === "download") {
@@ -1461,18 +1466,39 @@ const NumInWords = (number) => {
     return word;
 };
 
+export const getDurationDate = (paymentDate, duration) => {
+    let epoch = paymentDate;
+    let monthNames = ["Jan", "Feb", "Mar", "Apr",
+      "May", "Jun", "Jul", "Aug",
+      "Sep", "Oct", "Nov", "Dec"];
+    let startDate = new Date(epoch)
+    let finalStartDate = startDate.getDate() + " " + monthNames[startDate.getMonth()] + " " + startDate.getFullYear()
+  
+    let endDate = new Date(epoch)
+    endDate.setMonth(endDate.getMonth() + Number(duration))
+    let finalEndDate = endDate.getDate() + " " + monthNames[endDate.getMonth()] + " " + endDate.getFullYear()
+    let finalDate = finalStartDate + " to " + finalEndDate
+    return finalDate;
+};
 export const downloadReceipt = (
     applicationData,
     paymentData,
     bookingCase,
     mode = "download"
 ) => {
-    // const FETCHRECEIPT = {
-    //   GET: {
-    //     URL: "/collection-services/payments/_search",
-    //     ACTION: "_get",
-    //   },
-    // };
+    const receiptQueryString = [
+        { key: "consumerCodes", value: applicationData.bkApplicationNumber },
+        {
+            key: "tenantId",
+            value: "ch",
+        },
+    ];
+    const FETCHRECEIPT = {
+        GET: {
+            URL: "/collection-services/payments/_search",
+            ACTION: "_get",
+        },
+    };
     const DOWNLOADRECEIPT = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -1480,70 +1506,85 @@ export const downloadReceipt = (
         },
     };
     try {
-        //   httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
-        const queryStr = [
-            { key: "key", value: "bk-payment-receipt" },
-            {
-                key: "tenantId",
-                value: "ch",
-            },
-        ];
-        // if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
-        //   console.log("Could not find any receipts");
-        //   return;
-        // }
-        // DOWNLOADRECEIPT.GET.ACTION
-        let numberInWords = NumInWords(paymentData.totalAmount);
-        let receiptData = [
-            {
-                applicantDetail: {
-                    name: paymentData.payerName,
-                    mobileNumber: paymentData.mobileNumber,
-                    houseNo: applicationData.bkSector,
-                    permanentAddress: paymentData.payerAddress,
-                    permanentCity: paymentData.tenantId,
-                    sector: applicationData.bkHouseNo,
-                },
-                booking: {
-                    bkApplicationNumber: paymentData.consumerCode,
-                },
-                paymentInfo: {
-                    paymentDate: "13th Augest 2020",
-                    transactionId: "EDR654GF35",
-                    bookingPeriod: bookingCase === "" ? "13th Aug 2020 to 12th Sep 2020" : "30 July, 4:00 pm",
-                    bookingItem: bookingCase === "" ? 
-                        "Online Payment Against Booking of Open Space for Building Material" : "Online Payment Against Booking of Water Tanker",
-                    amount:
-                        paymentData.billDetails[0].billAccountDetails[1].amount,
-                    tax:
-                        paymentData.billDetails[0].billAccountDetails[0].amount,
-                    grandTotal: paymentData.totalAmount,
-                    amountInWords: numberInWords,
-                    paymentItemExtraColumnLabel : bookingCase == "" ?  "Booking Period" : "Time & Date"
-                },
-            },
-        ];
-
         httpRequest(
             "post",
-            DOWNLOADRECEIPT.GET.URL,
-            "",
-            queryStr,
-            { BookingInfo: receiptData },
-            { Accept: "application/json" },
-            { responseType: "arraybuffer" }
-        ).then((res) => {
-            res.filestoreIds[0];
-            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-                console.log("resMY", res);
-                res.filestoreIds.map((fileStoreId) => {
-                    downloadReceiptFromFilestoreID(fileStoreId, mode);
-                });
-            } else {
-                console.log("Error In Receipt Download");
+            FETCHRECEIPT.GET.URL,
+            FETCHRECEIPT.GET.ACTION,
+            receiptQueryString
+        ).then((payloadReceiptDetails) => {
+            const queryStr = [
+                { key: "key", value: "bk-payment-receipt" },
+                {
+                    key: "tenantId",
+                    value: "ch",
+                },
+            ];
+            if (
+                payloadReceiptDetails &&
+                payloadReceiptDetails.Payments &&
+                payloadReceiptDetails.Payments.length == 0
+            ) {
+                console.log("Could not find any receipts");
+                return;
             }
+            let receiptData = [
+                {
+                    applicantDetail: {
+                        name: payloadReceiptDetails.Payments[0].payerName,
+                        mobileNumber: payloadReceiptDetails.Payments[0].mobileNumber,
+                        houseNo: applicationData.bkHouseNo,
+                        permanentAddress: applicationData.bkCompleteAddress,
+                        permanentCity: payloadReceiptDetails.Payments[0].tenantId,
+                        sector: applicationData.bkSector
+                    },
+                    booking: {
+                        bkApplicationNumber: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.consumerCode,
+                    },
+                    paymentInfo: {
+                        paymentDate: convertEpochToDate(payloadReceiptDetails.Payments[0].transactionDate, "dayend"),
+                        transactionId: payloadReceiptDetails.Payments[0].transactionNumber,
+                        bookingPeriod:payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                                ? getDurationDate(payloadReceiptDetails.Payments[0].transactionDate, applicationData.bkDuration)
+                                : "30 July, 4:00 pm",
+                        bookingItem: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                                ? "Online Payment Against Booking of Open Space for Building Material"
+                                : "Online Payment Against Booking of Water Tanker",
+                        amount:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[1]
+                                .amount,
+                        tax:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0]
+                        .amount,
+                        grandTotal: payloadReceiptDetails.Payments[0].totalAmountPaid,
+                        amountInWords: NumInWords(payloadReceiptDetails.Payments[0].totalAmountPaid),
+                        paymentItemExtraColumnLabel:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                                ? "Booking Period"
+                                : "Time & Date",
+                    },
+                },
+            ];
+
+            httpRequest(
+                "post",
+                DOWNLOADRECEIPT.GET.URL,
+                "",
+                queryStr,
+                { BookingInfo: receiptData },
+                { Accept: "application/json" },
+                { responseType: "arraybuffer" }
+            ).then((res) => {
+                res.filestoreIds[0];
+                if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+                    console.log("resMY", res);
+                    res.filestoreIds.map((fileStoreId) => {
+                        downloadReceiptFromFilestoreID(fileStoreId, mode);
+                    });
+                } else {
+                    console.log("Error In Receipt Download");
+                }
+            });
         });
-        //   })
     } catch (exception) {
         console.log(exception, "exception");
         alert("Some Error Occured while downloading Receipt!");
@@ -1580,13 +1621,13 @@ export const downloadCertificate = (
                 },
                 bookingDetail: {
                     applicationNumber: applicationData.bkApplicationNumber,
-                    applicationDate: applicationData.bkDateCreated,
+                    applicationDate: convertDateInDMY(applicationData.bkDateCreated),
                     villageOrCity: applicationData.bkVillCity,
                     residentialOrCommercial: applicationData.bkType,
                     areaRequired: applicationData.bkAreaRequired,
                     category: applicationData.bkCategory,
                     typeOfConstruction: applicationData.bkConstructionType,
-                    permissionPeriod: "From 18-03-2020 To 17-04-2020",
+                    permissionPeriod: getDurationDate(applicationData.bkDateCreated, applicationData.bkDuration),
                     duration:
                         applicationData.bkDuration == "1"
                             ? `${applicationData.bkDuration} month`
@@ -1670,7 +1711,7 @@ export const downloadApplication = (
                     storageAreaRequired: applicationData.bkAreaRequired,
                     category: applicationData.bkCategory,
                     typeOfConstruction: applicationData.bkConstructionType,
-                    permissionPeriod: "From 18-03-2020 To 17-04-2020",
+                    // permissionPeriod: "From 18-03-2020 To 17-04-2020",
                     duration:
                         applicationData.bkDuration == "1"
                             ? `${applicationData.bkDuration} month`

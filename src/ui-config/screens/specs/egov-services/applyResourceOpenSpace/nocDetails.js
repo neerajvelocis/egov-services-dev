@@ -313,6 +313,12 @@ export const bookingDetails = getCommonCard({
                 },
             }),
             beforeFieldChange: (action, state, dispatch) => {
+
+                const bkCategory = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.Booking.bkCategory"
+                );
+
                 dispatch(
                     handleField(
                         "applyopenspace",
@@ -328,7 +334,7 @@ export const bookingDetails = getCommonCard({
                         "applyopenspace",
                         "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
                         "props.value",
-                        action.value === "Residential" ? "Cat-A" : "Cat-B"
+                        action.value === "Residential" ? "Cat-A" : (bkCategory == "" ||  bkCategory == "Cat-A") ? "Cat-B" : bkCategory
                     )
                 );
                 dispatch(

@@ -566,7 +566,7 @@ export const paymentSuccessFooter = (applicationNumber, tenant) => {
             ? `/egov-ui-framework/egov-services/search`
             : `/`
       },
-       visible: false
+       visible: true
     }
   });
 };

@@ -37,7 +37,6 @@ const formatTaxHeaders = (billDetail = {}) => {
         return y.value - x.value;
     });
     //formattedFees.reverse();
-    console.log("formattedFees", formattedFees);
     return formattedFees;
 };
 

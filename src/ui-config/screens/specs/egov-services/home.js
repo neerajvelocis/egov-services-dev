@@ -73,8 +73,6 @@ const screenConfig = {
   name: "home",
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
-    // setapplicationType('OPB');
-    
     return action;
   },
   components: {

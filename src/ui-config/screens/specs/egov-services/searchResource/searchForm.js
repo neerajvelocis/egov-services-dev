@@ -6,18 +6,14 @@ import {
     getDateField,
     getSelectField,
     getPattern,
-    getCommonSubHeader,
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import {
     getTodaysDateInYMD,
-    getNextMonthDateInYMD,
-    getFinancialYearDates,
 } from "../../utils/index";
 import { fetchData } from "../searchResource/citizenSearchFunctions";
 import {
-    prepareFinalObject,
     handleScreenConfigurationFieldChange as handleField,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
@@ -94,34 +90,6 @@ export const callBackForSearch = (state, dispatch, action) => {
     fetchData(action, state, dispatch);
 };
 
-// const clearSearch = (state, dispatch) => {
-//     const preparedFinalObject = get(
-//         state,
-//         "screenConfiguration.preparedFinalObject"
-//     );
-//     const { actualResults, MyBooking = {} } = preparedFinalObject;
-//     if (!!MyBooking.applicationNumber || !!MyBooking.status) {
-//         dispatch(
-//             handleField(
-//                 "my-applications",
-//                 "components.div.children.applicationSearch.children.searchForm.children.cardContent.children.applicationDetailsConatiner.children.applicationNumber",
-//                 "props.value",
-//                 ""
-//             )
-//         );
-//         dispatch(
-//             handleField(
-//                 "my-applications",
-//                 "components.div.children.searchCard.children.cardContent.children.statusApplicationNumberContainer.children.status",
-//                 "props.value",
-//                 ""
-//             )
-//         );
-//         dispatch(prepareFinalObject("searchScreen", {}));
-//         dispatch(prepareFinalObject("searchResults", actualResults));
-//     }
-// };
-
 export const searchForm = getCommonCard({
     header: getCommonTitle(
         {
@@ -178,28 +146,6 @@ export const searchForm = getCommonCard({
                 },
             }),
         },
-        applicationStatus: {
-            ...getSelectField({
-                label: {
-                    labelName: "Application Status",
-                    labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
-                },
-                placeholder: {
-                    labelName: "Application Status",
-                    labelKey: "MY_BK_APPLICATION_STATUS_PLACEHOLDER",
-                },
-                // pattern: getPattern("DoorHouseNo"),
-                // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                // required: true,
-                sourceJsonPath: "applyScreenMdmsData.Booking.applicationStatus",
-                jsonPath: "MyBooking.applicationStatus",
-                gridDefination: {
-                    xs: 12,
-                    sm: 6,
-                    md: 4,
-                },
-            }),
-        },
         bookingType: {
             ...getSelectField({
                 label: {
@@ -215,6 +161,28 @@ export const searchForm = getCommonCard({
                 // required: true,
                 sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
                 jsonPath: "MyBooking.bookingType",
+                gridDefination: {
+                    xs: 12,
+                    sm: 6,
+                    md: 4,
+                },
+            }),
+        },
+        applicationStatus: {
+            ...getSelectField({
+                label: {
+                    labelName: "Application Status",
+                    labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
+                },
+                placeholder: {
+                    labelName: "Application Status",
+                    labelKey: "MY_BK_APPLICATION_STATUS_PLACEHOLDER",
+                },
+                // pattern: getPattern("DoorHouseNo"),
+                // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                // required: true,
+                sourceJsonPath: "applyScreenMdmsData.Booking.applicationStatus",
+                jsonPath: "MyBooking.applicationStatus",
                 gridDefination: {
                     xs: 12,
                     sm: 6,
@@ -248,6 +216,23 @@ export const searchForm = getCommonCard({
                     md: 4,
                 },
             }),
+            // beforeFieldChange: (action, state, dispatch) => {
+
+            //     const fromDate = get(
+            //         state,
+            //         "screenConfiguration.preparedFinalObject.MyBooking.fromDate"
+            //     );
+            //     console.log("fromDateNew", fromDate);
+            //     dispatch(
+            //         handleField(
+            //             "my-applications",
+            //             "components.div.children.applicationSearch.children.searchForm.children.cardContent.children.applicationDetailsConatiner.children.toDate",
+            //             "props.inputProps.min",
+            //             fromDate
+            //         )
+            //     );
+
+            // },
             // visible: true,
         },
         toDate: {
@@ -275,6 +260,23 @@ export const searchForm = getCommonCard({
                     md: 4,
                 },
             }),
+            // beforeFieldChange: (action, state, dispatch) => {
+
+            //     const fromDate = get(
+            //         state,
+            //         "screenConfiguration.preparedFinalObject.MyBooking.fromDate"
+            //     );
+            //     console.log("fromDateNewToDate", fromDate);
+            //     // dispatch(
+            //     //     handleField(
+            //     //         "my-applications",
+            //     //         "components.div.children.applicationSearch.children.searchForm.children.cardContent.children.applicationDetailsConatiner.children.toDate",
+            //     //         "props.inputProps.min",
+            //     //         fromDate
+            //     //     )
+            //     // );
+
+            // },
             // visible: true,
         },
         resetButton: {
