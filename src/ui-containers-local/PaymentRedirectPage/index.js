@@ -22,17 +22,12 @@ class PaymentRedirect extends Component {
     componentDidMount = async () => {
         let { search } = this.props.location;
         console.log(search, "search");
+        const txnQuery=search.split('&')[0].replace('eg_pg_txnid','transactionId');
         try {
-
-
-            // let response = await getSearchResultsView([
-            //     { key: "tenantId", value: tenantId },
-            //     { key: "applicationNumber", value: consumerCode },
-            // ]);
 
             let pgUpdateResponse = await httpRequest(
                 "post",
-                "pg-service/transaction/v1/_update" + search,
+                "pg-service/transaction/v1/_update" + txnQuery,
                 "_update",
                 [],
                 {}
@@ -45,14 +40,9 @@ class PaymentRedirect extends Component {
             );
 			let tenantId = get(pgUpdateResponse, "Transaction[0].tenantId");
 			let transactionStatus = get(pgUpdateResponse, "Transaction[0].txnStatus")
-			let transactionId = get(pgUpdateResponse,"Transaction[0].txnId");
+            let transactionId = get(pgUpdateResponse,"Transaction[0].txnId");
+            let bookingType = get(pgUpdateResponse,"Transaction[0].productInfo"); 
 
-
-			
-			// let consumerCode = "CH-BK-2020-07-20-000493";
-			// let tenantId = "ch";
-			// let transactionStatus = "SUCCESS";
-			// let transactionId = "hldsfiwfodflkadpffd";
 
             if (transactionStatus === "FAILURE") {
                 if (getapplicationType() === "OSBM") {
@@ -92,8 +82,6 @@ class PaymentRedirect extends Component {
 				let payload = response.bookingsModelList[0];
 				set(payload, "businessService", "OSBM");
 				set(payload, "bkAction", "PAY");
-				set(payload, "bkAmount", "2360");
-				set(payload, "bkCgst", "360");
 				
 				console.log("payload", payload);
 

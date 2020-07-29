@@ -1,6 +1,8 @@
 import React from "react";
 import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
 import MyApplicationIcon from "../../../../ui-atoms-local/Icons/MyApplicationIcon";
+import FormIcon from "../../../../ui-atoms-local/Icons/FormIcon";
+import TradeLicenseIcon from "../../../../ui-atoms-local/Icons/TradeLicenseIcon";
 import { getRequiredDocData, clearlocalstorageAppDetails } from "../utils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -31,13 +33,15 @@ if(role_name === 'CITIZEN'){
         labelKey: "BK_APPLY",
         labelName: "Apply for Booking"
       },
-      icon: <i 
-      viewBox="0 -8 35 42"
-      color="primary"
-      // font-size="30px"
-      class="material-icons module-page-icon">
-      post_add
-      </i>,
+      icon : <TradeLicenseIcon />,
+      // icon: <i 
+      // viewBox="0 -8 35 42"
+      // color="primary"
+      // style={{fontSize : "50px"}}
+      // // font-size="30px"
+      // class="material-icons module-page-icon">
+      // post_add
+      // </i>,
       route: "applyservices"
       
     },
@@ -46,14 +50,15 @@ if(role_name === 'CITIZEN'){
         labelKey: "My Applications",
         labelName: "BK_MY_BOOKINGS"
       },
-      icon : <i 
-      viewBox="0 -8 35 42"
-      color="primary"
-      // font-size="30px"
-      class="material-icons module-page-icon">
-      list_alt
-      </i>,
-      // icon: <MyApplicationIcon />,
+      // icon : <i 
+      // viewBox="0 -8 35 42"
+      // color="primary"
+      // style={{fontSize : "50px"}}
+      // // font-size="30px"
+      // class="material-icons module-page-icon">
+      // list_alt
+      // </i>,
+      icon: <FormIcon />,
       route: "my-applications"
     },
    
@@ -68,8 +73,6 @@ const screenConfig = {
   name: "home",
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
-    // setapplicationType('OPB');
-    
     return action;
   },
   components: {

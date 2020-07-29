@@ -6,7 +6,7 @@ import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
 import { httpRequest } from "../../../../../ui-utils/api";
-import { getSearchResults } from "../../../../../ui-utils/commons";
+import { getSearchResults, getSearchResultsView } from "../../../../../ui-utils/commons";
 import { convertDateToEpoch, getBill, validateFields, showHideAdhocPopup } from "../../utils";
 import { getTenantId, localStorageSet, getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 
@@ -125,7 +125,7 @@ export const callPGService = async (state, dispatch, item) => {
       : window.origin
     }/egov-services/paymentRedirectPage`;
 
-    console.log(callbackUrl, "callbackUrl");
+    // console.log(callbackUrl, "callbackUrl");
   try {
     const queryObj = [
       { key: "tenantId", value: tenantId },
@@ -142,23 +142,24 @@ export const callPGService = async (state, dispatch, item) => {
     const billId = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].id");
     const consumerCode = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].consumerCode");
     const Accountdetails = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].billDetails[0].billAccountDetails");
-    console.log("Accountdetails", Accountdetails);
-    localStorageSet("amount", 0);
-    localStorageSet("gstAmount", 0);
-    localStorageSet("performanceBankGuaranteeCharges", 0);
+    // console.log("Accountdetails", Accountdetails);
+    // localStorageSet("amount", 0);
+    // localStorageSet("gstAmount", 0);
+    // localStorageSet("performanceBankGuaranteeCharges", 0);
 
-    for (let index = 0; index < Accountdetails.length; index++) {
-      const element = Accountdetails[index];
-      if (element.taxHeadCode === `OSBM` || element.taxHeadCode === `WTB`) {
-        localStorageSet("amount", element.amount);
-      } else if (element.taxHeadCode === `PETNOC_TAX` ||
-        element.taxHeadCode === `ROADCUTNOC_TAX` ||
-        element.taxHeadCode === `ADVERTISEMENTNOC_TAX`) {
-        localStorageSet("gstAmount", element.amount);
-      } else if (element.taxHeadCode === `ROADCUTNOC_FEE_BANK`) {
-        localStorageSet("performanceBankGuaranteeCharges", element.amount);
-      }
-    }
+
+    // for (let index = 0; index < Accountdetails.length; index++) {
+    //   const element = Accountdetails[index];
+    //   if (element.taxHeadCode === `OSBM` || element.taxHeadCode === `WTB`) {
+    //     localStorageSet("amount", element.amount);
+    //   } else if (element.taxHeadCode === `PETNOC_TAX` ||
+    //     element.taxHeadCode === `ROADCUTNOC_TAX` ||
+    //     element.taxHeadCode === `ADVERTISEMENTNOC_TAX`) {
+    //     localStorageSet("gstAmount", element.amount);
+    //   } else if (element.taxHeadCode === `ROADCUTNOC_FEE_BANK`) {
+    //     localStorageSet("performanceBankGuaranteeCharges", element.amount);
+    //   }
+    // }
 
 
     const taxAndPayments = [{
@@ -185,7 +186,6 @@ export const callPGService = async (state, dispatch, item) => {
         }
       };
 
-      console.log(requestBody, "myrequestBody");
       const goToPaymentGateway = await httpRequest(
         "post",
         "pg-service/transaction/v1/_create",
@@ -194,31 +194,33 @@ export const callPGService = async (state, dispatch, item) => {
         requestBody
       );
 
-    //    let response = await getSearchResultsView([
-    //                 { key: "tenantId", value: tenantId },
-    //                 { key: "applicationNumber", value: consumerCode },
-	// 			]);
+	//   Manually update workflow
+				// let response = await getSearchResultsView([
+        //             { key: "tenantId", value: tenantId },
+        //             { key: "applicationNumber", value: consumerCode },
+				// ]);
+				// let payload = response.bookingsModelList[0];
+				// set(payload, "businessService", "OSBM");
+				// set(payload, "bkAction", "PAY");
+				// set(payload, "bkAmount", taxAmount);
+				// // set(payload, "bkCgst", "360");
 				
-	// 			let payload = response.bookingsModelList[0];
-	// 			set(payload, "businessService", "OSBM");
-	// 			set(payload, "bkAction", "PAY");
-	// 			set(payload, "bkAmount", "2360");
-	// 			set(payload, "bkCgst", "360");
-				
-	// 			console.log("payload", payload);
+				// console.log("payloadNew", payload);
 
-    //             response = await httpRequest(
-    //                 "post",
-    //                 "/bookings/api/_update",
-    //                 "",
-    //                 [],
-    //                 {
-	// 					Booking: payload,
-	// 				}
-    //             );
+        //         response = await httpRequest(
+        //             "post",
+        //             "/bookings/api/_update",
+        //             "",
+        //             [],
+        //             {
+				// 		Booking: payload,
+				// 	}
+				// );
+				
+				//   Manually update workflow Ends
       
       // let data = {...goToPaymentGateway}
-      console.log(goToPaymentGateway, "goToPaymentGateway");
+      // console.log(goToPaymentGateway, "goToPaymentGateway");
       const redirectionUrl = get(goToPaymentGateway, "Transaction.redirectUrl");
       window.location = redirectionUrl;
     } catch (e) {

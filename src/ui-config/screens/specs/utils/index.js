@@ -16,7 +16,7 @@ import {
     getQueryArg,
     getTransformedLocalStorgaeLabels,
     getLocaleLabels,
-    getFileUrlFromAPI
+    getFileUrlFromAPI,
 } from "egov-ui-framework/ui-utils/commons";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -29,7 +29,7 @@ import {
     getCommonCaption,
     getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import axios from "axios"
+import axios from "axios";
 import { sampleGetBill } from "../../../../ui-utils/sampleResponses";
 
 export const getCommonApplyFooter = (children) => {
@@ -736,6 +736,7 @@ export const generateBill = async (
                 dispatch(
                     prepareFinalObject("ReceiptTemp[0].Bill", payload.Bill)
                 );
+                console.log("payload.Bill", payload.Bill);
                 const estimateData = createEstimateData(payload.Bill);
                 estimateData &&
                     estimateData.length &&
@@ -751,33 +752,34 @@ export const generateBill = async (
         console.log(e);
     }
 };
-export const generateWaterTankerBill = async (
+
+export const getReceipt = async (
     state,
     dispatch,
     applicationNumber,
     tenantId
 ) => {
     try {
-        if (state) {
-            let data = get(
-                state,
-                "screenConfiguration.preparedFinalObject.Booking"
+        if (applicationNumber && tenantId) {
+            let queryObject = [
+                { key: "tenantId", value: tenantId },
+                { key: "consumerCode", value: applicationNumber },
+            ];
+            const payload = await httpRequest(
+                "post",
+                "/collection-services/payments/_search",
+                "",
+                queryObject
             );
-            console.log(data, "myData");
-            const requestBody = {
-                constructionType: data.bkConstructionType,
-                durationInMonths: data.bkDuration,
-                residentialCommercial: data.bkType,
-                storage: data.bkAreaRequired,
-                villageCity: data.bkVillCity,
-            };
-            console.log(requestBody, "myBody");
-            const payload = await getWaterTankerBill(requestBody);
-            console.log(payload, "myBody");
-            if (payload && payload.data) {
-                dispatch(prepareFinalObject("ReceiptTemp.Bill", payload.data));
-                // const estimateData = createEstimateData(payload.data);
-                const estimateData = [payload.data];
+            if (payload) {
+                dispatch(
+                    prepareFinalObject("ReceiptTemp[0].Bill", [
+                        payload.Payments[0].paymentDetails[0].bill,
+                    ])
+                );
+                const estimateData = createEstimateData(
+                    payload.Payments[0].paymentDetails[0].bill.billDetails
+                );
                 estimateData &&
                     estimateData.length &&
                     dispatch(
@@ -788,8 +790,8 @@ export const generateWaterTankerBill = async (
                     );
             }
         }
-    } catch (e) {
-        console.log(e);
+    } catch (error) {
+        console.log(error);
     }
 };
 
@@ -1363,6 +1365,9 @@ export const getNextMonthDateInYMD = () => {
     return date;
 };
 
+
+
+
 export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
     getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
         if (mode === "download") {
@@ -1394,13 +1399,106 @@ export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
     });
 };
 
-export const downloadReceipt = ( applicationData, paymentData, mode = "download") => {
-        // const FETCHRECEIPT = {
-    //   GET: {
-    //     URL: "/collection-services/payments/_search",
-    //     ACTION: "_get",
-    //   },
-    // };
+const NumInWords = (number) => {
+    const first = [
+        "",
+        "one ",
+        "two ",
+        "three ",
+        "four ",
+        "five ",
+        "six ",
+        "seven ",
+        "eight ",
+        "nine ",
+        "ten ",
+        "eleven ",
+        "twelve ",
+        "thirteen ",
+        "fourteen ",
+        "fifteen ",
+        "sixteen ",
+        "seventeen ",
+        "eighteen ",
+        "nineteen ",
+    ];
+    const tens = [
+        "",
+        "",
+        "twenty",
+        "thirty",
+        "forty",
+        "fifty",
+        "sixty",
+        "seventy",
+        "eighty",
+        "ninety",
+    ];
+    const mad = ["", "thousand", "million", "billion", "trillion"];
+    let word = "";
+
+    for (let i = 0; i < mad.length; i++) {
+        let tempNumber = number % (100 * Math.pow(1000, i));
+        if (Math.floor(tempNumber / Math.pow(1000, i)) !== 0) {
+            if (Math.floor(tempNumber / Math.pow(1000, i)) < 20) {
+                word =
+                    first[Math.floor(tempNumber / Math.pow(1000, i))] +
+                    mad[i] +
+                    " " +
+                    word;
+            } else {
+                word =
+                    tens[Math.floor(tempNumber / (10 * Math.pow(1000, i)))] +
+                    first[Math.floor(tempNumber / Math.pow(1000, i)) % 10] +
+                    mad[i] +
+                    " " +
+                    word;
+            }
+        }
+
+        tempNumber = number % Math.pow(1000, i + 1);
+        if (Math.floor(tempNumber / (100 * Math.pow(1000, i))) !== 0)
+            word =
+                first[Math.floor(tempNumber / (100 * Math.pow(1000, i)))] +
+                "hunderd " +
+                word;
+    }
+    return word;
+};
+
+export const getDurationDate = (paymentDate, duration) => {
+    let epoch = paymentDate;
+    let monthNames = ["Jan", "Feb", "Mar", "Apr",
+      "May", "Jun", "Jul", "Aug",
+      "Sep", "Oct", "Nov", "Dec"];
+    let startDate = new Date(epoch)
+    let finalStartDate = startDate.getDate() + " " + monthNames[startDate.getMonth()] + " " + startDate.getFullYear()
+  
+    let endDate = new Date(epoch)
+    endDate.setMonth(endDate.getMonth() + Number(duration))
+    let finalEndDate = endDate.getDate() + " " + monthNames[endDate.getMonth()] + " " + endDate.getFullYear()
+    let finalDate = finalStartDate + " to " + finalEndDate
+    return finalDate;
+};
+export const downloadReceipt = (
+    applicationData,
+    paymentData,
+    bookingCase,
+    mode = "download"
+) => {
+    const receiptQueryString = [
+        { key: "consumerCodes", value: applicationData.bkApplicationNumber },
+        {
+            key: "tenantId",
+            value: "ch",
+        },
+    ];
+    const FETCHRECEIPT = {
+        GET: {
+            URL: "/collection-services/payments/_search",
+            ACTION: "_get",
+        },
+    };
     const DOWNLOADRECEIPT = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -1408,53 +1506,144 @@ export const downloadReceipt = ( applicationData, paymentData, mode = "download"
         },
     };
     try {
-        //   httpRequest("post", FETCHRECEIPT.GET.URL, FETCHRECEIPT.GET.ACTION, receiptQueryString).then((payloadReceiptDetails) => {
+        httpRequest(
+            "post",
+            FETCHRECEIPT.GET.URL,
+            FETCHRECEIPT.GET.ACTION,
+            receiptQueryString
+        ).then((payloadReceiptDetails) => {
+            const queryStr = [
+                { key: "key", value: "bk-payment-receipt" },
+                {
+                    key: "tenantId",
+                    value: "ch",
+                },
+            ];
+            if (
+                payloadReceiptDetails &&
+                payloadReceiptDetails.Payments &&
+                payloadReceiptDetails.Payments.length == 0
+            ) {
+                console.log("Could not find any receipts");
+                return;
+            }
+            let receiptData = [
+                {
+                    applicantDetail: {
+                        name: payloadReceiptDetails.Payments[0].payerName,
+                        mobileNumber: payloadReceiptDetails.Payments[0].mobileNumber,
+                        houseNo: applicationData.bkHouseNo,
+                        permanentAddress: applicationData.bkCompleteAddress,
+                        permanentCity: payloadReceiptDetails.Payments[0].tenantId,
+                        sector: applicationData.bkSector
+                    },
+                    booking: {
+                        bkApplicationNumber: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.consumerCode,
+                    },
+                    paymentInfo: {
+                        paymentDate: convertEpochToDate(payloadReceiptDetails.Payments[0].transactionDate, "dayend"),
+                        transactionId: payloadReceiptDetails.Payments[0].transactionNumber,
+                        bookingPeriod:payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                                ? getDurationDate(payloadReceiptDetails.Payments[0].transactionDate, applicationData.bkDuration)
+                                : "30 July, 4:00 pm",
+                        bookingItem: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                                ? "Online Payment Against Booking of Open Space for Building Material"
+                                : "Online Payment Against Booking of Water Tanker",
+                        amount:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[1]
+                                .amount,
+                        tax:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0]
+                        .amount,
+                        grandTotal: payloadReceiptDetails.Payments[0].totalAmountPaid,
+                        amountInWords: NumInWords(payloadReceiptDetails.Payments[0].totalAmountPaid),
+                        paymentItemExtraColumnLabel:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                                ? "Booking Period"
+                                : "Time & Date",
+                    },
+                },
+            ];
+
+            httpRequest(
+                "post",
+                DOWNLOADRECEIPT.GET.URL,
+                "",
+                queryStr,
+                { BookingInfo: receiptData },
+                { Accept: "application/json" },
+                { responseType: "arraybuffer" }
+            ).then((res) => {
+                res.filestoreIds[0];
+                if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+                    console.log("resMY", res);
+                    res.filestoreIds.map((fileStoreId) => {
+                        downloadReceiptFromFilestoreID(fileStoreId, mode);
+                    });
+                } else {
+                    console.log("Error In Receipt Download");
+                }
+            });
+        });
+    } catch (exception) {
+        console.log(exception, "exception");
+        alert("Some Error Occured while downloading Receipt!");
+    }
+};
+
+export const downloadCertificate = (
+    applicationData,
+    paymentData,
+    mode = "download"
+) => {
+    console.log("applicationData", applicationData);
+
+    const DOWNLOADCERTIFICATE = {
+        GET: {
+            URL: "/pdf-service/v1/_create",
+            // ACTION: "_get",
+        },
+    };
+    try {
         const queryStr = [
-            { key: "key", value: "bk-payment-receipt" },
-            {
-                key: "tenantId",
-                value: "ch",
-            },
+            { key: "key", value: "bk-osbm-pl" },
+            { key: "tenantId", value: "ch" },
         ];
-        // if(payloadReceiptDetails&&payloadReceiptDetails.Payments&&payloadReceiptDetails.Payments.length==0){
-        //   console.log("Could not find any receipts");
-        //   return;
-        // }
-        // DOWNLOADRECEIPT.GET.ACTION
-        let numberInWords = NumInWords(paymentData.totalAmount)
-        let receiptData = [
+        let certificateData = [
             {
                 applicantDetail: {
-                    name: paymentData.payerName,
-                    mobileNumber: paymentData.mobileNumber,
+                    name: applicationData.bkApplicantName,
+                    mobileNumber: applicationData.bkMobileNumber,
                     houseNo: applicationData.bkSector,
-                    permanentAddress: paymentData.payerAddress,
-                    permanentCity: paymentData.tenantId,
+                    permanentAddress: applicationData.bkCompleteAddress,
+                    permanentCity: applicationData.tenantId,
                     sector: applicationData.bkHouseNo,
                 },
-                booking: {
-                    bkApplicationNumber: paymentData.consumerCode,
-                },
-                paymentInfo: {
-                    paymentDate: "13th Augest 2020",
-                    transactionId: "EDR654GF35",
-                    bookingPeriod: "13th Aug 2020 to 12th Sep 2020",
-                    bookingItem:
-                        "Online Payment Against Booking of Open Space for Building Material",
-                    amount: paymentData.billDetails[0].billAccountDetails[1].amount,
-                    tax: paymentData.billDetails[0].billAccountDetails[0].amount,
-                    grandTotal: paymentData.totalAmount,
-                    amountInWords: numberInWords,
+                bookingDetail: {
+                    applicationNumber: applicationData.bkApplicationNumber,
+                    applicationDate: convertDateInDMY(applicationData.bkDateCreated),
+                    villageOrCity: applicationData.bkVillCity,
+                    residentialOrCommercial: applicationData.bkType,
+                    areaRequired: applicationData.bkAreaRequired,
+                    category: applicationData.bkCategory,
+                    typeOfConstruction: applicationData.bkConstructionType,
+                    permissionPeriod: getDurationDate(applicationData.bkDateCreated, applicationData.bkDuration),
+                    duration:
+                        applicationData.bkDuration == "1"
+                            ? `${applicationData.bkDuration} month`
+                            : `${applicationData.bkDuration} months`,
+                    categoryImage: "",
+                    // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
                 },
             },
         ];
 
         httpRequest(
             "post",
-            DOWNLOADRECEIPT.GET.URL,
+            DOWNLOADCERTIFICATE.GET.URL,
             "",
             queryStr,
-            { BookingInfo: receiptData },
+            { BookingInfo: certificateData },
             { Accept: "application/json" },
             { responseType: "arraybuffer" }
         ).then((res) => {
@@ -1475,89 +1664,103 @@ export const downloadReceipt = ( applicationData, paymentData, mode = "download"
     }
 };
 
-export const downloadCertificate = ( applicationData, paymentData, mode = "download") => {
+export const downloadApplication = (
+    applicationData,
+    paymentData,
+    bookingCase,
+    mode = "download"
+) => {
     console.log("applicationData", applicationData);
+    console.log("paymentData", paymentData);
+    console.log("bookingCase", bookingCase);
 
-    const DOWNLOADCERTIFICATE = {
+    const DOWNLOADAPPLICATION = {
         GET: {
             URL: "/pdf-service/v1/_create",
             // ACTION: "_get",
         },
     };
-try {
-    const queryStr = [
-        { key: "key", value: "bk-osbm-pl"},
-        {key: "tenantId", value: "ch"},
-    ];
-    let certificateData = [
-        {
-            applicantDetail: {
-                name: applicationData.bkApplicantName,
-                mobileNumber: applicationData.bkMobileNumber,
-                houseNo: applicationData.bkSector,
-                permanentAddress: applicationData.bkCompleteAddress,
-                permanentCity: applicationData.tenantId,
-                sector: applicationData.bkHouseNo,
+    try {
+        const queryStr = [
+            {
+                key: "key",
+                value:
+                    bookingCase == "" ? "bk-osbm-app-form" : "bk-wt-app-form",
             },
-            bookingDetail: {
-                applicationNumber: applicationData.bkApplicationNumber,
-                applicationDate: applicationData.bkDateCreated,
-                villageOrCity: applicationData.bkVillCity,
-                residentialOrCommercial: applicationData.bkType,
-                areaRequired: applicationData.bkAreaRequired,
-                category: applicationData.bkCategory,
-                typeOfConstruction: applicationData.bkConstructionType,
-                permissionPeriod: "From 18-03-2020 To 17-04-2020",
-                duration: applicationData.bkDuration == "1" ? `${applicationData.bkDuration} month` : `${applicationData.bkDuration} months`,
-                categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
+            { key: "tenantId", value: "ch" },
+        ];
+        let appData = [
+            {
+                applicantDetail: {
+                    name: applicationData.bkApplicantName,
+                    mobileNumber: applicationData.bkMobileNumber,
+                    houseNo: applicationData.bkSector,
+                    permanentAddress: applicationData.bkCompleteAddress,
+                    permanentCity: applicationData.tenantId,
+                    sector: applicationData.bkHouseNo,
+                    email: applicationData.bkEmail,
+                },
+                bookingDetail: {
+                    applicationNumber: applicationData.bkApplicationNumber,
+                    houseNo: applicationData.bkHouseNo,
+                    locality: applicationData.bkSector,
+                    completeAddress: applicationData.bkCompleteAddress,
+                    applicationDate: applicationData.bkDateCreated,
+                    villageOrCity: applicationData.bkVillCity,
+                    propertyType: applicationData.bkType,
+                    storageAreaRequired: applicationData.bkAreaRequired,
+                    category: applicationData.bkCategory,
+                    typeOfConstruction: applicationData.bkConstructionType,
+                    // permissionPeriod: "From 18-03-2020 To 17-04-2020",
+                    duration:
+                        applicationData.bkDuration == "1"
+                            ? `${applicationData.bkDuration} month`
+                            : `${applicationData.bkDuration} months`,
+                    categoryImage: "",
+                    // categoryImage: applicationData.bkCategory === "Cat-A" ? "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg" : applicationData.bkCategory === "Cat-B" ? "" : "http://3.6.65.87:3000/static/media/cat-c.4e1bc5ec.jpeg"
+                },
+                feeDetail: {
+                    baseCharge:
+                        paymentData === undefined
+                            ? ""
+                            : paymentData.billDetails[0].billAccountDetails[1]
+                                  .amount,
+                    taxes:
+                        paymentData === undefined
+                            ? ""
+                            : paymentData.billDetails[0].billAccountDetails[0]
+                                  .amount,
+                    totalAmout:
+                        paymentData === undefined
+                            ? ""
+                            : paymentData.totalAmount,
+                },
+            },
+        ];
+
+        console.log(appData, "applicationDataNew");
+        httpRequest(
+            "post",
+            DOWNLOADAPPLICATION.GET.URL,
+            "",
+            queryStr,
+            { BookingInfo: appData },
+            { Accept: "application/json" },
+            { responseType: "arraybuffer" }
+        ).then((res) => {
+            res.filestoreIds[0];
+            if (res && res.filestoreIds && res.filestoreIds.length > 0) {
+                console.log("resMY", res);
+                res.filestoreIds.map((fileStoreId) => {
+                    downloadReceiptFromFilestoreID(fileStoreId, mode);
+                });
+            } else {
+                console.log("Error In Receipt Download");
             }
-        },
-    ];
-
-    httpRequest(
-        "post",
-        DOWNLOADCERTIFICATE.GET.URL,
-        "",
-        queryStr,
-        { BookingInfo: certificateData },
-        { Accept: "application/json" },
-        { responseType: "arraybuffer" }
-    ).then((res) => {
-        res.filestoreIds[0];
-        if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-            console.log("resMY", res);
-            res.filestoreIds.map((fileStoreId) => {
-                downloadReceiptFromFilestoreID(fileStoreId, mode);
-            });
-        } else {
-            console.log("Error In Receipt Download");
-        }
-    });
-    //   })
-} catch (exception) {
-    console.log(exception, "exception");
-    alert("Some Error Occured while downloading Receipt!");
-}
-};
-
-const NumInWords = (number) => {
-    const first = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
-    const tens = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
-    const mad = ['', 'thousand', 'million', 'billion', 'trillion'];
-    let word = '';
-  
-    for (let i = 0; i < mad.length; i++) {
-      let tempNumber = number%(100*Math.pow(1000,i));
-      if (Math.floor(tempNumber/Math.pow(1000,i)) !== 0) {
-        if (Math.floor(tempNumber/Math.pow(1000,i)) < 20) {
-          word = first[Math.floor(tempNumber/Math.pow(1000,i))] + mad[i] + ' ' + word;
-        } else {
-          word = tens[Math.floor(tempNumber/(10*Math.pow(1000,i)))]  + first[Math.floor(tempNumber/Math.pow(1000,i))%10] + mad[i] + ' ' + word;
-        }
-      }
-  
-      tempNumber = number%(Math.pow(1000,i+1));
-      if (Math.floor(tempNumber/(100*Math.pow(1000,i))) !== 0) word = first[Math.floor(tempNumber/(100*Math.pow(1000,i)))] + 'hunderd ' + word;
+        });
+        //   })
+    } catch (exception) {
+        console.log(exception, "exception");
+        alert("Some Error Occured while downloading Receipt!");
     }
-      return word;
-  }
+};
