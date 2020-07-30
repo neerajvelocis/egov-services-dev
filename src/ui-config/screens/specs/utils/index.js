@@ -1481,16 +1481,18 @@ export const getDurationDate = (paymentDate, duration) => {
     return finalDate;
 };
 export const downloadReceipt = (
-    applicationData,
-    paymentData,
-    bookingCase,
+    state,
+    applicationNumber, 
+    tenantId,
     mode = "download"
 ) => {
+
+    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
     const receiptQueryString = [
-        { key: "consumerCodes", value: applicationData.bkApplicationNumber },
+        { key: "consumerCodes", value: applicationNumber },
         {
             key: "tenantId",
-            value: "ch",
+            value: tenantId,
         },
     ];
     const FETCHRECEIPT = {
@@ -1527,6 +1529,7 @@ export const downloadReceipt = (
                 console.log("Could not find any receipts");
                 return;
             }
+            console.log("payloadReceiptDetails", payloadReceiptDetails);
             let receiptData = [
                 {
                     applicantDetail: {
@@ -1592,11 +1595,12 @@ export const downloadReceipt = (
 };
 
 export const downloadCertificate = (
-    applicationData,
-    paymentData,
+    state,
+    applicationNumber, 
+    tenantId,
     mode = "download"
 ) => {
-    console.log("applicationData", applicationData);
+    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
 
     const DOWNLOADCERTIFICATE = {
         GET: {
@@ -1616,11 +1620,11 @@ export const downloadCertificate = (
                     mobileNumber: applicationData.bkMobileNumber,
                     houseNo: applicationData.bkSector,
                     permanentAddress: applicationData.bkCompleteAddress,
-                    permanentCity: applicationData.tenantId,
+                    permanentCity: tenantId,
                     sector: applicationData.bkHouseNo,
                 },
                 bookingDetail: {
-                    applicationNumber: applicationData.bkApplicationNumber,
+                    applicationNumber: applicationNumber,
                     applicationDate: convertDateInDMY(applicationData.bkDateCreated),
                     villageOrCity: applicationData.bkVillCity,
                     residentialOrCommercial: applicationData.bkType,
@@ -1665,14 +1669,11 @@ export const downloadCertificate = (
 };
 
 export const downloadApplication = (
-    applicationData,
-    paymentData,
-    bookingCase,
+    state, applicationNumber, tenantId,
     mode = "download"
 ) => {
-    console.log("applicationData", applicationData);
-    console.log("paymentData", paymentData);
-    console.log("bookingCase", bookingCase);
+    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
+    let paymentData = get(state.screenConfiguration.preparedFinalObject, "ReceiptTemp[0].Bill[0]")
 
     const DOWNLOADAPPLICATION = {
         GET: {
@@ -1696,12 +1697,12 @@ export const downloadApplication = (
                     mobileNumber: applicationData.bkMobileNumber,
                     houseNo: applicationData.bkSector,
                     permanentAddress: applicationData.bkCompleteAddress,
-                    permanentCity: applicationData.tenantId,
+                    permanentCity: tenantId,
                     sector: applicationData.bkHouseNo,
                     email: applicationData.bkEmail,
                 },
                 bookingDetail: {
-                    applicationNumber: applicationData.bkApplicationNumber,
+                    applicationNumber: applicationNumber,
                     houseNo: applicationData.bkHouseNo,
                     locality: applicationData.bkSector,
                     completeAddress: applicationData.bkCompleteAddress,
