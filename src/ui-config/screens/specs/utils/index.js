@@ -1686,7 +1686,7 @@ export const downloadApplication = (
             {
                 key: "key",
                 value:
-                    bookingCase == "" ? "bk-osbm-app-form" : "bk-wt-app-form",
+                applicationData.businessService == "OSBM" ? "bk-osbm-app-form" : "bk-wt-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
