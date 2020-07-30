@@ -296,13 +296,6 @@ export const footerReviewTop = (
     let downloadMenu = [];
     let printMenu = [];
 
-    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
-    let paymentData = get(state.screenConfiguration.preparedFinalObject, "ReceiptTemp[0].Bill[0]")
-    console.log(applicationData, "myData");
-    console.log(paymentData, "myData");
-    console.log(bookingCase, "bookingCase");
-    console.log(status, "status");
-
     // let renewalMenu=[];
     let certificateDownloadObject = {
         label: {
@@ -310,7 +303,7 @@ export const footerReviewTop = (
             labelKey: "MY_BK_CERTIFICATE_DOWNLOAD",
         },
         link: () => {
-            downloadCertificate(applicationData, paymentData);
+            downloadCertificate(state, applicationNumber, tenantId);
         },
         leftIcon: "book",
     };
@@ -320,7 +313,7 @@ export const footerReviewTop = (
             labelKey: "MY_BK_CERTIFICATE_PRINT",
         },
         link: () => {
-            downloadCertificate(applicationData, paymentData, "print");
+            downloadCertificate(state, applicationNumber, tenantId, "print");
         },
         leftIcon: "book",
     };
@@ -332,14 +325,18 @@ export const footerReviewTop = (
             //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
             //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
             // ]
-            downloadReceipt(applicationData, paymentData, bookingCase);
+            // let applicationNumber = get(state.screenConfiguration.preparedFinalObject.Booking, "bkApplicationNumber")
+            // let tenantId = get(state.screenConfiguration.preparedFinalObject.Booking, "tenantId")
+            downloadReceipt(state, applicationNumber, tenantId);
         },
         leftIcon: "receipt",
     };
     let receiptPrintObject = {
         label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_PRINT" },
         link: () => {
-            downloadReceipt(applicationData, paymentData, bookingCase, "print");
+            // let applicationNumber = get(state.screenConfiguration.preparedFinalObject.Booking, "bkApplicationNumber")
+            // let tenantId = get(state.screenConfiguration.preparedFinalObject.Booking, "tenantId")
+            downloadReceipt(state, applicationNumber, tenantId, "print");
         },
         leftIcon: "receipt",
     };
@@ -353,7 +350,7 @@ export const footerReviewTop = (
             // const documents = LicensesTemp[0].reviewDocData;
             // set(Licenses[0],"additionalDetails.documents",documents)
             // downloadAcknowledgementForm(Licenses);
-            downloadApplication(applicationData, paymentData, bookingCase);
+            downloadApplication(state, applicationNumber, tenantId);
         },
         leftIcon: "assignment",
     };
@@ -367,7 +364,7 @@ export const footerReviewTop = (
             // const documents = LicensesTemp[0].reviewDocData;
             // set(Licenses[0],"additionalDetails.documents",documents)
             // downloadAcknowledgementForm(Licenses,'print');
-            downloadApplication(applicationData, paymentData, bookingCase, "print");
+            downloadApplication(state, applicationNumber, tenantId, "print");
         },
         leftIcon: "assignment",
     };

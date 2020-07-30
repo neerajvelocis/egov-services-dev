@@ -161,8 +161,6 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
-  
-    let isPaid = false;
 
     bookingStatus = get(
         state,
