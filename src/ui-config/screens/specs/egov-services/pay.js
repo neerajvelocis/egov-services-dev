@@ -21,7 +21,7 @@ import { httpRequest } from "../../../../ui-utils";
 import { getUserInfo, getTenantId, getapplicationType, localStorageGet, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
 const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"} - (${getCurrentFinancialYear()})` //later use getFinancialYearDates
+    labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"} (${getCurrentFinancialYear()})` //later use getFinancialYearDates
     // labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"}` //later use getFinancialYearDates
   }),
   applicationNumber: {
