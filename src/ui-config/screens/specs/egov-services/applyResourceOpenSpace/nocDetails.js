@@ -334,7 +334,7 @@ export const bookingDetails = getCommonCard({
                         "applyopenspace",
                         "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkCategory",
                         "props.value",
-                        action.value === "Residential" ? "Cat-A" : (bkCategory == "" ||  bkCategory == "Cat-A") ? "Cat-B" : bkCategory
+                        action.value === "Residential" ? "Cat-A" : (bkCategory === "" || bkCategory === undefined ||  bkCategory === "Cat-A") ? "Cat-B" : bkCategory
                     )
                 );
                 dispatch(

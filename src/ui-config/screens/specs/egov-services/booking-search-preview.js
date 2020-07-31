@@ -2,8 +2,6 @@ import {
     getCommonCard,
     getCommonContainer,
     getCommonHeader,
-    getLabelWithValue,
-    getLabel,
     getBreak,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
@@ -26,7 +24,6 @@ import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
-import { openSpacePaymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import {
     getReceipt,
     generateBill,
@@ -35,19 +32,11 @@ import { applicantSummary } from "./searchResource/applicantSummary";
 import { openSpaceSummary } from "./searchResource/openSpaceSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/documentsSummary";
-import { taskStatusSummary } from "./searchResource/taskStatusSummary";
+import { remarksSummary } from "./searchResource/remarksSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
-    footerReview,
-    downloadPrintContainer,
     footerReviewTop,
 } from "./searchResource/footer";
-import {
-    SellMeatReassign,
-    SellMeatReject,
-    SellMeatForward,
-    SellMeatApprove,
-} from "./payResource/adhocPopup";
 import {
     getLocale,
     getUserInfo,
@@ -180,16 +169,6 @@ const setSearchResponse = async (
 
     prepareDocumentsView(state, dispatch);
 
-    // const printCont = footerReviewTop(
-    //     action,
-    //     state,
-    //     dispatch,
-    //     bookingStatus,
-    //     applicationNumber,
-    //     tenantId,
-    //     ""
-    // );
-
     const CitizenprintCont = footerReviewTop(
         action,
         state,
@@ -205,45 +184,8 @@ const setSearchResponse = async (
         "screenConfig.components.div.children.headerDiv.children.helpSection.children",
         CitizenprintCont
     )
-    // process.env.REACT_APP_NAME === "Citizen"
-    //     ? set(
-    //           action,
-    //           "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-    //           CitizenprintCont
-    //       )
-    //     : set(
-    //           action,
-    //           "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-    //           printCont
-    //       );
 };
 
-
-// const fetchBill = async (state, dispatch, applicationNumber, tenantId) => {
-//     await generateBill(state, dispatch, applicationNumber, tenantId);
-//     // let payload = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp");
-
-//     // console.log("payloadnewpay");
-
-//     //Collection Type Added in CS v1.1
-//     // payload && dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].billDetails[0].collectionType", "COUNTER"));
-
-//     // if (get(payload, "totalAmount") != undefined) {
-//     //   //set amount paid as total amount from bill - destination changed in CS v1.1
-//     //   dispatch(prepareFinalObject("ReceiptTemp[0].Bill[0].taxAndPayments[0].amountPaid", payload.totalAmount));
-//     //   //set total amount in instrument
-//     //   dispatch(prepareFinalObject("ReceiptTemp[0].instrument.amount", payload.totalAmount));
-//     // }
-
-//     // //Initially select instrument type as Cash
-//     // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.instrumentType.name", "Cash"));
-
-//     // //set tenantId
-//     // dispatch(prepareFinalObject("ReceiptTemp[0].tenantId", tenantId));
-
-//     // //set tenantId in instrument
-//     // dispatch(prepareFinalObject("ReceiptTemp[0].instrument.tenantId", tenantId));
-// };
 const getPaymentGatwayList = async (action, state, dispatch) => {
     try {
       let payload = null;
@@ -342,8 +284,7 @@ const screenConfig = {
                     applicantSummary : applicantSummary,
                     openSpaceSummary: openSpaceSummary,
                     documentsSummary: documentsSummary,
-                    taskStatusSummary: taskStatusSummary,
-                    // undertakingButton1,
+                    remarksSummary: remarksSummary,
                 }),
                 break: getBreak(),
                 footer: footer,

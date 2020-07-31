@@ -21,10 +21,8 @@ import { httpRequest } from "../../../../ui-utils";
 import { getUserInfo, getTenantId, getapplicationType, localStorageGet, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
 const header = getCommonContainer({
   header: getCommonHeader({
-    //labelName: `Application for ${getapplicationType()} - (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
-    //labelKey: "NOC_COMMON_APPLY_NOC"
-    // labelName: `Application for ${getapplicationType().substring(0,getapplicationType().length -3)} NOC - (${getCurrentFinancialYear()})` //later use getFinancialYearDates
-    labelName: `Application for ${getapplicationType()}` //later use getFinancialYearDates
+    labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"} - (${getCurrentFinancialYear()})` //later use getFinancialYearDates
+    // labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"}` //later use getFinancialYearDates
   }),
   applicationNumber: {
     uiFramework: "custom-atoms-local",
@@ -99,7 +97,7 @@ const screenConfig = {
             header: {
               gridDefination: {
                 xs: 12,
-                sm: 10
+                sm: 12
               },
               ...header
             }

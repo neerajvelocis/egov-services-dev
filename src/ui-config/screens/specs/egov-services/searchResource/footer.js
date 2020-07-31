@@ -295,8 +295,6 @@ export const footerReviewTop = (
 ) => {
     let downloadMenu = [];
     let printMenu = [];
-
-    // let renewalMenu=[];
     let certificateDownloadObject = {
         label: {
             labelName: "Booking Certificate",
@@ -321,12 +319,6 @@ export const footerReviewTop = (
     let receiptDownloadObject = {
         label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_DOWNLOAD" },
         link: () => {
-            // const receiptQueryString = [
-            //   { key: "consumerCodes", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "applicationNumber") },
-            //   { key: "tenantId", value: get(state.screenConfiguration.preparedFinalObject.Licenses[0], "tenantId") }
-            // ]
-            // let applicationNumber = get(state.screenConfiguration.preparedFinalObject.Booking, "bkApplicationNumber")
-            // let tenantId = get(state.screenConfiguration.preparedFinalObject.Booking, "tenantId")
             downloadReceipt(state, applicationNumber, tenantId);
         },
         leftIcon: "receipt",
@@ -334,8 +326,6 @@ export const footerReviewTop = (
     let receiptPrintObject = {
         label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_PRINT" },
         link: () => {
-            // let applicationNumber = get(state.screenConfiguration.preparedFinalObject.Booking, "bkApplicationNumber")
-            // let tenantId = get(state.screenConfiguration.preparedFinalObject.Booking, "tenantId")
             downloadReceipt(state, applicationNumber, tenantId, "print");
         },
         leftIcon: "receipt",
@@ -346,10 +336,6 @@ export const footerReviewTop = (
             labelKey: "MY_BK_APPLICATION_DOWNLOAD",
         },
         link: () => {
-            // const { Licenses ,LicensesTemp} = state.screenConfiguration.preparedFinalObject;
-            // const documents = LicensesTemp[0].reviewDocData;
-            // set(Licenses[0],"additionalDetails.documents",documents)
-            // downloadAcknowledgementForm(Licenses);
             downloadApplication(state, applicationNumber, tenantId);
         },
         leftIcon: "assignment",
@@ -360,10 +346,6 @@ export const footerReviewTop = (
             labelKey: "MY_BK_APPLICATION_PRINT",
         },
         link: () => {
-            // const { Licenses,LicensesTemp } = state.screenConfiguration.preparedFinalObject;
-            // const documents = LicensesTemp[0].reviewDocData;
-            // set(Licenses[0],"additionalDetails.documents",documents)
-            // downloadAcknowledgementForm(Licenses,'print');
             downloadApplication(state, applicationNumber, tenantId, "print");
         },
         leftIcon: "assignment",
@@ -401,40 +383,6 @@ export const footerReviewTop = (
         printMenu = [applicationPrintObject];
     }
 
-    // switch (status) {
-    //     case "APPROVED":
-    //         downloadMenu = [
-    //             certificateDownloadObject,
-    //             receiptDownloadObject,
-    //             applicationDownloadObject,
-    //         ];
-    //         printMenu = [
-    //             certificatePrintObject,
-    //             receiptPrintObject,
-    //             applicationPrintObject,
-    //         ];
-    //         break;
-    //     case "PENDINGASSIGNMENTDRIVER":
-    //         downloadMenu = [applicationDownloadObject];
-    //         printMenu = [applicationPrintObject];
-    //         break;
-    //     case "PENDINGAPPROVAL":
-    //         downloadMenu = [applicationDownloadObject];
-    //         printMenu = [applicationPrintObject];
-    //         break;
-    //     case "PENDINGPAYMENT":
-    //         downloadMenu = [applicationDownloadObject];
-    //         printMenu = [applicationPrintObject];
-    //         break;
-    //     case "REJECTED":
-    //         downloadMenu = [applicationDownloadObject];
-    //         printMenu = [applicationPrintObject];
-    //         break;
-    //     default:
-    //         break;
-    // }
-    /** END */
-
     return {
         rightdiv: {
             uiFramework: "custom-atoms",
@@ -457,8 +405,8 @@ export const footerReviewTop = (
                             rightIcon: "arrow_drop_down",
                             props: {
                                 variant: "outlined",
-                                style: { height: "60px", color: "#FE7A51" },
-                                className: "tl-download-button",
+                                style: { height: "60px", color: "#FE7A51", marginRight :"10px" },
+                                className: "",
                             },
                             menu: downloadMenu,
                         },
@@ -479,7 +427,7 @@ export const footerReviewTop = (
                             props: {
                                 variant: "outlined",
                                 style: { height: "60px", color: "#FE7A51" },
-                                className: "tl-print-button",
+                                className: "",
                             },
                             menu: printMenu,
                         },
