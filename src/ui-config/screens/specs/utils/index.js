@@ -1365,9 +1365,6 @@ export const getNextMonthDateInYMD = () => {
     return date;
 };
 
-
-
-
 export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
     getFileUrlFromAPI(fileStoreId, tenantId).then(async (fileRes) => {
         if (mode === "download") {
@@ -1466,28 +1463,50 @@ const NumInWords = (number) => {
     return word + "Rupees Only";
 };
 
-export const getDurationDate = (paymentDate, duration) => {
-    let epoch = paymentDate;
-    let monthNames = ["Jan", "Feb", "Mar", "Apr",
-      "May", "Jun", "Jul", "Aug",
-      "Sep", "Oct", "Nov", "Dec"];
-    let startDate = new Date(epoch)
-    let finalStartDate = startDate.getDate() + " " + monthNames[startDate.getMonth()] + " " + startDate.getFullYear()
-  
-    let endDate = new Date(epoch)
-    endDate.setMonth(endDate.getMonth() + Number(duration))
-    let finalEndDate = endDate.getDate() + " " + monthNames[endDate.getMonth()] + " " + endDate.getFullYear()
-    let finalDate = finalStartDate + " to " + finalEndDate
+export const getDurationDate = (fromDate, toDate) => {
+    let monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    let startDate = new Date(fromDate);
+    let finalStartDate =
+        startDate.getDate() +
+        " " +
+        monthNames[startDate.getMonth()] +
+        " " +
+        startDate.getFullYear();
+
+    let endDate = new Date(toDate);
+    endDate.setMonth(endDate.getMonth());
+    let finalEndDate =
+        endDate.getDate() +
+        " " +
+        monthNames[endDate.getMonth()] +
+        " " +
+        endDate.getFullYear();
+    let finalDate = finalStartDate + " to " + finalEndDate;
     return finalDate;
 };
 export const downloadReceipt = (
     state,
-    applicationNumber, 
+    applicationNumber,
     tenantId,
     mode = "download"
 ) => {
-
-    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
+    let applicationData = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking"
+    );
     const receiptQueryString = [
         { key: "consumerCodes", value: applicationNumber },
         {
@@ -1534,34 +1553,55 @@ export const downloadReceipt = (
                 {
                     applicantDetail: {
                         name: payloadReceiptDetails.Payments[0].payerName,
-                        mobileNumber: payloadReceiptDetails.Payments[0].mobileNumber,
+                        mobileNumber:
+                            payloadReceiptDetails.Payments[0].mobileNumber,
                         houseNo: applicationData.bkHouseNo,
                         permanentAddress: applicationData.bkCompleteAddress,
-                        permanentCity: payloadReceiptDetails.Payments[0].tenantId,
-                        sector: applicationData.bkSector
+                        permanentCity:
+                            payloadReceiptDetails.Payments[0].tenantId,
+                        sector: applicationData.bkSector,
                     },
                     booking: {
-                        bkApplicationNumber: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.consumerCode,
+                        bkApplicationNumber:
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.consumerCode,
                     },
                     paymentInfo: {
-                        paymentDate: convertEpochToDate(payloadReceiptDetails.Payments[0].transactionDate, "dayend"),
-                        transactionId: payloadReceiptDetails.Payments[0].transactionNumber,
-                        bookingPeriod:payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
-                                ? getDurationDate(payloadReceiptDetails.Payments[0].transactionDate, applicationData.bkDuration)
+                        paymentDate: convertEpochToDate(
+                            payloadReceiptDetails.Payments[0].transactionDate,
+                            "dayend"
+                        ),
+                        transactionId:
+                            payloadReceiptDetails.Payments[0].transactionNumber,
+                        bookingPeriod:
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSBM"
+                                ? getDurationDate(
+                                    applicationData.bkFromDate,
+                                      applicationData.bkToDate
+                                  )
                                 : "30 July, 4:00 pm",
-                        bookingItem: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                        bookingItem:
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSBM"
                                 ? "Online Payment Against Booking of Open Space for Building Material"
                                 : "Online Payment Against Booking of Water Tanker",
                         amount:
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[1]
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.billDetails[0].billAccountDetails[1]
                                 .amount,
                         tax:
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails[0]
-                        .amount,
-                        grandTotal: payloadReceiptDetails.Payments[0].totalAmountPaid,
-                        amountInWords: NumInWords(payloadReceiptDetails.Payments[0].totalAmountPaid),
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.billDetails[0].billAccountDetails[0]
+                                .amount,
+                        grandTotal:
+                            payloadReceiptDetails.Payments[0].totalAmountPaid,
+                        amountInWords: NumInWords(
+                            payloadReceiptDetails.Payments[0].totalAmountPaid
+                        ),
                         paymentItemExtraColumnLabel:
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill.businessService === "OSBM"
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSBM"
                                 ? "Booking Period"
                                 : "Time & Date",
                     },
@@ -1579,7 +1619,6 @@ export const downloadReceipt = (
             ).then((res) => {
                 res.filestoreIds[0];
                 if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-                    console.log("resMY", res);
                     res.filestoreIds.map((fileStoreId) => {
                         downloadReceiptFromFilestoreID(fileStoreId, mode);
                     });
@@ -1589,18 +1628,20 @@ export const downloadReceipt = (
             });
         });
     } catch (exception) {
-        console.log(exception, "exception");
         alert("Some Error Occured while downloading Receipt!");
     }
 };
 
 export const downloadCertificate = (
     state,
-    applicationNumber, 
+    applicationNumber,
     tenantId,
     mode = "download"
 ) => {
-    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
+    let applicationData = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking"
+    );
 
     const DOWNLOADCERTIFICATE = {
         GET: {
@@ -1625,13 +1666,18 @@ export const downloadCertificate = (
                 },
                 bookingDetail: {
                     applicationNumber: applicationNumber,
-                    applicationDate: convertDateInDMY(applicationData.bkDateCreated),
+                    applicationDate: convertDateInDMY(
+                        applicationData.bkDateCreated
+                    ),
                     villageOrCity: applicationData.bkVillCity,
                     residentialOrCommercial: applicationData.bkType,
                     areaRequired: applicationData.bkAreaRequired,
                     category: applicationData.bkCategory,
                     typeOfConstruction: applicationData.bkConstructionType,
-                    permissionPeriod: getDurationDate(applicationData.bkDateCreated, applicationData.bkDuration),
+                    permissionPeriod: getDurationDate(
+                        applicationData.bkFromDate,
+                          applicationData.bkToDate
+                      ),
                     duration:
                         applicationData.bkDuration == "1"
                             ? `${applicationData.bkDuration} month`
@@ -1653,27 +1699,33 @@ export const downloadCertificate = (
         ).then((res) => {
             res.filestoreIds[0];
             if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-                console.log("resMY", res);
                 res.filestoreIds.map((fileStoreId) => {
                     downloadReceiptFromFilestoreID(fileStoreId, mode);
                 });
             } else {
-                console.log("Error In Receipt Download");
+                console.log("Error In Permission Letter Download");
             }
         });
         //   })
     } catch (exception) {
-        console.log(exception, "exception");
-        alert("Some Error Occured while downloading Receipt!");
+        alert("Some Error Occured while downloading Permission Letter!");
     }
 };
 
 export const downloadApplication = (
-    state, applicationNumber, tenantId,
+    state,
+    applicationNumber,
+    tenantId,
     mode = "download"
 ) => {
-    let applicationData = get(state.screenConfiguration.preparedFinalObject, "Booking")
-    let paymentData = get(state.screenConfiguration.preparedFinalObject, "ReceiptTemp[0].Bill[0]")
+    let applicationData = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking"
+    );
+    let paymentData = get(
+        state.screenConfiguration.preparedFinalObject,
+        "ReceiptTemp[0].Bill[0]"
+    );
 
     const DOWNLOADAPPLICATION = {
         GET: {
@@ -1686,7 +1738,9 @@ export const downloadApplication = (
             {
                 key: "key",
                 value:
-                applicationData.businessService == "OSBM" ? "bk-osbm-app-form" : "bk-wt-app-form",
+                    applicationData.businessService == "OSBM"
+                        ? "bk-osbm-app-form"
+                        : "bk-wt-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1695,10 +1749,10 @@ export const downloadApplication = (
                 applicantDetail: {
                     name: applicationData.bkApplicantName,
                     mobileNumber: applicationData.bkMobileNumber,
-                    houseNo: applicationData.bkSector,
+                    houseNo: applicationData.bkHouseNo,
                     permanentAddress: applicationData.bkCompleteAddress,
                     permanentCity: tenantId,
-                    sector: applicationData.bkHouseNo,
+                    sector: applicationData.bkSector,
                     email: applicationData.bkEmail,
                 },
                 bookingDetail: {
@@ -1731,15 +1785,13 @@ export const downloadApplication = (
                             ? ""
                             : paymentData.billDetails[0].billAccountDetails[0]
                                   .amount,
-                    totalAmout:
+                    totalAmount:
                         paymentData === undefined
                             ? ""
                             : paymentData.totalAmount,
                 },
             },
         ];
-
-        console.log(appData, "applicationDataNew");
         httpRequest(
             "post",
             DOWNLOADAPPLICATION.GET.URL,
@@ -1751,17 +1803,15 @@ export const downloadApplication = (
         ).then((res) => {
             res.filestoreIds[0];
             if (res && res.filestoreIds && res.filestoreIds.length > 0) {
-                console.log("resMY", res);
                 res.filestoreIds.map((fileStoreId) => {
                     downloadReceiptFromFilestoreID(fileStoreId, mode);
                 });
             } else {
-                console.log("Error In Receipt Download");
+                console.log("Error In Application Download");
             }
         });
         //   })
     } catch (exception) {
-        console.log(exception, "exception");
-        alert("Some Error Occured while downloading Receipt!");
+        alert("Some Error Occured while downloading Application!");
     }
 };
