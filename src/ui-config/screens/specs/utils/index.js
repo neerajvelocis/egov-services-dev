@@ -1402,39 +1402,39 @@ export const downloadReceiptFromFilestoreID = (fileStoreId, mode, tenantId) => {
 const NumInWords = (number) => {
     const first = [
         "",
-        "one ",
-        "two ",
-        "three ",
-        "four ",
-        "five ",
-        "six ",
-        "seven ",
-        "eight ",
-        "nine ",
-        "ten ",
-        "eleven ",
-        "twelve ",
-        "thirteen ",
-        "fourteen ",
-        "fifteen ",
-        "sixteen ",
-        "seventeen ",
-        "eighteen ",
-        "nineteen ",
+        "One ",
+        "Two ",
+        "Three ",
+        "Four ",
+        "Five ",
+        "Six ",
+        "Seven ",
+        "Eight ",
+        "Nine ",
+        "Ten ",
+        "Eleven ",
+        "Twelve ",
+        "Thirteen ",
+        "Fourteen ",
+        "Fifteen ",
+        "Sixteen ",
+        "Seventeen ",
+        "Eighteen ",
+        "Nineteen ",
     ];
     const tens = [
         "",
         "",
-        "twenty",
-        "thirty",
-        "forty",
-        "fifty",
-        "sixty",
-        "seventy",
-        "eighty",
-        "ninety",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
     ];
-    const mad = ["", "thousand", "million", "billion", "trillion"];
+    const mad = ["", "Thousand", "Million", "Billion", "Trillion"];
     let word = "";
 
     for (let i = 0; i < mad.length; i++) {
@@ -1460,10 +1460,10 @@ const NumInWords = (number) => {
         if (Math.floor(tempNumber / (100 * Math.pow(1000, i))) !== 0)
             word =
                 first[Math.floor(tempNumber / (100 * Math.pow(1000, i)))] +
-                "hunderd " +
+                "Hunderd " +
                 word;
     }
-    return word;
+    return word + "Rupees Only";
 };
 
 export const getDurationDate = (paymentDate, duration) => {

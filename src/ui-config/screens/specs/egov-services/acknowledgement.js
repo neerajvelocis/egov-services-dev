@@ -581,7 +581,7 @@ export const paymentSuccessFooter = (state, applicationNumber, tenant) => {
                 action: "condition",
                 callBack: (state, dispatch) => {
                     //// generatePdf(state, dispatch, "receipt_download");
-                    downloadCertificate(
+                    downloadReceipt(
 						state, 
                         applicationNumber,
                         tenant
@@ -610,7 +610,7 @@ export const paymentSuccessFooter = (state, applicationNumber, tenant) => {
                 action: "condition",
                 callBack: (state, dispatch) => {
                     //// generatePdf(state, dispatch, "receipt_download");
-                    downloadReceipt(
+                    downloadCertificate(
 						state, 
                         applicationNumber,
                         tenant
