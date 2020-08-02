@@ -362,23 +362,13 @@ export const footerReviewTop = (
             receiptPrintObject,
             certificatePrintObject,
         ];
-    } else if (status === "PENDINGAPPROVAL" && bookingCase === "") {
+    } else if ((status === "PENDINGAPPROVAL" || status === "PENDINGPAYMENT" || status === "REJECTED") && bookingCase === "") {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
-    } else if (status === "PENDINGPAYMENT" && bookingCase === "") {
-        downloadMenu = [
-            applicationDownloadObject,
-        ];
-        printMenu = [
-            applicationPrintObject,
-        ];
-    } else if (status === "REJECTED" && bookingCase === "") {
-        downloadMenu = [applicationDownloadObject];
-        printMenu = [applicationPrintObject];
-    } else if ((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE" || status === "DELIVERED") && bookingCase.includes("Paid")) {
+    }else if ((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE" || status === "DELIVERED") && bookingCase.includes("Paid")) {
         downloadMenu = [applicationDownloadObject, receiptDownloadObject];
         printMenu = [applicationPrintObject, receiptPrintObject];
-    } else if((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE" || status === "DELIVERED") && !bookingCase.includes("Paid")){
+    } else if((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE" || status === "DELIVERED" || status === "REJECTED") && !bookingCase.includes("Paid")){
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
     }

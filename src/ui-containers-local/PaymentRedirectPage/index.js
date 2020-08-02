@@ -6,25 +6,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { getSearchResultsView } from "../../ui-utils/commons";
-import {
-    getAccessToken,
-    getTenantId,
-    getLocale,
-    getUserInfo,
-    localStorageGet,
-    setapplicationNumber,
-    getapplicationNumber,
-    getapplicationType,
-    lSRemoveItem,
-} from "egov-ui-kit/utils/localStorageUtils";
 
 class PaymentRedirect extends Component {
     componentDidMount = async () => {
         let { search } = this.props.location;
-        console.log(search, "search");
-        const txnQuery=search.split('&')[0].replace('eg_pg_txnid','transactionId');
+        const txnQuery = search
+            .split("&")[0]
+            .replace("eg_pg_txnid", "transactionId");
         try {
-
             let pgUpdateResponse = await httpRequest(
                 "post",
                 "pg-service/transaction/v1/_update" + txnQuery,
@@ -38,73 +27,55 @@ class PaymentRedirect extends Component {
                 pgUpdateResponse,
                 "Transaction[0].consumerCode"
             );
-			let tenantId = get(pgUpdateResponse, "Transaction[0].tenantId");
-			let transactionStatus = get(pgUpdateResponse, "Transaction[0].txnStatus")
-            let transactionId = get(pgUpdateResponse,"Transaction[0].txnId");
-            let bookingType = get(pgUpdateResponse,"Transaction[0].productInfo"); 
-
+            let tenantId = get(pgUpdateResponse, "Transaction[0].tenantId");
+            let transactionStatus = get(
+                pgUpdateResponse,
+                "Transaction[0].txnStatus"
+            );
+            let transactionId = get(pgUpdateResponse, "Transaction[0].txnId");
+            let bookingType = get(
+                pgUpdateResponse,
+                "Transaction[0].productInfo"
+            );
 
             if (transactionStatus === "FAILURE") {
-                if (getapplicationType() === "OSBM") {
+                if (bookingType === "OSBM") {
                     this.props.setRoute(
-                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}`
+                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
                     );
                 } else {
                     this.props.setRoute(
-                        `/egov-services/acknowledgement-adv?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}`
+                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
                     );
                 }
             } else {
-                // let data = {
-                //     bkBookingType: getapplicationType(),
-                //     tenantId: getTenantId(),
-                //     bkApplicationStatus: "PAID",
-				// 	bkApplicationNumber: consumerCode,
-				// 	bkAction : "PAY",
-				// 	bkAmount: localStorageGet(`amount`),
-				// 	bkCgst: localStorageGet(`gstAmount`),
-				// 	performanceBankGuaranteeCharges: localStorageGet(
-				// 		`performanceBankGuaranteeCharges`
-				// 	),
-                //     auditDetails: {
-                //         createdBy: 1,
-                //         lastModifiedBy: 1,
-                //         createdTime: 1578894136873,
-                //         lastModifiedTime: 1578894136873,
-                //     },
-                // };
-
                 let response = await getSearchResultsView([
                     { key: "tenantId", value: tenantId },
                     { key: "applicationNumber", value: consumerCode },
-				]);
-				
-				let payload = response.bookingsModelList[0];
-				set(payload, "businessService", "OSBM");
-				set(payload, "bkAction", "PAY");
-				
-				console.log("payload", payload);
+                ]);
 
+                let payload = response.bookingsModelList[0];
+                set(
+                    payload,
+                    "bkAction",
+                    bookingType === "OSBM" ? "PAY" : "PAIDAPPLY"
+                );
                 response = await httpRequest(
                     "post",
                     "/bookings/api/_update",
                     "",
                     [],
                     {
-						Booking: payload,
-					}
+                        Booking: payload,
+                    }
                 );
-                lSRemoveItem(`amount`);
-                lSRemoveItem(`gstAmount`);
-                lSRemoveItem(`performanceBankGuaranteeCharges`);
-
-                if (getapplicationType() === "OSBM") {
+                if (bookingType === "OSBM") {
                     this.props.setRoute(
-                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}`
+                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
                     );
-                }  else {
+                } else {
                     this.props.setRoute(
-                        `/egov-services/acknowledgement-adv?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}`
+                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
                     );
                 }
             }

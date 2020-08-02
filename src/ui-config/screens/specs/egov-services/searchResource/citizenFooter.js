@@ -153,6 +153,7 @@ export const footer = getCommonApplyFooter({
               callBack: (state, dispatch) =>
                 callBackForNext(state, dispatch, "pay"),
         },
+        visible: false
         // roleDefination: {
         //     rolePath: "user-info.roles",
         //     roles: ["CITIZEN"],

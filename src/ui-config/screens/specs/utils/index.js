@@ -1577,10 +1577,10 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
                                 ? getDurationDate(
-                                    applicationData.bkFromDate,
+                                      applicationData.bkFromDate,
                                       applicationData.bkToDate
                                   )
-                                : "30 July, 4:00 pm",
+                                : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
@@ -1588,12 +1588,10 @@ export const downloadReceipt = (
                                 : "Online Payment Against Booking of Water Tanker",
                         amount:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.billDetails[0].billAccountDetails[1]
-                                .amount,
+                                .bill.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("TAX"))[0].amount,
                         tax:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.billDetails[0].billAccountDetails[0]
-                                .amount,
+                                .bill.billDetails[0].billAccountDetails.filter(el => el.taxHeadCode.includes("TAX"))[0].amount,
                         grandTotal:
                             payloadReceiptDetails.Payments[0].totalAmountPaid,
                         amountInWords: NumInWords(
@@ -1603,7 +1601,7 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
                                 ? "Booking Period"
-                                : "Time & Date",
+                                : "Date & Time",
                     },
                 },
             ];
@@ -1676,12 +1674,12 @@ export const downloadCertificate = (
                     typeOfConstruction: applicationData.bkConstructionType,
                     permissionPeriod: getDurationDate(
                         applicationData.bkFromDate,
-                          applicationData.bkToDate
-                      ),
+                        applicationData.bkToDate
+                    ),
                     duration:
                         applicationData.bkDuration == "1"
-                            ? `${applicationData.bkDuration} month`
-                            : `${applicationData.bkDuration} months`,
+                            ? `${applicationData.bkDuration} Month`
+                            : `${applicationData.bkDuration} Months`,
                     categoryImage: "",
                     // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
                 },
@@ -1744,6 +1742,42 @@ export const downloadApplication = (
             },
             { key: "tenantId", value: "ch" },
         ];
+
+        let bookingDataOsbm = {
+            applicationNumber: applicationNumber,
+            houseNo: applicationData.bkHouseNo,
+            locality: applicationData.bkSector,
+            completeAddress: applicationData.bkCompleteAddress,
+            applicationDate: applicationData.bkDateCreated,
+            villageOrCity: applicationData.bkVillCity,
+            propertyType: applicationData.bkType,
+            storageAreaRequired: applicationData.bkAreaRequired,
+            category: applicationData.bkCategory,
+            typeOfConstruction: applicationData.bkConstructionType,
+            // permissionPeriod: "From 18-03-2020 To 17-04-2020",
+            duration:
+                applicationData.bkDuration == "1"
+                    ? `${applicationData.bkDuration} Month`
+                    : `${applicationData.bkDuration} Months`,
+            categoryImage: "",
+            // categoryImage: applicationData.bkCategory === "Cat-A" ? "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg" : applicationData.bkCategory === "Cat-B" ? "" : "http://3.6.65.87:3000/static/media/cat-c.4e1bc5ec.jpeg"
+        };
+        let bookingDataWt = {
+            applicationNumber: applicationNumber,
+            name: applicationData.bkApplicantName,
+            mobileNumber: applicationData.bkMobileNumber,
+            email: applicationData.bkEmail,
+            houseNo: applicationData.bkHouseNo,
+            locality: applicationData.bkSector,
+            completeAddress: applicationData.bkCompleteAddress,
+            applicationDate: applicationData.bkDateCreated,
+            propertyType: applicationData.bkType,
+            date: convertDateInDMY(applicationData.bkDate),
+            time: applicationData.bkTime,
+            applicationStatus: applicationData.bkApplicationStatus,
+            applicationType: applicationData.bkStatus,
+        };
+
         let appData = [
             {
                 applicantDetail: {
@@ -1755,39 +1789,22 @@ export const downloadApplication = (
                     sector: applicationData.bkSector,
                     email: applicationData.bkEmail,
                 },
-                bookingDetail: {
-                    applicationNumber: applicationNumber,
-                    houseNo: applicationData.bkHouseNo,
-                    locality: applicationData.bkSector,
-                    completeAddress: applicationData.bkCompleteAddress,
-                    applicationDate: applicationData.bkDateCreated,
-                    villageOrCity: applicationData.bkVillCity,
-                    propertyType: applicationData.bkType,
-                    storageAreaRequired: applicationData.bkAreaRequired,
-                    category: applicationData.bkCategory,
-                    typeOfConstruction: applicationData.bkConstructionType,
-                    // permissionPeriod: "From 18-03-2020 To 17-04-2020",
-                    duration:
-                        applicationData.bkDuration == "1"
-                            ? `${applicationData.bkDuration} month`
-                            : `${applicationData.bkDuration} months`,
-                    categoryImage: "",
-                    // categoryImage: applicationData.bkCategory === "Cat-A" ? "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg" : applicationData.bkCategory === "Cat-B" ? "" : "http://3.6.65.87:3000/static/media/cat-c.4e1bc5ec.jpeg"
-                },
+                bookingDetail:
+                    applicationData.businessService === "OSBM"
+                        ? bookingDataOsbm
+                        : bookingDataWt,
                 feeDetail: {
                     baseCharge:
                         paymentData === undefined
-                            ? ""
-                            : paymentData.billDetails[0].billAccountDetails[1]
-                                  .amount,
+                            ? null
+                            : paymentData.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("TAX"))[0].amount,
                     taxes:
                         paymentData === undefined
-                            ? ""
-                            : paymentData.billDetails[0].billAccountDetails[0]
-                                  .amount,
+                            ? null
+                            : paymentData.billDetails[0].billAccountDetails.filter(el => el.taxHeadCode.includes("TAX"))[0].amount,
                     totalAmount:
                         paymentData === undefined
-                            ? ""
+                            ? null
                             : paymentData.totalAmount,
                 },
             },

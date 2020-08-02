@@ -70,12 +70,14 @@ const setPaymentMethods = async (action, state, dispatch) => {
   }
 }
 
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "pay",
   beforeInitScreen: (action, state, dispatch) => {
     let applicationNumber = getQueryArg(window.location.href, "applicationNumber");
     let tenantId = getQueryArg(window.location.href, "tenantId");
+    let businessService = getQueryArg(window.location.href, "businessService");
     setPaymentMethods(action, state, dispatch)
     setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
 

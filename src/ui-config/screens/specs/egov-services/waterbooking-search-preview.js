@@ -30,15 +30,13 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill } from "../utils/index";
 import generatePdf from "../utils/receiptPdf";
-import {
-    generateBill,
-} from "../utils";
+import { getReceipt, generateBill } from "../utils";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
-import { applicantSummary  } from "./searchResource/applicantSummary";
+import { applicantSummary } from "./searchResource/applicantSummary";
 import { waterTankerSummary } from "./searchResource/waterTankerSummary";
 import { estimateSummary } from "./searchResource/estimateSummary";
 import { driverSummary } from "./searchResource/driverSummary";
-import { taskStatusSummary } from "./searchResource/taskStatusSummary";
+import { remarksSummary } from "./searchResource/remarksSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
     footerReview,
@@ -321,7 +319,7 @@ const HideshowEdit = (action, bookingStatus) => {
 
     set(
         action,
-        "screenConfig.components.div.children.body.children.cardContent.children.taskStatusSummary.children.cardContent.children.header.children.editSection.visible",
+        "screenConfig.components.div.children.body.children.cardContent.children.remarksSummary.children.cardContent.children.header.children.editSection.visible",
         false
     );
 
@@ -365,7 +363,6 @@ const setSearchResponse = async (
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
 
-
     let bookingCase = get(
         state,
         "screenConfiguration.preparedFinalObject.Booking.bkStatus",
@@ -398,9 +395,25 @@ const setSearchResponse = async (
     //     CitizenprintCont
     // )
 
-    if(bookingCase.includes("Paid")){
-        await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
+    if (bookingCase.includes("Paid")) {
+        if (
+            bookingStatus === "PENDINGASSIGNMENTDRIVER" ||
+            bookingStatus === "PENDINGUPDATE" ||
+            bookingStatus === "DELIVERED" ||
+            bookingStatus === "NOTDELIVERED"
+        ) {
+            await getReceipt(state, dispatch, applicationNumber, tenantId);
+        } else {
+            await generateBill(
+                state,
+                dispatch,
+                applicationNumber,
+                tenantId,
+                recData[0].businessService
+            );
+        }
     } else {
+        dispatch(prepareFinalObject("ReceiptTemp[0].Bill", []));
         set(
             action,
             "screenConfig.components.div.children.body.children.cardContent.children.estimateSummary.visible",
@@ -408,34 +421,43 @@ const setSearchResponse = async (
         );
     }
 
-    if(bookingStatus !== "PENDINGUPDATE"){
+    if (bookingStatus == "PENDINGUPDATE") {
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.driverSummary.visible",
+            bookingStatus == "PENDINGUPDATE" ? true : false
+        );
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.remarksSummary.visible",
+            false
+        );
+    } else if (bookingStatus == "REJECTED") {
         set(
             action,
             "screenConfig.components.div.children.body.children.cardContent.children.driverSummary.visible",
             false
         );
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.remarksSummary.visible",
+            true
+        );
     } else {
         set(
             action,
-            "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.bookingCaseContainer.props.items[0].item0.children.cardContent.children.driverContainer.children.approverName",
-            bookingCase.includes("Paid") ? false : true
-        ); 
-
-        // if(bookingCase === "Paid"){
-                      
-        // } else {
-        //     set(
-        //         action,
-        //         "components.div.children.body.children.cardContent.children.driverSummary.children.cardContent.children.normalCase.visible",
-        //         true
-        //     );
-        // }
+            "screenConfig.components.div.children.body.children.cardContent.children.driverSummary.visible",
+            false
+        );
+        set(
+            action,
+            "screenConfig.components.div.children.body.children.cardContent.children.remarksSummary.visible",
+            false
+        );
     }
 
 
-    // prepareDocumentsView(state, dispatch);
-
-      const CitizenprintCont = footerReviewTop(
+    const CitizenprintCont = footerReviewTop(
         action,
         state,
         dispatch,
@@ -449,16 +471,7 @@ const setSearchResponse = async (
         action,
         "screenConfig.components.div.children.headerDiv.children.helpSection.children",
         CitizenprintCont
-    )
-
-          
-          
-    // if (role_name == "CITIZEN") {
-    //     //   console.log("in Citizen");
-
-    //     //   // setSearchResponseForNocCretificate(state,  dispatch, applicationNumber, tenantId);
-    //     setDownloadMenu(state, dispatch);
-    // }
+    );
 };
 
 let httpLinkPET;
@@ -582,7 +595,6 @@ const setSearchResponseForNocCretificate = async (
     //setDownloadMenu(state, dispatch);
 };
 
-
 const screenConfig = {
     uiFramework: "material-ui",
     name: "waterbooking-search-preview",
@@ -595,7 +607,7 @@ const screenConfig = {
         const tenantId = getQueryArg(window.location.href, "tenantId");
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
         dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
-    
+
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "OSBM" },
@@ -651,10 +663,10 @@ const screenConfig = {
 
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    applicantSummary : applicantSummary,
+                    applicantSummary: applicantSummary,
                     waterTankerSummary: waterTankerSummary,
-                    driverSummary : driverSummary,
-                    taskStatusSummary: taskStatusSummary,
+                    driverSummary: driverSummary,
+                    remarksSummary: remarksSummary,
                 }),
                 break: getBreak(),
 
