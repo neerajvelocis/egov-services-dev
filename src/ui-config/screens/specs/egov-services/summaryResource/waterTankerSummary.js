@@ -97,6 +97,15 @@ export const waterTankerSummary = getCommonGrayCard({
                     jsonPath: "Booking.bkType",
                   }
                 ),
+                BookingCase: getLabelWithValue(
+                  {
+                    labelName: "Case",
+                    labelKey: "BK_WTB_CASE_LABEL",
+                  },
+                  {
+                    jsonPath: "Booking.bkStatus",
+                  }
+                ),
                 BookingDate: getLabelWithValue(
                   {
                     labelName: "Booking Date",
@@ -114,15 +123,6 @@ export const waterTankerSummary = getCommonGrayCard({
                   },
                   {
                     jsonPath: "Booking.bkTime",
-                  }
-                ),
-                BookingCase: getLabelWithValue(
-                  {
-                    labelName: "Case",
-                    labelKey: "BK_WTB_CASE_LABEL",
-                  },
-                  {
-                    jsonPath: "Booking.bkStatus",
                   }
                 )
               }),

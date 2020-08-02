@@ -115,7 +115,7 @@ const prepareDocumentsView = async (state, dispatch) => {
 
 const HideshowFooter = (action, bookingStatus) => {
     // Hide edit Footer
-    console.log("actionnew", action);
+    // console.log("actionnew", action);
     let showFooter = false;
     if (bookingStatus === "PENDINGPAYMENT") {
         showFooter = true;
@@ -220,11 +220,16 @@ const screenConfig = {
             window.location.href,
             "applicationNumber"
         );
+        const tenantId = getQueryArg(
+            window.location.href,
+            "tenantId"
+        );
+        const businessService = getQueryArg(
+            window.location.href,
+            "businessService"
+        );
         setapplicationNumber(applicationNumber);
-        const tenantId = getQueryArg(window.location.href, "tenantId");
-        dispatch(fetchLocalizationLabel(getLocale(), tenantId, tenantId));
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
-        // fetchBill(state, dispatch, applicationNumber, tenantId);
         getPaymentGatwayList(action, state, dispatch).then(response => {
         });
         const queryObject = [

@@ -905,7 +905,7 @@ export const createUpdateWtbApplication = async (
     let tenantId = getTenantId().split(".")[0];
     // let applicationNumber =
     //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
-    let method =  action === "PAIDAPPLY" ? "UPDATE" : "CREATE";
+    // let method =  action === "FAILUREAPPLY" ? "CREATE" : "UPDATE";
 
     try {
         let payload = get(
@@ -919,7 +919,7 @@ export const createUpdateWtbApplication = async (
         set(payload, "businessService", "BWT");
         setapplicationMode(status);
 
-        if (method === "CREATE") {
+        // if (method === "CREATE") {
             response = await httpRequest(
                 "post",
                 "/bookings/api/_create",
@@ -941,21 +941,22 @@ export const createUpdateWtbApplication = async (
             } else {
                 return { status: "fail", data: response.data };
             }
-        } else if (method === "UPDATE") {
-            response = await httpRequest(
-                "post",
-                "/bookings/api/_update",
-                "",
-                [],
-                {
-                    Booking: payload,
-                }
-            );
-            console.log("pet response update: ", response);
-            setapplicationNumber(response.data.bkApplicationNumber);
-            dispatch(prepareFinalObject("Booking", response.data));
-            return { status: "success", data: response.data };
-        }
+        // } 
+        // else if (method === "UPDATE") {
+        //     response = await httpRequest(
+        //         "post",
+        //         "/bookings/api/_update",
+        //         "",
+        //         [],
+        //         {
+        //             Booking: payload,
+        //         }
+        //     );
+        //     console.log("pet response update: ", response);
+        //     setapplicationNumber(response.data.bkApplicationNumber);
+        //     dispatch(prepareFinalObject("Booking", response.data));
+        //     return { status: "success", data: response.data };
+        // }
 
         // response = await httpRequest("post", "/bookings/api/_create", "", [], {
         //     Booking: payload,
