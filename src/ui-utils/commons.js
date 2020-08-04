@@ -538,6 +538,12 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
             []
         );
+    } else if (type == "apply_cgb") {
+        documents = get(
+            state,
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
+            []
+        );
     } else {
         documents = get(
             state,
@@ -895,6 +901,96 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
         return { status: "failure", message: error };
     }
 };
+export const createUpdateCgbApplication = async (
+    state,
+    dispatch,
+    action
+) => {
+    let response = "";
+    let tenantId = getTenantId().split(".")[0];
+    // let applicationNumber =
+    //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
+    // let method =  action === "FAILUREAPPLY" ? "CREATE" : "UPDATE";
+
+    try {
+        let payload = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking",
+            []
+        );
+        set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
+        set(payload, "tenantId", tenantId);
+        set(payload, "bkAction", action);
+        set(payload, "businessService", "GFCP");
+        setapplicationMode(status);
+
+        // if (method === "CREATE") {
+        response = await httpRequest(
+            "post",
+            "/bookings/api/_create",
+            "",
+            [],
+            {
+                Booking: payload,
+            }
+        );
+        console.log("pet response : ", response);
+        if (
+            response.data.bkApplicationNumber !== "null" ||
+            response.data.bkApplicationNumber !== ""
+        ) {
+            dispatch(prepareFinalObject("Booking", response.data));
+            setapplicationNumber(response.data.bkApplicationNumber);
+            setApplicationNumberBox(state, dispatch);
+            return { status: "success", data: response.data };
+        } else {
+            return { status: "fail", data: response.data };
+        }
+        // } 
+        // else if (method === "UPDATE") {
+        //     response = await httpRequest(
+        //         "post",
+        //         "/bookings/api/_update",
+        //         "",
+        //         [],
+        //         {
+        //             Booking: payload,
+        //         }
+        //     );
+        //     console.log("pet response update: ", response);
+        //     setapplicationNumber(response.data.bkApplicationNumber);
+        //     dispatch(prepareFinalObject("Booking", response.data));
+        //     return { status: "success", data: response.data };
+        // }
+
+        // response = await httpRequest("post", "/bookings/api/_create", "", [], {
+        //     Booking: payload,
+        // });
+        // if (
+        //     response.data.bkApplicationNumber !== "null" ||
+        //     response.data.bkApplicationNumber !== ""
+        // ) {
+        //     dispatch(prepareFinalObject("Booking", response.data));
+        //     setapplicationNumber(response.data.bkApplicationNumber);
+        //     setApplicationNumberBox(state, dispatch);
+        //     return { status: "success", data: response.data };
+        // } else {
+        //     return { status: "fail", data: response.data };
+        // }
+    } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+        // Revert the changed pfo in case of request failure
+        let BookingData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking",
+            []
+        );
+        dispatch(prepareFinalObject("Booking", BookingData));
+
+        return { status: "failure", message: error };
+    }
+};
 
 export const createUpdateWtbApplication = async (
     state,
@@ -920,27 +1016,27 @@ export const createUpdateWtbApplication = async (
         setapplicationMode(status);
 
         // if (method === "CREATE") {
-            response = await httpRequest(
-                "post",
-                "/bookings/api/_create",
-                "",
-                [],
-                {
-                    Booking: payload,
-                }
-            );
-            console.log("pet response : ", response);
-            if (
-                response.data.bkApplicationNumber !== "null" ||
-                response.data.bkApplicationNumber !== ""
-            ) {
-                dispatch(prepareFinalObject("Booking", response.data));
-                setapplicationNumber(response.data.bkApplicationNumber);
-                setApplicationNumberBox(state, dispatch);
-                return { status: "success", data: response.data };
-            } else {
-                return { status: "fail", data: response.data };
+        response = await httpRequest(
+            "post",
+            "/bookings/api/_create",
+            "",
+            [],
+            {
+                Booking: payload,
             }
+        );
+        console.log("pet response : ", response);
+        if (
+            response.data.bkApplicationNumber !== "null" ||
+            response.data.bkApplicationNumber !== ""
+        ) {
+            dispatch(prepareFinalObject("Booking", response.data));
+            setapplicationNumber(response.data.bkApplicationNumber);
+            setApplicationNumberBox(state, dispatch);
+            return { status: "success", data: response.data };
+        } else {
+            return { status: "fail", data: response.data };
+        }
         // } 
         // else if (method === "UPDATE") {
         //     response = await httpRequest(
@@ -1106,9 +1202,9 @@ export const getBoundaryData = async (
         const tenantId =
             process.env.REACT_APP_NAME === "Employee"
                 ? get(
-                      state.screenConfiguration.preparedFinalObject,
-                      "Licenses[0].tradeLicenseDetail.address.city"
-                  )
+                    state.screenConfiguration.preparedFinalObject,
+                    "Licenses[0].tradeLicenseDetail.address.city"
+                )
                 : getQueryArg(window.location.href, "tenantId");
 
         const mohallaData =
@@ -1124,8 +1220,8 @@ export const getBoundaryData = async (
                             /[.]/g,
                             "_"
                         )}_REVENUE_${item.code
-                        .toUpperCase()
-                        .replace(/[._:-\s\/]/g, "_")}`,
+                            .toUpperCase()
+                            .replace(/[._:-\s\/]/g, "_")}`,
                 });
                 return result;
             }, []);
@@ -1791,8 +1887,8 @@ export const getCitizenGridData = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATED,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
 
@@ -1870,8 +1966,8 @@ export const getGridDataAdvertisement1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -1900,8 +1996,8 @@ export const getGridDataRoadcut1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -1930,8 +2026,8 @@ export const getGridDataSellMeat1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2198,10 +2294,10 @@ export const createUpdateADVNocApplication = async (
                 responsecreateDemand.Calculations[0].taxHeadEstimates[0]
                     .estimateAmount > 0
                     ? await searchBill(
-                          dispatch,
-                          response.applicationId,
-                          getTenantId()
-                      )
+                        dispatch,
+                        response.applicationId,
+                        getTenantId()
+                    )
                     : "";
 
                 lSRemoveItem(`exemptedCategory`);

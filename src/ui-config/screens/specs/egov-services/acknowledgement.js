@@ -31,7 +31,7 @@ import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
 
 export const header = getCommonContainer({
     header: getCommonHeader({
-        labelName: `Application for ${getapplicationType() === "OSBM"?"Open Space to Store Building Material" : "Water Tanker"} (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+        labelName: `Application for ${getapplicationType() !== "CGB" ? (getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker") : "Commercial Ground"} (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),
     applicationNumber: {
@@ -104,7 +104,7 @@ const getAcknowledgementCard = (
                 },
             },
             paymentSuccessFooter: paymentSuccessFooter(
-				state,
+                state,
                 applicationNumber,
                 tenantId,
                 businessService
@@ -151,7 +151,7 @@ const setApplicationData = async (dispatch, applicationNumber, tenantId) => {
             value: applicationNumber,
         },
     ];
-	const response = await getSearchResultsView(queryObject);
+    const response = await getSearchResultsView(queryObject);
     dispatch(prepareFinalObject("Booking", get(response, "bookingsModelList[0]", [])));
 };
 
@@ -165,9 +165,9 @@ const setSearchResponseForNocCretificate = async (
         tenantId: tenantId,
         applicationId: applicationNumber,
         dataPayload: { requestDocumentType: "receiptData" },
-	};
-	
-	
+    };
+
+
 
     //NOC_Receipts
     const response0_RECEIPT = await getSearchResultsForNocCretificate([
@@ -262,14 +262,14 @@ export const paymentSuccessFooter = (state, applicationNumber, tenantId, busines
                 callBack: (state, dispatch) => {
                     //// generatePdf(state, dispatch, "receipt_download");
                     downloadReceipt(
-						state, 
+                        state,
                         applicationNumber,
                         tenantId
                     );
                 },
             },
-		},
-		downloadPermissionLetterButton: {
+        },
+        downloadPermissionLetterButton: {
             componentPath: "Button",
             props: {
                 variant: "outlined",
@@ -291,13 +291,13 @@ export const paymentSuccessFooter = (state, applicationNumber, tenantId, busines
                 callBack: (state, dispatch) => {
                     //// generatePdf(state, dispatch, "receipt_download");
                     downloadCertificate(
-						state, 
+                        state,
                         applicationNumber,
                         tenantId
                     );
                 },
             },
-            visible : businessService === "OSBM" ? true : false
+            visible: businessService === "OSBM" || "CGB" ? true : false
         },
         gotoHome: {
             componentPath: "Button",
@@ -371,7 +371,7 @@ const screenConfig = {
             tenantId,
             businessService
         );
-		setApplicationData(dispatch, applicationNumber, tenantId);
+        setApplicationData(dispatch, applicationNumber, tenantId);
         set(action, "screenConfig.components.div.children", data);
         return action;
     },
