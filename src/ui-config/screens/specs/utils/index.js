@@ -763,7 +763,7 @@ export const getReceipt = async (
         if (applicationNumber && tenantId) {
             let queryObject = [
                 { key: "tenantId", value: tenantId },
-                { key: "consumerCode", value: applicationNumber },
+                { key: "consumerCodes", value: applicationNumber },
             ];
             const payload = await httpRequest(
                 "post",
