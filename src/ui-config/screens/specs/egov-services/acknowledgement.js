@@ -96,8 +96,8 @@ const getAcknowledgementCard = (
                             labelKey: "BK_PAYMENT_SUCCESS_MESSAGE_SUB",
                         },
                         tailText: {
-                            labelName: "Payment Receipt No.",
-                            labelKey: "BK_PMT_RCPT_NO",
+                            labelName: "Transaction No.",
+                            labelKey: "BK_PMT_TXN_ID",
                         },
                         number: secondNumber,
                     }),

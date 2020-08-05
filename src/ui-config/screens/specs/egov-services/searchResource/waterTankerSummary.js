@@ -163,8 +163,14 @@ export const waterTankerSummary = getCommonGrayCard({
                             labelKey: "MY_BK_DATE_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkDate",
-                            callBack: convertDateInDMY
+							jsonPath: "Booking.bkDate",
+							callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            },
                         }
                     ),
                     BookingTime: getLabelWithValue(
@@ -174,6 +180,13 @@ export const waterTankerSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkTime",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return value;
+                                }
+                            },
                         }
                     )
                    

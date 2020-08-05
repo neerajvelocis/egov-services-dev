@@ -141,6 +141,7 @@ export const bookingDetails = getCommonCard({
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 required: true,
                 jsonPath: "Booking.bkCompleteAddress",
+                maxLength: 500,
             }),
         },
         bkSector: {
@@ -205,7 +206,7 @@ export const bookingDetails = getCommonCard({
                 },
                 placeholder: {
                     labelName: "Type of Request",
-                    labelName: "BK_WTB_CASE_PLACEHOLDER",
+                    labelKey: "BK_WTB_CASE_PLACEHOLDER",
                 },
                 // required: true,
                 pattern: getPattern("typeOfRequest"),
