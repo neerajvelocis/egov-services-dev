@@ -61,6 +61,13 @@ export const driverSummary = getCommonGrayCard({
                       },
                       {
                           jsonPath: "Booking.bkApproverName",
+                          callBack: (value) => {
+                            if (value === undefined || value === "" || value === null) {
+                               return "NA"
+                            } else {
+                                return value;
+                            }
+                        },
                       },
                   )
               }),
@@ -69,9 +76,9 @@ export const driverSummary = getCommonGrayCard({
           hasAddItem: false,
           isReviewPage: true,
           sourceJsonPath: "Booking",
-          prefixSourceJsonPath:
-              "children.cardContent.children.driverContainer.children",
-          afterPrefixJsonPath: "children.value.children.key",
+        //   prefixSourceJsonPath:
+        //       "children.cardContent.children.driverContainer.children",
+        //   afterPrefixJsonPath: "children.value.children.key",
       },
       type: "array",
   },

@@ -379,22 +379,6 @@ const setSearchResponse = async (
 
     // HideshowFooter(action, bookingStatus);
 
-    // const CitizenprintCont = footerReviewTop(
-    //     action,
-    //     state,
-    //     dispatch,
-    //     bookingStatus,
-    //     applicationNumber,
-    //     tenantId,
-    //     ""
-    // );
-
-    // set(
-    //     action,
-    //     "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-    //     CitizenprintCont
-    // )
-
     if (bookingCase.includes("Paid")) {
         if (
             bookingStatus === "PENDINGASSIGNMENTDRIVER" ||
