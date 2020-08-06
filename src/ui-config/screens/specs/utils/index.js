@@ -753,7 +753,7 @@ export const generateBill = async (
     }
 };
 
-export const getReceipt = async (
+export const generageBillCollection = async (
     state,
     dispatch,
     applicationNumber,
@@ -1581,17 +1581,18 @@ export const downloadReceipt = (
                                       applicationData.bkToDate
                                   )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
-                        bookingItem:
+                        bookingItem: `Online Payment Against Booking of ${
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
-                                ? "Online Payment Against Booking of Open Space for Building Material"
-                                : "Online Payment Against Booking of Water Tanker",
-                        amount:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("TAX"))[0].amount,
-                        tax:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.billDetails[0].billAccountDetails.filter(el => el.taxHeadCode.includes("TAX"))[0].amount,
+                                ? "Open Space for Building Material"
+                                : "Water Tanker"
+                        }`,
+                        amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                            (el) => !el.taxHeadCode.includes("TAX")
+                        )[0].amount,
+                        tax: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                            (el) => el.taxHeadCode.includes("TAX")
+                        )[0].amount,
                         grandTotal:
                             payloadReceiptDetails.Payments[0].totalAmountPaid,
                         amountInWords: NumInWords(
@@ -1602,6 +1603,19 @@ export const downloadReceipt = (
                                 .bill.businessService === "OSBM"
                                 ? "Booking Period"
                                 : "Date & Time",
+                        paymentMode:
+                            payloadReceiptDetails.Payments[0].paymentMode,
+                        receiptNo:
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .receiptNumber,
+                    },
+                    payerInfo: {
+                        payerName: payloadReceiptDetails.Payments[0].payerName,
+                        payerMobile:
+                            payloadReceiptDetails.Payments[0].mobileNumber,
+                    },
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
                     },
                 },
             ];
@@ -1683,6 +1697,9 @@ export const downloadCertificate = (
                     categoryImage: "",
                     // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
                 },
+                generatedBy: {
+                    generatedBy: JSON.parse(getUserInfo()).name,
+                },
             },
         ];
 
@@ -1738,7 +1755,9 @@ export const downloadApplication = (
                 value:
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
-                        : "bk-wt-app-form",
+                        : applicationData.bkStatus.includes("Paid")
+                        ? "bk-wt-app-form"
+                        : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1797,15 +1816,22 @@ export const downloadApplication = (
                     baseCharge:
                         paymentData === undefined
                             ? null
-                            : paymentData.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("TAX"))[0].amount,
+                            : paymentData.billDetails[0].billAccountDetails.filter(
+                                  (el) => !el.taxHeadCode.includes("TAX")
+                              )[0].amount,
                     taxes:
                         paymentData === undefined
                             ? null
-                            : paymentData.billDetails[0].billAccountDetails.filter(el => el.taxHeadCode.includes("TAX"))[0].amount,
+                            : paymentData.billDetails[0].billAccountDetails.filter(
+                                  (el) => el.taxHeadCode.includes("TAX")
+                              )[0].amount,
                     totalAmount:
                         paymentData === undefined
                             ? null
                             : paymentData.totalAmount,
+                },
+                generatedBy: {
+                    generatedBy: JSON.parse(getUserInfo()).name,
                 },
             },
         ];
