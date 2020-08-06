@@ -25,7 +25,7 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import {
-    getReceipt,
+    generageBillCollection,
     generateBill,
 } from "../utils";
 import { applicantSummary } from "./searchResource/applicantSummary";
@@ -157,7 +157,7 @@ const setSearchResponse = async (
         {}
     );
     if(bookingStatus === "APPROVED"){
-        await getReceipt(state, dispatch, applicationNumber, tenantId)
+        await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     }

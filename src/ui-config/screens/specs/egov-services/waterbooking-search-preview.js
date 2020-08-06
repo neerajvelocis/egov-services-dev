@@ -30,7 +30,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill } from "../utils/index";
 import generatePdf from "../utils/receiptPdf";
-import { getReceipt, generateBill } from "../utils";
+import { generageBillCollection, generateBill } from "../utils";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { applicantSummary } from "./searchResource/applicantSummary";
 import { waterTankerSummary } from "./searchResource/waterTankerSummary";
@@ -386,7 +386,7 @@ const setSearchResponse = async (
             bookingStatus === "DELIVERED" ||
             bookingStatus === "NOTDELIVERED"
         ) {
-            await getReceipt(state, dispatch, applicationNumber, tenantId);
+            await generageBillCollection(state, dispatch, applicationNumber, tenantId);
         } else {
             await generateBill(
                 state,
