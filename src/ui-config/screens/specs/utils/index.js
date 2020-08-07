@@ -265,8 +265,8 @@ export const gotoApplyWithStep = (state, dispatch, step) => {
         process.env.REACT_APP_SELF_RUNNING === "true"
             ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
             : applicationType === "Booking"
-            ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
-            : ``;
+                ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
+                : ``;
 
     console.log(applyUrl, "applyUrl");
 
@@ -1577,9 +1577,9 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
                                 ? getDurationDate(
-                                      applicationData.bkFromDate,
-                                      applicationData.bkToDate
-                                  )
+                                    applicationData.bkFromDate,
+                                    applicationData.bkToDate
+                                )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
@@ -1648,10 +1648,22 @@ export const downloadCertificate = (
         },
     };
     try {
-        const queryStr = [
+        let queryStr = [
             { key: "key", value: "bk-osbm-pl" },
             { key: "tenantId", value: "ch" },
         ];
+
+        applicationData.businessService == "OSBM"
+            ? queryStr = [
+                { key: "key", value: "bk-osbm-pl" },
+                { key: "tenantId", value: "ch" },
+            ]
+            : queryStr = [
+                { key: "key", value: "bk-cg-pl" },
+                { key: "tenantId", value: "ch" },
+            ]
+
+
         let certificateData = [
             {
                 applicantDetail: {
@@ -1736,9 +1748,14 @@ export const downloadApplication = (
             {
                 key: "key",
                 value:
-                    applicationData.businessService == "OSBM"
-                        ? "bk-osbm-app-form"
-                        : "bk-wt-app-form",
+
+
+
+
+                    applicationData.businessService !== "GFCP" ? (
+                        applicationData.businessService == "OSBM"
+                            ? "bk-osbm-app-form"
+                            : "bk-wt-app-form") : "bk-cg-app-form"
             },
             { key: "tenantId", value: "ch" },
         ];

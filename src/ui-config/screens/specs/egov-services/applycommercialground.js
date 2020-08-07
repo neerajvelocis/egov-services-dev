@@ -326,6 +326,9 @@ const screenConfig = {
         dispatch(prepareFinalObject("Booking.bkBookingVenue", venueData));
         dispatch(prepareFinalObject("Booking.bkSector", venueData));
 
+
+
+
         const step = getQueryArg(window.location.href, "step");
         dispatch(
             prepareFinalObject(

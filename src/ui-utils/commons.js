@@ -918,6 +918,36 @@ export const createUpdateCgbApplication = async (
             "Booking",
             []
         );
+        let reduxDocuments = get(
+            state,
+            "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+            {}
+        );
+        let bookingDocuments = [];
+        let otherDocuments = [];
+
+        jp.query(reduxDocuments, "$.*").forEach((doc) => {
+            console.log(doc, "documents");
+            if (doc.documents && doc.documents.length > 0) {
+                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                    bookingDocuments = [
+                        ...bookingDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                } else if (!doc.documentSubCode) {
+                    otherDocuments = [
+                        ...otherDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                }
+            }
+        });
+
+        set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);

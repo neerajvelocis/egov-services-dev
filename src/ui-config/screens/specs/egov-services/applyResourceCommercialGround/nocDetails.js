@@ -218,7 +218,7 @@ export const bookingDetails = getCommonCard({
         required: true,
         //pattern: getPattern("Name"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "Booking.bkPurpose",
+        jsonPath: "Booking.bkBookingPurpose",
       }),
     },
 

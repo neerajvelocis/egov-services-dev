@@ -297,7 +297,7 @@ export const paymentSuccessFooter = (state, applicationNumber, tenantId, busines
                     );
                 },
             },
-            visible: businessService === "OSBM" || "CGB" ? true : false
+            visible: (businessService === "OSBM" || businessService === "CGB") ? true : false
         },
         gotoHome: {
             componentPath: "Button",

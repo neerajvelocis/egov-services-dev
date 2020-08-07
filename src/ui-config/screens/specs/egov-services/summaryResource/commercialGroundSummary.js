@@ -132,16 +132,16 @@ export const commercialGroundSummary = getCommonGrayCard({
                         {
                             jsonPath: "Booking.bkCategory",
                         }
-                    ),
-                    Purpose: getLabelWithValue(
+                    ), Purpose: getLabelWithValue(
                         {
                             labelName: "Purpose",
                             labelKey: "BK_CGB_PURPOSE_LABEL",
                         },
                         {
-                            jsonPath: "Booking.bkPurpose",
+                            jsonPath: "Booking.bkBookingPurpose",
                         }
                     ),
+
 
                 }),
             }),

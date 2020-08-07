@@ -11,6 +11,37 @@ import {
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import set from "lodash/set";
+import { httpRequest } from "../../../../ui-utils/api";
+
+const getDates = async (state, dispatch) => {
+
+    let bookingVenueName = get(
+        state,
+        "screenConfiguration.preparedFinalObject.bookingCalendar.sector"
+    );
+
+    let requestBody = {
+        bookingType: 'GROUND_FOR_COMMERCIAL_PURPOSE',
+        bookingVenue: bookingVenueName,
+
+    }
+
+    try {
+        const payload = await httpRequest(
+            "post",
+            "bookings/commercial/ground/availability/_search",
+            "",
+            [],
+            requestBody
+        )
+        // dispatch(prepareFinalObject("occupiedDates", payload.data));
+        return payload
+
+    } catch (exception) {
+
+    }
+};
+
 
 export const callBackForReset = (state, dispatch, action) => {
     const preparedFinalObject = get(
@@ -85,58 +116,76 @@ const callBackForBook = async (state, dispatch) => {
 }
 
 
+var getDaysArray = function (start, end) {
+    let arr = [];
+    let endDate = new Date(end);
+    for (let dt = new Date(start); dt <= endDate; dt.setDate(dt.getDate() + 1)) {
+        arr.push(new Date(dt));
+    }
+    console.log(arr, "ARRAY")
+    return arr;
+};
 
-
-
-
-// export const callBackForReset = (state, dispatch) => {
-//     dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ''));
-//     dispatch(prepareFinalObject("bookingCalendar.fromDateToDisplay", ''));
-//     dispatch(prepareFinalObject("bookingCalendar.sector", ''));
-
-// };
 
 
 export const callBackForSearch = async (state, dispatch) => {
-
 
     let sectorData = get(
         state,
         "screenConfiguration.preparedFinalObject.bookingCalendar.sector"
     );
-    let toDateData = get(
-        state,
-        "screenConfiguration.preparedFinalObject.bookingCalendar.toDateToDisplay"
-    );
-    let fromDateData = get(
-        state,
-        "screenConfiguration.preparedFinalObject.bookingCalendar.fromDateToDisplay"
-    );
+    // let toDateData = get(
+    //     state,
+    //     "screenConfiguration.preparedFinalObject.bookingCalendar.toDateToDisplay"
+    // );
+    // let fromDateData = get(
+    //     state,
+    //     "screenConfiguration.preparedFinalObject.bookingCalendar.fromDateToDisplay"
+    // );
 
-    if (sectorData === "" || toDateData === "" || fromDateData === "") {
-        dispatch(toggleSnackbar(true, { labelName: "Please Fill All Fields!", labelKey: "" },
+    if (sectorData === "") {
+        dispatch(toggleSnackbar(true, { labelName: "Please Select Booking Venue!", labelKey: "" },
             "warning"));
     }
     else {
 
         dispatch(prepareFinalObject("bookingCalendar.allowClick", "true"));
-        let promise = new Promise((resolve, reject) => {
-            setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
+        // let promise = new Promise((resolve, reject) => {
+        //     setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
+        // })
+
+        // let result = await promise; // wait until the promise resolves (*)
+
+        // let promise = new Promise((resolve, reject) => {
+        //          setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
+        //      })
+        let response = await getDates()
+        console.log(response, "res1")
+        let data = response.data
+        console.log(data, "datedata")
+
+        let reservedDates = []
+        var daylist = []
+        data.map((dataitem) => {
+            let start = dataitem.fromDate;
+            let end = dataitem.toDate;
+            daylist = getDaysArray(start, end);
+            console.log(daylist, "LOOP1")
+
+
+            daylist.map((v) => {
+                reservedDates.push(v.toISOString().slice(0, 10))
+                console.log(reservedDates, "LOOP2")
+            })
+
         })
-
-        let result = await promise; // wait until the promise resolves (*)
-
-
-
-
-
-
+        console.log(reservedDates, "daylist")
         const actionDefination = [
 
             {
                 path: "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
                 property: "reservedDays",
-                value: result
+                value: reservedDates
             },
 
         ];
@@ -145,30 +194,18 @@ export const callBackForSearch = async (state, dispatch) => {
     }
 
 
-    // "done!"
+
+
+
 }
 
 
+// "done!"
 
-// export const callBackForBook = (state, dispatch) => {
 
-//     let from = get(
-//         state,
-//         "screenConfiguration.preparedFinalObject.Check.fromDate",
-//         {}
-//     );
 
-//     let to = get(
-//         state,
-//         "screenConfiguration.preparedFinalObject.Check.toDate",
-//         {}
-//     );
-//     const appendUrl =
-//         process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-//     const reviewUrl = `${appendUrl}/egov-services/applycommercialground?from=${from}&to=${to}`;
-//     dispatch(setRoute(reviewUrl));
 
-// };
+
 
 export const NOCCalendar = getCommonCard({
     Calendar: getCommonContainer({
@@ -266,64 +303,64 @@ export const NOCApplication = getCommonCard({
                 },
             }),
         },
-        fromDatePeriodOfDisplay: getDateField({
-            label: {
-                labelName: "From Date",
-                labelKey: "BK_CGB_FROM_DATE_LABEL"
-            },
-            placeholder: {
-                labelName: "Enter From Date",
-                labelKey: "BK_CGB_FROM_DATE_PLACEHOLDER"
-            },
-            jsonPath: "bookingCalendar.fromDateToDisplay",
-            gridDefination: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-            },
-            pattern: getPattern("Date"),
-            errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-            required: true,
-            afterFieldChange: (action, state, dispatch) => {
-                let today = getTodaysDateInYMD();
-                let FromDate = get(state.screenConfiguration.preparedFinalObject, `bookingCalendar.fromDateToDisplay`, []);
-                if (FromDate < today) {
-                    dispatch(toggleSnackbar(true, { labelName: "Display Date should be greater than today!", labelKey: "" },
-                        "warning"));
-                    set(state, 'screenConfiguration.preparedFinalObject.bookingCalendar.fromDateToDisplay', '');
-                    dispatch(prepareFinalObject("bookingCalendar.fromDateToDisplay", ''));
-                }
-            }
-        }),
-        toDatePeriodOfDisplay: getDateField({
-            label: {
-                labelName: "To Date",
-                labelKey: "BK_CGB_TO_DATE_LABEL"
-            },
-            placeholder: {
-                labelName: "Enter To Date",
-                labelKey: "BK_CGB_TO_DATE_PLACEHOLDER"
-            },
-            jsonPath: "bookingCalendar.toDateToDisplay",
-            gridDefination: {
-                xs: 12,
-                sm: 6,
-                md: 4,
-            },
-            pattern: getPattern("Date"),
-            errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-            required: true,
-            afterFieldChange: (action, state, dispatch) => {
-                let FromDate = get(state.screenConfiguration.preparedFinalObject, `bookingCalendar.fromDateToDisplay`, []);
-                let ToDate = get(state.screenConfiguration.preparedFinalObject, `bookingCalendar.toDateToDisplay`, []);
-                if (ToDate <= FromDate) {
-                    dispatch(toggleSnackbar(true, { labelName: "To Date should be greater than or equal to From Date!", labelKey: "" },
-                        "warning"));
-                    set(state, 'screenConfiguration.preparedFinalObject.bookingCalendar.toDateToDisplay', '');
-                    dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ''));
-                }
-            }
-        }),
+        // fromDatePeriodOfDisplay: getDateField({
+        //     label: {
+        //         labelName: "From Date",
+        //         labelKey: "BK_CGB_FROM_DATE_LABEL"
+        //     },
+        //     placeholder: {
+        //         labelName: "Enter From Date",
+        //         labelKey: "BK_CGB_FROM_DATE_PLACEHOLDER"
+        //     },
+        //     jsonPath: "bookingCalendar.fromDateToDisplay",
+        //     gridDefination: {
+        //         xs: 12,
+        //         sm: 6,
+        //         md: 4,
+        //     },
+        //     pattern: getPattern("Date"),
+        //     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //     required: true,
+        //     afterFieldChange: (action, state, dispatch) => {
+        //         let today = getTodaysDateInYMD();
+        //         let FromDate = get(state.screenConfiguration.preparedFinalObject, `bookingCalendar.fromDateToDisplay`, []);
+        //         if (FromDate < today) {
+        //             dispatch(toggleSnackbar(true, { labelName: "Display Date should be greater than today!", labelKey: "" },
+        //                 "warning"));
+        //             set(state, 'screenConfiguration.preparedFinalObject.bookingCalendar.fromDateToDisplay', '');
+        //             dispatch(prepareFinalObject("bookingCalendar.fromDateToDisplay", ''));
+        //         }
+        //     }
+        // }),
+        // toDatePeriodOfDisplay: getDateField({
+        //     label: {
+        //         labelName: "To Date",
+        //         labelKey: "BK_CGB_TO_DATE_LABEL"
+        //     },
+        //     placeholder: {
+        //         labelName: "Enter To Date",
+        //         labelKey: "BK_CGB_TO_DATE_PLACEHOLDER"
+        //     },
+        //     jsonPath: "bookingCalendar.toDateToDisplay",
+        //     gridDefination: {
+        //         xs: 12,
+        //         sm: 6,
+        //         md: 4,
+        //     },
+        //     pattern: getPattern("Date"),
+        //     errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //     required: true,
+        //     afterFieldChange: (action, state, dispatch) => {
+        //         let FromDate = get(state.screenConfiguration.preparedFinalObject, `bookingCalendar.fromDateToDisplay`, []);
+        //         let ToDate = get(state.screenConfiguration.preparedFinalObject, `bookingCalendar.toDateToDisplay`, []);
+        //         if (ToDate <= FromDate) {
+        //             dispatch(toggleSnackbar(true, { labelName: "To Date should be greater than or equal to From Date!", labelKey: "" },
+        //                 "warning"));
+        //             set(state, 'screenConfiguration.preparedFinalObject.bookingCalendar.toDateToDisplay', '');
+        //             dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ''));
+        //         }
+        //     }
+        // }),
         dummyDiv: {
             uiFramework: "custom-atoms",
             componentPath: "Div",

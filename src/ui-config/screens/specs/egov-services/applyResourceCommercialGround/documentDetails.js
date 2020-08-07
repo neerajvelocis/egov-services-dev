@@ -9,7 +9,7 @@ export const documentDetails = getCommonCard({
   header: getCommonTitle(
     {
       labelName: "Required Documents",
-      labelKey: "BK_OSB_HEADER_STEP_3",
+      labelKey: "BK_CGB_HEADER_STEP_3",
       // labelKey: "NOC_DOCUMENT_DETAILS_HEADER_POPUP"
     },
     {
@@ -21,7 +21,7 @@ export const documentDetails = getCommonCard({
   subText: getCommonParagraph({
     labelName:
       "Only one file can be uploaded for one document. If multiple files need to be uploaded then please combine all files in a pdf and then upload",
-    labelKey: "BK_OSB_DOCUMENT_SUBTEXT"
+    labelKey: "BK_CGB_DOCUMENT_SUBTEXT"
   }),
   break: getBreak(),
   documentList: {
@@ -32,7 +32,7 @@ export const documentDetails = getCommonCard({
     props: {
       buttonLabel: {
         labelName: "UPLOAD FILE",
-        labelKey: "BK_OSB_DOCUMENT_UPLOAD_BUTTON"
+        labelKey: "BK_CGB_DOCUMENT_UPLOAD_BUTTON"
       },
       description: "Only .jpg, .jpeg, .png and .pdf files. 1MB max file size.",
       inputProps: {
