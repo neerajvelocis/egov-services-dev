@@ -259,6 +259,10 @@ export const bookingDetails = getCommonCard({
                 },
             }),
             beforeFieldChange: (action, state, dispatch) => {
+                const bkDuration = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.Booking.bkDuration"
+                );
                 dispatch(
                     handleField(
                         "applyopenspace",
@@ -274,7 +278,7 @@ export const bookingDetails = getCommonCard({
                         "applyopenspace",
                         "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkDuration",
                         "props.value",
-                        action.value === "New" ? "6" : "1"
+                        action.value === "New" ? "6" : (bkDuration === "" || bkDuration === undefined ||  bkDuration === "6") ? "1" : bkDuration
                     )
                 );
                 dispatch(

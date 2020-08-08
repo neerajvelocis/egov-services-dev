@@ -274,16 +274,18 @@ const screenConfig = {
                         },
                     },
                 },
-                // taskStatus: {
-                //   uiFramework: "custom-containers-local",
-                //   componentPath: "WorkFlowContainer",
-                //   moduleName: "egov-workflow",
+                taskStatus: {
+                  uiFramework: "custom-containers-local",
+                  componentPath: "WorkFlowContainer",
+                  moduleName: "egov-services",
                 //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+                  visible: true,
                 //   props: {
-                //     dataPath: "Licenses",
-                //     moduleName: "SELLMEATNOC",
+                //     dataPath: "Booking",
+                //     moduleName: "MyBooking",
                 //   },
-                // },
+                },
+                
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     applicantSummary : applicantSummary,
