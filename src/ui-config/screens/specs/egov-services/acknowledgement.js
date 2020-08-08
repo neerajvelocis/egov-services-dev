@@ -32,7 +32,7 @@ export const header = getCommonContainer({
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
                 : "Water Tanker"
-        } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+            } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),
     applicationNumber: {
@@ -100,99 +100,14 @@ export const paymentSuccessFooter = (
                 action: "condition",
                 callBack: (state, dispatch) => {
                     //// generatePdf(state, dispatch, "receipt_download");
-                    downloadCertificate(state, applicationNumber, tenantId);
+                    downloadCertificate(
+                        state,
+                        applicationNumber,
+                        tenantId
+                    );
                 },
             },
-            visible: businessService === "OSBM" ? true : false,
-        },
-        gotoHome: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    //    minWidth: "200px",
-                    height: "48px",
-                    marginRight: "16px",
-                },
-            },
-            children: {
-                goToHomeButtonLabel: getLabel({
-                    labelName: "GO TO HOME",
-                    labelKey: "BK_BUTTON_HOME",
-                }),
-            },
-            onClickDefination: {
-                action: "page_change",
-                path:
-                    process.env.REACT_APP_SELF_RUNNING === "true"
-                        ? `/egov-ui-framework/egov-services/search`
-                        : `/`,
-            },
-            visible: true,
-        },
-    });
-};
-export const paymentFailureFooter = ( state,
-    applicationNumber,
-    tenantId,
-    businessService) => {
-    return getCommonApplyFooter({
-      //Call gotoHome
-      retryPayment: {
-        componentPath: "Button",
-        props: {
-          variant: "contained",
-          color: "primary",
-          style: {
-          //  minWidth: "200px",
-            height: "48px",
-            marginRight: "16px"
-          }
-        },
-        children: {
-          downloadReceiptButtonLabel: getLabel({
-            labelName: "RETRY",
-            labelKey: "BK_BUTTON_PAYMENT_RETRY"
-          })
-        },
-        onClickDefination: {
-          action: "page_change",
-          path: `/egov-services/pay?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
-        }
-      }
-    });
-  };
-export const applicationSuccessFooter = (
-    state,
-    applicationNumber,
-    tenantId,
-    businessService
-) => {
-    return getCommonApplyFooter({
-        downloadApplicationButton: {
-            componentPath: "Button",
-            props: {
-                variant: "outlined",
-                color: "primary",
-                style: {
-                    //   minWidth: "200px",
-                    height: "48px",
-                    marginRight: "16px",
-                },
-            },
-            children: {
-                downloadReceiptButtonLabel: getLabel({
-                    labelName: "DOWNLOAD APPLICATION",
-                    labelKey: "BK_BUTTON_DOWNLOAD_APPLICATION",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: (state, dispatch) => {
-                    downloadApplication(state, applicationNumber, tenantId);
-                },
-            },
+            visible: (businessService === "OSBM" || businessService === "CGB") ? true : false
         },
         gotoHome: {
             componentPath: "Button",

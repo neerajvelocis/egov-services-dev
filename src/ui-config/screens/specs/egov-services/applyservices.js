@@ -33,7 +33,7 @@ if (role_name === "CITIZEN") {
                     class="material-icons module-page-icon"
                     style={{ fontSize: "50px" }}
                 >
-					store
+                    store
                     {/* account_balance */}
                 </i>
             ),
@@ -76,7 +76,7 @@ if (role_name === "CITIZEN") {
                     group_work
                 </i>
             ),
-            route: "",
+            route: "checkavailability",
             // {
             //   screenKey: "citizenMainLanding",
             //   jsonPath: "components.adhocDialog"

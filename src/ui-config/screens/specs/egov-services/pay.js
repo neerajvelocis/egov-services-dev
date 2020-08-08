@@ -21,7 +21,7 @@ import { httpRequest } from "../../../../ui-utils";
 import { getUserInfo, getTenantId, getapplicationType, localStorageGet, lSRemoveItem, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
 const header = getCommonContainer({
   header: getCommonHeader({
-    labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"} (${getCurrentFinancialYear()})` //later use getFinancialYearDates
+    labelName: `Application for ${getapplicationType() !== "CGB" ? (getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker") : "Commercial Ground"} (${getCurrentFinancialYear()})` //later use getFinancialYearDates
     // labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"}` //later use getFinancialYearDates
   }),
   applicationNumber: {
@@ -43,15 +43,15 @@ const setSearchResponse = async (
   tenantId
 ) => {
   const response = await getSearchResultsView([
-      { key: "tenantId", value: tenantId },
-      { key: "applicationNumber", value: applicationNumber },
+    { key: "tenantId", value: tenantId },
+    { key: "applicationNumber", value: applicationNumber },
   ]);
   let recData = get(response, "bookingsModelList", []);
   dispatch(
-      prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
+    prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
   );
   dispatch(
-      prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
+    prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
   );
 
   await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
@@ -60,10 +60,12 @@ const setSearchResponse = async (
 
 const setPaymentMethods = async (action, state, dispatch) => {
   const response = await getPaymentGateways();
-  if(!!response.length) {
+  if (!!response.length) {
     const paymentMethods = response.map(item => ({
-      label: { labelName: item,
-      labelKey: item},
+      label: {
+        labelName: item,
+        labelKey: item
+      },
       link: () => callPGService(state, dispatch, item)
     }))
     set(action, "screenConfig.components.div.children.footer.children.makePayment.props.data.menu", paymentMethods)
@@ -140,8 +142,8 @@ const screenConfig = {
               //   "PM_PAYMENT_VIEW_BREAKUP",
               //   "pay"
               // ),
-             // capturePaymentDetails,
-            //  g8Details
+              // capturePaymentDetails,
+              //  g8Details
             })
           }
         },

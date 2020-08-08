@@ -9,7 +9,7 @@ import TaskStatusComponents from "../TaskStatusComponents";
 import Divider from "@material-ui/core/Divider";
 import { getCurrentStatus } from "../TaskStatusComponents";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
-import "./index.css";
+//import "./index.css";
 
 const styles = theme => ({
   root: {
@@ -35,8 +35,8 @@ class VerticalLinearStepper extends React.Component {
                       labelKey={
                         item.businessService
                           ? `WF_${item.businessService.toUpperCase()}_${
-                              item.state.applicationStatus
-                            }`
+                          item.state.applicationStatus
+                          }`
                           : ""
                       }
                     />

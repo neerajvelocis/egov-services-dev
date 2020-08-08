@@ -265,8 +265,8 @@ export const gotoApplyWithStep = (state, dispatch, step) => {
         process.env.REACT_APP_SELF_RUNNING === "true"
             ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
             : applicationType === "Booking"
-            ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
-            : ``;
+                ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
+                : ``;
 
     console.log(applyUrl, "applyUrl");
 
@@ -1574,19 +1574,21 @@ export const downloadReceipt = (
                         transactionId:
                             payloadReceiptDetails.Payments[0].transactionNumber,
                         bookingPeriod:
+
+
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
                                 ? getDurationDate(
-                                      applicationData.bkFromDate,
-                                      applicationData.bkToDate
-                                  )
+                                    applicationData.bkFromDate,
+                                    applicationData.bkToDate
+                                )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem: `Online Payment Against Booking of ${
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
                                 ? "Open Space for Building Material"
                                 : "Water Tanker"
-                        }`,
+                            }`,
                         amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                             (el) => !el.taxHeadCode.includes("TAX")
                         )[0].amount,
@@ -1599,6 +1601,8 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].totalAmountPaid
                         ),
                         paymentItemExtraColumnLabel:
+
+
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM"
                                 ? "Booking Period"
@@ -1662,10 +1666,22 @@ export const downloadCertificate = (
         },
     };
     try {
-        const queryStr = [
+        let queryStr = [
             { key: "key", value: "bk-osbm-pl" },
             { key: "tenantId", value: "ch" },
         ];
+
+        applicationData.businessService == "OSBM"
+            ? queryStr = [
+                { key: "key", value: "bk-osbm-pl" },
+                { key: "tenantId", value: "ch" },
+            ]
+            : queryStr = [
+                { key: "key", value: "bk-cg-pl" },
+                { key: "tenantId", value: "ch" },
+            ]
+
+
         let certificateData = [
             {
                 applicantDetail: {
@@ -1756,8 +1772,8 @@ export const downloadApplication = (
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
                         : applicationData.bkStatus.includes("Paid")
-                        ? "bk-wt-app-form"
-                        : "bk-wt-unpaid-app-form",
+                            ? "bk-wt-app-form"
+                            : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1817,14 +1833,14 @@ export const downloadApplication = (
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
-                                  (el) => !el.taxHeadCode.includes("TAX")
-                              )[0].amount,
+                                (el) => !el.taxHeadCode.includes("TAX")
+                            )[0].amount,
                     taxes:
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
-                                  (el) => el.taxHeadCode.includes("TAX")
-                              )[0].amount,
+                                (el) => el.taxHeadCode.includes("TAX")
+                            )[0].amount,
                     totalAmount:
                         paymentData === undefined
                             ? null

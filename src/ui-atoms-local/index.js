@@ -37,6 +37,10 @@ const MenuButton = Loadable({
   loader: () => import("./MenuButton"),
   loading: () => <Loading />
 });
+const BookingCalendar = Loadable({
+  loader: () => import("./BookingCalendar"),
+  loading: () => <Loading />
+});
 
 const FireNocIcon = Loadable({
   loader: () => import("./Icons/FireNocIcon"),
@@ -53,6 +57,7 @@ export {
   ApplicationNoContainer,
   Checkbox,
   MapLocation,
+  BookingCalendar,
   AutoSuggest,
   Asteric,
   MenuButton,

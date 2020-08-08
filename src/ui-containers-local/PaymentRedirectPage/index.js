@@ -43,7 +43,13 @@ class PaymentRedirect extends Component {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
                     );
-                } else {
+                } else if (bookingType === "CGB") {
+                    this.props.setRoute(
+                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
+                    );
+                }
+
+                else {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
                     );
@@ -58,7 +64,7 @@ class PaymentRedirect extends Component {
                 set(
                     payload,
                     "bkAction",
-                    bookingType === "OSBM" ? "PAY" : "PAIDAPPLY"
+                    bookingType !== "CGB" ? (bookingType === "OSBM" ? "PAY" : "PAIDAPPLY") : "APPLY"
                 );
                 response = await httpRequest(
                     "post",
@@ -73,7 +79,14 @@ class PaymentRedirect extends Component {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
                     );
-                } else {
+                } else if (bookingType === "CGB") {
+                    this.props.setRoute(
+                        `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
+                    );
+                }
+
+
+                else {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
                     );
