@@ -763,7 +763,7 @@ export const getReceipt = async (
         if (applicationNumber && tenantId) {
             let queryObject = [
                 { key: "tenantId", value: tenantId },
-                { key: "consumerCode", value: applicationNumber },
+                { key: "consumerCodes", value: applicationNumber },
             ];
             const payload = await httpRequest(
                 "post",
@@ -1574,18 +1574,37 @@ export const downloadReceipt = (
                         transactionId:
                             payloadReceiptDetails.Payments[0].transactionNumber,
                         bookingPeriod:
+
+
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
-                                ? getDurationDate(
-                                    applicationData.bkFromDate,
-                                    applicationData.bkToDate
-                                )
-                                : `${applicationData.bkDate} , ${applicationData.bkTime} `,
+                                .bill.businessService !== "GFCP" ? (payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "OSBM" ? getDurationDate(
+                                        applicationData.bkFromDate,
+                                        applicationData.bkToDate
+                                    )
+                                    : `${applicationData.bkDate} , ${applicationData.bkTime} `) : getDurationDate(
+                                        applicationData.bkFromDate,
+                                        applicationData.bkToDate
+                                    ),
+
+
+
+
+
                         bookingItem:
+
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
-                                ? "Online Payment Against Booking of Open Space for Building Material"
-                                : "Online Payment Against Booking of Water Tanker",
+                                .bill.businessService !== "GFCP" ? (payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "OSBM" ? "Online Payment Against Booking of Open Space for Building Material"
+                                    : "Online Payment Against Booking of Water Tanker") : "Online Payment Against Booking of Commercial Ground",
+
+
+
+
+                        // payloadReceiptDetails.Payments[0].paymentDetails[0]
+                        //     .bill.businessService === "OSBM"
+                        //     ? "Online Payment Against Booking of Open Space for Building Material"
+                        //     : "Online Payment Against Booking of Water Tanker",
                         amount:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.billDetails[0].billAccountDetails.filter(el => !el.taxHeadCode.includes("TAX"))[0].amount,
@@ -1598,10 +1617,18 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].totalAmountPaid
                         ),
                         paymentItemExtraColumnLabel:
+
+
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
-                                ? "Booking Period"
-                                : "Date & Time",
+                                .bill.businessService !== "GFCP" ? (payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "OSBM"
+                                    ? "Booking Period"
+                                    : "Date & Time") : "Booking Period",
+
+                        // payloadReceiptDetails.Payments[0].paymentDetails[0]
+                        // .bill.businessService === "OSBM"
+                        // ? "Booking Period"
+                        // : "Date & Time",
                     },
                 },
             ];

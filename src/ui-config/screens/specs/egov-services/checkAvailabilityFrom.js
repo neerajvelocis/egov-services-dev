@@ -201,7 +201,10 @@ export const callBackForSearch = async (state, dispatch) => {
 
 
 // "done!"
+var dt = new Date()
 
+//dt.setMonth(dt.getMonth() + 6);
+alert(dt)
 
 
 
@@ -231,6 +234,8 @@ export const NOCCalendar = getCommonCard({
                 maxWidth: false,
                 screenKey: "bookingCalendar",
                 reservedDays: [],
+
+
             },
             children: {
                 popup: {},
