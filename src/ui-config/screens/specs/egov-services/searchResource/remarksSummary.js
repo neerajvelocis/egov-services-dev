@@ -28,7 +28,6 @@ export const remarksSummary = getCommonGrayCard({
         Date: getLabelWithValue({
             jsonPath: "Booking.bookingsRemarks[0]",
             callBack: (value) => {
-                console.log(value, "remarksValue");
                 if (value === undefined) {
                     return "No Remarks Available.";
                 } else {

@@ -25,7 +25,7 @@ import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
 import {
-    getReceipt,
+    generageBillCollection,
     generateBill,
 } from "../utils";
 import { applicantSummary } from "./searchResource/applicantSummary";
@@ -157,7 +157,7 @@ const setSearchResponse = async (
         {}
     );
     if(bookingStatus === "APPROVED"){
-        await getReceipt(state, dispatch, applicationNumber, tenantId)
+        await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     }
@@ -274,16 +274,18 @@ const screenConfig = {
                         },
                     },
                 },
-                // taskStatus: {
-                //   uiFramework: "custom-containers-local",
-                //   componentPath: "WorkFlowContainer",
-                //   moduleName: "egov-workflow",
+                taskStatus: {
+                  uiFramework: "custom-containers-local",
+                  componentPath: "WorkFlowContainer",
+                  moduleName: "egov-services",
                 //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+                  visible: true,
                 //   props: {
-                //     dataPath: "Licenses",
-                //     moduleName: "SELLMEATNOC",
+                //     dataPath: "Booking",
+                //     moduleName: "MyBooking",
                 //   },
-                // },
+                },
+                
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     applicantSummary : applicantSummary,

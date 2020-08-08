@@ -60,7 +60,7 @@ class Example extends React.Component {
 
     getInitialState() {
         return {
-            from: new Date(),
+            from: null,
             to: null,
             enteredTo: null, // Keep track of the last day for mouseEnter.
         };

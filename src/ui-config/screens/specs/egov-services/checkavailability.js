@@ -1,5 +1,5 @@
 
-import { NOCApplication, NOCCalendar } from "./checkAvailabilityFrom";
+import { NOCApplication, NOCCalendar } from "./checkAvailabilityForm";
 
 import { prepareFinalObject, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 

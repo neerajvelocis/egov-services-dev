@@ -110,7 +110,7 @@ const callBackForBook = async (state, dispatch) => {
         let reviewUrl = `${appendUrl}/egov-services/applycommercialground?from=${fromDateString}&to=${toDateString}&venue=${venueData}`;
         dispatch(setRoute(reviewUrl))
     } else {
-        let warrningMsg = { labelName: "Please select Date RANGE", labelKey: "BK_CGB_SELECT_DATE_RANGE" };
+        let warrningMsg = { labelName: "Please select Date RANGE", labelKey: "" };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
     }
 }
@@ -149,7 +149,7 @@ export const callBackForSearch = async (state, dispatch) => {
     }
     else {
 
-        dispatch(prepareFinalObject("bookingCalendar.allowClick", "true"));
+
         // let promise = new Promise((resolve, reject) => {
         //     setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
         // })
@@ -159,37 +159,48 @@ export const callBackForSearch = async (state, dispatch) => {
         // let promise = new Promise((resolve, reject) => {
         //          setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
         //      })
+
+
         let response = await getDates()
+
         console.log(response, "res1")
-        let data = response.data
-        console.log(data, "datedata")
+        if (await response !== undefined) {
+            let data = response.data
+            console.log(data, "datedata")
 
-        let reservedDates = []
-        var daylist = []
-        data.map((dataitem) => {
-            let start = dataitem.fromDate;
-            let end = dataitem.toDate;
-            daylist = getDaysArray(start, end);
-            console.log(daylist, "LOOP1")
+            dispatch(prepareFinalObject("bookingCalendar.allowClick", "true"));
+
+            let reservedDates = []
+            var daylist = []
+            data.map((dataitem) => {
+                let start = dataitem.fromDate;
+                let end = dataitem.toDate;
+                daylist = getDaysArray(start, end);
+                console.log(daylist, "LOOP1")
 
 
-            daylist.map((v) => {
-                reservedDates.push(v.toISOString().slice(0, 10))
-                console.log(reservedDates, "LOOP2")
+                daylist.map((v) => {
+                    reservedDates.push(v.toISOString().slice(0, 10))
+                    console.log(reservedDates, "LOOP2")
+                })
+
             })
+            console.log(reservedDates, "daylist")
+            const actionDefination = [
 
-        })
-        console.log(reservedDates, "daylist")
-        const actionDefination = [
+                {
+                    path: "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                    property: "reservedDays",
+                    value: reservedDates
+                },
 
-            {
-                path: "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-                property: "reservedDays",
-                value: reservedDates
-            },
-
-        ];
-        dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch);
+            ];
+            dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch);
+        }
+        else {
+            dispatch(toggleSnackbar(true, { labelName: "Please Try After Sometime!", labelKey: "" },
+                "warning"));
+        }
 
     }
 
@@ -200,11 +211,6 @@ export const callBackForSearch = async (state, dispatch) => {
 }
 
 
-// "done!"
-var dt = new Date()
-
-//dt.setMonth(dt.getMonth() + 6);
-alert(dt)
 
 
 
@@ -212,19 +218,19 @@ alert(dt)
 
 export const NOCCalendar = getCommonCard({
     Calendar: getCommonContainer({
-        dummyDiv: {
-            uiFramework: "custom-atoms",
-            componentPath: "Div",
-            gridDefination: {
-                xs: 12,
+        // dummyDiv: {
+        //     uiFramework: "custom-atoms",
+        //     componentPath: "Div",
+        //     gridDefination: {
+        //         xs: 12,
 
-                md: 1,
-            },
-            visible: true,
-            props: {
-                disabled: true
-            }
-        },
+        //         md: 1,
+        //     },
+        //     visible: true,
+        //     props: {
+        //         disabled: true
+        //     }
+        // },
         bookingCalendar: {
             uiFramework: "custom-atoms-local",
             moduleName: "egov-services",
@@ -242,7 +248,7 @@ export const NOCCalendar = getCommonCard({
 
             },
         },
-
+        break: getBreak(),
         bookButton: {
             componentPath: "Button",
             props: {
@@ -251,7 +257,7 @@ export const NOCCalendar = getCommonCard({
                 style: {
                     //minWidth: "200px",
                     height: "48px",
-                    marginLeft: "830px"
+
                 }
 
             },
@@ -295,7 +301,7 @@ export const NOCApplication = getCommonCard({
                 gridDefination: {
                     xs: 12,
                     sm: 6,
-                    md: 4,
+                    md: 6,
                 },
 
                 sourceJsonPath: "calendarScreenMdmsData.sector",
@@ -370,9 +376,10 @@ export const NOCApplication = getCommonCard({
             uiFramework: "custom-atoms",
             componentPath: "Div",
             gridDefination: {
-                xs: 12,
+                xs: 0,
                 sm: 6,
-                md: 12,
+                md: 0,
+
             },
             visible: true,
             props: {

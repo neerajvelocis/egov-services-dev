@@ -30,7 +30,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { searchBill } from "../utils/index";
 import generatePdf from "../utils/receiptPdf";
-import { getReceipt, generateBill } from "../utils";
+import { generageBillCollection, generateBill } from "../utils";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { applicantSummary } from "./searchResource/applicantSummary";
 import { waterTankerSummary } from "./searchResource/waterTankerSummary";
@@ -379,22 +379,6 @@ const setSearchResponse = async (
 
     // HideshowFooter(action, bookingStatus);
 
-    // const CitizenprintCont = footerReviewTop(
-    //     action,
-    //     state,
-    //     dispatch,
-    //     bookingStatus,
-    //     applicationNumber,
-    //     tenantId,
-    //     ""
-    // );
-
-    // set(
-    //     action,
-    //     "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-    //     CitizenprintCont
-    // )
-
     if (bookingCase.includes("Paid")) {
         if (
             bookingStatus === "PENDINGASSIGNMENTDRIVER" ||
@@ -402,7 +386,7 @@ const setSearchResponse = async (
             bookingStatus === "DELIVERED" ||
             bookingStatus === "NOTDELIVERED"
         ) {
-            await getReceipt(state, dispatch, applicationNumber, tenantId);
+            await generageBillCollection(state, dispatch, applicationNumber, tenantId);
         } else {
             await generateBill(
                 state,
@@ -650,16 +634,16 @@ const screenConfig = {
                         },
                     },
                 },
-                // taskStatus: {
-                //   uiFramework: "custom-containers-local",
-                //   componentPath: "WorkFlowContainer",
-                //   moduleName: "egov-workflow",
-                //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
-                //   props: {
-                //     dataPath: "Licenses",
-                //     moduleName: "SELLMEATNOC",
-                //   },
-                // },
+                taskStatus: {
+                  uiFramework: "custom-containers-local",
+                  componentPath: "WorkFlowContainer",
+                  moduleName: "egov-services",
+                  visible: true,
+                  props: {
+                    // dataPath: "Licenses",
+                    // moduleName: "SELLMEATNOC",
+                  },
+                },
 
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
