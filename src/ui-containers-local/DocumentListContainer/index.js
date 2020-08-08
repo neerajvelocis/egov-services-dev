@@ -32,7 +32,12 @@ const mapStateToProps = state => {
     "screenConfiguration.preparedFinalObject.popupdocumentsContract",
     []
   );
-  return { documentsList, popupdocumentsContract};
+  const documentsUploadReduxOld = get(
+    state,
+    "screenConfiguration.preparedFinalObject.documentsUploadReduxOld",
+    {}
+  );
+  return { documentsList, popupdocumentsContract, documentsUploadReduxOld};
 };
 
 export default withStyles(styles)(

@@ -896,11 +896,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
     }
 };
 
-export const createUpdateWtbApplication = async (
-    state,
-    dispatch,
-    action
-) => {
+export const createUpdateWtbApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
     // let applicationNumber =
@@ -920,28 +916,22 @@ export const createUpdateWtbApplication = async (
         setapplicationMode(status);
 
         // if (method === "CREATE") {
-            response = await httpRequest(
-                "post",
-                "/bookings/api/_create",
-                "",
-                [],
-                {
-                    Booking: payload,
-                }
-            );
-            console.log("pet response : ", response);
-            if (
-                response.data.bkApplicationNumber !== "null" ||
-                response.data.bkApplicationNumber !== ""
-            ) {
-                dispatch(prepareFinalObject("Booking", response.data));
-                setapplicationNumber(response.data.bkApplicationNumber);
-                setApplicationNumberBox(state, dispatch);
-                return { status: "success", data: response.data };
-            } else {
-                return { status: "fail", data: response.data };
-            }
-        // } 
+        response = await httpRequest("post", "/bookings/api/_create", "", [], {
+            Booking: payload,
+        });
+        console.log("pet response : ", response);
+        if (
+            response.data.bkApplicationNumber !== "null" ||
+            response.data.bkApplicationNumber !== ""
+        ) {
+            dispatch(prepareFinalObject("Booking", response.data));
+            setapplicationNumber(response.data.bkApplicationNumber);
+            setApplicationNumberBox(state, dispatch);
+            return { status: "success", data: response.data };
+        } else {
+            return { status: "fail", data: response.data };
+        }
+        // }
         // else if (method === "UPDATE") {
         //     response = await httpRequest(
         //         "post",
@@ -1446,6 +1436,47 @@ export const isFileValid = (file, acceptedFiles) => {
         false
     );
 };
+
+// Created for OSBM
+
+export const furnishOsbmResponse = (response) => {
+    // Handle applicant ownership dependent dropdowns
+    let refurnishresponse = {};
+    let applicationdetail =
+        response.bookingsModelList.length > 0 && response.bookingsModelList[0];
+
+        console.log(response, "myapplicationdetail");
+
+    set(
+        refurnishresponse,
+        "bkApplicantName",
+        applicationdetail.bkApplicantName
+    );
+    set(refurnishresponse, "bkMobileNumber", applicationdetail.bkMobileNumber);
+    set(refurnishresponse, "bkEmail", applicationdetail.bkEmail);
+
+    set(refurnishresponse, "bkHouseNo", applicationdetail.bkHouseNo);
+    set(
+        refurnishresponse,
+        "bkCompleteAddress",
+        applicationdetail.bkCompleteAddress
+    );
+    set(refurnishresponse, "bkSector", applicationdetail.bkSector);
+    set(refurnishresponse, "bkType", applicationdetail.bkType);
+
+    set(refurnishresponse, "bkAreaRequired", applicationdetail.bkAreaRequired);
+    set(refurnishresponse, "bkDuration", applicationdetail.bkDuration);
+    set(refurnishresponse, "bkCategory", applicationdetail.bkCategory);
+    set(refurnishresponse, "bkVillCity", applicationdetail.bkVillCity);
+    set(
+        refurnishresponse,
+        "bkConstructionType",
+        applicationdetail.bkConstructionType
+    );
+    return refurnishresponse;
+};
+
+// Ceated for OSBM
 
 export const furnishNocResponse = (response) => {
     // Handle applicant ownership dependent dropdowns

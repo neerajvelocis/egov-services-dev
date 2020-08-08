@@ -99,7 +99,6 @@ const callBackForNext = async (state, dispatch) => {
                 state.screenConfiguration.preparedFinalObject,
                 "Booking"
             );
-            console.log("myApplicationData", applicationData);
             setapplicationNumber(applicationData.bkApplicationNumber);
             setTimeout(() => {
                 const appendUrl =
@@ -117,19 +116,20 @@ const callBackForNext = async (state, dispatch) => {
             );
             let responseStatus = get(response, "status", "");
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                let successMessage = {
-                    labelName: "APPLICATION SUBMITTED SUCCESSFULLY! ",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                dispatch(toggleSnackbar(true, successMessage, "success"));
-                setTimeout(() => {
-                    const appendUrl =
-                        process.env.REACT_APP_SELF_RUNNING === "true"
-                            ? "/egov-ui-framework"
-                            : "";
-                    const reviewUrl = `${appendUrl}/egov-services/my-applications`;
-                    dispatch(setRoute(reviewUrl));
-                }, 1000);
+                // let successMessage = {
+                //     labelName: "APPLICATION SUBMITTED SUCCESSFULLY! ",
+                //     labelKey: "", //UPLOAD_FILE_TOAST
+                // };
+                // dispatch(toggleSnackbar(true, successMessage, "success"));
+                let tenantId = getTenantId().split(".")[0];
+                let applicationNumber = get(
+                    response,
+                    "data.bkApplicationNumber",
+                    ""
+                );
+                let businessService = get(response, "data.businessService", "");
+                const reviewUrl = `/egov-services/acknowledgement?purpose=${"apply"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+                dispatch(setRoute(reviewUrl));
             } else {
                 let errorMessage = {
                     labelName: "Submission Falied, Try Again later!",

@@ -78,6 +78,10 @@ const MultiItemsWithImageContainer = Loadable({
   loader: () => import("./MultiItemsWithImageContainer"),
   loading: () => <Loading />
 });
+const WorkFlowContainer = Loadable({
+  loader: () => import("./WorkFlowContainer"),
+  loading: () => <Loading />
+});
 
 
 
@@ -99,5 +103,6 @@ export {
   ReassignContainer,
   ForwardContainer,
   UnderTakingContainer,
-  MultiItemsWithImageContainer
+  MultiItemsWithImageContainer,
+  WorkFlowContainer
 };

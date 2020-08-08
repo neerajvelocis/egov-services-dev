@@ -60,6 +60,19 @@ const MultiItemsWithImage = Loadable({
   loader: () => import("./MultiItemsWithImage"),
   loading: () => <Loading />
 });
+const TaskDialog = Loadable({
+  loader: () => import("./TaskDialog"),
+  loading: () => <Loading />
+});
+
+const TaskStatusComponents = Loadable({
+  loader: () => import("./TaskStatusComponents"),
+  loading: () => <Loading />
+});
+const Footer = Loadable({
+  loader: () => import("./Footer"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -73,5 +86,8 @@ export {
   FeesEstimateCard,
   DividerWithLabel,
   HowItWorks,
-  MultiItemsWithImage
+  MultiItemsWithImage,
+  TaskDialog,
+  TaskStatusComponents,
+  Footer
 };
