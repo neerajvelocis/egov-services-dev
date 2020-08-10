@@ -1686,19 +1686,19 @@ export const downloadCertificate = (
     };
     try {
         let queryStr = [
-            { key: "key", value: "bk-osbm-pl" },
+            { key: "key", value: applicationData.businessService == "OSBM" ? "bk-osbm-pl" : "bk-cg-pl" },
             { key: "tenantId", value: "ch" },
         ];
 
-        applicationData.businessService == "OSBM"
-            ? queryStr = [
-                { key: "key", value: "bk-osbm-pl" },
-                { key: "tenantId", value: "ch" },
-            ]
-            : queryStr = [
-                { key: "key", value: "bk-cg-pl" },
-                { key: "tenantId", value: "ch" },
-            ]
+        // applicationData.businessService == "OSBM"
+        //     ? queryStr = [
+        //         { key: "key", value: "bk-osbm-pl" },
+        //         { key: "tenantId", value: "ch" },
+        //     ]
+        //     : queryStr = [
+        //         { key: "key", value: "bk-cg-pl" },
+        //         { key: "tenantId", value: "ch" },
+        //     ]
 
 
         let certificateData = [
@@ -1706,10 +1706,10 @@ export const downloadCertificate = (
                 applicantDetail: {
                     name: applicationData.bkApplicantName,
                     mobileNumber: applicationData.bkMobileNumber,
-                    houseNo: applicationData.bkSector,
+                    houseNo: applicationData.bkHouseNo,
                     permanentAddress: applicationData.bkCompleteAddress,
                     permanentCity: tenantId,
-                    sector: applicationData.bkHouseNo,
+                    sector: applicationData.bkSector,
                 },
                 bookingDetail: {
                     applicationNumber: applicationNumber,
@@ -1725,10 +1725,16 @@ export const downloadCertificate = (
                         applicationData.bkFromDate,
                         applicationData.bkToDate
                     ),
+                    bookingPeriod : getDurationDate(
+                        applicationData.bkFromDate,
+                        applicationData.bkToDate
+                    ),
+                    groundName : applicationData.bkSector,
                     duration:
                         applicationData.bkDuration == "1"
                             ? `${applicationData.bkDuration} Month`
                             : `${applicationData.bkDuration} Months`,
+                            
                     categoryImage: "",
                     // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
                 },
