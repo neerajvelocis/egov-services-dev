@@ -1,7 +1,15 @@
-
 import {
-    getBreak, getCommonCard, getCommonContainer, getCommonGrayCard, getCommonTitle,
-    getSelectField, getDateField, getTextField, getPattern, getLabel, getTodaysDateInYMD
+    getBreak,
+    getCommonCard,
+    getCommonContainer,
+    getCommonGrayCard,
+    getCommonTitle,
+    getSelectField,
+    getDateField,
+    getTextField,
+    getPattern,
+    getLabel,
+    getTodaysDateInYMD,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     getTenantId,
@@ -10,26 +18,24 @@ import {
     lSRemoveItemlocal,
     setapplicationNumber,
     getUserInfo,
-    localStorageSet
+    localStorageSet,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
-    prepareFinalObject, handleScreenConfigurationFieldChange as handleField, toggleSnackbar
-} from "egov-ui-framework/ui-redux/screen-configuration/actions"; import {
-    dispatchMultipleFieldChangeAction,
-} from "egov-ui-framework/ui-config/screens/specs/utils";
+    prepareFinalObject,
+    handleScreenConfigurationFieldChange as handleField,
+    toggleSnackbar,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import set from "lodash/set";
 import { httpRequest } from "../../../../ui-utils/api";
 
 export const getDates = async (sectorData) => {
-
-
     let requestBody = {
-        bookingType: 'GROUND_FOR_COMMERCIAL_PURPOSE',
-        bookingVenue: sectorData
-
-    }
+        bookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
+        bookingVenue: sectorData,
+    };
 
     try {
         const payload = await httpRequest(
@@ -38,15 +44,11 @@ export const getDates = async (sectorData) => {
             "",
             [],
             requestBody
-        )
+        );
         // dispatch(prepareFinalObject("occupiedDates", payload.data));
-        return payload
-
-    } catch (exception) {
-
-    }
+        return payload;
+    } catch (exception) {}
 };
-
 
 export const callBackForReset = (state, dispatch, action) => {
     const preparedFinalObject = get(
@@ -56,7 +58,6 @@ export const callBackForReset = (state, dispatch, action) => {
     const { bookingCalendar } = preparedFinalObject;
     console.log(bookingCalendar, "bookingCalendar");
     if (bookingCalendar.sector) {
-
         dispatch(
             handleField(
                 "checkavailability",
@@ -65,7 +66,6 @@ export const callBackForReset = (state, dispatch, action) => {
                 ""
             )
         );
-
     }
 
     if (bookingCalendar.toDateToDisplay) {
@@ -90,54 +90,66 @@ export const callBackForReset = (state, dispatch, action) => {
     }
 
     const actionDefination = [
-
         {
-            path: "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+            path:
+                "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
             property: "reservedDays",
-            value: []
+            value: [],
         },
-
     ];
-    dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch);
+    dispatchMultipleFieldChangeAction(
+        "checkavailability",
+        actionDefination,
+        dispatch
+    );
     dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
-
 };
 
-
 const callBackForBook = async (state, dispatch) => {
-
-    const appendUrl = process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-    if ('Check' in state.screenConfiguration.preparedFinalObject && state.screenConfiguration.preparedFinalObject.Check.toDate !== "") {
-
-        let venueData = state.screenConfiguration.preparedFinalObject.bookingCalendar.sector;
-        let fromDateString = state.screenConfiguration.preparedFinalObject.Check.fromDate;
-        let toDateString = state.screenConfiguration.preparedFinalObject.Check.toDate;
-        localStorageSet("fromDateCG", fromDateString)
-        localStorageSet("toDateCG", toDateString)
-        localStorageSet("venueCG", venueData)
+    const appendUrl =
+        process.env.REACT_APP_SELF_RUNNING === "true"
+            ? "/egov-ui-framework"
+            : "";
+    if (
+        "Check" in state.screenConfiguration.preparedFinalObject &&
+        state.screenConfiguration.preparedFinalObject.Check.toDate !== ""
+    ) {
+        let venueData =
+            state.screenConfiguration.preparedFinalObject.bookingCalendar
+                .sector;
+        let fromDateString =
+            state.screenConfiguration.preparedFinalObject.Check.fromDate;
+        let toDateString =
+            state.screenConfiguration.preparedFinalObject.Check.toDate;
+        localStorageSet("fromDateCG", fromDateString);
+        localStorageSet("toDateCG", toDateString);
+        localStorageSet("venueCG", venueData);
         let reviewUrl = `${appendUrl}/egov-services/applycommercialground`;
-        dispatch(setRoute(reviewUrl))
+        dispatch(setRoute(reviewUrl));
     } else {
-        let warrningMsg = { labelName: "Please select Date RANGE", labelKey: "" };
+        let warrningMsg = {
+            labelName: "Please select Date RANGE",
+            labelKey: "",
+        };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
     }
-}
-
+};
 
 var getDaysArray = function (start, end) {
     let arr = [];
     let endDate = new Date(end);
-    for (let dt = new Date(start); dt <= endDate; dt.setDate(dt.getDate() + 1)) {
+    for (
+        let dt = new Date(start);
+        dt <= endDate;
+        dt.setDate(dt.getDate() + 1)
+    ) {
         arr.push(new Date(dt));
     }
-    console.log(arr, "ARRAY")
+    console.log(arr, "ARRAY");
     return arr;
 };
 
-
-
 export const callBackForSearch = async (state, dispatch) => {
-
     let sectorData = get(
         state,
         "screenConfiguration.preparedFinalObject.bookingCalendar.sector"
@@ -153,12 +165,14 @@ export const callBackForSearch = async (state, dispatch) => {
     // );
 
     if (sectorData === "") {
-        dispatch(toggleSnackbar(true, { labelName: "Please Select Booking Venue!", labelKey: "" },
-            "warning"));
-    }
-    else {
-
-
+        dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: "Please Select Booking Venue!", labelKey: "" },
+                "warning"
+            )
+        );
+    } else {
         // let promise = new Promise((resolve, reject) => {
         //     setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
         // })
@@ -169,77 +183,56 @@ export const callBackForSearch = async (state, dispatch) => {
         //          setTimeout(() => resolve(['2020-07-01', '2020-07-04', '2020-07-15', '2020-07-31',]), 1000)
         //      })
 
+        let response = await getDates(sectorData);
 
-        let response = await getDates(sectorData)
-
-        console.log(response, "res1")
-        if (await response !== undefined) {
-            let data = response.data
-            console.log(data, "datedata")
+        console.log(response, "res1");
+        if ((await response) !== undefined) {
+            let data = response.data;
+            console.log(data, "datedata");
 
             dispatch(prepareFinalObject("bookingCalendar.allowClick", "true"));
 
-            let reservedDates = []
-            var daylist = []
+            let reservedDates = [];
+            var daylist = [];
             data.map((dataitem) => {
                 let start = dataitem.fromDate;
                 let end = dataitem.toDate;
                 daylist = getDaysArray(start, end);
-                console.log(daylist, "LOOP1")
-
+                console.log(daylist, "LOOP1");
 
                 daylist.map((v) => {
-                    reservedDates.push(v.toISOString().slice(0, 10))
-                    console.log(reservedDates, "LOOP2")
-                })
-
-            })
-            console.log(reservedDates, "daylist")
+                    reservedDates.push(v.toISOString().slice(0, 10));
+                    console.log(reservedDates, "LOOP2");
+                });
+            });
+            console.log(reservedDates, "daylist");
             const actionDefination = [
-
                 {
-                    path: "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                    path:
+                        "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
                     property: "reservedDays",
-                    value: reservedDates
+                    value: reservedDates,
                 },
-
             ];
-            dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch);
+            dispatchMultipleFieldChangeAction(
+                "checkavailability",
+                actionDefination,
+                dispatch
+            );
+        } else {
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    { labelName: "Please Try After Sometime!", labelKey: "" },
+                    "warning"
+                )
+            );
         }
-        else {
-            dispatch(toggleSnackbar(true, { labelName: "Please Try After Sometime!", labelKey: "" },
-                "warning"));
-        }
-
     }
-
-
-
-
-
-}
-
-
-
-
-
-
+};
 
 export const NOCCalendar = getCommonCard({
     Calendar: getCommonContainer({
-        // dummyDiv: {
-        //     uiFramework: "custom-atoms",
-        //     componentPath: "Div",
-        //     gridDefination: {
-        //         xs: 12,
-
-        //         md: 1,
-        //     },
-        //     visible: true,
-        //     props: {
-        //         disabled: true
-        //     }
-        // },
         bookingCalendar: {
             uiFramework: "custom-atoms-local",
             moduleName: "egov-services",
@@ -248,19 +241,15 @@ export const NOCCalendar = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 12,
-
             },
             props: {
                 open: false,
                 maxWidth: false,
                 screenKey: "bookingCalendar",
                 reservedDays: [],
-
-
             },
             children: {
                 popup: {},
-
             },
         },
         dummyDiv: {
@@ -270,16 +259,12 @@ export const NOCCalendar = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 9,
-
-
-
             },
             visible: true,
             props: {
-                disabled: true
-            }
+                disabled: true,
+            },
         },
-
 
         bookButton: {
             componentPath: "Button",
@@ -289,34 +274,28 @@ export const NOCCalendar = getCommonCard({
                 style: {
                     minWidth: "200px",
                     height: "48px",
-                    marginTop: "50px"
-
-                }
-
+                    marginTop: "50px",
+                },
             },
 
             children: {
                 submitButtonLabel: getLabel({
                     labelName: "Book",
-                    labelKey: "BK_CGB_BOOK_LABEL"
+                    labelKey: "BK_CGB_BOOK_LABEL",
                 }),
-
             },
             onClickDefination: {
                 action: "condition",
-                callBack: callBackForBook
+                callBack: callBackForBook,
             },
             visible: true,
         },
-
-
-    })
-
-})
+    }),
+});
 export const NOCApplication = getCommonCard({
     subHeader: getCommonTitle({
         labelName: "Check Commercial Ground Availability",
-        labelKey: "BK_CGB_CHECK_AVAILABILITY_HEADING"
+        labelKey: "BK_CGB_CHECK_AVAILABILITY_HEADING",
     }),
 
     break: getBreak(),
@@ -336,7 +315,6 @@ export const NOCApplication = getCommonCard({
                     xs: 12,
                     sm: 6,
                     md: 6,
-
                 },
 
                 sourceJsonPath: "calendarScreenMdmsData.sector",
@@ -415,8 +393,6 @@ export const NOCApplication = getCommonCard({
         //         sm: 12,
         //         md: 12,
 
-
-
         //     },
         //     visible: true,
         //     props: {
@@ -438,14 +414,13 @@ export const NOCApplication = getCommonCard({
                 style: {
                     minWidth: "200px",
                     height: "48px",
-                    marginRight: "16px"
-                }
+                    marginRight: "16px",
+                },
             },
             gridDefination: {
                 xs: 12,
                 sm: 12,
                 md: 3,
-
             },
 
             children: {
@@ -458,14 +433,14 @@ export const NOCApplication = getCommonCard({
                 // },
                 submitButtonLabel: getLabel({
                     labelName: "Search",
-                    labelKey: "BK_CGB_SEARCH_LABEL"
-                })
+                    labelKey: "BK_CGB_SEARCH_LABEL",
+                }),
             },
             onClickDefination: {
                 action: "condition",
-                callBack: callBackForSearch
+                callBack: callBackForSearch,
             },
-            visible: true
+            visible: true,
         },
         resetButton: {
             componentPath: "Button",
@@ -477,30 +452,25 @@ export const NOCApplication = getCommonCard({
                     height: "48px",
                     marginRight: "16px",
                     //marginLeft: "100px"
-                }
+                },
             },
             gridDefination: {
                 xs: 12,
                 sm: 12,
                 md: 3,
-
             },
 
             children: {
                 resetButtonLabel: getLabel({
                     labelName: "Reset",
-                    labelKey: "BK_CGB_RESET_LABEL"
-                })
+                    labelKey: "BK_CGB_RESET_LABEL",
+                }),
             },
             onClickDefination: {
                 action: "condition",
-                callBack: callBackForReset
-
+                callBack: callBackForReset,
             },
-            visible: true
+            visible: true,
         },
-       
-
     }),
-
 });
