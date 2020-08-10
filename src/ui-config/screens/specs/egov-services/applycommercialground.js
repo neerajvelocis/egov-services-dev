@@ -6,7 +6,7 @@ import {
 import {
     getCurrentFinancialYear,
     clearlocalstorageAppDetails,
-    convertDateInDMY,
+    convertDateInYMD,
 } from "../utils";
 import { footer } from "./applyResourceCommercialGround/footer";
 import {
@@ -340,19 +340,19 @@ const screenConfig = {
 
         const queryfrom = getQueryArg(window.location.href, "from");
         const queryto = getQueryArg(window.location.href, "to");
-        const from = convertDateInDMY(queryfrom);
-        const to = convertDateInDMY(queryto);
+        const from = convertDateInYMD(queryfrom);
+        const to = convertDateInYMD(queryto);
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
-                convertDateInDMY(localStorageGet("fromDateCG"))
+                convertDateInYMD(localStorageGet("fromDateCG"))
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkToDate",
-                convertDateInDMY(localStorageGet("toDateCG"))
+                convertDateInYMD(localStorageGet("toDateCG"))
             )
         );
 
