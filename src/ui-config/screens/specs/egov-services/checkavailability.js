@@ -6,7 +6,7 @@ import {
     checkAvailabilitySearch,
     checkAvailabilityCalendar,
 } from "./checkAvailabilityForm";
-import { setapplicationNumber, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
+import { setapplicationNumber, lSRemoveItemlocal, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     prepareFinalObject,
@@ -30,23 +30,30 @@ const getMdmsData = async (action, state, dispatch) => {
         payload.sector = [
             {
                 id: 1,
-                code: "SECTOR-17",
+                code: "Circus Ground, Sector 17",
                 tenantId: "ch.chandigarh",
-                name: "SECTOR-17",
+                name: "Circus Ground, Sector 17",
                 active: true,
             },
             {
                 id: 2,
-                code: "EG_SECTOR_34",
+                code: "Exhibition Ground, Sector 34",
                 tenantId: "ch.chandigarh",
-                name: "EG_SECTOR_34",
+                name: "Exhibition Ground, Sector 34",
                 active: true,
             },
             {
                 id: 2,
-                code: "MANIMAJRA",
+                code: "Housing Board Ground, Manimajra",
                 tenantId: "ch.chandigarh",
-                name: "MANIMAJRA",
+                name: "Housing Board Ground, Manimajra",
+                active: true,
+            },
+            {
+                id: 2,
+                code: "Circus Ground, Manimajra",
+                tenantId: "ch.chandigarh",
+                name: "Circus Ground, Manimajra",
                 active: true,
             },
         ];
@@ -56,6 +63,71 @@ const getMdmsData = async (action, state, dispatch) => {
         console.log(e);
     }
 };
+
+// const getMdmsData = async (action, state, dispatch) => {
+// 	alert("this")
+//     let tenantId = getTenantId().split(".")[0];
+//     let mdmsBody = {
+//         MdmsCriteria: {
+//             tenantId: tenantId,
+//             moduleDetails: [
+//                 {
+//                     moduleName: "tenant",
+//                     masterDetails: [
+//                         {
+//                             name: "tenants",
+//                         },
+//                     ],
+//                 },
+//                 {
+//                     moduleName: "Booking",
+//                     masterDetails: [
+//                         {
+//                             name: "Commerical_Ground_Cat",
+//                         },
+//                     ],
+//                 },
+//             ],
+//         },
+//     };
+//     try {
+//         let payload = null;
+//         payload = await httpRequest(
+//             "post",
+//             "/egov-mdms-service/v1/_search",
+//             "_search",
+//             [],
+//             mdmsBody
+// 		);
+// 		console.log(payload, "myPayload");
+// 		// payload.sector = [
+//         //     {
+//         //         id: 1,
+//         //         code: "SECTOR-17",
+//         //         tenantId: "ch.chandigarh",
+//         //         name: "SECTOR-17",
+//         //         active: true,
+//         //     },
+//         //     {
+//         //         id: 2,
+//         //         code: "EG_SECTOR_34",
+//         //         tenantId: "ch.chandigarh",
+//         //         name: "EG_SECTOR_34",
+//         //         active: true,
+//         //     },
+//         //     {
+//         //         id: 2,
+//         //         code: "MANIMAJRA",
+//         //         tenantId: "ch.chandigarh",
+//         //         name: "MANIMAJRA",
+//         //         active: true,
+//         //     },
+//         // ];
+//         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
 
 const prepareEditFlow = async (
     state,
@@ -159,8 +231,6 @@ const screenConfig = {
         const tenantId = getQueryArg(window.location.href, "tenantId");
 		getMdmsData(action, state, dispatch);
 		
-
-
         if (applicationNumber !== null) {
             set(
                 action.screenConfig,

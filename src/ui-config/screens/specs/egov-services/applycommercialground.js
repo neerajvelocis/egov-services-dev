@@ -148,7 +148,6 @@ export const formwizardFourthStep = {
 
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
-    console.log(tenantId, "tenantId");
     let mdmsBody = {
         MdmsCriteria: {
             tenantId: tenantId,
@@ -165,32 +164,12 @@ const getMdmsData = async (action, state, dispatch) => {
                     moduleName: "Booking",
                     masterDetails: [
                         {
-                            name: "Sector",
+                            name: "Com_Ground_Documents",
                         },
                         {
-                            name: "CityType",
+                            name: "Commerical_Ground_Cat",
                         },
-                        {
-                            name: "PropertyType",
-                        },
-                        {
-                            name: "Area",
-                        },
-                        {
-                            name: "Duration",
-                        },
-                        {
-                            name: "Category",
-                        },
-                        {
-                            name: "Documents",
-                        },
-                        {
-                            name: "Purpose",
-                        },
-                        {
-                            name: "BookingVenue",
-                        },
+                        
                     ],
                 },
             ],
@@ -206,80 +185,80 @@ const getMdmsData = async (action, state, dispatch) => {
             mdmsBody
         );
         ///company///municipal corporation)
-        payload.MdmsRes.BookingVenue = [
-            {
-                id: 1,
-                code: "Sector 17",
-                tenantId: "ch.chandigarh",
-                name: "Sector 17",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "Sector 34",
-                tenantId: "ch.chandigarh",
-                name: "Sector 34",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "Manimajra",
-                tenantId: "ch.chandigarh",
-                name: "Manimajra",
-                active: true,
-            },
-        ];
-        payload.MdmsRes.Category = [
-            {
-                id: 1,
-                code: "INDIVIDUAL",
-                tenantId: "ch.chandigarh",
-                name: "INDIVIDUAL",
-                active: true,
-            },
-            {
-                id: 1,
-                code: "CORPORATE",
-                tenantId: "ch.chandigarh",
-                name: "CORPORATE",
-                active: true,
-            },
-            {
-                id: 1,
-                code: "SOCIETY",
-                tenantId: "ch.chandigarh",
-                name: "SOCIETY",
-                active: true,
-            },
-            {
-                id: 1,
-                code: "COMPANY",
-                tenantId: "ch.chandigarh",
-                name: "COMPANY",
-                active: true,
-            },
-            {
-                id: 1,
-                code: "GOVERNMENT",
-                tenantId: "ch.chandigarh",
-                name: "GOVERNMENT",
-                active: true,
-            },
-            {
-                id: 1,
-                code: "SEMI GOVERNMENT",
-                tenantId: "ch.chandigarh",
-                name: "SEMI GOVERNMENT",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "MUNICIPAL CORPORATION",
-                tenantId: "ch.chandigarh",
-                name: "MUNICIPAL CORPORATION",
-                active: true,
-            },
-        ];
+        // payload.MdmsRes.BookingVenue = [
+        //     {
+        //         id: 1,
+        //         code: "Sector 17",
+        //         tenantId: "ch.chandigarh",
+        //         name: "Sector 17",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 2,
+        //         code: "Sector 34",
+        //         tenantId: "ch.chandigarh",
+        //         name: "Sector 34",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 2,
+        //         code: "Manimajra",
+        //         tenantId: "ch.chandigarh",
+        //         name: "Manimajra",
+        //         active: true,
+        //     },
+        // ];
+        // payload.MdmsRes.Category = [
+        //     {
+        //         id: 1,
+        //         code: "INDIVIDUAL",
+        //         tenantId: "ch.chandigarh",
+        //         name: "INDIVIDUAL",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "CORPORATE",
+        //         tenantId: "ch.chandigarh",
+        //         name: "CORPORATE",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "SOCIETY",
+        //         tenantId: "ch.chandigarh",
+        //         name: "SOCIETY",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "COMPANY",
+        //         tenantId: "ch.chandigarh",
+        //         name: "COMPANY",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "GOVERNMENT",
+        //         tenantId: "ch.chandigarh",
+        //         name: "GOVERNMENT",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "SEMI GOVERNMENT",
+        //         tenantId: "ch.chandigarh",
+        //         name: "SEMI GOVERNMENT",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 2,
+        //         code: "MUNICIPAL CORPORATION",
+        //         tenantId: "ch.chandigarh",
+        //         name: "MUNICIPAL CORPORATION",
+        //         active: true,
+        //     },
+        // ];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);

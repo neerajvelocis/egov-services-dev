@@ -239,7 +239,7 @@ export const bookingDetails = getCommonCard({
           labelKey: "BK_CGB_CATEGORY_PLACEHOLDER",
         },
         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-        sourceJsonPath: "applyScreenMdmsData.Category",
+        sourceJsonPath: "applyScreenMdmsData.Booking.Commerical_Ground_Cat",
         jsonPath: "Booking.bkCategory",
         required: true,
         props: {
