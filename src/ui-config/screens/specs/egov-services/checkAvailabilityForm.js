@@ -4,6 +4,15 @@ import {
     getSelectField, getDateField, getTextField, getPattern, getLabel, getTodaysDateInYMD
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
+    getTenantId,
+    setapplicationType,
+    lSRemoveItem,
+    lSRemoveItemlocal,
+    setapplicationNumber,
+    getUserInfo,
+    localStorageSet
+} from "egov-ui-kit/utils/localStorageUtils";
+import {
     prepareFinalObject, handleScreenConfigurationFieldChange as handleField, toggleSnackbar
 } from "egov-ui-framework/ui-redux/screen-configuration/actions"; import {
     dispatchMultipleFieldChangeAction,
@@ -103,7 +112,10 @@ const callBackForBook = async (state, dispatch) => {
         let venueData = state.screenConfiguration.preparedFinalObject.bookingCalendar.sector;
         let fromDateString = state.screenConfiguration.preparedFinalObject.Check.fromDate;
         let toDateString = state.screenConfiguration.preparedFinalObject.Check.toDate;
-        let reviewUrl = `${appendUrl}/egov-services/applycommercialground?from=${fromDateString}&to=${toDateString}&venue=${venueData}`;
+        localStorageSet("fromDateCG", fromDateString)
+        localStorageSet("toDateCG", toDateString)
+        localStorageSet("venueCG", venueData)
+        let reviewUrl = `${appendUrl}/egov-services/applycommercialground`;
         dispatch(setRoute(reviewUrl))
     } else {
         let warrningMsg = { labelName: "Please select Date RANGE", labelKey: "" };
@@ -412,38 +424,12 @@ export const NOCApplication = getCommonCard({
         //     }
         // },
 
-        resetButton: {
-            componentPath: "Button",
-            props: {
-                variant: "outlined",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginRight: "16px",
-                    //   marginLeft: "100px"
-                }
-            },
-            gridDefination: {
-                xs: 12,
-                sm: 12,
-                md: 3,
-
-            },
-
-            children: {
-                resetButtonLabel: getLabel({
-                    labelName: "Reset",
-                    labelKey: "BK_CGB_RESET_LABEL"
-                })
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForReset
-
-            },
-            visible: true
-        },
+        //     },
+        //     visible: true,
+        //     props: {
+        //         disabled: true
+        //     }
+        // },
         searchButton: {
             componentPath: "Button",
             props: {
@@ -481,6 +467,39 @@ export const NOCApplication = getCommonCard({
             },
             visible: true
         },
+        resetButton: {
+            componentPath: "Button",
+            props: {
+                variant: "outlined",
+                color: "primary",
+                style: {
+                    minWidth: "200px",
+                    height: "48px",
+                    marginRight: "16px",
+                    //marginLeft: "100px"
+                }
+            },
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 3,
+
+            },
+
+            children: {
+                resetButtonLabel: getLabel({
+                    labelName: "Reset",
+                    labelKey: "BK_CGB_RESET_LABEL"
+                })
+            },
+            onClickDefination: {
+                action: "condition",
+                callBack: callBackForReset
+
+            },
+            visible: true
+        },
+       
 
     }),
 

@@ -94,12 +94,20 @@ const TaskStatusComponents = ({ currentObj, index }) => {
             labelName={getCurrentStatus(get(currentObj, "state.state"))}
             labelKey={
               currentObj.businessService
-                ? `WF_${currentObj.businessService.toUpperCase()}_${get(
+                ? `${get(
                   currentObj,
                   "state.state"
                 )}`
                 : ""
             }
+            // labelKey={
+            //   currentObj.businessService
+            //     ? `WF_${currentObj.businessService.toUpperCase()}_${get(
+            //       currentObj,
+            //       "state.state"
+            //     )}`
+            //     : ""
+            // }
           />
         </Typography>
       </Grid>

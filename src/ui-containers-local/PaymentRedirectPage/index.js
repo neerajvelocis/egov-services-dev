@@ -43,7 +43,7 @@ class PaymentRedirect extends Component {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
                     );
-                } else if (bookingType === "CGB") {
+                } else if (bookingType === "GFCP") {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"failure"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&businessService=${bookingType}`
                     );
@@ -64,7 +64,7 @@ class PaymentRedirect extends Component {
                 set(
                     payload,
                     "bkAction",
-                    bookingType !== "CGB" ? (bookingType === "OSBM" ? "PAY" : "PAIDAPPLY") : "APPLY"
+                    bookingType === "OSBM" ? "PAY" : bookingType === "GFCP" ? "APPLY" : "PAIDAPPLY"
                 );
                 response = await httpRequest(
                     "post",
@@ -79,7 +79,7 @@ class PaymentRedirect extends Component {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
                     );
-                } else if (bookingType === "CGB") {
+                } else if (bookingType === "GFCP") {
                     this.props.setRoute(
                         `/egov-services/acknowledgement?purpose=${"pay"}&status=${"success"}&applicationNumber=${consumerCode}&tenantId=${tenantId}&secondNumber=${transactionId}&businessService=${bookingType}`
                     );

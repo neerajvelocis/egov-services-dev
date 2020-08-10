@@ -5,6 +5,12 @@ import { prepareFinalObject, toggleSnackbar } from "egov-ui-framework/ui-redux/s
 
 import { getCommonContainer, getCommonCard } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import {
+  getFileUrlFromAPI,
+  getQueryArg,
+  getTransformedLocale,
+  setBusinessServiceDataToLocalStorage,
+} from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
 
 
@@ -48,13 +54,67 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
+export const prepareEditFlow = async (
+  state,
+  dispatch,
+  applicationNumber,
+  tenantId
+) => {
+  if (applicationNumber) {
+      let response = await getSearchResultsView([
+          { key: "tenantId", value: tenantId },
+          { key: "applicationNumber", value: applicationNumber },
+      ]);
+      setapplicationNumber(applicationNumber);
+      setApplicationNumberBox(state, dispatch, applicationNumber);
+
+      // let Refurbishresponse = furnishOsbmResponse(response);
+      dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+
+      console.log(response, "responseNew");
+
+      let fileStoreIds = Object.keys(response.documentMap);
+      let fileStoreIdsValue = Object.values(response.documentMap);
+      if (fileStoreIds.length > 0) {
+          let fileUrls =
+              fileStoreIds.length > 0
+                  ? await getFileUrlFromAPI(fileStoreIds)
+                  : {};
+          dispatch(
+              prepareFinalObject("documentsUploadReduxOld.documents", [
+                  {
+                      fileName: fileStoreIdsValue[0],
+                      fileStoreId: fileStoreIds[0],
+                      fileUrl: fileUrls[fileStoreIds[0]],
+                  },
+              ])
+          );
+      }
+  }
+};
+
 const screenConfig = {
   uiFramework: "material-ui",
   name: "checkavailability",
   beforeInitScreen: (action, state, dispatch) => {
+    const applicationNumber = getQueryArg(
+      window.location.href,
+      "applicationNumber"
+  );
+  const tenantId = getQueryArg(window.location.href, "tenantId");
     getMdmsData(action, state, dispatch).then(response => {
 
     });
+
+    if (applicationNumber !== null) {
+      set(
+          action.screenConfig,
+          "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+          true
+      );
+      prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+  }
+
     dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
     dispatch(prepareFinalObject("bookingCalendar.sector", ""));
     dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ""));

@@ -390,7 +390,6 @@ import get from "lodash/get";
 import set from "lodash/set";
 import {
     generageBillCollection,
-
     generateBill,
 } from "../utils";
 import { commercialGroundSummary } from "./summaryResource/commercialGroundSummary";
@@ -522,7 +521,6 @@ const setSearchResponse = async (
         {}
     );
     if (bookingStatus === "APPLIED") {
-        // await getReceipt(state, dispatch, applicationNumber, tenantId)
         await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
@@ -640,16 +638,16 @@ const screenConfig = {
                         },
                     },
                 },
-                // taskStatus: {
-                //   uiFramework: "custom-containers-local",
-                //   componentPath: "WorkFlowContainer",
-                //   moduleName: "egov-workflow",
-                //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
-                //   props: {
-                //     dataPath: "Licenses",
-                //     moduleName: "SELLMEATNOC",
-                //   },
-                // },
+                taskStatus: {
+                  uiFramework: "custom-containers-local",
+                  componentPath: "WorkFlowContainer",
+                  moduleName: "egov-services",
+                  visible:  true,
+                  props: {
+                    // dataPath: "Licenses",
+                    // moduleName: "SELLMEATNOC",
+                  },
+                },
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     applicantSummary: applicantSummary,
