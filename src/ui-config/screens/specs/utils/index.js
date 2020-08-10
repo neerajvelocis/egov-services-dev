@@ -1796,7 +1796,7 @@ export const downloadApplication = (
                 value:
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
-                        : applicationData.bkStatus.includes("Paid")
+                        :  applicationData.businessService == "GFCP" ? "bk-cg-app-form": applicationData.bkStatus.includes("Paid")
                             ? "bk-wt-app-form"
                             : "bk-wt-unpaid-app-form",
             },
@@ -1837,6 +1837,17 @@ export const downloadApplication = (
             applicationStatus: applicationData.bkApplicationStatus,
             applicationType: applicationData.bkStatus,
         };
+        let bookingDataGFCP = {
+            applicationNumber: applicationNumber,
+            venue: applicationData.bkBookingVenue,
+            bookingCategory: applicationData.bkCategory,
+            bookingPeriod: getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            ),
+            bookingPurpose: applicationData.bkBookingPurpose
+            
+        }
 
         let appData = [
             {
@@ -1848,18 +1859,20 @@ export const downloadApplication = (
                     permanentCity: tenantId,
                     sector: applicationData.bkSector,
                     email: applicationData.bkEmail,
+                    fatherName: applicationData.bkFatherName,
+                    DOB : null,
                 },
                 bookingDetail:
                     applicationData.businessService === "OSBM"
                         ? bookingDataOsbm
-                        : bookingDataWt,
+                        : applicationData.businessService === "GFCP" ? bookingDataGFCP: bookingDataWt,
                 feeDetail: {
                     baseCharge:
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
                                 (el) => !el.taxHeadCode.includes("TAX")
-                            )[0].amount,
+                            )[0].amount, 
                     taxes:
                         paymentData === undefined
                             ? null
