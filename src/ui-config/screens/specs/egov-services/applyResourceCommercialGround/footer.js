@@ -22,6 +22,7 @@ import {
     localStorageSet,
     getTenantId,
     getapplicationNumber,
+    setapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
@@ -58,13 +59,25 @@ const callBackForNext = async (state, dispatch) => {
 
             // GET FEE DETAILS
             let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(response, "data.bkApplicationNumber", "");
+            let applicationNumber = get(
+                response,
+                "data.bkApplicationNumber",
+                ""
+            );
+            let businessService = get(response, "data.businessService", "");
+            const reviewUrl = `/egov-services/applycommercialground?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            dispatch(setRoute(reviewUrl));
 
-            let bookingType = get(response, "data.bkBookingType", "");
-
-            set(state.screenConfiguration.screenConfig["applycommercialground"], "components.div.children.headerDiv.children.header.children.applicationNumber.props.number", applicationNumber)
-            set(state.screenConfiguration.screenConfig["applycommercialground"], "components.div.children.headerDiv.children.header.children.applicationNumber.visible", true)
-
+            // set(
+            //     state.screenConfiguration.screenConfig["applycommercialground"],
+            //     "components.div.children.headerDiv.children.header.children.applicationNumber.props.number",
+            //     applicationNumber
+            // );
+            set(
+                state.screenConfiguration.screenConfig["applycommercialground"],
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
+            );
             await generateBill(state, dispatch, applicationNumber, tenantId, "GFCP");
 
             // GET DOCUMENT DATA FOR DOWNLOAD
@@ -105,14 +118,19 @@ const callBackForNext = async (state, dispatch) => {
         //         labelKey: "", //UPLOAD_FILE_TOAST
         //     };
         //     dispatch(toggleSnackbar(true, successMessage, "success"));
-        setTimeout(() => {
-            const appendUrl =
-                process.env.REACT_APP_SELF_RUNNING === "true"
-                    ? "/egov-ui-framework"
-                    : "";
-            const reviewUrl = `${appendUrl}/egov-services/pay?applicationNumber=${response.data.bkApplicationNumber}&tenantId=${response.data.tenantId}`;
-            dispatch(setRoute(reviewUrl));
-        }, 1000);
+        let applicationData = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking"
+        );
+        console.log(applicationData, "applicationDataMy");
+        setapplicationNumber(applicationData.bkApplicationNumber);
+        // setTimeout(() => {
+        const appendUrl =
+            process.env.REACT_APP_SELF_RUNNING === "true"
+                ? "/egov-ui-framework"
+                : "";
+        const reviewUrl = `/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
+        dispatch(setRoute(reviewUrl));
         // setTimeout(() => {
         // const appendUrl =
         //     process.env.REACT_APP_SELF_RUNNING === "true"
