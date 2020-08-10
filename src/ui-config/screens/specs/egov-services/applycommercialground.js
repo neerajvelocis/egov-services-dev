@@ -6,7 +6,7 @@ import {
 import {
     getCurrentFinancialYear,
     clearlocalstorageAppDetails,
-    convertDateInYMD,
+    convertDateInDMY,
 } from "../utils";
 import { footer } from "./applyResourceCommercialGround/footer";
 import {
@@ -239,44 +239,44 @@ const getMdmsData = async (action, state, dispatch) => {
             },
             {
                 id: 1,
-                code: "corporate",
+                code: "CORPORATE",
                 tenantId: "ch.chandigarh",
-                name: "corporate",
+                name: "CORPORATE",
                 active: true,
             },
             {
                 id: 1,
-                code: "Society",
+                code: "SOCIETY",
                 tenantId: "ch.chandigarh",
-                name: "Society",
+                name: "SOCIETY",
                 active: true,
             },
             {
                 id: 1,
-                code: "company",
+                code: "COMPANY",
                 tenantId: "ch.chandigarh",
-                name: "company",
+                name: "COMPANY",
                 active: true,
             },
             {
                 id: 1,
-                code: "Government",
+                code: "GOVERNMENT",
                 tenantId: "ch.chandigarh",
-                name: "Government",
+                name: "GOVERNMENT",
                 active: true,
             },
             {
                 id: 1,
-                code: "semi government",
+                code: "SEMI GOVERNMENT",
                 tenantId: "ch.chandigarh",
-                name: "semi government",
+                name: "SEMI GOVERNMENT",
                 active: true,
             },
             {
                 id: 2,
-                code: "municipal corporation",
+                code: "MUNICIPAL CORPORATION",
                 tenantId: "ch.chandigarh",
-                name: "municipal corporation",
+                name: "MUNICIPAL CORPORATION",
                 active: true,
             },
         ];
@@ -340,19 +340,19 @@ const screenConfig = {
 
         const queryfrom = getQueryArg(window.location.href, "from");
         const queryto = getQueryArg(window.location.href, "to");
-        const from = convertDateInYMD(queryfrom);
-        const to = convertDateInYMD(queryto);
+        const from = convertDateInDMY(queryfrom);
+        const to = convertDateInDMY(queryto);
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
-                convertDateInYMD(localStorageGet("fromDateCG"))
+                convertDateInDMY(localStorageGet("fromDateCG"))
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkToDate",
-                convertDateInYMD(localStorageGet("toDateCG"))
+                convertDateInDMY(localStorageGet("toDateCG"))
             )
         );
 

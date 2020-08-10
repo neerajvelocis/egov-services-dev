@@ -61,33 +61,33 @@ export const callBackForReset = (state, dispatch, action) => {
         dispatch(
             handleField(
                 "checkavailability",
-                "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.Sector",
+                "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.Sector",
                 "props.value",
                 ""
             )
         );
     }
 
-    if (bookingCalendar.toDateToDisplay) {
-        dispatch(
-            handleField(
-                "checkavailability",
-                "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.toDatePeriodOfDisplay",
-                "props.value",
-                ""
-            )
-        );
-    }
-    if (bookingCalendar.fromDateToDisplay) {
-        dispatch(
-            handleField(
-                "checkavailability",
-                "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.fromDatePeriodOfDisplay",
-                "props.value",
-                ""
-            )
-        );
-    }
+    // if (bookingCalendar.toDateToDisplay) {
+    //     dispatch(
+    //         handleField(
+    //             "checkavailability",
+    //             "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.toDatePeriodOfDisplay",
+    //             "props.value",
+    //             ""
+    //         )
+    //     );
+    // }
+    // if (bookingCalendar.fromDateToDisplay) {
+    //     dispatch(
+    //         handleField(
+    //             "checkavailability",
+    //             "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.fromDatePeriodOfDisplay",
+    //             "props.value",
+    //             ""
+    //         )
+    //     );
+    // }
 
     const actionDefination = [
         {
@@ -208,8 +208,7 @@ export const callBackForSearch = async (state, dispatch) => {
             console.log(reservedDates, "daylist");
             const actionDefination = [
                 {
-                    path:
-                        "components.headerDiv.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                    path:"components.div.children.NOCCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
                     property: "reservedDays",
                     value: reservedDates,
                 },
