@@ -302,6 +302,28 @@ export const prepareEditFlow = async (
 
         // let Refurbishresponse = furnishOsbmResponse(response);
         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkFromDate",
+                convertDateInYMD(localStorageGet("fromDateCG"))
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkToDate",
+                convertDateInYMD(localStorageGet("toDateCG"))
+            )
+        );
+
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkBookingVenue",
+                localStorageGet("venueCG")
+            )
+        );
+        dispatch(
+            prepareFinalObject("Booking.bkSector", localStorageGet("venueCG"))
+        );
 
         console.log(response, "responseNew");
 
@@ -336,12 +358,13 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        const venueData = getQueryArg(window.location.href, "venue");
 
-        const queryfrom = getQueryArg(window.location.href, "from");
-        const queryto = getQueryArg(window.location.href, "to");
-        const from = convertDateInYMD(queryfrom);
-        const to = convertDateInYMD(queryto);
+        // const venueData = getQueryArg(window.location.href, "venue");
+
+        // const queryfrom = getQueryArg(window.location.href, "from");
+        // const queryto = getQueryArg(window.location.href, "to");
+        // const from = convertDateInYMD(queryfrom);
+        // const to = convertDateInYMD(queryto);
 
         dispatch(
             prepareFinalObject(
@@ -398,14 +421,14 @@ const screenConfig = {
         });
 
         // Search in case of EDIT flow
-        // if (applicationNumber !== null) {
-        //     set(
-        //         action.screenConfig,
-        //         "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-        //         true
-        //     );
-        //     prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        // }
+        if (applicationNumber !== null) {
+            set(
+                action.screenConfig,
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
+            );
+            prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+        }
 
         // Code to goto a specific step through URL
         if (step && step.match(/^\d+$/)) {

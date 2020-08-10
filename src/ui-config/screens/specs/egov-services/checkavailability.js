@@ -1,59 +1,27 @@
 import {
     getCommonContainer,
     getCommonHeader,
-    getStepperObject,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { NOCApplication, NOCCalendar } from "./checkAvailabilityForm";
 import {
-    getTenantId,
-    setapplicationType,
-    lSRemoveItem,
-    lSRemoveItemlocal,
-    setapplicationNumber,
-    getUserInfo,
-    localStorageGet,
-} from "egov-ui-kit/utils/localStorageUtils";
+    checkAvailabilitySearch,
+    checkAvailabilityCalendar,
+} from "./checkAvailabilityForm";
+import { setapplicationNumber, lSRemoveItemlocal } from "egov-ui-kit/utils/localStorageUtils";
+import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
-import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import set from "lodash/set";
 import {
     getFileUrlFromAPI,
     getQueryArg,
-    getTransformedLocale,
-    setBusinessServiceDataToLocalStorage,
 } from "egov-ui-framework/ui-utils/commons";
 import {
-    prepareDocumentsUploadData,
-    getSearchResults,
     getSearchResultsView,
     setApplicationNumberBox,
-    furnishNocResponse,
 } from "../../../../ui-utils/commons";
-import get from "lodash/get";
-
-// export const callBackForBook = (state, dispatch) => {
-
-//   let from = get(
-//     state,
-//     "screenConfiguration.preparedFinalObject.Check.fromDate",
-//     {}
-//   );
-
-//   let to = get(
-//     state,
-//     "screenConfiguration.preparedFinalObject.Check.toDate",
-//     {}
-//   );
-//   const appendUrl =
-//     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-//   const reviewUrl = `${appendUrl}/egov-services/applycommercialground?from=${from}&to=${to}`;
-//   dispatch(setRoute(reviewUrl));
-
-// };
+import { getAvailabilityData, getBetweenDays } from "../utils";
 
 const getMdmsData = async (action, state, dispatch) => {
     try {
@@ -83,15 +51,13 @@ const getMdmsData = async (action, state, dispatch) => {
             },
         ];
 
-        console.log(payload.sector, "payload.MdmsRes");
-
-        dispatch(prepareFinalObject("calendarScreenMdmsData", payload));
+        dispatch(prepareFinalObject("applyScreenMdmsData", payload));
     } catch (e) {
         console.log(e);
     }
 };
 
-export const prepareEditFlow = async (
+const prepareEditFlow = async (
     state,
     dispatch,
     applicationNumber,
@@ -105,10 +71,47 @@ export const prepareEditFlow = async (
         setapplicationNumber(applicationNumber);
         setApplicationNumberBox(state, dispatch, applicationNumber);
 
-        // let Refurbishresponse = furnishOsbmResponse(response);
         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+        dispatch(prepareFinalObject("availabilityCheck", response.bookingsModelList[0]));
+		
+		let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
 
-        console.log(response, "responseNew");
+		if (availabilityData !== undefined) {
+            let data = availabilityData.data;
+            let reservedDates = [];
+            var daylist = [];
+            data.map((dataitem) => {
+                let start = dataitem.fromDate;
+                let end = dataitem.toDate;
+                daylist = getBetweenDays(start, end);
+                daylist.map((v) => {
+                    reservedDates.push(v.toISOString().slice(0, 10));
+                });
+            });
+            prepareFinalObject("reservedAvailabilityData", reservedDates);
+            const actionDefination = [
+                {
+                    path:
+                        "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                    property: "reservedDays",
+                    value: reservedDates,
+                },
+			];
+            dispatchMultipleFieldChangeAction(
+                "checkavailability",
+                actionDefination,
+                dispatch
+            );
+        } else {
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    { labelName: "Please Try After Sometime!", labelKey: "" },
+                    "warning"
+                )
+            );
+        }
+
 
         let fileStoreIds = Object.keys(response.documentMap);
         let fileStoreIdsValue = Object.values(response.documentMap);
@@ -129,7 +132,7 @@ export const prepareEditFlow = async (
         }
     }
 };
-export const header = getCommonContainer({
+const header = getCommonContainer({
     header: getCommonHeader({
         labelName: `Apply for Commercial Ground`,
         labelKey: "BK_CGB_APPLY",
@@ -154,7 +157,9 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch).then((response) => {});
+		getMdmsData(action, state, dispatch);
+		
+
 
         if (applicationNumber !== null) {
             set(
@@ -163,13 +168,15 @@ const screenConfig = {
                 true
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        }
+        } else {
+			// alert("in this")
+			// lSRemoveItemlocal("fromDateCG")
+			// lSRemoveItemlocal("toDateCG")
+		}
 
-        dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
-        dispatch(prepareFinalObject("bookingCalendar.sector", ""));
-        dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ""));
-        dispatch(prepareFinalObject("bookingCalendar.fromDateToDisplay", ""));
-        dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
+        // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
+        // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
+        // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
         return action;
     },
     components: {
@@ -194,87 +201,10 @@ const screenConfig = {
                         },
                     },
                 },
-                NOCApplication,
-                NOCCalendar,
+                checkAvailabilitySearch,
+                checkAvailabilityCalendar,
             },
         },
-        // body: getCommonCard({
-        //   Calendar: getCommonContainer({
-        //     bookingClander: {
-        //       uiFramework: "custom-atoms-local",
-        //       moduleName: "egov-services",
-        //       componentPath: "BookingCalendar",
-        //       props: {
-        //         open: false,
-        //         maxWidth: false,
-        //         screenKey: "bookingCalendar",
-        //         reservedDays: ['2020-07-01', '2020-07-04'],
-        //       },
-        //       children: {
-        //         popup: {},
-
-        //       },
-        //     },
-
-        //     bookButton: {
-        //       componentPath: "Button",
-        //       props: {
-        //         variant: "contained",
-        //         color: "primary",
-        //         style: {
-        //           //minWidth: "200px",
-        //           height: "48px",
-        //           marginLeft: "786px"
-        //         }
-
-        //       },
-        //       children: {
-        //         submitButtonLabel: getLabel({
-        //           labelName: "Book",
-        //           labelKey: "BK_PCCBH_BOOK_LABEL"
-        //         }),
-
-        //       },
-        //       onClickDefination: {
-        //         action: "condition",
-        //         callBack: () => { window.alert("yoyo") }
-        //       },
-        //       visible: true,
-        //     }
-        //   })
-
-        // }),
-        // bookButton: {
-        //   componentPath: "Button",
-        //   props: {
-        //     variant: "contained",
-        //     color: "primary",
-        //     style: {
-        //       // minWidth: "200px",
-        //       height: "48px",
-        //       marginRight: "16px"
-        //     }
-        //   },
-
-        //   children: {
-        //     // previousButtonIcon: {
-        //     //     uiFramework: "custom-atoms",
-        //     //     componentPath: "Icon",
-        //     //     props: {
-        //     //         iconName: "keyboard_arrow_left"
-        //     //     }
-        //     // },
-        //     submitButtonLabel: getLabel({
-        //       labelName: "BOOK ",
-        //       labelKey: "BK_CGB_BOOK_LABEL"
-        //     })
-        //   },
-        //   onClickDefination: {
-        //     action: "condition",
-        //     callBack: callBackForBook
-        //   },
-        //   visible: false
-        // },
     },
 };
 

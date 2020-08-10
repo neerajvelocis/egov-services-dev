@@ -1,28 +1,19 @@
 import React from "react";
 import Helmet from "react-helmet";
 import DayPicker, { DateUtils } from "react-day-picker";
-
 import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import get from "lodash/get";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import {
-    dispatchMultipleFieldChangeAction,
-    getLabel,
-} from "egov-ui-framework/ui-config/screens/specs/utils";
-
-// import {
-//     getBreak, getCommonCard, getCommonContainer, getCommonGrayCard, getCommonTitle,
-//     getSelectField, getDateField, getTextField, getPattern, getLabel, getTodaysDateInYMD
-// } from "egov-ui-framework/ui-config/screens/specs/utils";
-//import { addDays } from 'date-fns';
-//import DatePicker from "react-datepicker";
-//import "react-datepicker/dist/react-datepicker.css";
+    getFileUrlFromAPI,
+    getQueryArg,
+} from "egov-ui-framework/ui-utils/commons";
 import "react-day-picker/lib/style.css";
+import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 class Example extends React.Component {
     constructor(props) {
         super(props);
@@ -35,27 +26,64 @@ class Example extends React.Component {
     }
 
     componentDidMount() {
-        // let reservedDays = ['2020-07-01', '2020-07-04', '2020-07-12'];
+        const applicationNumber = getQueryArg(
+            window.location.href,
+            "applicationNumber"
+        );
+        console.log(applicationNumber, "applicationNumberNew");
         let pushReservedDay = [];
         for (let i = 0; i < this.props.reservedDays.length; i++) {
             pushReservedDay.push(new Date(this.props.reservedDays[i]));
         }
         this.setState({ dselectedDays: pushReservedDay });
+
+         if(this.props.reservedDays.length > 0) {
+         
+            this.setState({
+                from: new Date(this.props.availabilityCheck.bkFromDate),
+                // to: new Date(this.props.availabilityCheck.bkToDate),
+                enteredTo: new Date(this.props.availabilityCheck.bkToDate),
+            });
+        } 
+        // if(applicationNumber !== null || applicationNumber !== undefined){
+        //     alert("in it")
+        //     this.setState({
+        //         from: new Date(localStorageGet("fromDateCG")),
+        //         // to: new Date(this.props.availabilityCheck.bkToDate),
+        //         enteredTo: new Date(localStorageGet("toDateCG")),
+        //     });
+        // } 
     }
 
     componentWillReceiveProps(nextProps) {
-        // console.log('componentWillReceiveProps', nextProps.state.screenConfiguration.preparedFinalObject.availabilityCheckSelectedData);
-        //   this.setState(nextProps);
-
-        //TODO
-        //Call API with SelectedData
-
+        const applicationNumber = getQueryArg(
+            window.location.href,
+            "applicationNumber"
+        );
+        console.log(applicationNumber, "applicationNumberNew");
         let reservedDays = nextProps.reservedDays;
         let pushReservedDay = [];
         for (let i = 0; i < reservedDays.length; i++) {
             pushReservedDay.push(new Date(reservedDays[i]));
         }
         this.setState({ dselectedDays: pushReservedDay });
+
+        if(this.props.reservedDays.length > 0) {
+         
+            this.setState({
+                from: new Date(this.props.availabilityCheck.bkFromDate),
+                // to: new Date(this.props.availabilityCheck.bkToDate),
+                enteredTo: new Date(this.props.availabilityCheck.bkToDate),
+            });
+        } 
+        // if(applicationNumber !== null || applicationNumber !== undefined){
+        //     alert("in it")
+        //     this.setState({
+        //         from: new Date(localStorageGet("fromDateCG")),
+        //         // to: new Date(this.props.availabilityCheck.bkToDate),
+        //         enteredTo: new Date(localStorageGet("toDateCG")),
+        //     });
+        // }
     }
 
     getInitialState() {
@@ -73,8 +101,8 @@ class Example extends React.Component {
     }
 
     handleDayClick = (day, modifiers = {}) => {
-        let val = this.props.allowClickData;
-        if (val === "false") {
+        let val = this.props.availabilityCheck;
+        if (val === "false" || val === undefined) {
             this.handleResetClick();
             this.props.showError2();
             return;
@@ -86,7 +114,10 @@ class Example extends React.Component {
                 return;
             }
             if (this.isSelectingFirstDay(from, to, day)) {
-                this.props.prepareFinalObject("Check.fromDate", day);
+                this.props.prepareFinalObject(
+                    "availabilityCheck.bkFromDate",
+                    day
+                );
 
                 this.setState({
                     from: day,
@@ -98,7 +129,10 @@ class Example extends React.Component {
                     to: day,
                     enteredTo: day,
                 });
-                this.props.prepareFinalObject("Check.toDate", day);
+                this.props.prepareFinalObject(
+                    "availabilityCheck.bkToDate",
+                    day
+                );
                 this.checkRangeValidity();
             }
         }
@@ -115,7 +149,7 @@ class Example extends React.Component {
 
     handleResetClick = () => {
         this.setState(this.getInitialState());
-        this.props.prepareFinalObject("Check.toDate", "");
+        this.props.prepareFinalObject("availabilityCheck.bkToDate", "");
     };
 
     setFromDateHandle = (date) => {
@@ -127,7 +161,6 @@ class Example extends React.Component {
 
     setToDateHandle = (date) => {
         this.setState({ filtertoDate: date });
-        //console.log(this.props.bookingCalendar)
     };
 
     checkRangeValidity() {
@@ -164,33 +197,6 @@ class Example extends React.Component {
         }
     };
 
-    SearchBookings = () => {
-        console.log(this.state);
-        let reservedDays = [
-            "2020-07-01",
-            "2020-07-05",
-            "2020-07-06",
-            "2020-07-11",
-            "2020-07-12",
-            "2020-07-21",
-            "2020-07-23",
-            "2020-07-24",
-            "2020-07-25",
-            "2020-07-26",
-            "2020-08-01",
-            "2020-08-02",
-            "2020-08-05",
-            "2020-08-07",
-            "2020-08-12",
-            "2020-08-25",
-        ];
-        let pushReservedDay = [];
-        for (let i = 0; i < reservedDays.length; i++) {
-            pushReservedDay.push(new Date(reservedDays[i]));
-        }
-        this.setState({ dselectedDays: pushReservedDay });
-    };
-
     render() {
         const { from, to, enteredTo } = this.state;
         const modifiers = { start: from, end: enteredTo };
@@ -198,79 +204,9 @@ class Example extends React.Component {
         const selectedDays = [from, { from, to: enteredTo }];
         console.log(this.state.dselectedDays);
         console.log(this.props, "sankalp");
+        console.log(this.state, "sankalp state");
         return (
             <div className="Outer">
-                {/* <div className="filter-section fl">
-
-                    <div className="area-filter-section fl ml-20">
-                        <div className="mb-10">
-                            <label>Area/Sector</label>
-                        </div>
-                        <div>
-                            <select className="area-select" value={this.state.area} onChange={this.selectChangeHandle} data-name="area">
-                                <option value="_none">-Select-</option>
-                                <option>Sector 37, Noida</option>
-                                <option>Sector 44, Noida</option>
-                                <option>Sector 66 Greator Noida</option>
-                                <option>Sector 120, Noida</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="prop-filter-section fl ml-20">
-                        <div className="mb-10">
-                            <label>Property</label>
-                        </div>
-                        <div>
-                            <select className="prop-select" value={this.state.prop} onChange={this.selectChangeHandle} data-name="property">
-                                <option value="_none">-Select-</option>
-                                <option>AKG Complex</option>
-                                <option>Raiway Quarters</option>
-                                <option>Guar City Stadium</option>
-                                <option>MIET Compus</option>
-                            </select>
-                        </div>
-                    </div>
-
-                     <div className="fromdate-filter-section fl ml-20">
-                        <div className="mb-10">
-                            <label>From Date</label>
-                        </div>
-                        <div>
-                            <DatePicker
-                                selected={this.state.filterfromDate}
-                                onChange={this.setFromDateHandle}
-                                className="form-control"
-                                dateFormat="dd/MM/yyyy"
-                                isClearable={true}
-                                placeholderText="DD/MM/YYYY"
-
-                            />
-                        </div>
-                    </div>
-
-                    <div className="todate-filter-section fl ml-20">
-                        <div className="mb-10">
-                            <label>To Date</label>
-                        </div>
-                        <div>
-                            <DatePicker
-                                selected={this.state.filtertoDate}
-                                onChange={this.setToDateHandle}
-                                className="form-control"
-                                dateFormat="dd/MM/yyyy"
-                                isClearable={true}
-                                placeholderText="DD/MM/YYYY"
-
-                            />
-                        </div>
-                    </div> 
-                    <div className="actions-section fl ml-20" style={{ marginTop: "27px" }}>
-                        <input type="button" value="Search" onClick={this.SearchBookings} />
-
-                    </div>
-
-                </div> */}
                 <div className="calendar-section fl" style={{ width: "100%" }}>
                     <DayPicker
                         className="Range"
@@ -337,9 +273,8 @@ class Example extends React.Component {
 }
 const mapStateToProps = (state) => {
     return {
-        allowClickData:
-            state.screenConfiguration.preparedFinalObject.bookingCalendar
-                .allowClick,
+        availabilityCheck:
+            state.screenConfiguration.preparedFinalObject.availabilityCheck,
     };
 };
 
@@ -362,7 +297,7 @@ const mapDispatchToProps = (dispatch) => {
                     true,
                     {
                         labelName:
-                            "Selected Range Should Not Contain Red Blocks",
+                            "Selected Range Should Not Contain Reserved Date",
                         labelKey: "",
                     },
                     "warning"
