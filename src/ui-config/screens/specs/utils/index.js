@@ -1577,17 +1577,25 @@ export const downloadReceipt = (
 
 
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
+                                .bill.businessService === "OSBM" ||
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "GFCP"
                                 ? getDurationDate(
                                     applicationData.bkFromDate,
                                     applicationData.bkToDate
                                 )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem: `Online Payment Against Booking of ${
+
+
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
-                                ? "Open Space for Building Material"
-                                : "Water Tanker"
+                                .bill.businessService === "GFCP" ? "Commercial Ground" : (
+                                    payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                        .bill.businessService === "OSBM"
+                                        ? "Open Space for Building Material"
+                                        : "Water Tanker")
+
+
                             }`,
                         amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                             (el) => !el.taxHeadCode.includes("TAX")
@@ -1604,7 +1612,9 @@ export const downloadReceipt = (
 
 
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
+                                .bill.businessService === "OSBM" ||
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "GFCP"
                                 ? "Booking Period"
                                 : "Date & Time",
                         paymentMode:
