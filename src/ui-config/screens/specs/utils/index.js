@@ -1926,3 +1926,35 @@ export const downloadApplication = (
         alert("Some Error Occured while downloading Application!");
     }
 };
+
+export const getAvailabilityData = async (sectorData) => {
+    let requestBody = {
+        bookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
+        bookingVenue: sectorData,
+    };
+    try {
+        const payload = await httpRequest(
+            "post",
+            "bookings/commercial/ground/availability/_search",
+            "",
+            [],
+            requestBody
+        );
+        return payload;
+    } catch (exception) {
+        console.log(exception);
+    }
+};
+
+export const getBetweenDays = function (start, end) {
+    let arr = [];
+    // let endDate = new Date(end);
+    for (
+        let dt = new Date(start);
+        dt <= new Date(end);
+        dt.setDate(dt.getDate() + 1)
+    ) {
+        arr.push(new Date(dt));
+    }
+    return arr;
+};
