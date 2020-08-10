@@ -541,7 +541,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     } else if (type == "apply_cgb") {
         documents = get(
             state,
-            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Com_Ground_Documents",
             []
         );
     } else {
