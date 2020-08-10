@@ -925,7 +925,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             console.log(doc, "documents");
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                if (doc.documentCode === "GFCP") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
