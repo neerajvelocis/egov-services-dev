@@ -287,8 +287,9 @@ class Example extends React.Component {
                     </div>
 
                 </div> */}
-                <div className="calendar-section fl" >
+                <div className="calendar-section fl" style={{ width: '100%' }} >
                     <DayPicker
+
                         className="Range"
                         numberOfMonths={1}
                         fromMonth={from}
@@ -313,19 +314,25 @@ class Example extends React.Component {
                             Reset
                         </button>
                     )}
+
+
                 </div>
                 <Helmet>
                     <style>{`
+
                     .Outer{ align-item :center}
+                    .Range{width: 100%}
           .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
           background-color: #f0f8ff !important;
+          
           color: #4a90e2;
           }
           .Range .DayPicker-Day {
+              
             border-radius: 0 !important;
           }
   
-          .DayPicker-Month{width: 768px; height:521px;margin:auto;}
+          .DayPicker-Month{width:100%; height:100%;margin:auto;}
           .fl{float:left;}
           .filter-section{width:100%;display:block;margin-bottom:20px;margin-top:40px;}
           .calendar-section{width:100%;display:block;}
