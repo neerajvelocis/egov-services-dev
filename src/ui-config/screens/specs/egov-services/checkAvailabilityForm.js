@@ -22,17 +22,12 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { httpRequest } from "../../../../ui-utils/api";
 
-const getDates = async (state, dispatch) => {
+export const getDates = async (sectorData) => {
 
-    let bookingVenueName = get(
-        state,
-        "screenConfiguration.preparedFinalObject.bookingCalendar.sector"
-    );
 
     let requestBody = {
         bookingType: 'GROUND_FOR_COMMERCIAL_PURPOSE',
-        // bookingVenue: bookingVenueName,
-        bookingVenue: "EG_SECTOR_34",
+        bookingVenue: sectorData
 
     }
 
@@ -147,6 +142,7 @@ export const callBackForSearch = async (state, dispatch) => {
         state,
         "screenConfiguration.preparedFinalObject.bookingCalendar.sector"
     );
+
     // let toDateData = get(
     //     state,
     //     "screenConfiguration.preparedFinalObject.bookingCalendar.toDateToDisplay"
@@ -174,7 +170,7 @@ export const callBackForSearch = async (state, dispatch) => {
         //      })
 
 
-        let response = await getDates()
+        let response = await getDates(sectorData)
 
         console.log(response, "res1")
         if (await response !== undefined) {
@@ -248,6 +244,12 @@ export const NOCCalendar = getCommonCard({
             uiFramework: "custom-atoms-local",
             moduleName: "egov-services",
             componentPath: "BookingCalendar",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 12,
+
+            },
             props: {
                 open: false,
                 maxWidth: false,
@@ -261,19 +263,38 @@ export const NOCCalendar = getCommonCard({
 
             },
         },
-        break: getBreak(),
+        dummyDiv: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 9,
+
+
+
+            },
+            visible: true,
+            props: {
+                disabled: true
+            }
+        },
+
+
         bookButton: {
             componentPath: "Button",
             props: {
                 variant: "contained",
                 color: "primary",
                 style: {
-                    //minWidth: "200px",
+                    minWidth: "200px",
                     height: "48px",
+                    marginTop: "50px"
 
                 }
 
             },
+
             children: {
                 submitButtonLabel: getLabel({
                     labelName: "Book",
@@ -315,6 +336,7 @@ export const NOCApplication = getCommonCard({
                     xs: 12,
                     sm: 6,
                     md: 6,
+
                 },
 
                 sourceJsonPath: "calendarScreenMdmsData.sector",
@@ -389,9 +411,18 @@ export const NOCApplication = getCommonCard({
         //     uiFramework: "custom-atoms",
         //     componentPath: "Div",
         //     gridDefination: {
-        //         xs: 0,
-        //         sm: 6,
-        //         md: 0,
+        //         xs: 12,
+        //         sm: 12,
+        //         md: 12,
+
+
+
+        //     },
+        //     visible: true,
+        //     props: {
+        //         disabled: true
+        //     }
+        // },
 
         //     },
         //     visible: true,
@@ -409,6 +440,12 @@ export const NOCApplication = getCommonCard({
                     height: "48px",
                     marginRight: "16px"
                 }
+            },
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 3,
+
             },
 
             children: {
@@ -441,6 +478,12 @@ export const NOCApplication = getCommonCard({
                     marginRight: "16px",
                     //marginLeft: "100px"
                 }
+            },
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 3,
+
             },
 
             children: {

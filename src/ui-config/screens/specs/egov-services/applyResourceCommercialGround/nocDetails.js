@@ -41,7 +41,7 @@ export const personalDetails = getCommonCard({
           labelKey: "BK_CGB_NAME_LABEL",
         },
         placeholder: {
-          labelName: "Enter Applicant Name",
+          labelName: "Applicant Name",
           labelKey: "BK_CGB_NAME_PLACEHOLDER",
         },
         required: true,
@@ -53,11 +53,11 @@ export const personalDetails = getCommonCard({
     bkFatherName: {
       ...getTextField({
         label: {
-          labelName: "Father Name",
+          labelName: "Father's Name",
           labelKey: "BK_CGB_FATHERNAME_LABEL",
         },
         placeholder: {
-          labelName: "Enter Father's Name",
+          labelName: "Father's Name",
           labelKey: "BK_CGB_FATHERNAME_PLACEHOLDER",
         },
         required: true,
@@ -73,7 +73,7 @@ export const personalDetails = getCommonCard({
           labelKey: "BK_CGB_EMAIL_LABEL",
         },
         placeholder: {
-          labelName: "Enter Email Address",
+          labelName: "Email Address",
           labelKey: "BK_CGB_EMAIL_PLACEHOLDER",
         },
         required: true,
@@ -89,7 +89,7 @@ export const personalDetails = getCommonCard({
           labelKey: "BK_CGB_MOBILE_NO_LABEL",
         },
         placeholder: {
-          labelName: "Enter Contact Number",
+          labelName: "Contact Number",
           labelKey: "BK_CGB_MOBILE_NO_PLACEHOLDER",
         },
         required: true,
@@ -105,7 +105,7 @@ export const personalDetails = getCommonCard({
           labelKey: "BK_CGB_COMPLETE_ADDRESS_LABEL",
         },
         placeholder: {
-          labelName: "Enter Complete Address",
+          labelName: "Complete Address",
           labelKey: "BK_CGB_COMPLETE_ADDRESS_PLACEHOLDER",
         },
         // pattern: getPattern("DoorHouseNo"),
@@ -152,7 +152,7 @@ export const bookingDetails = getCommonCard({
           labelKey: "BK_CGB_FROM_DATE_LABEL"
         },
         placeholder: {
-          labelName: "Enter From Date",
+          labelName: "From Date",
           labelKey: "BK_CGB_FROM_DATE_PLACEHOLDER"
         },
         required: true,
@@ -171,7 +171,7 @@ export const bookingDetails = getCommonCard({
           labelKey: "BK_CGB_TO_DATE_LABEL"
         },
         placeholder: {
-          labelName: "Enter To Date",
+          labelName: "To Date",
           labelKey: "BK_CGB_TO_DATE_PLACEHOLDER"
         },
         required: true,
@@ -212,7 +212,7 @@ export const bookingDetails = getCommonCard({
           labelKey: "BK_CGB_PURPOSE_LABEL",
         },
         placeholder: {
-          labelName: "Enter Purpose",
+          labelName: "Purpose",
           labelKey: "BK_CGB_PURPOSE_PLACEHOLDER",
         },
         required: true,
