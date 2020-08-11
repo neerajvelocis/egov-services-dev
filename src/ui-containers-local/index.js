@@ -82,6 +82,10 @@ const WorkFlowContainer = Loadable({
   loader: () => import("./WorkFlowContainer"),
   loading: () => <Loading />
 });
+const BookingCalenderContainer = Loadable({
+  loader: () => import("./BookingCalenderContainer"),
+  loading: () => <Loading />
+});
 
 
 
@@ -104,5 +108,6 @@ export {
   ForwardContainer,
   UnderTakingContainer,
   MultiItemsWithImageContainer,
-  WorkFlowContainer
+  WorkFlowContainer,
+  BookingCalenderContainer
 };

@@ -1944,14 +1944,15 @@ export const getAvailabilityData = async (sectorData) => {
         bookingVenue: sectorData,
     };
     try {
-        const payload = await httpRequest(
+        const response = await httpRequest(
             "post",
             "bookings/commercial/ground/availability/_search",
             "",
             [],
             requestBody
         );
-        return payload;
+        console.log(response, "availability response");
+        return response;
     } catch (exception) {
         console.log(exception);
     }

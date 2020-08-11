@@ -3,6 +3,11 @@ import {
     getCommonHeader,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
+    getCurrentFinancialYear,
+    clearlocalstorageAppDetails,
+    convertDateInYMD,
+} from "../utils";
+import {
     checkAvailabilitySearch,
     checkAvailabilityCalendar,
 } from "./checkAvailabilityForm";
@@ -144,7 +149,10 @@ const prepareEditFlow = async (
         setApplicationNumberBox(state, dispatch, applicationNumber);
 
         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
-        dispatch(prepareFinalObject("availabilityCheck", response.bookingsModelList[0]));
+        dispatch(prepareFinalObject("availabilityCheckData", response.bookingsModelList[0]));
+        // dispatch(prepareFinalObject("availabilityCheckData.bkToDate", response.bookingsModelList[0].bkToDate));
+        // dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", response.bookingsModelList[0].bkFromDate));
+        // dispatch(prepareFinalObject("availabilityCheckData.bkSector", response.bookingsModelList[0].bkSector));
 		
 		let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
 
@@ -160,20 +168,20 @@ const prepareEditFlow = async (
                     reservedDates.push(v.toISOString().slice(0, 10));
                 });
             });
-            prepareFinalObject("reservedAvailabilityData", reservedDates);
-            const actionDefination = [
-                {
-                    path:
-                        "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-                    property: "reservedDays",
-                    value: reservedDates,
-                },
-			];
-            dispatchMultipleFieldChangeAction(
-                "checkavailability",
-                actionDefination,
-                dispatch
-            );
+            dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
+            // const actionDefination = [
+            //     {
+            //         path:
+            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+            //         property: "reservedDays",
+            //         value: reservedDates,
+            //     },
+			// ];
+            // dispatchMultipleFieldChangeAction(
+            //     "checkavailability",
+            //     actionDefination,
+            //     dispatch
+            // );
         } else {
             dispatch(
                 toggleSnackbar(
@@ -224,6 +232,7 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "checkavailability",
     beforeInitScreen: (action, state, dispatch) => {
+        // clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,
             "applicationNumber"
