@@ -1749,6 +1749,17 @@ export const downloadCertificate = (
                     categoryImage: "",
                     // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
                 },
+                approvedBy:{
+                    approvedBy: "Renil Commissioner",
+                    role: "Additional Commissioner"
+                },
+                tenantInfo:{
+                    municipalityName: "Municipal Corporation Chandigarh",
+                    address: "New Deluxe Building, Sector 17, Chandigarh",
+                    contactNumber: "+91-172-2541002, 0172-2541003",
+                    logoUrl: "https://chstage.blob.core.windows.net/fileshare/logo.png",
+                    webSite: "http://mcchandigarh.gov.in"
+                },
                 generatedBy: {
                     generatedBy: JSON.parse(getUserInfo()).name,
                 },

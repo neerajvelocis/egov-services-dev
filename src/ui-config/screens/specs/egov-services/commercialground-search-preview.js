@@ -445,7 +445,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "DOC_DOC_PICTURE",
+            title: "GFCP",
             fileStoreId: id,
             linkText: "View",
         });

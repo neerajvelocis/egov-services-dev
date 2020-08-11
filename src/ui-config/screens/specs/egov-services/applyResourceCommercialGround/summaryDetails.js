@@ -24,7 +24,7 @@ export const changeStep = (
     defaultActiveStep = -1
 ) => {
     let activeStep = get(
-        state.screenConfiguration.screenConfig["applyopenspace"],
+        state.screenConfiguration.screenConfig["applycommercialground"],
         "components.div.children.stepper.props.activeStep",
         0
     );
@@ -60,7 +60,7 @@ export const changeStep = (
         },
     ];
     dispatchMultipleFieldChangeAction(
-        "applyopenspace",
+        "applycommercialground",
         actionDefination,
         dispatch
     );
@@ -70,7 +70,7 @@ export const renderSteps = (activeStep, dispatch) => {
     switch (activeStep) {
         case 0:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applycommercialground",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFirstStep"
                 ),
@@ -79,7 +79,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 1:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applycommercialground",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardSecondStep"
                 ),
@@ -88,7 +88,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 2:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applycommercialground",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardThirdStep"
                 ),
@@ -97,7 +97,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         default:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applycommercialground",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFourthStep"
                 ),

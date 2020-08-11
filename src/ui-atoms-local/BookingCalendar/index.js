@@ -225,7 +225,7 @@ class Example extends React.Component {
                     {from && !to && "Please select the last day."}
                     {from &&
                         to &&
-                        `Selected from ${from.toLocaleDateString()} to
+                        `Selected Date from ${from.toLocaleDateString()} to
                 ${to.toLocaleDateString()}`}{" "}
                     {from && to && (
                         <button
