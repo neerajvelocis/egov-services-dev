@@ -60,11 +60,40 @@ const callBackForReset = (state, dispatch, action) => {
 const callBackForBook = async (state, dispatch) => {
     let availabilityCheck =
         state.screenConfiguration.preparedFinalObject.availabilityCheck;
-    if (
-        availabilityCheck.bkApplicationNumber == null ||
-        availabilityCheck.bkApplicationNumber == undefined
-    )
-        if (availabilityCheck.bkToDate !== "") {
+    console.log(availabilityCheck, "availabilityCheck");
+    if (availabilityCheck !== undefined) {
+        if (
+            (availabilityCheck &&
+                availabilityCheck.bkApplicationNumber == null) ||
+            availabilityCheck.bkApplicationNumber == undefined
+        ) {
+            console.log(
+                availabilityCheck.bkToDate,
+                "availabilityCheck.bkToDate !=="
+            );
+            if (availabilityCheck.bkToDate === undefined) {
+                let warrningMsg = {
+                    labelName: "Please select Date RANGE",
+                    labelKey: "",
+                };
+                dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+            } else {
+                let venueData =
+                    state.screenConfiguration.preparedFinalObject
+                        .availabilityCheck.bkSector;
+                let fromDateString =
+                    state.screenConfiguration.preparedFinalObject
+                        .availabilityCheck.bkFromDate;
+                let toDateString =
+                    state.screenConfiguration.preparedFinalObject
+                        .availabilityCheck.bkToDate;
+                localStorageSet("fromDateCG", fromDateString);
+                localStorageSet("toDateCG", toDateString);
+                localStorageSet("venueCG", venueData);
+                let reviewUrl = `/egov-services/applycommercialground`;
+                dispatch(setRoute(reviewUrl));
+            }
+        } else {
             let venueData =
                 state.screenConfiguration.preparedFinalObject.availabilityCheck
                     .bkSector;
@@ -77,30 +106,15 @@ const callBackForBook = async (state, dispatch) => {
             localStorageSet("fromDateCG", fromDateString);
             localStorageSet("toDateCG", toDateString);
             localStorageSet("venueCG", venueData);
-            let reviewUrl = `/egov-services/applycommercialground`;
+            let reviewUrl = `/egov-services/applycommercialground?applicationNumber=${availabilityCheck.bkApplicationNumber}&tenantId=${availabilityCheck.tenantId}&businessService=${availabilityCheck.businessService}`;
             dispatch(setRoute(reviewUrl));
-        } else {
-            let warrningMsg = {
-                labelName: "Please select Date RANGE",
-                labelKey: "",
-            };
-            dispatch(toggleSnackbar(true, warrningMsg, "warning"));
         }
-    else {
-        let venueData =
-            state.screenConfiguration.preparedFinalObject.availabilityCheck
-                .bkSector;
-        let fromDateString =
-            state.screenConfiguration.preparedFinalObject.availabilityCheck
-                .bkFromDate;
-        let toDateString =
-            state.screenConfiguration.preparedFinalObject.availabilityCheck
-                .bkToDate;
-        localStorageSet("fromDateCG", fromDateString);
-        localStorageSet("toDateCG", toDateString);
-        localStorageSet("venueCG", venueData);
-        let reviewUrl = `/egov-services/applycommercialground?applicationNumber=${availabilityCheck.bkApplicationNumber}&tenantId=${availabilityCheck.tenantId}&businessService=${availabilityCheck.businessService}`;
-        dispatch(setRoute(reviewUrl));
+    } else {
+        let warrningMsg = {
+            labelName: "Please select Date RANGE",
+            labelKey: "",
+        };
+        dispatch(toggleSnackbar(true, warrningMsg, "warning"));
     }
 };
 
@@ -110,7 +124,9 @@ const callBackForSearch = async (state, dispatch) => {
         "screenConfiguration.preparedFinalObject.availabilityCheck.bkSector"
     );
 
-    if (sectorData === "") {
+    console.log(sectorData);
+
+    if (sectorData === "" || sectorData === undefined) {
         dispatch(
             toggleSnackbar(
                 true,
