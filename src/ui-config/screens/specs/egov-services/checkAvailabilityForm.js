@@ -28,7 +28,7 @@ import get from "lodash/get";
 const callBackForReset = (state, dispatch, action) => {
     const bkSector = get(
         state,
-        "screenConfiguration.preparedFinalObject.availabilityCheck.bkSector"
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
     );
     if (bkSector) {
         dispatch(
@@ -58,75 +58,96 @@ const callBackForReset = (state, dispatch, action) => {
 };
 
 const callBackForBook = async (state, dispatch) => {
-    let availabilityCheck =
-        state.screenConfiguration.preparedFinalObject.availabilityCheck;
-    console.log(availabilityCheck, "availabilityCheck");
-    if (availabilityCheck !== undefined) {
-        if (
-            (availabilityCheck &&
-                availabilityCheck.bkApplicationNumber == null) ||
-            availabilityCheck.bkApplicationNumber == undefined
-        ) {
-            console.log(
-                availabilityCheck.bkToDate,
-                "availabilityCheck.bkToDate !=="
-            );
-            if (availabilityCheck.bkToDate === undefined) {
-                let warrningMsg = {
-                    labelName: "Please select Date RANGE",
-                    labelKey: "",
-                };
-                dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-            } else {
-                let venueData =
-                    state.screenConfiguration.preparedFinalObject
-                        .availabilityCheck.bkSector;
-                let fromDateString =
-                    state.screenConfiguration.preparedFinalObject
-                        .availabilityCheck.bkFromDate;
-                let toDateString =
-                    state.screenConfiguration.preparedFinalObject
-                        .availabilityCheck.bkToDate;
-                localStorageSet("fromDateCG", fromDateString);
-                localStorageSet("toDateCG", toDateString);
-                localStorageSet("venueCG", venueData);
-                let reviewUrl = `/egov-services/applycommercialground`;
-                dispatch(setRoute(reviewUrl));
-            }
-        } else {
-            let venueData =
-                state.screenConfiguration.preparedFinalObject.availabilityCheck
-                    .bkSector;
-            let fromDateString =
-                state.screenConfiguration.preparedFinalObject.availabilityCheck
-                    .bkFromDate;
-            let toDateString =
-                state.screenConfiguration.preparedFinalObject.availabilityCheck
-                    .bkToDate;
-            localStorageSet("fromDateCG", fromDateString);
-            localStorageSet("toDateCG", toDateString);
-            localStorageSet("venueCG", venueData);
-            let reviewUrl = `/egov-services/applycommercialground?applicationNumber=${availabilityCheck.bkApplicationNumber}&tenantId=${availabilityCheck.tenantId}&businessService=${availabilityCheck.businessService}`;
-            dispatch(setRoute(reviewUrl));
-        }
-    } else {
+    let availabilityCheckData =
+        state.screenConfiguration.preparedFinalObject.availabilityCheckData;
+    console.log(availabilityCheckData, "availabilityCheckData");
+    if(availabilityCheckData === undefined){
         let warrningMsg = {
             labelName: "Please select Date RANGE",
             labelKey: "",
         };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-    }
+    } else {
+        if (availabilityCheckData.bkToDate === undefined || availabilityCheckData.bkToDate === "") {
+            let warrningMsg = {
+                labelName: "Please select Date RANGE",
+                labelKey: "",
+            };
+            dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+        } else if("bkApplicationNumber" in availabilityCheckData) {
+            dispatch(setRoute(`/egov-services/applycommercialground?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}`));
+        } else
+            dispatch(setRoute(`/egov-services/applycommercialground?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}`));
+     }
+    
+    // if (availabilityCheckData !== undefined) {
+
+
+    //     if (
+    //         (availabilityCheckData &&
+    //             availabilityCheckData.bkApplicationNumber == null) ||
+    //         availabilityCheckData.bkApplicationNumber == undefined
+    //     ) {
+    //         console.log(
+    //             availabilityCheckData.bkToDate,
+    //             "availabilityCheckData.bkToDate !=="
+    //         );
+    //         if (availabilityCheckData.bkToDate === undefined) {
+    //             let warrningMsg = {
+    //                 labelName: "Please select Date RANGE",
+    //                 labelKey: "",
+    //             };
+    //             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+    //         } else {
+    //             let venueData =
+    //                 state.screenConfiguration.preparedFinalObject
+    //                     .availabilityCheckData.bkSector;
+    //             let fromDateString =
+    //                 state.screenConfiguration.preparedFinalObject
+    //                     .availabilityCheckData.bkFromDate;
+    //             let toDateString =
+    //                 state.screenConfiguration.preparedFinalObject
+    //                     .availabilityCheckData.bkToDate;
+    //             localStorageSet("fromDateCG", fromDateString);
+    //             localStorageSet("toDateCG", toDateString);
+    //             localStorageSet("venueCG", venueData);
+    //             let reviewUrl = `/egov-services/applycommercialground`;
+    //             dispatch(setRoute(reviewUrl));
+    //         }
+    //     } else {
+    //         let venueData =
+    //             state.screenConfiguration.preparedFinalObject.availabilityCheckData
+    //                 .bkSector;
+    //         let fromDateString =
+    //             state.screenConfiguration.preparedFinalObject.availabilityCheckData
+    //                 .bkFromDate;
+    //         let toDateString =
+    //             state.screenConfiguration.preparedFinalObject.availabilityCheckData
+    //                 .bkToDate;
+    //         localStorageSet("fromDateCG", fromDateString);
+    //         localStorageSet("toDateCG", toDateString);
+    //         localStorageSet("venueCG", venueData);
+    //         let reviewUrl = `/egov-services/applycommercialground?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`;
+    //         dispatch(setRoute(reviewUrl));
+    //     }
+    // } else {
+    //     let warrningMsg = {
+    //         labelName: "Please select Date RANGE",
+    //         labelKey: "",
+    //     };
+    //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+    // }
 };
 
 const callBackForSearch = async (state, dispatch) => {
-    let sectorData = get(
+    let availabilityCheckData = get(
         state,
-        "screenConfiguration.preparedFinalObject.availabilityCheck.bkSector"
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    console.log(sectorData);
+    console.log(availabilityCheckData, "availabilityCheckData in form");
 
-    if (sectorData === "" || sectorData === undefined) {
+    if(availabilityCheckData === undefined){
         dispatch(
             toggleSnackbar(
                 true,
@@ -135,11 +156,12 @@ const callBackForSearch = async (state, dispatch) => {
             )
         );
     } else {
-        let response = await getAvailabilityData(sectorData);
+    if("bkSector" in availabilityCheckData){
+        let bookingVenue = availabilityCheckData && availabilityCheckData.bkSector;
+        console.log(bookingVenue, "bookingVenue");
+        let response = await getAvailabilityData(bookingVenue);
         if (response !== undefined) {
             let data = response.data;
-            // dispatch(prepareFinalObject("bookingCalendar.allowClick", "true"));
-
             let reservedDates = [];
             var daylist = [];
             data.map((dataitem) => {
@@ -150,20 +172,20 @@ const callBackForSearch = async (state, dispatch) => {
                     reservedDates.push(v.toISOString().slice(0, 10));
                 });
             });
-            prepareFinalObject("reservedAvailabilityData", reservedDates);
-            const actionDefination = [
-                {
-                    path:
-                        "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-                    property: "reservedDays",
-                    value: reservedDates,
-                },
-            ];
-            dispatchMultipleFieldChangeAction(
-                "checkavailability",
-                actionDefination,
-                dispatch
-            );
+            dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
+            // const actionDefination = [
+            //     {
+            //         path:
+            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+            //         property: "reservedDays",
+            //         value: reservedDates,
+            //     },
+            // ];
+            // dispatchMultipleFieldChangeAction(
+            //     "checkavailability",
+            //     actionDefination,
+            //     dispatch
+            // );
         } else {
             dispatch(
                 toggleSnackbar(
@@ -173,70 +195,66 @@ const callBackForSearch = async (state, dispatch) => {
                 )
             );
         }
+    } else {
+        dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: "Please Select Booking Venue!", labelKey: "" },
+                "warning"
+            )
+        );
+
     }
+}
+    // if (availabilityCheckData.bkSector === "" || availabilityCheckData.bkSector === undefined) {
+    //     dispatch(
+    //         toggleSnackbar(
+    //             true,
+    //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+    //             "warning"
+    //         )
+    //     );
+    // } else {
+    //     let response = await getAvailabilityData(availabilityCheckData.bkSector);
+    //     if (response !== undefined) {
+    //         let data = response.data;
+    //         let reservedDates = [];
+    //         var daylist = [];
+    //         data.map((dataitem) => {
+    //             let start = dataitem.fromDate;
+    //             let end = dataitem.toDate;
+    //             daylist = getBetweenDays(start, end);
+    //             daylist.map((v) => {
+    //                 reservedDates.push(v.toISOString().slice(0, 10));
+    //             });
+    //         });
+    //         prepareFinalObject("reservedAvailabilityData", reservedDates);
+    //         const actionDefination = [
+    //             {
+    //                 path:
+    //                     "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+    //                 property: "reservedDays",
+    //                 value: reservedDates,
+    //             },
+    //         ];
+    //         dispatchMultipleFieldChangeAction(
+    //             "checkavailability",
+    //             actionDefination,
+    //             dispatch
+    //         );
+    //     } else {
+    //         dispatch(
+    //             toggleSnackbar(
+    //                 true,
+    //                 { labelName: "Please Try After Sometime!", labelKey: "" },
+    //                 "warning"
+    //             )
+    //         );
+    //     }
+    // }
 };
 
-export const checkAvailabilityCalendar = getCommonCard({
-    Calendar: getCommonContainer({
-        bookingCalendar: {
-            uiFramework: "custom-atoms-local",
-            moduleName: "egov-services",
-            componentPath: "BookingCalendar",
-            gridDefination: {
-                xs: 12,
-                sm: 12,
-                md: 12,
-            },
-            props: {
-                open: false,
-                maxWidth: false,
-                screenKey: "bookingCalendar",
-                reservedDays: [],
-            },
-            children: {
-                popup: {},
-            },
-        },
-        dummyDiv: {
-            uiFramework: "custom-atoms",
-            componentPath: "Div",
-            gridDefination: {
-                xs: 12,
-                sm: 12,
-                md: 9,
-            },
-            visible: true,
-            props: {
-                disabled: true,
-            },
-        },
 
-        bookButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginTop: "50px",
-                },
-            },
-
-            children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Book",
-                    labelKey: "BK_CGB_BOOK_LABEL",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForBook,
-            },
-            visible: true,
-        },
-    }),
-});
 export const checkAvailabilitySearch = getCommonCard({
     subHeader: getCommonTitle({
         labelName: "Check Commercial Ground Availability",
@@ -263,7 +281,7 @@ export const checkAvailabilitySearch = getCommonCard({
                 },
 
                 sourceJsonPath: "applyScreenMdmsData.sector",
-                jsonPath: "availabilityCheck.bkSector",
+                jsonPath: "availabilityCheckData.bkSector",
                 required: true,
                 props: {
                     className: "applicant-details-error",
@@ -335,6 +353,67 @@ export const checkAvailabilitySearch = getCommonCard({
             onClickDefination: {
                 action: "condition",
                 callBack: callBackForReset,
+            },
+            visible: true,
+        },
+    }),
+});
+export const checkAvailabilityCalendar = getCommonCard({
+    Calendar: getCommonContainer({
+        bookingCalendar: {
+            uiFramework: "custom-containers-local",
+            moduleName: "egov-services",
+            componentPath: "BookingCalenderContainer",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 12,
+            },
+            props: {
+                open: false,
+                maxWidth: false,
+                screenKey: "bookingCalendar",
+                reservedDays: [],
+            },
+            children: {
+                popup: {},
+            },
+        },
+        dummyDiv: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 9,
+            },
+            visible: true,
+            props: {
+                disabled: true,
+            },
+        },
+
+        bookButton: {
+            componentPath: "Button",
+            props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                    minWidth: "200px",
+                    height: "48px",
+                    marginTop: "50px",
+                },
+            },
+
+            children: {
+                submitButtonLabel: getLabel({
+                    labelName: "Book",
+                    labelKey: "BK_CGB_BOOK_LABEL",
+                }),
+            },
+            onClickDefination: {
+                action: "condition",
+                callBack: callBackForBook,
             },
             visible: true,
         },

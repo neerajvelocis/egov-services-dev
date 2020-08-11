@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import {
     getFileUrlFromAPI,
     getQueryArg,
+    addQueryArg
 } from "egov-ui-framework/ui-utils/commons";
 import "react-day-picker/lib/style.css";
 import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
@@ -25,70 +26,99 @@ class BookingCalendar extends React.Component {
         };
     }
 
+    getDeselectDays() {}
     componentDidMount() {
-        const {availabilityCheckData} = this.props
+        const { availabilityCheckData } = this.props;
         console.log(availabilityCheckData, "availabilityCheckData");
 
-
-        const applicationNumber = getQueryArg(
-            window.location.href,
-            "applicationNumber"
-        );
-        console.log(applicationNumber, "applicationNumberNew");
-        let pushReservedDay = [];
-        for (let i = 0; i < this.props.reservedDays.length; i++) {
-            pushReservedDay.push(new Date(this.props.reservedDays[i]));
+        if("reservedDays" in availabilityCheckData){
+            let pushReservedDay = [];
+            availabilityCheckData.reservedDays.length > 0 &&availabilityCheckData.reservedDays.map(el => {
+                pushReservedDay.push(new Date(el));
+            })
+            this.setState({ 
+                dselectedDays: pushReservedDay, 
+                from :  new Date(availabilityCheckData.bkFromDate), 
+                enteredTo : new Date(availabilityCheckData.bkToDate)
+            })
         }
-        this.setState({ dselectedDays: pushReservedDay });
+        
+        
+      
 
-         if(this.props.reservedDays.length > 0) {
-         
-            this.setState({
-                from: new Date(this.props.availabilityCheck.bkFromDate),
-                // to: new Date(this.props.availabilityCheck.bkToDate),
-                enteredTo: new Date(this.props.availabilityCheck.bkToDate),
-            });
-        } 
+
+        // for (let i = 0; i < this.props.reservedDays.length; i++) {
+        //     pushReservedDay.push(new Date(this.props.reservedDays[i]));
+        // }
+        
+
+        //  if(this.props.reservedDays.length > 0) {
+
+        //     this.setState({
+        //         from: new Date(this.props.availabilityCheckData.bkFromDate),
+        //         // to: new Date(this.props.availabilityCheckData.bkToDate),
+        //         enteredTo: new Date(this.props.availabilityCheckData.bkToDate),
+        //     });
+        // }
         // if(applicationNumber !== null || applicationNumber !== undefined){
         //     alert("in it")
         //     this.setState({
         //         from: new Date(localStorageGet("fromDateCG")),
-        //         // to: new Date(this.props.availabilityCheck.bkToDate),
+        //         // to: new Date(this.props.availabilityCheckData.bkToDate),
         //         enteredTo: new Date(localStorageGet("toDateCG")),
         //     });
-        // } 
+        // }
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     const applicationNumber = getQueryArg(
-    //         window.location.href,
-    //         "applicationNumber"
-    //     );
-    //     console.log(applicationNumber, "applicationNumberNew");
-    //     let reservedDays = nextProps.reservedDays;
-    //     let pushReservedDay = [];
-    //     for (let i = 0; i < reservedDays.length; i++) {
-    //         pushReservedDay.push(new Date(reservedDays[i]));
-    //     }
-    //     this.setState({ dselectedDays: pushReservedDay });
+    componentWillReceiveProps(nextProps) {
+        if("reservedDays" in nextProps.availabilityCheckData){
+            let pushReservedDay = [];
+            nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
+                pushReservedDay.push(new Date(el));
+            })
+            this.setState({ 
+                dselectedDays: pushReservedDay, 
+            })
+        }
 
-    //     if(this.props.reservedDays.length > 0) {
-         
-    //         this.setState({
-    //             from: new Date(this.props.availabilityCheck.bkFromDate),
-    //             // to: new Date(this.props.availabilityCheck.bkToDate),
-    //             enteredTo: new Date(this.props.availabilityCheck.bkToDate),
-    //         });
-    //     } 
-    //     // if(applicationNumber !== null || applicationNumber !== undefined){
-    //     //     alert("in it")
-    //     //     this.setState({
-    //     //         from: new Date(localStorageGet("fromDateCG")),
-    //     //         // to: new Date(this.props.availabilityCheck.bkToDate),
-    //     //         enteredTo: new Date(localStorageGet("toDateCG")),
-    //     //     });
-    //     // }
-    // }
+        if("bkApplicationNumber" in nextProps.availabilityCheckData){
+            this.setState({ 
+                from :  new Date(nextProps.availabilityCheckData.bkFromDate), 
+                enteredTo : new Date(nextProps.availabilityCheckData.bkToDate)
+            })
+        }
+        
+            
+           
+        // const applicationNumber = getQueryArg(
+        //     window.location.href,
+        //     "applicationNumber"
+        // );
+        // console.log(applicationNumber, "applicationNumberNew");
+        // let reservedDays = nextProps.reservedDays;
+        // let pushReservedDay = [];
+        // for (let i = 0; i < reservedDays.length; i++) {
+        //     pushReservedDay.push(new Date(reservedDays[i]));
+        // }
+        // this.setState({ dselectedDays: pushReservedDay });
+
+        // if(this.props.reservedDays.length > 0) {
+
+        //     this.setState({
+        //         from: new Date(this.props.availabilityCheckData.bkFromDate),
+        //         // to: new Date(this.props.availabilityCheckData.bkToDate),
+        //         enteredTo: new Date(this.props.availabilityCheckData.bkToDate),
+        //     });
+        // }
+        // if(applicationNumber !== null || applicationNumber !== undefined){
+        //     alert("in it")
+        //     this.setState({
+        //         from: new Date(localStorageGet("fromDateCG")),
+        //         // to: new Date(this.props.availabilityCheckData.bkToDate),
+        //         enteredTo: new Date(localStorageGet("toDateCG")),
+        //     });
+        // }
+    }
 
     getInitialState() {
         return {
@@ -105,13 +135,8 @@ class BookingCalendar extends React.Component {
     }
 
     handleDayClick = (day, modifiers = {}) => {
-        const {availabilityCheckData} = this.props
-        let val = this.props.availabilityCheck;
-        if (val === "false" || val === undefined) {
-            this.handleResetClick();
-            this.props.showError2();
-            return;
-        } else {
+        const { availabilityCheckData } = this.props;
+        if("reservedDays" in availabilityCheckData){
             console.log(modifiers.disabled, "Modifiers");
             const { from, to } = this.state;
             if (from && to && day >= from && day <= to) {
@@ -120,10 +145,10 @@ class BookingCalendar extends React.Component {
             }
             if (this.isSelectingFirstDay(from, to, day)) {
                 this.props.prepareFinalObject(
-                    "availabilityCheck.bkFromDate",
+                    "availabilityCheckData.bkFromDate",
                     day
                 );
-
+                
                 this.setState({
                     from: day,
                     to: null,
@@ -135,12 +160,51 @@ class BookingCalendar extends React.Component {
                     enteredTo: day,
                 });
                 this.props.prepareFinalObject(
-                    "availabilityCheck.bkToDate",
+                    "availabilityCheckData.bkToDate",
                     day
                 );
                 this.checkRangeValidity();
             }
+        } else {
+            this.handleResetClick();
+            this.props.showError2();
+            return;
         }
+        // let val = availabilityCheckData
+        // if (val === "false" || val === undefined) {
+        //     this.handleResetClick();
+        //     this.props.showError2();
+        //     return;
+        // } else {
+        //     console.log(modifiers.disabled, "Modifiers");
+        //     const { from, to } = this.state;
+        //     if (from && to && day >= from && day <= to) {
+        //         this.handleResetClick();
+        //         return;
+        //     }
+        //     if (this.isSelectingFirstDay(from, to, day)) {
+        //         this.props.prepareFinalObject(
+        //             "availabilityCheckData.bkFromDate",
+        //             day
+        //         );
+
+        //         this.setState({
+        //             from: day,
+        //             to: null,
+        //             enteredTo: null,
+        //         });
+        //     } else {
+        //         this.setState({
+        //             to: day,
+        //             enteredTo: day,
+        //         });
+        //         this.props.prepareFinalObject(
+        //             "availabilityCheckData.bkToDate",
+        //             day
+        //         );
+        //         this.checkRangeValidity();
+        //     }
+        // }
     };
 
     handleDayMouseEnter = (day) => {
@@ -154,7 +218,7 @@ class BookingCalendar extends React.Component {
 
     handleResetClick = () => {
         this.setState(this.getInitialState());
-        this.props.prepareFinalObject("availabilityCheck.bkToDate", "");
+        this.props.prepareFinalObject("availabilityCheckData.bkToDate", "");
     };
 
     // setFromDateHandle = (date) => {
@@ -207,9 +271,12 @@ class BookingCalendar extends React.Component {
         const modifiers = { start: from, end: enteredTo };
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
+        console.log(this.state.dselectedDays);
+        // console.log(this.props, "sankalp");
+        // console.log(this.state, "sankalp state");
         return (
-            <div className="Outer">
-                <div className="calendar-section fl" style={{ width: "100%" }}>
+            <div className="calender-wrapper">
+                <div className="calendar-section" style={{ width: "100%" }}>
                     <DayPicker
                         className="Range"
                         numberOfMonths={1}
@@ -221,7 +288,6 @@ class BookingCalendar extends React.Component {
                         onDayMouseEnter={this.handleDayMouseEnter}
                     />
                 </div>
-
                 <div>
                     {!from && !to && "Please select the first day."}
                     {from && !to && "Please select the last day."}
@@ -240,17 +306,21 @@ class BookingCalendar extends React.Component {
                 </div>
                 <Helmet>
                     <style>{`
-
-                    .Outer{ align-item :center}
-                    .Range{width: 100%}
-          .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
-          background-color: #f0f8ff !important;
+    .DayPicker{
+        width : 100%
+    }
+                    // .Range{width: 100%}
+        //   .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+        //   background-color: #f0f8ff !important;
           
-          color: #4a90e2;
-          }
-          .Range .DayPicker-Day {
+        //   color: #4a90e2;
+        //   }
+        .DayPicker:not(.DayPicker--interactionDisabled) .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover{
+            background-color : pink;
+        }
+        .DayPicker-Day {
               
-            border-radius: 0 !important;
+            border-radius: 0 ;
           }
   
           .DayPicker-Month{width:100%; height:100%;margin:auto;}
@@ -275,8 +345,8 @@ class BookingCalendar extends React.Component {
 }
 // const mapStateToProps = (state) => {
 //     return {
-//         availabilityCheck:
-//             state.screenConfiguration.preparedFinalObject.availabilityCheck,
+//         availabilityCheckData:
+//             state.screenConfiguration.preparedFinalObject.availabilityCheckData,
 //     };
 // };
 

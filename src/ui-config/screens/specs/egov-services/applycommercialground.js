@@ -269,7 +269,9 @@ export const prepareEditFlow = async (
     state,
     dispatch,
     applicationNumber,
-    tenantId
+    tenantId, 
+    fromDate,
+    toDate, venue
 ) => {
     if (applicationNumber) {
         let response = await getSearchResultsView([
@@ -284,24 +286,24 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
-                convertDateInYMD(localStorageGet("fromDateCG"))
+                convertDateInYMD(fromDate)
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkToDate",
-                convertDateInYMD(localStorageGet("toDateCG"))
+                convertDateInYMD(toDate)
             )
         );
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkBookingVenue",
-                localStorageGet("venueCG")
+                venue
             )
         );
         dispatch(
-            prepareFinalObject("Booking.bkSector", localStorageGet("venueCG"))
+            prepareFinalObject("Booking.bkSector", venue)
         );
 
         console.log(response, "responseNew");
@@ -330,42 +332,40 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "applycommercialground",
     beforeInitScreen: (action, state, dispatch) => {
-        clearlocalstorageAppDetails(state);
+        // clearlocalstorageAppDetails(state);
         setapplicationType("GFCP");
         const applicationNumber = getQueryArg(
             window.location.href,
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-
-        // const venueData = getQueryArg(window.location.href, "venue");
-
-        // const queryfrom = getQueryArg(window.location.href, "from");
-        // const queryto = getQueryArg(window.location.href, "to");
+        const venue = getQueryArg(window.location.href, "venue");
+        const fromDate = getQueryArg(window.location.href, "fromDate");
+        const toDate = getQueryArg(window.location.href, "toDate");
         // const from = convertDateInYMD(queryfrom);
         // const to = convertDateInYMD(queryto);
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
-                convertDateInYMD(localStorageGet("fromDateCG"))
+                convertDateInYMD(fromDate)
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkToDate",
-                convertDateInYMD(localStorageGet("toDateCG"))
+                convertDateInYMD(toDate)
             )
         );
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkBookingVenue",
-                localStorageGet("venueCG")
+                venue
             )
         );
         dispatch(
-            prepareFinalObject("Booking.bkSector", localStorageGet("venueCG"))
+            prepareFinalObject("Booking.bkSector", venue)
         );
 
         const step = getQueryArg(window.location.href, "step");
@@ -406,7 +406,7 @@ const screenConfig = {
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-            prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+            prepareEditFlow(state, dispatch, applicationNumber, tenantId, fromDate, toDate, venue);
         }
 
         // Code to goto a specific step through URL

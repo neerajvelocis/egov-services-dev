@@ -73,6 +73,10 @@ const Footer = Loadable({
   loader: () => import("./Footer"),
   loading: () => <Loading />
 });
+const BookingCalendar = Loadable({
+  loader: () => import("./BookingCalendar"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -89,5 +93,6 @@ export {
   MultiItemsWithImage,
   TaskDialog,
   TaskStatusComponents,
-  Footer
+  Footer,
+  BookingCalendar
 };
