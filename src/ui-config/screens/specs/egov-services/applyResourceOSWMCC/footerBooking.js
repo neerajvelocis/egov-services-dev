@@ -14,7 +14,7 @@ import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
 import {
-    createUpdateOsbApplication,
+    createUpdateOSWMCCApplication,
     prepareDocumentsUploadData,
 } from "../../../../../ui-utils/commons";
 import {
@@ -42,12 +42,11 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdateOSWMCCApplication(
             state,
             dispatch,
             "INITIATE"
         );
-        console.log(response, "myResponse");
         let responseStatus = get(response, "status", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
             // DISPLAY SUCCESS MESSAGE
@@ -112,7 +111,7 @@ const callBackForNext = async (state, dispatch) => {
     }
     if (activeStep === 3) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdateOSWMCCApplication(
             state,
             dispatch,
             "APPLY"

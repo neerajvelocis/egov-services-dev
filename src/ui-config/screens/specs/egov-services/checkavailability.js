@@ -247,15 +247,7 @@ const screenConfig = {
                 true
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        } else {
-			// alert("in this")
-			// lSRemoveItemlocal("fromDateCG")
-			// lSRemoveItemlocal("toDateCG")
-		}
-
-        // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
-        // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
-        // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
+        }
         return action;
     },
     components: {
