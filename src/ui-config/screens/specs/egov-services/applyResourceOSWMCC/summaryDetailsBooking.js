@@ -9,8 +9,8 @@ import {
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { openSpaceSummary } from "../summaryResource/openSpaceSummaryNewLocationOSWMCC";
-import { applicantSummary } from "../summaryResource/applicantSummaryNewLocationOSWMCC";
+import { openSpaceSummary } from "../summaryResource/openSpaceSummaryOSWMCC";
+import { applicantSummary } from "../summaryResource/applicantSummaryBookingOSWMCC";
 import { documentsSummary } from "../summaryResource/documentsSummaryNewLocationOSWMCC";
 
 

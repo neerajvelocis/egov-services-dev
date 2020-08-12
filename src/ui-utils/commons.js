@@ -901,6 +901,113 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
         return { status: "failure", message: error };
     }
 };
+
+export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => {
+    let response = "";
+    let tenantId = getTenantId().split(".")[0];
+    // let applicationNumber =
+    //     getapplicationNumber() !== "null" && action === "INITIATE"
+    //         ? false
+    //         : getapplicationNumber() === "null" && action === "INITIATE"
+    //         ? false
+    //         : true;
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
+    try {
+        let payload = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking",
+            []
+        );
+        let reduxDocuments = get(
+            state,
+            "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+            {}
+        );
+        let bookingDocuments = [];
+        let otherDocuments = [];
+
+        jp.query(reduxDocuments, "$.*").forEach((doc) => {
+            console.log(doc, "documents");
+            if (doc.documents && doc.documents.length > 0) {
+                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                    bookingDocuments = [
+                        ...bookingDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                } else if (!doc.documentSubCode) {
+                    otherDocuments = [
+                        ...otherDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                }
+            }
+        });
+
+        set(payload, "wfDocuments", bookingDocuments);
+        
+        set(payload, "tenantId", tenantId);
+        set(payload, "action", action);
+        set(payload, "businessService", "NLUJM");
+        set(payload, "idProof", "Adhar");
+
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/newLocation/_create",
+                "",
+                [],
+                {
+                    NewLocationDetails: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.applicationNumber !== "null" ||
+                response.data.applicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.applicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/newLocation/_update",
+                "",
+                [],
+                {
+                    NewLocationDetails: payload,
+                }
+            );
+            console.log("pet response update: ", response);
+            setapplicationNumber(response.data.applicationNumber);
+            dispatch(prepareFinalObject("Booking", response.data));
+            return { status: "success", data: response.data };
+        }
+
+        
+    } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+        // Revert the changed pfo in case of request failure
+        let fireNocData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking",
+            []
+        );
+        // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
+        dispatch(prepareFinalObject("Booking", fireNocData));
+
+        return { status: "failure", message: error };
+    }
+};
 export const createUpdateCgbApplication = async (
     state,
     dispatch,

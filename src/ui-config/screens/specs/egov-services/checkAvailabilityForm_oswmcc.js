@@ -21,7 +21,7 @@ const getDates = async (state, dispatch) => {
     );
 
     let requestBody = {
-        bookingType: 'GROUND_FOR_COMMERCIAL_PURPOSE',
+        bookingType: 'OPEN_SPACE_WITHIN_MCC',
         bookingVenue: bookingVenueName,
 
     }
@@ -102,14 +102,14 @@ export const callBackForReset = (state, dispatch, action) => {
 const callBackForBook = async (state, dispatch) => {
 
     const appendUrl = process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-   // if ('Check' in state.screenConfiguration.preparedFinalObject && state.screenConfiguration.preparedFinalObject.Check.toDate !== "") {
+    // if ('Check' in state.screenConfiguration.preparedFinalObject && state.screenConfiguration.preparedFinalObject.Check.toDate !== "") {
 
-        // let venueData = state.screenConfiguration.preparedFinalObject.bookingCalendar.sector;
-        // let fromDateString = state.screenConfiguration.preparedFinalObject.Check.fromDate;
-        // let toDateString = state.screenConfiguration.preparedFinalObject.Check.toDate;
-        //let reviewUrl = `${appendUrl}/egov-services/applyopenspacewmcc?from=${fromDateString}&to=${toDateString}&venue=${venueData}`;
-        let reviewUrl = `${appendUrl}/egov-services/applyopenspacewmcc`;
-        dispatch(setRoute(reviewUrl))
+    // let venueData = state.screenConfiguration.preparedFinalObject.bookingCalendar.sector;
+    // let fromDateString = state.screenConfiguration.preparedFinalObject.Check.fromDate;
+    // let toDateString = state.screenConfiguration.preparedFinalObject.Check.toDate;
+    //let reviewUrl = `${appendUrl}/egov-services/applyopenspacewmcc?from=${fromDateString}&to=${toDateString}&venue=${venueData}`;
+    let reviewUrl = `${appendUrl}/egov-services/applyopenspacewmcc`;
+    dispatch(setRoute(reviewUrl))
     // } else {
     //     let warrningMsg = { labelName: "Please select Date RANGE", labelKey: "" };
     //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -129,7 +129,7 @@ var getDaysArray = function (start, end) {
 
 
 const callBackForAddNewLocation = async (state, dispatch) => {
-    
+
     const addLocationURL = `/egov-services/applyNewLocationUnderMCC`;
     dispatch(setRoute(addLocationURL));
 }
@@ -247,7 +247,7 @@ export const NOCCalendar = getCommonCard({
             children: {
                 submitButtonLabel: getLabel({
                     labelName: "Book",
-                    labelKey: "BK_CGB_BOOK_LABEL"
+                    labelKey: "BK_OSWMCC_BOOK_LABEL"
                 }),
 
             },
@@ -320,11 +320,64 @@ export const NOCApplication = getCommonCard({
                     // disabled: true
                 },
             }),
+            beforeFieldChange: (action, state, dispatch) => {
+
+                // dispatch(
+                //     handleField(
+                //         "checkavailability_oswmcc",
+                //         "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.SectorLocations",
+                //         "props.dropdownData",
+                //         [
+                //             { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
+                //             { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
+                //             { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
+                //         ]
+                //     )
+                // );
+                const calendarScreenMdmsData = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.calendarScreenMdmsData"
+                );
+                const sectorWiselocationsObject = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
+                );
+console.log(action, "nero action");
+                const locationsWithinSector = get(
+                    sectorWiselocationsObject,
+                    action.value
+                );
+                
+
+                // let payload = {};
+                // let locationsWithinSector = [
+                //         { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
+                //         { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
+                //         { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
+                //     ];
+                    calendarScreenMdmsData.locationsWithinSector = locationsWithinSector;
+                    dispatch(prepareFinalObject("calendarScreenMdmsData", calendarScreenMdmsData));    
+                //set(action, "screenConfiguration.preparedFinalObject.calendarScreenMdmsData.locationsWithinSector", locationsWithinSector)
+                // dispatch(
+                //     handleField(
+                //         "checkavailability_oswmcc",
+                //         "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.SectorLocations",
+                //         "visible",
+                //         true
+                //     )
+                // );
+
+                // set(action, "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.SectorLocations", [
+                //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
+                //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
+                //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
+                // ])
+            }
         },
         SectorLocations: {
             ...getSelectField({
                 label: {
-                    labelName: "Sector's Locations",
+                    labelName: "Booking Locations",
                     labelKey: "BK_OSWMCC_BOOKING_LOCAION_LABEL",
                 },
 
