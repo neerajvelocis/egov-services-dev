@@ -832,6 +832,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "OSBM");
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {
             response = await httpRequest(
@@ -948,7 +949,8 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "GFCP");
-        setapplicationMode(status);
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+        // setapplicationMode(status);
 
         // if (method === "CREATE") {
         response = await httpRequest("post", "/bookings/api/_create", "", [], {
@@ -1029,7 +1031,8 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "BWT");
-        setapplicationMode(status);
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+        // setapplicationMode(status);
 
         if (method === "CREATE") {
             response = await httpRequest(
