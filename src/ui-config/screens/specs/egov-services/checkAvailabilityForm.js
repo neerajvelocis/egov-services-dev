@@ -26,11 +26,11 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 
 const callBackForReset = (state, dispatch, action) => {
-    const bkSector = get(
+    const availabilityCheckData = get(
         state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
-    if (bkSector) {
+    if (availabilityCheckData.bkSector) {
         dispatch(
             handleField(
                 "checkavailability",
@@ -40,20 +40,40 @@ const callBackForReset = (state, dispatch, action) => {
             )
         );
     }
+    if (availabilityCheckData.bkFromDate) {
+        dispatch(
+            handleField(
+                "checkavailability",
+                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                "props.value",
+                ""
+            )
+        );
+    }
+    if (availabilityCheckData.reservedDays) {
+        dispatch(
+            handleField(
+                "checkavailability",
+                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
+                "props.reservedDays",
+                []
+            )
+        );
+    }
 
-    const actionDefination = [
-        {
-            path:
-                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-            property: "reservedDays",
-            value: [],
-        },
-    ];
-    dispatchMultipleFieldChangeAction(
-        "checkavailability",
-        actionDefination,
-        dispatch
-    );
+    // const actionDefination = [
+    //     {
+    //         path:
+    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+    //         property: "reservedDays",
+    //         value: [],
+    //     },
+    // ];
+    // dispatchMultipleFieldChangeAction(
+    //     "checkavailability",
+    //     actionDefination,
+    //     dispatch
+    // );
     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 };
 
