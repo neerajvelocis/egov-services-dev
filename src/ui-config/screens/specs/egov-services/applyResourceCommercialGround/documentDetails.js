@@ -39,7 +39,7 @@ export const documentDetails = getCommonCard({
         accept: ".pdf,.png,.jpg,.jpeg"
       },
       maxFileSize: 1025,
-      moduleName: "CGB"
+      moduleName: "GFCP"
     },
     type: "array"
   }

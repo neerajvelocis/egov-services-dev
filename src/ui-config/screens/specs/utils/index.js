@@ -265,8 +265,8 @@ export const gotoApplyWithStep = (state, dispatch, step) => {
         process.env.REACT_APP_SELF_RUNNING === "true"
             ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
             : applicationType === "Booking"
-                ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
-                : ``;
+            ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
+            : ``;
 
     console.log(applyUrl, "applyUrl");
 
@@ -1334,11 +1334,20 @@ export const clearlocalstorageAppDetails = (state) => {
 
 export const convertDateInDMY = (inputDate) => {
     if (inputDate) {
-        var datePart = inputDate.split("-");
-        let year = datePart[0],
-            month = datePart[1],
-            day = datePart[2];
-        return day + "/" + month + "/" + year;
+        let today = new Date(inputDate);
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1;
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = "0" + dd;
+        }
+
+        if (mm < 10) {
+            mm = "0" + mm;
+        }
+
+        today = dd + "/" + mm + "/" + yyyy;
+        return today;
     } else {
         return "";
     }
@@ -1352,6 +1361,18 @@ export const getTodaysDateInYMD = () => {
             : date.getMonth() + 1;
     let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
     date = `${date.getFullYear()}-${month}-${day}`;
+    return date;
+};
+export const convertDateInYMD = (data) => {
+    let date = new Date(data);
+    //date = date.valueOf();
+    let month =
+        date.getMonth() + 1 < 10
+            ? `0${date.getMonth() + 1}`
+            : date.getMonth() + 1;
+    let day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+    date = `${date.getFullYear()}-${month}-${day}`;
+    // date = epochToYmdDate(date);
     return date;
 };
 
@@ -1574,21 +1595,25 @@ export const downloadReceipt = (
                         transactionId:
                             payloadReceiptDetails.Payments[0].transactionNumber,
                         bookingPeriod:
-
-
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
+                                .bill.businessService === "OSBM" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP"
                                 ? getDurationDate(
-                                    applicationData.bkFromDate,
-                                    applicationData.bkToDate
-                                )
+                                      applicationData.bkFromDate,
+                                      applicationData.bkToDate
+                                  )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem: `Online Payment Against Booking of ${
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
+                                .bill.businessService === "GFCP"
+                                ? "Commercial Ground"
+                                : payloadReceiptDetails.Payments[0]
+                                      .paymentDetails[0].bill
+                                      .businessService === "OSBM"
                                 ? "Open Space for Building Material"
                                 : "Water Tanker"
-                            }`,
+                        }`,
                         amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                             (el) => !el.taxHeadCode.includes("TAX")
                         )[0].amount,
@@ -1601,10 +1626,10 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].totalAmountPaid
                         ),
                         paymentItemExtraColumnLabel:
-
-
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM"
+                                .bill.businessService === "OSBM" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP"
                                 ? "Booking Period"
                                 : "Date & Time",
                         paymentMode:
@@ -1667,30 +1692,35 @@ export const downloadCertificate = (
     };
     try {
         let queryStr = [
-            { key: "key", value: "bk-osbm-pl" },
+            {
+                key: "key",
+                value:
+                    applicationData.businessService == "OSBM"
+                        ? "bk-osbm-pl"
+                        : "bk-cg-pl",
+            },
             { key: "tenantId", value: "ch" },
         ];
 
-        applicationData.businessService == "OSBM"
-            ? queryStr = [
-                { key: "key", value: "bk-osbm-pl" },
-                { key: "tenantId", value: "ch" },
-            ]
-            : queryStr = [
-                { key: "key", value: "bk-cg-pl" },
-                { key: "tenantId", value: "ch" },
-            ]
-
+        // applicationData.businessService == "OSBM"
+        //     ? queryStr = [
+        //         { key: "key", value: "bk-osbm-pl" },
+        //         { key: "tenantId", value: "ch" },
+        //     ]
+        //     : queryStr = [
+        //         { key: "key", value: "bk-cg-pl" },
+        //         { key: "tenantId", value: "ch" },
+        //     ]
 
         let certificateData = [
             {
                 applicantDetail: {
                     name: applicationData.bkApplicantName,
                     mobileNumber: applicationData.bkMobileNumber,
-                    houseNo: applicationData.bkSector,
+                    houseNo: applicationData.bkHouseNo,
                     permanentAddress: applicationData.bkCompleteAddress,
                     permanentCity: tenantId,
-                    sector: applicationData.bkHouseNo,
+                    sector: applicationData.bkSector,
                 },
                 bookingDetail: {
                     applicationNumber: applicationNumber,
@@ -1706,12 +1736,29 @@ export const downloadCertificate = (
                         applicationData.bkFromDate,
                         applicationData.bkToDate
                     ),
+                    bookingPeriod: getDurationDate(
+                        applicationData.bkFromDate,
+                        applicationData.bkToDate
+                    ),
+                    groundName: applicationData.bkSector,
                     duration:
                         applicationData.bkDuration == "1"
                             ? `${applicationData.bkDuration} Month`
                             : `${applicationData.bkDuration} Months`,
+
                     categoryImage: "",
                     // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
+                },
+                approvedBy:{
+                    approvedBy: "Renil Commissioner",
+                    role: "Additional Commissioner"
+                },
+                tenantInfo:{
+                    municipalityName: "Municipal Corporation Chandigarh",
+                    address: "New Deluxe Building, Sector 17, Chandigarh",
+                    contactNumber: "+91-172-2541002, 0172-2541003",
+                    logoUrl: "https://chstage.blob.core.windows.net/fileshare/logo.png",
+                    webSite: "http://mcchandigarh.gov.in"
                 },
                 generatedBy: {
                     generatedBy: JSON.parse(getUserInfo()).name,
@@ -1771,9 +1818,11 @@ export const downloadApplication = (
                 value:
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
+                        : applicationData.businessService == "GFCP"
+                        ? "bk-cg-app-form"
                         : applicationData.bkStatus.includes("Paid")
-                            ? "bk-wt-app-form"
-                            : "bk-wt-unpaid-app-form",
+                        ? "bk-wt-app-form"
+                        : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1812,6 +1861,16 @@ export const downloadApplication = (
             applicationStatus: applicationData.bkApplicationStatus,
             applicationType: applicationData.bkStatus,
         };
+        let bookingDataGFCP = {
+            applicationNumber: applicationNumber,
+            venue: applicationData.bkBookingVenue,
+            bookingCategory: applicationData.bkCategory,
+            bookingPeriod: getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            ),
+            bookingPurpose: applicationData.bkBookingPurpose,
+        };
 
         let appData = [
             {
@@ -1823,24 +1882,28 @@ export const downloadApplication = (
                     permanentCity: tenantId,
                     sector: applicationData.bkSector,
                     email: applicationData.bkEmail,
+                    fatherName: applicationData.bkFatherName,
+                    DOB: null,
                 },
                 bookingDetail:
                     applicationData.businessService === "OSBM"
                         ? bookingDataOsbm
+                        : applicationData.businessService === "GFCP"
+                        ? bookingDataGFCP
                         : bookingDataWt,
                 feeDetail: {
                     baseCharge:
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
-                                (el) => !el.taxHeadCode.includes("TAX")
-                            )[0].amount,
+                                  (el) => !el.taxHeadCode.includes("TAX")
+                              )[0].amount,
                     taxes:
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
-                                (el) => el.taxHeadCode.includes("TAX")
-                            )[0].amount,
+                                  (el) => el.taxHeadCode.includes("TAX")
+                              )[0].amount,
                     totalAmount:
                         paymentData === undefined
                             ? null
@@ -1873,4 +1936,37 @@ export const downloadApplication = (
     } catch (exception) {
         alert("Some Error Occured while downloading Application!");
     }
+};
+
+export const getAvailabilityData = async (sectorData) => {
+    let requestBody = {
+        bookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
+        bookingVenue: sectorData,
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/commercial/ground/availability/_search",
+            "",
+            [],
+            requestBody
+        );
+        console.log(response, "availability response");
+        return response;
+    } catch (exception) {
+        console.log(exception);
+    }
+};
+
+export const getBetweenDays = function (start, end) {
+    let arr = [];
+    // let endDate = new Date(end);
+    for (
+        let dt = new Date(start);
+        dt <= new Date(end);
+        dt.setDate(dt.getDate() + 1)
+    ) {
+        arr.push(new Date(dt));
+    }
+    return arr;
 };

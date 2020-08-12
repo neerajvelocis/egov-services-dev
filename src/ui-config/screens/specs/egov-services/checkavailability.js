@@ -1,162 +1,290 @@
-
-import { NOCApplication, NOCCalendar } from "./checkAvailabilityForm";
-
-import { prepareFinalObject, toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
-import { getCommonContainer, getCommonCard } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import get from "lodash/get";
-
-
-// export const callBackForBook = (state, dispatch) => {
-
-//   let from = get(
-//     state,
-//     "screenConfiguration.preparedFinalObject.Check.fromDate",
-//     {}
-//   );
-
-//   let to = get(
-//     state,
-//     "screenConfiguration.preparedFinalObject.Check.toDate",
-//     {}
-//   );
-//   const appendUrl =
-//     process.env.REACT_APP_SELF_RUNNING === "true" ? "/egov-ui-framework" : "";
-//   const reviewUrl = `${appendUrl}/egov-services/applycommercialground?from=${from}&to=${to}`;
-//   dispatch(setRoute(reviewUrl));
-
-// };
+import {
+    getCommonContainer,
+    getCommonHeader,
+} from "egov-ui-framework/ui-config/screens/specs/utils";
+import {
+    getCurrentFinancialYear,
+    clearlocalstorageAppDetails,
+    convertDateInYMD,
+} from "../utils";
+import {
+    checkAvailabilitySearch,
+    checkAvailabilityCalendar,
+} from "./checkAvailabilityForm";
+import { setapplicationNumber, lSRemoveItemlocal, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
+import {
+    prepareFinalObject,
+    toggleSnackbar,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import set from "lodash/set";
+import {
+    getFileUrlFromAPI,
+    getQueryArg,
+} from "egov-ui-framework/ui-utils/commons";
+import {
+    getSearchResultsView,
+    setApplicationNumberBox,
+} from "../../../../ui-utils/commons";
+import { getAvailabilityData, getBetweenDays } from "../utils";
 
 const getMdmsData = async (action, state, dispatch) => {
+    try {
+        let payload = {};
 
-  try {
-    let payload = {};
+        payload.sector = [
+            {
+                id: 1,
+                code: "Circus Ground, Sector 17",
+                tenantId: "ch.chandigarh",
+                name: "Circus Ground, Sector 17",
+                active: true,
+            },
+            {
+                id: 2,
+                code: "Exhibition Ground, Sector 34",
+                tenantId: "ch.chandigarh",
+                name: "Exhibition Ground, Sector 34",
+                active: true,
+            },
+            {
+                id: 2,
+                code: "Housing Board Ground, Manimajra",
+                tenantId: "ch.chandigarh",
+                name: "Housing Board Ground, Manimajra",
+                active: true,
+            },
+            {
+                id: 2,
+                code: "Circus Ground, Manimajra",
+                tenantId: "ch.chandigarh",
+                name: "Circus Ground, Manimajra",
+                active: true,
+            },
+        ];
 
-    payload.sector = [
-      { id: 1, code: 'SECTOR-17', tenantId: 'ch.chandigarh', name: 'SECTOR-17', active: true },
-      { id: 2, code: 'EG_SECTOR_34', tenantId: 'ch.chandigarh', name: 'EG_SECTOR_34', active: true },
-      { id: 2, code: 'MANIMAJRA', tenantId: 'ch.chandigarh', name: 'MANIMAJRA', active: true }
-    ]
-
-
-    console.log(payload.sector, "payload.MdmsRes");
-
-    dispatch(prepareFinalObject("calendarScreenMdmsData", payload));
-  } catch (e) {
-    console.log(e);
-  }
+        dispatch(prepareFinalObject("applyScreenMdmsData", payload));
+    } catch (e) {
+        console.log(e);
+    }
 };
+
+// const getMdmsData = async (action, state, dispatch) => {
+// 	alert("this")
+//     let tenantId = getTenantId().split(".")[0];
+//     let mdmsBody = {
+//         MdmsCriteria: {
+//             tenantId: tenantId,
+//             moduleDetails: [
+//                 {
+//                     moduleName: "tenant",
+//                     masterDetails: [
+//                         {
+//                             name: "tenants",
+//                         },
+//                     ],
+//                 },
+//                 {
+//                     moduleName: "Booking",
+//                     masterDetails: [
+//                         {
+//                             name: "Commerical_Ground_Cat",
+//                         },
+//                     ],
+//                 },
+//             ],
+//         },
+//     };
+//     try {
+//         let payload = null;
+//         payload = await httpRequest(
+//             "post",
+//             "/egov-mdms-service/v1/_search",
+//             "_search",
+//             [],
+//             mdmsBody
+// 		);
+// 		console.log(payload, "myPayload");
+// 		// payload.sector = [
+//         //     {
+//         //         id: 1,
+//         //         code: "SECTOR-17",
+//         //         tenantId: "ch.chandigarh",
+//         //         name: "SECTOR-17",
+//         //         active: true,
+//         //     },
+//         //     {
+//         //         id: 2,
+//         //         code: "EG_SECTOR_34",
+//         //         tenantId: "ch.chandigarh",
+//         //         name: "EG_SECTOR_34",
+//         //         active: true,
+//         //     },
+//         //     {
+//         //         id: 2,
+//         //         code: "MANIMAJRA",
+//         //         tenantId: "ch.chandigarh",
+//         //         name: "MANIMAJRA",
+//         //         active: true,
+//         //     },
+//         // ];
+//         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
+
+const prepareEditFlow = async (
+    state,
+    dispatch,
+    applicationNumber,
+    tenantId
+) => {
+    if (applicationNumber) {
+        let response = await getSearchResultsView([
+            { key: "tenantId", value: tenantId },
+            { key: "applicationNumber", value: applicationNumber },
+        ]);
+        setapplicationNumber(applicationNumber);
+        setApplicationNumberBox(state, dispatch, applicationNumber);
+
+        dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+        dispatch(prepareFinalObject("availabilityCheckData", response.bookingsModelList[0]));
+        // dispatch(prepareFinalObject("availabilityCheckData.bkToDate", response.bookingsModelList[0].bkToDate));
+        // dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", response.bookingsModelList[0].bkFromDate));
+        // dispatch(prepareFinalObject("availabilityCheckData.bkSector", response.bookingsModelList[0].bkSector));
+		
+		let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
+
+		if (availabilityData !== undefined) {
+            let data = availabilityData.data;
+            let reservedDates = [];
+            var daylist = [];
+            data.map((dataitem) => {
+                let start = dataitem.fromDate;
+                let end = dataitem.toDate;
+                daylist = getBetweenDays(start, end);
+                daylist.map((v) => {
+                    reservedDates.push(v.toISOString().slice(0, 10));
+                });
+            });
+            dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
+            // const actionDefination = [
+            //     {
+            //         path:
+            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+            //         property: "reservedDays",
+            //         value: reservedDates,
+            //     },
+			// ];
+            // dispatchMultipleFieldChangeAction(
+            //     "checkavailability",
+            //     actionDefination,
+            //     dispatch
+            // );
+        } else {
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    { labelName: "Please Try After Sometime!", labelKey: "" },
+                    "warning"
+                )
+            );
+        }
+
+
+        let fileStoreIds = Object.keys(response.documentMap);
+        let fileStoreIdsValue = Object.values(response.documentMap);
+        if (fileStoreIds.length > 0) {
+            let fileUrls =
+                fileStoreIds.length > 0
+                    ? await getFileUrlFromAPI(fileStoreIds)
+                    : {};
+            dispatch(
+                prepareFinalObject("documentsUploadReduxOld.documents", [
+                    {
+                        fileName: fileStoreIdsValue[0],
+                        fileStoreId: fileStoreIds[0],
+                        fileUrl: fileUrls[fileStoreIds[0]],
+                    },
+                ])
+            );
+        }
+    }
+};
+const header = getCommonContainer({
+    header: getCommonHeader({
+        labelName: `Apply for Commercial Ground`,
+        labelKey: "BK_CGB_APPLY",
+    }),
+    applicationNumber: {
+        uiFramework: "custom-atoms-local",
+        moduleName: "egov-services",
+        componentPath: "ApplicationNoContainer",
+        props: {
+            number: "NA",
+        },
+        visible: false,
+    },
+});
 
 const screenConfig = {
-  uiFramework: "material-ui",
-  name: "checkavailability",
-  beforeInitScreen: (action, state, dispatch) => {
-    getMdmsData(action, state, dispatch).then(response => {
+    uiFramework: "material-ui",
+    name: "checkavailability",
+    beforeInitScreen: (action, state, dispatch) => {
+        // clearlocalstorageAppDetails(state);
+        const applicationNumber = getQueryArg(
+            window.location.href,
+            "applicationNumber"
+        );
+        const tenantId = getQueryArg(window.location.href, "tenantId");
+		getMdmsData(action, state, dispatch);
+		
+        if (applicationNumber !== null) {
+            set(
+                action.screenConfig,
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
+            );
+            prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+        } else {
+			// alert("in this")
+			// lSRemoveItemlocal("fromDateCG")
+			// lSRemoveItemlocal("toDateCG")
+		}
 
-    });
-    dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
-    dispatch(prepareFinalObject("bookingCalendar.sector", ""));
-    dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ""));
-    dispatch(prepareFinalObject("bookingCalendar.fromDateToDisplay", ""));
-    dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
-    return action;
-  },
-  components: {
-
-
-    headerDiv: {
-      uiFramework: "custom-atoms",
-      componentPath: "Div",
-      props: {
-        className: "common-div-css",
-        id: "search"
-      },
-      children: {
-        NOCApplication,
-        NOCCalendar
-      }
+        // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
+        // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
+        // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
+        return action;
     },
-    // body: getCommonCard({
-    //   Calendar: getCommonContainer({
-    //     bookingClander: {
-    //       uiFramework: "custom-atoms-local",
-    //       moduleName: "egov-services",
-    //       componentPath: "BookingCalendar",
-    //       props: {
-    //         open: false,
-    //         maxWidth: false,
-    //         screenKey: "bookingCalendar",
-    //         reservedDays: ['2020-07-01', '2020-07-04'],
-    //       },
-    //       children: {
-    //         popup: {},
-
-    //       },
-    //     },
-
-    //     bookButton: {
-    //       componentPath: "Button",
-    //       props: {
-    //         variant: "contained",
-    //         color: "primary",
-    //         style: {
-    //           //minWidth: "200px",
-    //           height: "48px",
-    //           marginLeft: "786px"
-    //         }
-
-    //       },
-    //       children: {
-    //         submitButtonLabel: getLabel({
-    //           labelName: "Book",
-    //           labelKey: "BK_PCCBH_BOOK_LABEL"
-    //         }),
-
-    //       },
-    //       onClickDefination: {
-    //         action: "condition",
-    //         callBack: () => { window.alert("yoyo") }
-    //       },
-    //       visible: true,
-    //     }
-    //   })
-
-    // }),
-    // bookButton: {
-    //   componentPath: "Button",
-    //   props: {
-    //     variant: "contained",
-    //     color: "primary",
-    //     style: {
-    //       // minWidth: "200px",
-    //       height: "48px",
-    //       marginRight: "16px"
-    //     }
-    //   },
-
-    //   children: {
-    //     // previousButtonIcon: {
-    //     //     uiFramework: "custom-atoms",
-    //     //     componentPath: "Icon",
-    //     //     props: {
-    //     //         iconName: "keyboard_arrow_left"
-    //     //     }
-    //     // },
-    //     submitButtonLabel: getLabel({
-    //       labelName: "BOOK ",
-    //       labelKey: "BK_CGB_BOOK_LABEL"
-    //     })
-    //   },
-    //   onClickDefination: {
-    //     action: "condition",
-    //     callBack: callBackForBook
-    //   },
-    //   visible: false
-    // },
-
-  },
+    components: {
+        div: {
+            uiFramework: "custom-atoms",
+            componentPath: "Div",
+            props: {
+                className: "common-div-css",
+                id: "search",
+            },
+            children: {
+                headerDiv: {
+                    uiFramework: "custom-atoms",
+                    componentPath: "Container",
+                    children: {
+                        header: {
+                            gridDefination: {
+                                xs: 12,
+                                sm: 10,
+                            },
+                            ...header,
+                        },
+                    },
+                },
+                checkAvailabilitySearch,
+                checkAvailabilityCalendar,
+            },
+        },
+    },
 };
-
 
 export default screenConfig;

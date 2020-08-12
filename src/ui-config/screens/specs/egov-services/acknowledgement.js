@@ -31,7 +31,7 @@ export const header = getCommonContainer({
         labelName: `Application for ${
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
-                : "Water Tanker"
+                : getapplicationType() === "GFCP" ? "Commercial Ground" : "Water Tanker"
             } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),
@@ -107,7 +107,68 @@ export const paymentSuccessFooter = (
                     );
                 },
             },
-            visible: (businessService === "OSBM" || businessService === "CGB") ? true : false
+            visible: (businessService === "OSBM" || businessService === "GFCP") ? true : false
+        },
+        gotoHome: {
+            componentPath: "Button",
+            props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                    //    minWidth: "200px",
+                    height: "48px",
+                    marginRight: "16px",
+                },
+            },
+            children: {
+                goToHomeButtonLabel: getLabel({
+                    labelName: "GO TO HOME",
+                    labelKey: "BK_BUTTON_HOME",
+                }),
+            },
+            onClickDefination: {
+                action: "page_change",
+                path:
+                    process.env.REACT_APP_SELF_RUNNING === "true"
+                        ? `/egov-ui-framework/egov-services/search`
+                        : `/`,
+            },
+            visible: true,
+        },
+    });
+};
+export const applicationSuccessFooter = (
+    state,
+    applicationNumber,
+    tenantId,
+    businessService
+) => {
+    return getCommonApplyFooter({
+        //call gotoHome
+        downloadApplicationButton: {
+            componentPath: "Button",
+            props: {
+                variant: "outlined",
+                color: "primary",
+                style: {
+                    //   minWidth: "200px",
+                    height: "48px",
+                    marginRight: "16px",
+                },
+            },
+            children: {
+                downloadReceiptButtonLabel: getLabel({
+                    labelName: "DOWNLOAD Application",
+                    labelKey: "BK_BUTTON_DOWNLOAD_APPLICATION",
+                }),
+            },
+            onClickDefination: {
+                action: "condition",
+                callBack: (state, dispatch) => {
+                    //// generatePdf(state, dispatch, "receipt_download");
+                    downloadApplication(state, applicationNumber, tenantId);
+                },
+            },
         },
         gotoHome: {
             componentPath: "Button",
@@ -253,8 +314,10 @@ const getAcknowledgementCard = (
                 },
             },
             paymentFailureFooter: paymentFailureFooter(
+                state,
                 applicationNumber,
-                tenantId
+                tenantId,
+                businessService
             ),
         };
     }

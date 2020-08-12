@@ -44,37 +44,49 @@ const callBackForNext = async (state, dispatch) => {
     isFormValid = validatestepformflag[0];
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 1 && isFormValid != false) {
-        let isEstimateVisible = bookingData.bkStatus.includes("Paid")
-            ? true
-            : false;
-        set(
-            state.screenConfiguration.screenConfig["applywatertanker"],
-            "components.div.children.formwizardThirdStep.children.summaryDetails.children.cardContent.children.div.children.estimateSummary.visible",
-            isEstimateVisible
+        let response = await createUpdateWtbApplication(
+            state,
+            dispatch,
+            "INITIATE"
         );
-        if (bookingData.bkStatus.includes("Paid")) {
-            let response = await createUpdateWtbApplication(
-                state,
-                dispatch,
-                "INITIATE"
+        let responseStatus = get(response, "status", "");
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+            isFormValid = true;
+
+            // DISPLAY SUCCESS MESSAGE
+            // let successMessage = {
+            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
+            //     labelKey: "", //UPLOAD_FILE_TOAST
+            // };
+            // dispatch(toggleSnackbar(true, successMessage, "success"));
+
+            let tenantId = getTenantId().split(".")[0];
+            let applicationNumber = get(
+                response,
+                "data.bkApplicationNumber",
+                ""
             );
-            let responseStatus = get(response, "status", "");
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                isFormValid = true;
+            let businessService = get(response, "data.businessService", "");
+            const reviewUrl = `/egov-services/applywatertanker?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            dispatch(setRoute(reviewUrl));
 
-                // DISPLAY SUCCESS MESSAGE
-                // let successMessage = {
-                //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-                //     labelKey: "", //UPLOAD_FILE_TOAST
-                // };
-                // dispatch(toggleSnackbar(true, successMessage, "success"));
+            set(
+                state.screenConfiguration.screenConfig["applywatertanker"],
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
+            );
+            set(
+                state.screenConfiguration.screenConfig["applywatertanker"],
+                "components.div.children.formwizardThirdStep.children.summaryDetails.children.cardContent.children.div.children.estimateSummary.visible",
+                false
+            );
 
-                // GET FEE DETAILS
-                let tenantId = getTenantId().split(".")[0];
-                let applicationNumber = get(
-                    response,
-                    "data.bkApplicationNumber",
-                    ""
+            // GET FEE DETAILS
+            if (bookingData.bkStatus.includes("Paid")) {
+                set(
+                    state.screenConfiguration.screenConfig["applywatertanker"],
+                    "components.div.children.formwizardThirdStep.children.summaryDetails.children.cardContent.children.div.children.estimateSummary.visible",
+                    true
                 );
                 await generateBill(
                     state,
@@ -83,14 +95,14 @@ const callBackForNext = async (state, dispatch) => {
                     tenantId,
                     "BWT"
                 );
-            } else {
-                isFormValid = false;
-                let errorMessage = {
-                    labelName: "Submission Falied, Try Again later!",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                dispatch(toggleSnackbar(true, errorMessage, "error"));
             }
+        } else {
+            isFormValid = false;
+            let errorMessage = {
+                labelName: "Submission Falied, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
     }
     if (activeStep === 2) {
@@ -100,14 +112,14 @@ const callBackForNext = async (state, dispatch) => {
                 "Booking"
             );
             setapplicationNumber(applicationData.bkApplicationNumber);
-            setTimeout(() => {
-                const appendUrl =
-                    process.env.REACT_APP_SELF_RUNNING === "true"
-                        ? "/egov-ui-framework"
-                        : "";
-                const reviewUrl = `${appendUrl}/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
-                dispatch(setRoute(reviewUrl));
-            }, 1000);
+            // setTimeout(() => {
+            const appendUrl =
+                process.env.REACT_APP_SELF_RUNNING === "true"
+                    ? "/egov-ui-framework"
+                    : "";
+            const reviewUrl = `/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
+            dispatch(setRoute(reviewUrl));
+            // }, 1000);
         } else {
             let response = await createUpdateWtbApplication(
                 state,

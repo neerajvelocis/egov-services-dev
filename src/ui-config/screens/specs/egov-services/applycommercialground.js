@@ -2,9 +2,12 @@ import {
     getCommonContainer,
     getCommonHeader,
     getStepperObject,
-    convertDateInYMD
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
+import {
+    getCurrentFinancialYear,
+    clearlocalstorageAppDetails,
+    convertDateInYMD,
+} from "../utils";
 import { footer } from "./applyResourceCommercialGround/footer";
 import {
     personalDetails,
@@ -31,6 +34,7 @@ import {
     lSRemoveItemlocal,
     setapplicationNumber,
     getUserInfo,
+    localStorageGet,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
 import {
@@ -87,7 +91,7 @@ export const header = getCommonContainer({
     applicationNumber: {
         uiFramework: "custom-atoms-local",
         moduleName: "egov-services",
-        componentPath: "applicationNumberContainer",
+        componentPath: "ApplicationNoContainer",
         props: {
             number: "NA",
         },
@@ -137,14 +141,13 @@ export const formwizardFourthStep = {
         id: "apply_form4",
     },
     children: {
-        summaryDetails
+        summaryDetails,
     },
     visible: false,
 };
 
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
-    console.log(tenantId, "tenantId")
     let mdmsBody = {
         MdmsCriteria: {
             tenantId: tenantId,
@@ -161,38 +164,16 @@ const getMdmsData = async (action, state, dispatch) => {
                     moduleName: "Booking",
                     masterDetails: [
                         {
-                            name: "Sector",
+                            name: "Com_Ground_Documents",
                         },
                         {
-                            name: "CityType",
+                            name: "Commerical_Ground_Cat",
                         },
-                        {
-                            name: "PropertyType",
-                        },
-                        {
-                            name: "Area",
-                        },
-                        {
-                            name: "Duration",
-                        },
-                        {
-                            name: "Category",
-                        },
-                        {
-                            name: "Documents",
-                        },
-                        {
-                            name: "Purpose"
-                        },
-                        {
-                            name: "BookingVenue"
-                        },
-
+                        
                     ],
-                }
-
-            ]
-        }
+                },
+            ],
+        },
     };
     try {
         let payload = null;
@@ -204,20 +185,80 @@ const getMdmsData = async (action, state, dispatch) => {
             mdmsBody
         );
         ///company///municipal corporation)
-        payload.MdmsRes.BookingVenue = [
-            { id: 1, code: 'Sector 17', tenantId: 'ch.chandigarh', name: 'Sector 17', active: true },
-            { id: 2, code: 'Sector 34', tenantId: 'ch.chandigarh', name: 'Sector 34', active: true },
-            { id: 2, code: 'Manimajra', tenantId: 'ch.chandigarh', name: 'Manimajra', active: true }
-        ]
-        payload.MdmsRes.Category = [
-            { id: 1, code: 'INDIVIDUAL', tenantId: 'ch.chandigarh', name: 'INDIVIDUAL', active: true },
-            { id: 1, code: 'corporate', tenantId: 'ch.chandigarh', name: 'corporate', active: true },
-            { id: 1, code: 'Society', tenantId: 'ch.chandigarh', name: 'Society', active: true },
-            { id: 1, code: 'company', tenantId: 'ch.chandigarh', name: 'company', active: true },
-            { id: 1, code: 'Government', tenantId: 'ch.chandigarh', name: 'Government', active: true },
-            { id: 1, code: 'semi government', tenantId: 'ch.chandigarh', name: 'semi government', active: true },
-            { id: 2, code: 'municipal corporation', tenantId: 'ch.chandigarh', name: 'municipal corporation', active: true }
-        ]
+        // payload.MdmsRes.BookingVenue = [
+        //     {
+        //         id: 1,
+        //         code: "Sector 17",
+        //         tenantId: "ch.chandigarh",
+        //         name: "Sector 17",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 2,
+        //         code: "Sector 34",
+        //         tenantId: "ch.chandigarh",
+        //         name: "Sector 34",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 2,
+        //         code: "Manimajra",
+        //         tenantId: "ch.chandigarh",
+        //         name: "Manimajra",
+        //         active: true,
+        //     },
+        // ];
+        // payload.MdmsRes.Category = [
+        //     {
+        //         id: 1,
+        //         code: "INDIVIDUAL",
+        //         tenantId: "ch.chandigarh",
+        //         name: "INDIVIDUAL",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "CORPORATE",
+        //         tenantId: "ch.chandigarh",
+        //         name: "CORPORATE",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "SOCIETY",
+        //         tenantId: "ch.chandigarh",
+        //         name: "SOCIETY",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "COMPANY",
+        //         tenantId: "ch.chandigarh",
+        //         name: "COMPANY",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "GOVERNMENT",
+        //         tenantId: "ch.chandigarh",
+        //         name: "GOVERNMENT",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 1,
+        //         code: "SEMI GOVERNMENT",
+        //         tenantId: "ch.chandigarh",
+        //         name: "SEMI GOVERNMENT",
+        //         active: true,
+        //     },
+        //     {
+        //         id: 2,
+        //         code: "MUNICIPAL CORPORATION",
+        //         tenantId: "ch.chandigarh",
+        //         name: "MUNICIPAL CORPORATION",
+        //         active: true,
+        //     },
+        // ];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -228,78 +269,61 @@ export const prepareEditFlow = async (
     state,
     dispatch,
     applicationNumber,
-    tenantId
+    tenantId, 
+    fromDate,
+    toDate, venue
 ) => {
     if (applicationNumber) {
         let response = await getSearchResultsView([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
+        setapplicationNumber(applicationNumber);
+        setApplicationNumberBox(state, dispatch, applicationNumber);
 
-        let Refurbishresponse = furnishNocResponse(response);
-        dispatch(prepareFinalObject("Booking", Refurbishresponse));
-        if (applicationNumber) {
-            setapplicationNumber(applicationNumber);
-            setApplicationNumberBox(state, dispatch, applicationNumber);
-        }
-
-        // Set sample docs upload
-        // dispatch(prepareFinalObject("documentsUploadRedux", sampleDocUpload()));
-        let documentsPreview = [];
-
-        // Get all documents from response
-        let petnocdetails = get(
-            state,
-            "screenConfiguration.preparedFinalObject.Booking",
-            {}
+        // let Refurbishresponse = furnishOsbmResponse(response);
+        dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkFromDate",
+                convertDateInYMD(fromDate)
+            )
         );
-        let uploadVaccinationCertificate = petnocdetails.hasOwnProperty(
-            "uploadVaccinationCertificate"
-        )
-            ? petnocdetails.uploadVaccinationCertificate[0]["fileStoreId"]
-            : "";
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkToDate",
+                convertDateInYMD(toDate)
+            )
+        );
 
-        let uploadPetPicture = petnocdetails.hasOwnProperty("uploadPetPicture")
-            ? petnocdetails.uploadPetPicture[0]["fileStoreId"]
-            : "";
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkBookingVenue",
+                venue
+            )
+        );
+        dispatch(
+            prepareFinalObject("Booking.bkSector", venue)
+        );
 
-        if (uploadVaccinationCertificate !== "" && uploadPetPicture !== "") {
-            documentsPreview.push(
-                {
-                    title: "VACCINATION_CERTIFIACTE",
-                    fileStoreId: uploadVaccinationCertificate,
-                    linkText: "View",
-                },
-                {
-                    title: "PET_PICTURE",
-                    fileStoreId: uploadPetPicture,
-                    linkText: "View",
-                }
-            );
-            let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+        console.log(response, "responseNew");
+
+        let fileStoreIds = Object.keys(response.documentMap);
+        let fileStoreIdsValue = Object.values(response.documentMap);
+        if (fileStoreIds.length > 0) {
             let fileUrls =
-                fileStoreIds.length > 0 ? await getFileUrlFromAPI(fileStoreIds) : {};
-            documentsPreview = documentsPreview.map(function (doc, index) {
-                doc["link"] =
-                    (fileUrls &&
-                        fileUrls[doc.fileStoreId] &&
-                        fileUrls[doc.fileStoreId].split(",")[0]) ||
-                    "";
-                //doc["name"] = doc.fileStoreId;
-                doc["name"] =
-                    (fileUrls[doc.fileStoreId] &&
-                        decodeURIComponent(
-                            fileUrls[doc.fileStoreId]
-                                .split(",")[0]
-                                .split("?")[0]
-                                .split("/")
-                                .pop()
-                                .slice(13)
-                        )) ||
-                    `Document - ${index + 1}`;
-                return doc;
-            });
-            dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+                fileStoreIds.length > 0
+                    ? await getFileUrlFromAPI(fileStoreIds)
+                    : {};
+            dispatch(
+                prepareFinalObject("documentsUploadReduxOld.documents", [
+                    {
+                        fileName: fileStoreIdsValue[0],
+                        fileStoreId: fileStoreIds[0],
+                        fileUrl: fileUrls[fileStoreIds[0]],
+                    },
+                ])
+            );
         }
     }
 };
@@ -308,26 +332,41 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "applycommercialground",
     beforeInitScreen: (action, state, dispatch) => {
-        clearlocalstorageAppDetails(state);
-        setapplicationType('CGB');
-
+        // clearlocalstorageAppDetails(state);
+        setapplicationType("GFCP");
+        const applicationNumber = getQueryArg(
+            window.location.href,
+            "applicationNumber"
+        );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        const venueData = getQueryArg(window.location.href, "venue");
+        const venue = getQueryArg(window.location.href, "venue");
+        const fromDate = getQueryArg(window.location.href, "fromDate");
+        const toDate = getQueryArg(window.location.href, "toDate");
+        // const from = convertDateInYMD(queryfrom);
+        // const to = convertDateInYMD(queryto);
 
-        const queryfrom = getQueryArg(window.location.href, "from");
-        const queryto = getQueryArg(window.location.href, "to");
-        const from = convertDateInYMD(queryfrom)
-        const to = convertDateInYMD(queryto)
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkFromDate",
+                convertDateInYMD(fromDate)
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkToDate",
+                convertDateInYMD(toDate)
+            )
+        );
 
-
-        dispatch(prepareFinalObject("Booking.bkFromDate", from));
-        dispatch(prepareFinalObject("Booking.bkToDate", to));
-
-        dispatch(prepareFinalObject("Booking.bkBookingVenue", venueData));
-        dispatch(prepareFinalObject("Booking.bkSector", venueData));
-
-
-
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkBookingVenue",
+                venue
+            )
+        );
+        dispatch(
+            prepareFinalObject("Booking.bkSector", venue)
+        );
 
         const step = getQueryArg(window.location.href, "step");
         dispatch(
@@ -361,7 +400,14 @@ const screenConfig = {
         });
 
         // Search in case of EDIT flow
-        // prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+        if (applicationNumber !== null) {
+            set(
+                action.screenConfig,
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
+            );
+            prepareEditFlow(state, dispatch, applicationNumber, tenantId, fromDate, toDate, venue);
+        }
 
         // Code to goto a specific step through URL
         if (step && step.match(/^\d+$/)) {

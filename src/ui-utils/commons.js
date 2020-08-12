@@ -541,7 +541,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     } else if (type == "apply_cgb") {
         documents = get(
             state,
-            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Com_Ground_Documents",
             []
         );
     } else {
@@ -1036,7 +1036,7 @@ export const createUpdateCgbApplication = async (
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             console.log(doc, "documents");
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                if (doc.documentCode === "GFCP") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -1062,15 +1062,9 @@ export const createUpdateCgbApplication = async (
         setapplicationMode(status);
 
         // if (method === "CREATE") {
-        response = await httpRequest(
-            "post",
-            "/bookings/api/_create",
-            "",
-            [],
-            {
-                Booking: payload,
-            }
-        );
+        response = await httpRequest("post", "/bookings/api/_create", "", [], {
+            Booking: payload,
+        });
         console.log("pet response : ", response);
         if (
             response.data.bkApplicationNumber !== "null" ||
@@ -1083,7 +1077,7 @@ export const createUpdateCgbApplication = async (
         } else {
             return { status: "fail", data: response.data };
         }
-        // } 
+        // }
         // else if (method === "UPDATE") {
         //     response = await httpRequest(
         //         "post",
@@ -1134,7 +1128,7 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
     let tenantId = getTenantId().split(".")[0];
     // let applicationNumber =
     //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
-    // let method =  action === "FAILUREAPPLY" ? "CREATE" : "UPDATE";
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
 
     try {
         let payload = get(
@@ -1148,38 +1142,43 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
         set(payload, "businessService", "BWT");
         setapplicationMode(status);
 
-        // if (method === "CREATE") {
-        response = await httpRequest("post", "/bookings/api/_create", "", [], {
-            Booking: payload,
-        });
-        console.log("pet response : ", response);
-        if (
-            response.data.bkApplicationNumber !== "null" ||
-            response.data.bkApplicationNumber !== ""
-        ) {
-            dispatch(prepareFinalObject("Booking", response.data));
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_create",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.bkApplicationNumber !== "null" ||
+                response.data.bkApplicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.bkApplicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_update",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response update: ", response);
             setapplicationNumber(response.data.bkApplicationNumber);
-            setApplicationNumberBox(state, dispatch);
+            dispatch(prepareFinalObject("Booking", response.data));
             return { status: "success", data: response.data };
-        } else {
-            return { status: "fail", data: response.data };
         }
-        // }
-        // else if (method === "UPDATE") {
-        //     response = await httpRequest(
-        //         "post",
-        //         "/bookings/api/_update",
-        //         "",
-        //         [],
-        //         {
-        //             Booking: payload,
-        //         }
-        //     );
-        //     console.log("pet response update: ", response);
-        //     setapplicationNumber(response.data.bkApplicationNumber);
-        //     dispatch(prepareFinalObject("Booking", response.data));
-        //     return { status: "success", data: response.data };
-        // }
 
         // response = await httpRequest("post", "/bookings/api/_create", "", [], {
         //     Booking: payload,
@@ -1329,9 +1328,9 @@ export const getBoundaryData = async (
         const tenantId =
             process.env.REACT_APP_NAME === "Employee"
                 ? get(
-                    state.screenConfiguration.preparedFinalObject,
-                    "Licenses[0].tradeLicenseDetail.address.city"
-                )
+                      state.screenConfiguration.preparedFinalObject,
+                      "Licenses[0].tradeLicenseDetail.address.city"
+                  )
                 : getQueryArg(window.location.href, "tenantId");
 
         const mohallaData =
@@ -1347,8 +1346,8 @@ export const getBoundaryData = async (
                             /[.]/g,
                             "_"
                         )}_REVENUE_${item.code
-                            .toUpperCase()
-                            .replace(/[._:-\s\/]/g, "_")}`,
+                        .toUpperCase()
+                        .replace(/[._:-\s\/]/g, "_")}`,
                 });
                 return result;
             }, []);
@@ -2055,8 +2054,8 @@ export const getCitizenGridData = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATED,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                        ? "FORWARD"
-                        : "",
+                    ? "FORWARD"
+                    : "",
         },
     };
 
@@ -2134,8 +2133,8 @@ export const getGridDataAdvertisement1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                        ? "FORWARD"
-                        : "",
+                    ? "FORWARD"
+                    : "",
         },
     };
     try {
@@ -2164,8 +2163,8 @@ export const getGridDataRoadcut1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                        ? "FORWARD"
-                        : "",
+                    ? "FORWARD"
+                    : "",
         },
     };
     try {
@@ -2194,8 +2193,8 @@ export const getGridDataSellMeat1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                        ? "FORWARD"
-                        : "",
+                    ? "FORWARD"
+                    : "",
         },
     };
     try {
@@ -2462,10 +2461,10 @@ export const createUpdateADVNocApplication = async (
                 responsecreateDemand.Calculations[0].taxHeadEstimates[0]
                     .estimateAmount > 0
                     ? await searchBill(
-                        dispatch,
-                        response.applicationId,
-                        getTenantId()
-                    )
+                          dispatch,
+                          response.applicationId,
+                          getTenantId()
+                      )
                     : "";
 
                 lSRemoveItem(`exemptedCategory`);
