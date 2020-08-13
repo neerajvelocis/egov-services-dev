@@ -57,14 +57,20 @@ const callBackForNext = async (state, dispatch) => {
             // dispatch(toggleSnackbar(true, successMessage, "success"));
 
             // GET FEE DETAILS
-            let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(
-                response,
-                "data.bkApplicationNumber",
-                ""
-            );
-            let businessService = get(response, "data.businessService", "");
-            const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            let applicationData = get(
+                    response,
+                    "data",
+                    ""
+                );
+            console.log(applicationData, "applicationDataNew");
+            // let tenantId = getTenantId().split(".")[0];
+            // let applicationNumber = get(
+            //     response,
+            //     "data.bkApplicationNumber",
+            //     ""
+            // );
+            // let businessService = get(response, "data.businessService", "");
+            const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}&fromDate=${applicationData.bkFromDate}&toDate=${applicationData.bkToDate}&sector=${applicationData.bkSector}&venue=${applicationData.bkBookingVenue}`;
             dispatch(setRoute(reviewUrl));
 
             

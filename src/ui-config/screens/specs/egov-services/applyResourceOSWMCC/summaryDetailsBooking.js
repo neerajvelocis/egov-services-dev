@@ -11,7 +11,9 @@ import {
 import get from "lodash/get";
 import { openSpaceSummaryOSWMCC } from "../summaryResource/openSpaceSummaryOSWMCC";
 import { applicantSummary } from "../summaryResource/applicantSummaryBookingOSWMCC";
+import { estimateSummary } from "../summaryResource/estimateSummary";
 import { documentsSummary } from "../summaryResource/documentsSummaryNewLocationOSWMCC";
+
 
 
 export const callBackForPrevious = (state, dispatch) => {

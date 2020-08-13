@@ -3,7 +3,11 @@ import {
     getCommonHeader,
     getStepperObject,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getCurrentFinancialYear, clearlocalstorageAppDetails, convertDateInYMD } from "../utils";
+import {
+    getCurrentFinancialYear,
+    clearlocalstorageAppDetails,
+    convertDateInYMD,
+} from "../utils";
 import { footer } from "./applyResourceOSWMCC/footerBooking";
 import {
     personalDetails,
@@ -23,6 +27,7 @@ import {
     prepareFinalObject,
     handleScreenConfigurationFieldChange as handleField,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import {
     getTenantId,
     setapplicationType,
@@ -61,7 +66,6 @@ export const stepper = getStepperObject(
     { props: { activeStep: 0 } },
     stepsData
 );
-
 
 export const header = getCommonContainer({
     header: getCommonHeader({
@@ -255,62 +259,88 @@ export const prepareEditFlow = async (
     state,
     dispatch,
     applicationNumber,
-    tenantId, 
-    fromDate,
-    toDate, venue, locality
+    tenantId,
+    businessService
+    // fromDate,
+    // toDate,
+    // venue,
+    // locality
 ) => {
-    if (applicationNumber) {
-        let response = await getSearchResultsView([
-            { key: "tenantId", value: tenantId },
-            { key: "applicationNumber", value: applicationNumber },
-        ]);
-        setapplicationNumber(applicationNumber);
-        setApplicationNumberBox(state, dispatch, applicationNumber);
-
-        // let Refurbishresponse = furnishOsbmResponse(response);
-        dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+    const availabilityCheckData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
+    );
+    if (availabilityCheckData !== undefined) {
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
-                convertDateInYMD(fromDate)
+                convertDateInYMD(availabilityCheckData.bkFromdate)
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkToDate",
-                convertDateInYMD(toDate)
+                convertDateInYMD(availabilityCheckData.bkToDate)
             )
         );
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkBookingVenue",
-                venue
+                availabilityCheckData.bkBookingVenue
             )
         );
         dispatch(
-            prepareFinalObject("Booking.bkSector", locality)
+            prepareFinalObject(
+                "Booking.bkSector",
+                availabilityCheckData.bkSector
+            )
         );
-
-
-        let fileStoreIds = Object.keys(response.documentMap);
-        let fileStoreIdsValue = Object.values(response.documentMap);
-        if (fileStoreIds.length > 0) {
-            let fileUrls =
-                fileStoreIds.length > 0
-                    ? await getFileUrlFromAPI(fileStoreIds)
-                    : {};
-            dispatch(
-                prepareFinalObject("documentsUploadReduxOld.documents", [
-                    {
-                        fileName: fileStoreIdsValue[0],
-                        fileStoreId: fileStoreIds[0],
-                        fileUrl: fileUrls[fileStoreIds[0]],
-                    },
-                ])
-            );
-        }
+    } else {
+        dispatch(setRoute(
+            `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
+        ))
+        // dispatch(setRoute(`/egov-services/checkavailability_oswmcc?application`));
+        console.log("availabilityCheckData in undefined");
     }
+    // if (applicationNumber) {
+    //     let response = await getSearchResultsView([
+    //         { key: "tenantId", value: tenantId },
+    //         { key: "applicationNumber", value: applicationNumber },
+    //     ]);
+    //     setapplicationNumber(applicationNumber);
+    //     setApplicationNumberBox(state, dispatch, applicationNumber);
+
+    //     // let Refurbishresponse = furnishOsbmResponse(response);
+    //     dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+    //     // dispatch(
+    //     //     prepareFinalObject("Booking.bkFromDate", convertDateInYMD(fromDate))
+    //     // );
+    //     // dispatch(
+    //     //     prepareFinalObject("Booking.bkToDate", convertDateInYMD(toDate))
+    //     // );
+
+    //     // dispatch(prepareFinalObject("Booking.bkBookingVenue", venue));
+    //     // dispatch(prepareFinalObject("Booking.bkSector", locality));
+
+    //     let fileStoreIds = Object.keys(response.documentMap);
+    //     let fileStoreIdsValue = Object.values(response.documentMap);
+    //     if (fileStoreIds.length > 0) {
+    //         let fileUrls =
+    //             fileStoreIds.length > 0
+    //                 ? await getFileUrlFromAPI(fileStoreIds)
+    //                 : {};
+    //         dispatch(
+    //             prepareFinalObject("documentsUploadReduxOld.documents", [
+    //                 {
+    //                     fileName: fileStoreIdsValue[0],
+    //                     fileStoreId: fileStoreIds[0],
+    //                     fileUrl: fileUrls[fileStoreIds[0]],
+    //                 },
+    //             ])
+    //         );
+    //     }
+    // }
 };
 
 const screenConfig = {
@@ -325,36 +355,24 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
+        const businessService = getQueryArg(
+            window.location.href,
+            "businessService"
+        );
         const step = getQueryArg(window.location.href, "step");
-        const locality = getQueryArg(window.location.href, "sector");
-        const venue = getQueryArg(window.location.href, "venue");
-        const fromDate = getQueryArg(window.location.href, "fromDate");
-        const toDate = getQueryArg(window.location.href, "toDate");
-        // const from = convertDateInYMD(queryfrom);
-        // const to = convertDateInYMD(queryto);
-
-        dispatch(
-            prepareFinalObject("Booking.bkFromDate", convertDateInYMD(fromDate))
-        );
-        dispatch(
-            prepareFinalObject("Booking.bkToDate", convertDateInYMD(toDate))
-        );
-
-        dispatch(prepareFinalObject("Booking.bkBookingVenue", venue));
-        dispatch(prepareFinalObject("Booking.bkSector", locality));
 
         dispatch(
             prepareFinalObject(
                 "Booking.bkApplicantName",
                 JSON.parse(getUserInfo()).name
             )
-        ),
-            dispatch(
-                prepareFinalObject(
-                    "Booking.bkMobileNumber",
-                    JSON.parse(getUserInfo()).mobileNumber
-                )
-            );
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkMobileNumber",
+                JSON.parse(getUserInfo()).mobileNumber
+            )
+        );
 
         //Set Module Name
         set(state, "screenConfiguration.moduleName", "services");
@@ -371,7 +389,59 @@ const screenConfig = {
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-            prepareEditFlow(state, dispatch, applicationNumber, tenantId, fromDate, toDate, venue, locality);
+            prepareEditFlow(
+                state,
+                dispatch,
+                applicationNumber,
+                tenantId,
+                businessService
+                // fromDate,
+                // toDate,
+                // venue,
+                // locality
+            );
+        } else {
+            // const locality = getQueryArg(window.location.href, "sector");
+            // const venue = getQueryArg(window.location.href, "venue");
+            // const fromDate = getQueryArg(window.location.href, "fromDate");
+            // const toDate = getQueryArg(window.location.href, "toDate");
+            // const from = convertDateInYMD(queryfrom);
+            // const to = convertDateInYMD(queryto);
+
+            const availabilityCheckData = get(
+                state,
+                "screenConfiguration.preparedFinalObject.availabilityCheckData"
+            );
+            if (availabilityCheckData !== undefined) {
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkFromDate",
+                        convertDateInYMD(availabilityCheckData.bkFromdate)
+                    )
+                );
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkToDate",
+                        convertDateInYMD(availabilityCheckData.bkToDate)
+                    )
+                );
+
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkBookingVenue",
+                        availabilityCheckData.bkBookingVenue
+                    )
+                );
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkSector",
+                        availabilityCheckData.bkSector
+                    )
+                );
+            } else {
+                dispatch(setRoute(`/egov-services/checkavailability_oswmcc`));
+                console.log("availabilityCheckData in undefined");
+            }
         }
 
         // Code to goto a specific step through URL

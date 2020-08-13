@@ -342,6 +342,47 @@ const setApplicationData = async (dispatch, applicationNumber, tenantId) => {
 
 
 
+// const screenConfig = {
+//     uiFramework: "material-ui",
+//     name: "acknowledgement",
+//     components: {
+//         div: {
+//             uiFramework: "custom-atoms",
+//             componentPath: "Div",
+//             props: {
+//                 className: "common-div-css",
+//             },
+//         },
+//     },
+//     beforeInitScreen: (action, state, dispatch) => {
+//         const purpose = getQueryArg(window.location.href, "purpose");
+//         const status = getQueryArg(window.location.href, "status");
+//         const applicationNumber = getQueryArg(
+//             window.location.href,
+//             "applicationNumber"
+//         );
+//         const secondNumber = getQueryArg(window.location.href, "secondNumber");
+//         const tenantId = getQueryArg(window.location.href, "tenantId");
+//         const businessService = getQueryArg(
+//             window.location.href,
+//             "businessService"
+//         );
+//         const data = getAcknowledgementCard(
+//             state,
+//             dispatch,
+//             purpose,
+//             status,
+//             applicationNumber,
+//             secondNumber,
+//             tenantId,
+//             businessService
+//         );
+//         setApplicationData(dispatch, applicationNumber, tenantId);
+//         set(action, "screenConfig.components.div.children", data);
+//         return action;
+//     },
+// };
+
 const screenConfig = {
     uiFramework: "material-ui",
     name: "acknowledgement",
@@ -377,7 +418,16 @@ const screenConfig = {
             tenantId,
             businessService
         );
-        setApplicationData(dispatch, applicationNumber, tenantId);
+
+        const bookingTypeIdentifier = get(
+            state,
+            "screenConfiguration.screenConfig.applyNewLocationUnderMCC.name"
+        );
+        if (bookingTypeIdentifier === "applyNewLocationUnderMCC") {
+            // setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
+        } else {
+            setApplicationData(dispatch, applicationNumber, tenantId);
+        }
         set(action, "screenConfig.components.div.children", data);
         return action;
     },

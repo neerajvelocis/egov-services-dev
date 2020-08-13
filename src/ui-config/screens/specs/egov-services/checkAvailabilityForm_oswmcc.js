@@ -100,17 +100,26 @@ const callBackForBook = async (state, dispatch) => {
             };
             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
         } else if ("bkApplicationNumber" in availabilityCheckData) {
+            // dispatch(
+            //     setRoute(
+            //         `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
+            //     )
+            // );
             dispatch(
                 setRoute(
-                    `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.locationsWithinSector}`
+                    `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
                 )
             );
-        } else
+        } else {
             dispatch(
-                setRoute(
-                    `/egov-services/applyopenspacewmcc?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.locationsWithinSector}`
+                // setRoute(
+                //     `/egov-services/applyopenspacewmcc?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
+                // )
+                 setRoute(
+                    `/egov-services/applyopenspacewmcc`
                 )
             );
+        }
     }
 };
 
@@ -124,9 +133,6 @@ const callBackForSearch = async (state, dispatch) => {
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
-
-    console.log(availabilityCheckData, "availabilityCheckData in form");
-
     if (availabilityCheckData === undefined) {
         dispatch(
             toggleSnackbar(
@@ -159,19 +165,6 @@ const callBackForSearch = async (state, dispatch) => {
                         reservedDates
                     )
                 );
-                // const actionDefination = [
-                //     {
-                //         path:
-                //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-                //         property: "reservedDays",
-                //         value: reservedDates,
-                //     },
-                // ];
-                // dispatchMultipleFieldChangeAction(
-                //     "checkavailability",
-                //     actionDefination,
-                //     dispatch
-                // );
             } else {
                 dispatch(
                     toggleSnackbar(
@@ -194,52 +187,6 @@ const callBackForSearch = async (state, dispatch) => {
             );
         }
     }
-    // if (availabilityCheckData.bkSector === "" || availabilityCheckData.bkSector === undefined) {
-    //     dispatch(
-    //         toggleSnackbar(
-    //             true,
-    //             { labelName: "Please Select Booking Venue!", labelKey: "" },
-    //             "warning"
-    //         )
-    //     );
-    // } else {
-    //     let response = await getAvailabilityData(availabilityCheckData.bkSector);
-    //     if (response !== undefined) {
-    //         let data = response.data;
-    //         let reservedDates = [];
-    //         var daylist = [];
-    //         data.map((dataitem) => {
-    //             let start = dataitem.fromDate;
-    //             let end = dataitem.toDate;
-    //             daylist = getBetweenDays(start, end);
-    //             daylist.map((v) => {
-    //                 reservedDates.push(v.toISOString().slice(0, 10));
-    //             });
-    //         });
-    //         prepareFinalObject("reservedAvailabilityData", reservedDates);
-    //         const actionDefination = [
-    //             {
-    //                 path:
-    //                     "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-    //                 property: "reservedDays",
-    //                 value: reservedDates,
-    //             },
-    //         ];
-    //         dispatchMultipleFieldChangeAction(
-    //             "checkavailability",
-    //             actionDefination,
-    //             dispatch
-    //         );
-    //     } else {
-    //         dispatch(
-    //             toggleSnackbar(
-    //                 true,
-    //                 { labelName: "Please Try After Sometime!", labelKey: "" },
-    //                 "warning"
-    //             )
-    //         );
-    //     }
-    // }
 };
 
 
@@ -362,25 +309,25 @@ export const checkAvailabilitySearch = getCommonCard({
                     state,
                     "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
                 );
-                const locationsWithinSector = get(
+                const bkBookingVenue = get(
                     sectorWiselocationsObject,
                     action.value
                 );
 
                 // let payload = {};
-                // let locationsWithinSector = [
+                // let bkBookingVenue = [
                 //         { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
                 //         { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
                 //         { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
                 //     ];
-                applyScreenMdmsData.locationsWithinSector = locationsWithinSector;
+                applyScreenMdmsData.bkBookingVenue = bkBookingVenue;
                 dispatch(
                     prepareFinalObject(
                         "applyScreenMdmsData",
                         applyScreenMdmsData
                     )
                 );
-                //set(action, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.locationsWithinSector", locationsWithinSector)
+                //set(action, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.bkBookingVenue", bkBookingVenue)
                 // dispatch(
                 //     handleField(
                 //         "checkavailability_oswmcc",
@@ -414,8 +361,8 @@ export const checkAvailabilitySearch = getCommonCard({
                     md: 6,
                 },
 
-                sourceJsonPath: "applyScreenMdmsData.locationsWithinSector",
-                jsonPath: "availabilityCheckData.locationsWithinSector",
+                sourceJsonPath: "applyScreenMdmsData.bkBookingVenue",
+                jsonPath: "availabilityCheckData.bkBookingVenue",
                 required: true,
                 props: {
                     className: "applicant-details-error",

@@ -59,8 +59,8 @@ const getMdmsData = async (action, state, dispatch) => {
                 active: true,
             },
         ];
-        payload.locationsWithinSector = [];
-        //   payload.locationsWithinSector = [
+        payload.bkBookingVenue = [];
+        //   payload.bkBookingVenue = [
         //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
         //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
         //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
@@ -158,9 +158,6 @@ const prepareEditFlow = async (
                 response.bookingsModelList[0]
             )
         );
-        // dispatch(prepareFinalObject("availabilityCheckData.bkToDate", response.bookingsModelList[0].bkToDate));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", response.bookingsModelList[0].bkFromDate));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkSector", response.bookingsModelList[0].bkSector));
 
         let availabilityData = await getAvailabilityData(
             response.bookingsModelList[0].bkSector
@@ -184,19 +181,6 @@ const prepareEditFlow = async (
                     reservedDates
                 )
             );
-            // const actionDefination = [
-            //     {
-            //         path:
-            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-            //         property: "reservedDays",
-            //         value: reservedDates,
-            //     },
-            // ];
-            // dispatchMultipleFieldChangeAction(
-            //     "checkavailability",
-            //     actionDefination,
-            //     dispatch
-            // );
         } else {
             dispatch(
                 toggleSnackbar(
@@ -207,23 +191,23 @@ const prepareEditFlow = async (
             );
         }
 
-        let fileStoreIds = Object.keys(response.documentMap);
-        let fileStoreIdsValue = Object.values(response.documentMap);
-        if (fileStoreIds.length > 0) {
-            let fileUrls =
-                fileStoreIds.length > 0
-                    ? await getFileUrlFromAPI(fileStoreIds)
-                    : {};
-            dispatch(
-                prepareFinalObject("documentsUploadReduxOld.documents", [
-                    {
-                        fileName: fileStoreIdsValue[0],
-                        fileStoreId: fileStoreIds[0],
-                        fileUrl: fileUrls[fileStoreIds[0]],
-                    },
-                ])
-            );
-        }
+        // let fileStoreIds = Object.keys(response.documentMap);
+        // let fileStoreIdsValue = Object.values(response.documentMap);
+        // if (fileStoreIds.length > 0) {
+        //     let fileUrls =
+        //         fileStoreIds.length > 0
+        //             ? await getFileUrlFromAPI(fileStoreIds)
+        //             : {};
+        //     dispatch(
+        //         prepareFinalObject("documentsUploadReduxOld.documents", [
+        //             {
+        //                 fileName: fileStoreIdsValue[0],
+        //                 fileStoreId: fileStoreIds[0],
+        //                 fileUrl: fileUrls[fileStoreIds[0]],
+        //             },
+        //         ])
+        //     );
+        // }
     }
 };
 const header = getCommonContainer({
@@ -251,7 +235,85 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch).then((response) => {});
+        getMdmsData(action, state, dispatch).then((response) => {
+            const sectorWiselocationsObject = {
+                "SECTOR-17": [
+                    {
+                        id: 1,
+                        code: "RamLila Ground",
+                        tenantId: "ch.chandigarh",
+                        name: "RamLila_Ground",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Mohalla RamKishan",
+                        tenantId: "ch.chandigarh",
+                        name: "Mohalla_RamKishan",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Guard Enclave",
+                        tenantId: "ch.chandigarh",
+                        name: "Guard_Enclave",
+                        active: true,
+                    },
+                ],
+                "EG_SECTOR_34": [
+                    {
+                        id: 1,
+                        code: "Choda Mod",
+                        tenantId: "ch.chandigarh",
+                        name: "Choda Mod",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Pari Chok",
+                        tenantId: "ch.chandigarh",
+                        name: "pari_chok",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Cricket Ground",
+                        tenantId: "ch.chandigarh",
+                        name: "Cricket_Ground",
+                        active: true,
+                    },
+                ],
+                "MANIMAJRA": [
+                    {
+                        id: 1,
+                        code: "kakrala",
+                        tenantId: "ch.chandigarh",
+                        name: "kakrala",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Buldapur",
+                        tenantId: "ch.chandigarh",
+                        name: "Buldapur",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Ithera",
+                        tenantId: "ch.chandigarh",
+                        name: "Ithera",
+                        active: true,
+                    },
+                ],
+            };
+            dispatch(
+                prepareFinalObject(
+                    "sectorWiselocationsObject",
+                    sectorWiselocationsObject
+                )
+            );
+        });
 
         if (applicationNumber !== null) {
             set(
@@ -262,88 +324,6 @@ const screenConfig = {
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
         }
 
-        // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
-        // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
-        // dispatch(prepareFinalObject("bookingCalendar.toDateToDisplay", ""));
-        // dispatch(prepareFinalObject("bookingCalendar.fromDateToDisplay", ""));
-        // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
-        const sectorWiselocationsObject = {
-            "SECTOR-17": [
-                {
-                    id: 1,
-                    code: "RamLila Ground",
-                    tenantId: "ch.chandigarh",
-                    name: "RamLila_Ground",
-                    active: true,
-                },
-                {
-                    id: 2,
-                    code: "Mohalla RamKishan",
-                    tenantId: "ch.chandigarh",
-                    name: "Mohalla_RamKishan",
-                    active: true,
-                },
-                {
-                    id: 2,
-                    code: "Guard Enclave",
-                    tenantId: "ch.chandigarh",
-                    name: "Guard_Enclave",
-                    active: true,
-                },
-            ],
-            EG_SECTOR_34: [
-                {
-                    id: 1,
-                    code: "Choda Mod",
-                    tenantId: "ch.chandigarh",
-                    name: "Choda Mod",
-                    active: true,
-                },
-                {
-                    id: 2,
-                    code: "Pari Chok",
-                    tenantId: "ch.chandigarh",
-                    name: "pari_chok",
-                    active: true,
-                },
-                {
-                    id: 2,
-                    code: "Cricket Ground",
-                    tenantId: "ch.chandigarh",
-                    name: "Cricket_Ground",
-                    active: true,
-                },
-            ],
-            MANIMAJRA: [
-                {
-                    id: 1,
-                    code: "kakrala",
-                    tenantId: "ch.chandigarh",
-                    name: "kakrala",
-                    active: true,
-                },
-                {
-                    id: 2,
-                    code: "Buldapur",
-                    tenantId: "ch.chandigarh",
-                    name: "Buldapur",
-                    active: true,
-                },
-                {
-                    id: 2,
-                    code: "Ithera",
-                    tenantId: "ch.chandigarh",
-                    name: "Ithera",
-                    active: true,
-                },
-            ],
-        };
-        dispatch(
-            prepareFinalObject(
-                "sectorWiselocationsObject",
-                sectorWiselocationsObject
-            )
-        );
 
         return action;
     },
