@@ -169,7 +169,7 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Commerical_Ground_Cat",
                         },
-                        
+
                     ],
                 },
             ],
@@ -269,7 +269,7 @@ export const prepareEditFlow = async (
     state,
     dispatch,
     applicationNumber,
-    tenantId, 
+    tenantId,
     fromDate,
     toDate, venue
 ) => {
