@@ -265,8 +265,8 @@ export const gotoApplyWithStep = (state, dispatch, step) => {
         process.env.REACT_APP_SELF_RUNNING === "true"
             ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
             : applicationType === "Booking"
-            ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
-            : ``;
+                ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
+                : ``;
 
     console.log(applyUrl, "applyUrl");
 
@@ -1597,23 +1597,23 @@ export const downloadReceipt = (
                         bookingPeriod:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM" ||
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "GFCP"
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "GFCP"
                                 ? getDurationDate(
-                                      applicationData.bkFromDate,
-                                      applicationData.bkToDate
-                                  )
+                                    applicationData.bkFromDate,
+                                    applicationData.bkToDate
+                                )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem: `Online Payment Against Booking of ${
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "GFCP"
                                 ? "Commercial Ground"
                                 : payloadReceiptDetails.Payments[0]
-                                      .paymentDetails[0].bill
-                                      .businessService === "OSBM"
-                                ? "Open Space for Building Material"
-                                : "Water Tanker"
-                        }`,
+                                    .paymentDetails[0].bill
+                                    .businessService === "OSBM"
+                                    ? "Open Space for Building Material"
+                                    : "Water Tanker"
+                            }`,
                         amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                             (el) => !el.taxHeadCode.includes("TAX")
                         )[0].amount,
@@ -1628,8 +1628,8 @@ export const downloadReceipt = (
                         paymentItemExtraColumnLabel:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM" ||
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "GFCP"
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "GFCP"
                                 ? "Booking Period"
                                 : "Date & Time",
                         paymentMode:
@@ -1749,11 +1749,11 @@ export const downloadCertificate = (
                     categoryImage: "",
                     // categoryImage: "http://3.6.65.87:3000/static/media/cat-a.4e1bc5ec.jpeg"
                 },
-                approvedBy:{
+                approvedBy: {
                     approvedBy: "Renil Commissioner",
                     role: "Additional Commissioner"
                 },
-                tenantInfo:{
+                tenantInfo: {
                     municipalityName: "Municipal Corporation Chandigarh",
                     address: "New Deluxe Building, Sector 17, Chandigarh",
                     contactNumber: "+91-172-2541002, 0172-2541003",
@@ -1819,10 +1819,10 @@ export const downloadApplication = (
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
                         : applicationData.businessService == "GFCP"
-                        ? "bk-cg-app-form"
-                        : applicationData.bkStatus.includes("Paid")
-                        ? "bk-wt-app-form"
-                        : "bk-wt-unpaid-app-form",
+                            ? "bk-cg-app-form"
+                            : applicationData.bkStatus.includes("Paid")
+                                ? "bk-wt-app-form"
+                                : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1889,21 +1889,21 @@ export const downloadApplication = (
                     applicationData.businessService === "OSBM"
                         ? bookingDataOsbm
                         : applicationData.businessService === "GFCP"
-                        ? bookingDataGFCP
-                        : bookingDataWt,
+                            ? bookingDataGFCP
+                            : bookingDataWt,
                 feeDetail: {
                     baseCharge:
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
-                                  (el) => !el.taxHeadCode.includes("TAX")
-                              )[0].amount,
+                                (el) => !el.taxHeadCode.includes("TAX")
+                            )[0].amount,
                     taxes:
                         paymentData === undefined
                             ? null
                             : paymentData.billDetails[0].billAccountDetails.filter(
-                                  (el) => el.taxHeadCode.includes("TAX")
-                              )[0].amount,
+                                (el) => el.taxHeadCode.includes("TAX")
+                            )[0].amount,
                     totalAmount:
                         paymentData === undefined
                             ? null

@@ -40,10 +40,12 @@ import {
     updateDropDowns,
     searchBill,
     createDemandForAdvNOC,
+    convertDateInDMY,
 } from "../ui-config/screens/specs/utils";
 import { httpRequest } from "./api";
 
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { convertDateInYMD } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 const role_name = JSON.parse(getUserInfo()).roles[0].code;
 
@@ -925,7 +927,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             console.log(doc, "documents");
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "GFCP") {
+                if (doc.documentCode === "GFCP_DOCUMENT") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -942,6 +944,10 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
                 }
             }
         });
+        set(payload, "financialYear", getCurrentFinancialYear());
+
+        // set(payload, "bkFromDate", convertDateInYMD(payload.bkFromDate));
+        // set(payload, "bkToDate", convertDateInYMD(payload.bkToDate));
 
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
@@ -1217,9 +1223,9 @@ export const getBoundaryData = async (
         const tenantId =
             process.env.REACT_APP_NAME === "Employee"
                 ? get(
-                      state.screenConfiguration.preparedFinalObject,
-                      "Licenses[0].tradeLicenseDetail.address.city"
-                  )
+                    state.screenConfiguration.preparedFinalObject,
+                    "Licenses[0].tradeLicenseDetail.address.city"
+                )
                 : getQueryArg(window.location.href, "tenantId");
 
         const mohallaData =
@@ -1235,8 +1241,8 @@ export const getBoundaryData = async (
                             /[.]/g,
                             "_"
                         )}_REVENUE_${item.code
-                        .toUpperCase()
-                        .replace(/[._:-\s\/]/g, "_")}`,
+                            .toUpperCase()
+                            .replace(/[._:-\s\/]/g, "_")}`,
                 });
                 return result;
             }, []);
@@ -1943,8 +1949,8 @@ export const getCitizenGridData = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATED,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
 
@@ -2022,8 +2028,8 @@ export const getGridDataAdvertisement1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2052,8 +2058,8 @@ export const getGridDataRoadcut1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2082,8 +2088,8 @@ export const getGridDataSellMeat1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2350,10 +2356,10 @@ export const createUpdateADVNocApplication = async (
                 responsecreateDemand.Calculations[0].taxHeadEstimates[0]
                     .estimateAmount > 0
                     ? await searchBill(
-                          dispatch,
-                          response.applicationId,
-                          getTenantId()
-                      )
+                        dispatch,
+                        response.applicationId,
+                        getTenantId()
+                    )
                     : "";
 
                 lSRemoveItem(`exemptedCategory`);

@@ -153,10 +153,10 @@ const prepareEditFlow = async (
         // dispatch(prepareFinalObject("availabilityCheckData.bkToDate", response.bookingsModelList[0].bkToDate));
         // dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", response.bookingsModelList[0].bkFromDate));
         // dispatch(prepareFinalObject("availabilityCheckData.bkSector", response.bookingsModelList[0].bkSector));
-		
-		let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
 
-		if (availabilityData !== undefined) {
+        let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
+
+        if (availabilityData !== undefined) {
             let data = availabilityData.data;
             let reservedDates = [];
             var daylist = [];
@@ -169,6 +169,28 @@ const prepareEditFlow = async (
                 });
             });
             dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
+            let availabilityCheckData =
+                state.screenConfiguration.preparedFinalObject.availabilityCheckData;
+            reservedDates.map((date) => {
+
+                if (date === availabilityCheckData.bkFromDate || date === availabilityCheckData.bkToDate) {
+
+                    // availabilityCheckData.bkFromDate == null
+                    // availabilityCheckData.bkToDate == null
+
+                    dispatch(
+                        toggleSnackbar(
+                            true,
+                            { labelName: `${availabilityCheckData.bkFromDate} and ${availabilityCheckData.bkToDate} Dates are already Booked`, labelKey: "" },
+                            "warning"
+                        )
+                    );
+                    dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
+                    dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
+                    dispatch(prepareFinalObject("Booking.bkFromDate", null));
+                    dispatch(prepareFinalObject("Booking.bkToDate", null));
+                }
+            })
             // const actionDefination = [
             //     {
             //         path:
@@ -176,7 +198,7 @@ const prepareEditFlow = async (
             //         property: "reservedDays",
             //         value: reservedDates,
             //     },
-			// ];
+            // ];
             // dispatchMultipleFieldChangeAction(
             //     "checkavailability",
             //     actionDefination,
@@ -238,8 +260,8 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-		getMdmsData(action, state, dispatch);
-		
+        getMdmsData(action, state, dispatch);
+
         if (applicationNumber !== null) {
             set(
                 action.screenConfig,
@@ -248,10 +270,10 @@ const screenConfig = {
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
         } else {
-			// alert("in this")
-			// lSRemoveItemlocal("fromDateCG")
-			// lSRemoveItemlocal("toDateCG")
-		}
+            // alert("in this")
+            // lSRemoveItemlocal("fromDateCG")
+            // lSRemoveItemlocal("toDateCG")
+        }
 
         // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
         // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
