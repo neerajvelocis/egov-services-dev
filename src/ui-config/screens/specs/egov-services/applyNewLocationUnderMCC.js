@@ -237,7 +237,7 @@ const screenConfig = {
     name: "applyNewLocationUnderMCC",
     beforeInitScreen: (action, state, dispatch) => {
         clearlocalstorageAppDetails(state);
-        setapplicationType("OSWMCC");
+        setapplicationType("NLUJM");
         const applicationNumber = getQueryArg(
             window.location.href,
             "applicationNumber"

@@ -147,6 +147,39 @@ export const getSearchResultsView = async (queryObject) => {
     //alert(JSON.stringify(response));
 };
 
+export const getSearchResultsViewForNewLocOswmcc = async (queryObject) => {
+    try {
+        console.log('Neero OSWMMCC');
+        const response = await httpRequest(
+            "post",
+            "/bookings/api/citizen/_search",
+            "",
+            [],
+            {
+                tenantId: queryObject[0]["value"],
+                applicationNumber: queryObject[1]["value"],
+                applicationStatus: "",
+                mobileNumber: "",
+                fromDate: "",
+                toDate: "",
+                bookingType: "",
+                uuid: JSON.parse(getUserInfo()).uuid,
+            }
+        );
+        return response;
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+    //alert(JSON.stringify(response));
+};
+
+
 export const preparepopupDocumentsUploadData = (
     state,
     dispatch,
@@ -948,11 +981,15 @@ export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => 
         });
 
         set(payload, "wfDocuments", bookingDocuments);
-        
+
         set(payload, "tenantId", tenantId);
         set(payload, "action", action);
         set(payload, "businessService", "NLUJM");
         set(payload, "idProof", "Adhar");
+        
+        var financialYear = getCurrentFinancialYear();
+        
+        set(payload, "financialYear", financialYear);
 
         if (method === "CREATE") {
             response = await httpRequest(
@@ -992,7 +1029,7 @@ export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => 
             return { status: "success", data: response.data };
         }
 
-        
+
     } catch (error) {
         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
 
@@ -1328,9 +1365,9 @@ export const getBoundaryData = async (
         const tenantId =
             process.env.REACT_APP_NAME === "Employee"
                 ? get(
-                      state.screenConfiguration.preparedFinalObject,
-                      "Licenses[0].tradeLicenseDetail.address.city"
-                  )
+                    state.screenConfiguration.preparedFinalObject,
+                    "Licenses[0].tradeLicenseDetail.address.city"
+                )
                 : getQueryArg(window.location.href, "tenantId");
 
         const mohallaData =
@@ -1346,8 +1383,8 @@ export const getBoundaryData = async (
                             /[.]/g,
                             "_"
                         )}_REVENUE_${item.code
-                        .toUpperCase()
-                        .replace(/[._:-\s\/]/g, "_")}`,
+                            .toUpperCase()
+                            .replace(/[._:-\s\/]/g, "_")}`,
                 });
                 return result;
             }, []);
@@ -2054,8 +2091,8 @@ export const getCitizenGridData = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATED,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
 
@@ -2133,8 +2170,8 @@ export const getGridDataAdvertisement1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2163,8 +2200,8 @@ export const getGridDataRoadcut1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2193,8 +2230,8 @@ export const getGridDataSellMeat1 = async () => {
                 JSON.parse(getUserInfo()).roles[0].code == "SI"
                     ? "INITIATE,REASSIGNTOSI,PAID,RESENT"
                     : JSON.parse(getUserInfo()).roles[0].code == "MOH"
-                    ? "FORWARD"
-                    : "",
+                        ? "FORWARD"
+                        : "",
         },
     };
     try {
@@ -2461,10 +2498,10 @@ export const createUpdateADVNocApplication = async (
                 responsecreateDemand.Calculations[0].taxHeadEstimates[0]
                     .estimateAmount > 0
                     ? await searchBill(
-                          dispatch,
-                          response.applicationId,
-                          getTenantId()
-                      )
+                        dispatch,
+                        response.applicationId,
+                        getTenantId()
+                    )
                     : "";
 
                 lSRemoveItem(`exemptedCategory`);

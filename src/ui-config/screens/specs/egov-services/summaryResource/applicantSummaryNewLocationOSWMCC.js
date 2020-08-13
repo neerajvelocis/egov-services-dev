@@ -24,7 +24,7 @@ export const applicantSummary = getCommonGrayCard({
               },
               ...getCommonSubHeader({
                   labelName: "Applicant Details",
-                  labelKey: "BK_OSWMCC_NEW_LOC_APLICANT_DETAILS_HEADER",
+                  labelKey: "BK_OSWMCC_NEW_LOC_APPLICANT_DETAILS",
               }),
           },
           

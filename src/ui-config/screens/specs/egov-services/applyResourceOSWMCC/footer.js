@@ -51,22 +51,15 @@ const callBackForNext = async (state, dispatch) => {
         let responseStatus = get(response, "status", "");
         console.log(responseStatus, response.status, "Response status");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
-            // DISPLAY SUCCESS MESSAGE
-            // let successMessage = {
-            //     labelName: "APPLICATION INITIATED SUCCESSFULLY! ",
-            //     labelKey: "", //UPLOAD_FILE_TOAST
-            // };
-            // dispatch(toggleSnackbar(true, successMessage, "success"));
-console.log(response, "Nero Resp");
-            // GET FEE DETAILS
+            
             let tenantId = getTenantId().split(".")[0];
             let applicationNumber = get(
                 response,
-                "data.NewLocationDetails.applicationNumber",
+                "data.applicationNumber",
                 ""
             );
-            let businessService = get(response, "data.NewLocationDetails", "");
-            const reviewUrl = `/egov-services/applyNewLocationUnderMCC?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            //let businessService = get(response, "data.businessService", "");
+            const reviewUrl = `/egov-services/applyNewLocationUnderMCC?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
             dispatch(setRoute(reviewUrl));
 
             
@@ -113,7 +106,7 @@ console.log(response, "Nero Resp");
     }
     if (activeStep === 3) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdateOSWMCCNewLocation(
             state,
             dispatch,
             "APPLY"
@@ -129,10 +122,10 @@ console.log(response, "Nero Resp");
             let tenantId = getTenantId().split(".")[0];
             let applicationNumber = get(
                 response,
-                "data.NewLocationDetails.applicationNumber",
+                "data.applicationNumber",
                 ""
             );
-            let businessService = get(response, "data.NewLocationDetails", "");
+            let businessService = get(response, "data.businessService", "");
             const reviewUrl = `/egov-services/acknowledgement?purpose=${"apply"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
             dispatch(setRoute(reviewUrl));
         } else {

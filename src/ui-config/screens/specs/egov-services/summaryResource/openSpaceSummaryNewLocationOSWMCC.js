@@ -37,11 +37,11 @@ export const openSpaceSummary = getCommonGrayCard({
         props: {
             contents: [
                 {
-                    label: "BK_OSWMCC_NEW_LOC_APPLICATION_NUMBER_LABEL",
+                    label: "MY_BK_APPLICATION_NUMBER_LABEL",
                     jsonPath: "applicationNumber",
                 },
                 {
-                    label: "BK_OSWMCC_NEW_LOC_APPLICATION_STATUS_LABEL",
+                    label: "MY_BK_APPLICATION_STATUS_LABEL",
                     jsonPath: "applicationStatus",
                 },
                 {
@@ -49,7 +49,7 @@ export const openSpaceSummary = getCommonGrayCard({
                     jsonPath: "sector",
                 },
                 {
-                    label: "OSWMCC_NEW_LOC_ADDRESS_LABEL",
+                    label: "BK_OSWMCC_LOC_ADDRESS_LABEL",
                     jsonPath: "localityAddress",
                 },
                 {
