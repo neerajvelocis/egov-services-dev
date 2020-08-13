@@ -447,7 +447,7 @@ const screenConfig = {
             "screenConfiguration.screenConfig.applyNewLocationUnderMCC.name"
         );
         if (bookingTypeIdentifier === "applyNewLocationUnderMCC") {
-            // setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
+            setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
         } else {
             setApplicationData(dispatch, applicationNumber, tenantId);
         }
