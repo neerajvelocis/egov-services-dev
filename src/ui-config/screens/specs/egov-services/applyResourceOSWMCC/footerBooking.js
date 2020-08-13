@@ -14,7 +14,7 @@ import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { httpRequest } from "../../../../../ui-utils";
 import {
-    createUpdateOsbApplication,
+    createUpdateOSWMCCApplication,
     prepareDocumentsUploadData,
 } from "../../../../../ui-utils/commons";
 import {
@@ -42,12 +42,11 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdateOSWMCCApplication(
             state,
             dispatch,
             "INITIATE"
         );
-        console.log(response, "myResponse");
         let responseStatus = get(response, "status", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
             // DISPLAY SUCCESS MESSAGE
@@ -58,14 +57,20 @@ const callBackForNext = async (state, dispatch) => {
             // dispatch(toggleSnackbar(true, successMessage, "success"));
 
             // GET FEE DETAILS
-            let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(
-                response,
-                "data.bkApplicationNumber",
-                ""
-            );
-            let businessService = get(response, "data.businessService", "");
-            const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            let applicationData = get(
+                    response,
+                    "data",
+                    ""
+                );
+            console.log(applicationData, "applicationDataNew");
+            // let tenantId = getTenantId().split(".")[0];
+            // let applicationNumber = get(
+            //     response,
+            //     "data.bkApplicationNumber",
+            //     ""
+            // );
+            // let businessService = get(response, "data.businessService", "");
+            const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}&fromDate=${applicationData.bkFromDate}&toDate=${applicationData.bkToDate}&sector=${applicationData.bkSector}&venue=${applicationData.bkBookingVenue}`;
             dispatch(setRoute(reviewUrl));
 
             
@@ -112,7 +117,7 @@ const callBackForNext = async (state, dispatch) => {
     }
     if (activeStep === 3) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdateOSWMCCApplication(
             state,
             dispatch,
             "APPLY"

@@ -150,9 +150,7 @@ const prepareEditFlow = async (
 
         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
         dispatch(prepareFinalObject("availabilityCheckData", response.bookingsModelList[0]));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkToDate", response.bookingsModelList[0].bkToDate));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", response.bookingsModelList[0].bkFromDate));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkSector", response.bookingsModelList[0].bkSector));
+    
 		
 		let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
 
@@ -247,15 +245,7 @@ const screenConfig = {
                 true
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        } else {
-			// alert("in this")
-			// lSRemoveItemlocal("fromDateCG")
-			// lSRemoveItemlocal("toDateCG")
-		}
-
-        // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
-        // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
-        // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
+        }
         return action;
     },
     components: {

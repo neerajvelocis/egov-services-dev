@@ -39,7 +39,7 @@ export const personalDetails = getCommonCard({
                 jsonPath: "Booking.bkApplicantName",
             }),
         },
-        bkApplicantFatherName: {
+        bkFatherName: {
             ...getTextField({
                 label: {
                     labelName: "Father Name",
@@ -52,7 +52,7 @@ export const personalDetails = getCommonCard({
                 required: true,
                 pattern: getPattern("Name"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkApplicantFatherName",
+                jsonPath: "Booking.bkFatherName",
             }),
         },
         bkEmail: {
@@ -128,26 +128,61 @@ export const bookingDetails = getCommonCard({
     
 
     applicationDetailsConatiner: getCommonContainer({
+        fromdate: {
+            ...getTextField({
+              label: {
+                labelName: "From Date",
+                labelKey: "BK_OSWMCC_BOOKING_FROM_DATE_LABEL"
+              },
+              placeholder: {
+                labelName: "From Date",
+                labelKey: "BK_OSWMCC_BOOKING_FROM_DATE_PLACEHOLDER"
+              },
+              required: true,
+              props: {
+                disabled: true,
+              },
+              //pattern: getPattern("NoOfEmp"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              jsonPath: "Booking.bkFromDate",
+            })
+          },
+          todate: {
+            ...getTextField({
+              label: {
+                labelName: "To Date",
+                labelKey: "BK_OSWMCC_BOOKING_TO_DATE_LABEL"
+              },
+              placeholder: {
+                labelName: "To Date",
+                labelKey: "BK_OSWMCC_BOOKING_TO_DATE_PLACEHOLDER"
+              },
+              required: true,
+              props: {
+                disabled: true,
+              },
+              //pattern: getPattern("NoOfEmp"),
+              errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+              jsonPath: "Booking.bkToDate",
+            })
+          },
         bkSector: {
-            ...getSelectField({
+            ...getTextField({
                 label: {
-                    labelName: "Locality",
+                    labelName: "Booking Venue",
                     labelKey: "BK_OSWMCC_BOOKING_SECTOR_LABEL",
                 },
-                optionLabel: "name",
                 placeholder: {
-                    labelName: "Select Locality",
+                    labelName: "Enter Booking Venue",
                     labelKey: "BK_OSWMCC_BOOKING_SECTOR_PLACEHOLDER",
                 },
-                
-                sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
-                jsonPath: "Booking.bkSector",
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 required: true,
-                requiredMessage: "required Message",
+                jsonPath: "Booking.bkSector",
                 props: {
                     className: "applicant-details-error",
                     required: true,
-                    // disabled: true
+                    disabled: true
                 },
             }),
         },
@@ -165,11 +200,15 @@ export const bookingDetails = getCommonCard({
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 required: true,
                 jsonPath: "Booking.bkBookingVenue",
-                maxLength: 500,
+                props: {
+                    className: "applicant-details-error",
+                    required: true,
+                    disabled: true
+                },
             }),
         },
 
-        bkPurpose: {
+        bkBookingPurpose: {
             ...getTextField({
                 label: {
                     labelName: "Purpose",
@@ -183,34 +222,32 @@ export const bookingDetails = getCommonCard({
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
-                jsonPath: "Booking.bkPurpose",
+                jsonPath: "Booking.bkBookingPurpose",
                 props: {
                     required: true,
-                    helperText: "custom helper text",
                 },
             }),
         },
-        bkBookingDuration: {
-            ...getTextField({
-                label: {
-                    labelName: "Booking Duration",
-                    labelKey: "BK_OSWMCC_BOOKING_DURATION_LABEL",
-                },
-                placeholder: {
-                    labelName: "Booking Duration",
-                    labelKey: "BK_OSWMCC_BOOKING_DURATION_PLACEHOLDER",
-                },
-                pattern: getPattern("Address"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                // helperText : "new helper outside",
-                required: true,
-                jsonPath: "Booking.bkBookingDuration",
-                props: {
-                    required: true,
-                    helperText: "custom helper text",
-                },
-            }),
-        }
+        // bkBookingDuration: {
+        //     ...getTextField({
+        //         label: {
+        //             labelName: "Booking Duration",
+        //             labelKey: "BK_OSWMCC_BOOKING_DURATION_LABEL",
+        //         },
+        //         placeholder: {
+        //             labelName: "Booking Duration",
+        //             labelKey: "BK_OSWMCC_BOOKING_DURATION_PLACEHOLDER",
+        //         },
+        //         pattern: getPattern("Address"),
+        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         // helperText : "new helper outside",
+        //         required: true,
+        //         jsonPath: "Booking.bkBookingDuration",
+        //         props: {
+        //             required: true,
+        //         },
+        //     }),
+        // }
         
         
         

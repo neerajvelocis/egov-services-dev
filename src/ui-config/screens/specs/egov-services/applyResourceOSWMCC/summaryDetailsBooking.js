@@ -9,9 +9,11 @@ import {
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { openSpaceSummary } from "../summaryResource/openSpaceSummaryOSWMCC";
+import { openSpaceSummaryOSWMCC } from "../summaryResource/openSpaceSummaryOSWMCC";
 import { applicantSummary } from "../summaryResource/applicantSummaryBookingOSWMCC";
+import { estimateSummary } from "../summaryResource/estimateSummary";
 import { documentsSummary } from "../summaryResource/documentsSummaryNewLocationOSWMCC";
+
 
 
 export const callBackForPrevious = (state, dispatch) => {
@@ -24,7 +26,7 @@ export const changeStep = (
     defaultActiveStep = -1
 ) => {
     let activeStep = get(
-        state.screenConfiguration.screenConfig["applyNewLocationUnderMCC"],
+        state.screenConfiguration.screenConfig["applyopenspacewmcc"],
         "components.div.children.stepper.props.activeStep",
         0
     );
@@ -60,7 +62,7 @@ export const changeStep = (
         },
     ];
     dispatchMultipleFieldChangeAction(
-        "applyNewLocationUnderMCC",
+        "applyopenspacewmcc",
         actionDefination,
         dispatch
     );
@@ -70,7 +72,7 @@ export const renderSteps = (activeStep, dispatch) => {
     switch (activeStep) {
         case 0:
             dispatchMultipleFieldChangeAction(
-                "applyNewLocationUnderMCC",
+                "applyopenspacewmcc",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFirstStep"
                 ),
@@ -79,7 +81,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 1:
             dispatchMultipleFieldChangeAction(
-                "applyNewLocationUnderMCC",
+                "applyopenspacewmcc",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardSecondStep"
                 ),
@@ -88,7 +90,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 2:
             dispatchMultipleFieldChangeAction(
-                "applyNewLocationUnderMCC",
+                "applyopenspacewmcc",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardThirdStep"
                 ),
@@ -97,7 +99,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         default:
             dispatchMultipleFieldChangeAction(
-                "applyNewLocationUnderMCC",
+                "applyopenspacewmcc",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFourthStep"
                 ),
@@ -198,6 +200,6 @@ export const summaryDetails = getCommonCard({
     },
     
     applicantSummary: applicantSummary,
-    openSpaceSummary: openSpaceSummary,
+    openSpaceSummaryOSWMCC: openSpaceSummaryOSWMCC,
     documentsSummary: documentsSummary
 });

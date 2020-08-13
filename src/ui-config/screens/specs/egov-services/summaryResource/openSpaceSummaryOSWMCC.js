@@ -10,7 +10,7 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
-export const openSpaceSummary = getCommonGrayCard({
+export const openSpaceSummaryOSWMCC = getCommonGrayCard({
     header: {
         uiFramework: "custom-atoms",
         componentPath: "Container",
@@ -23,7 +23,7 @@ export const openSpaceSummary = getCommonGrayCard({
                     xs: 8,
                 },
                 ...getCommonSubHeader({
-                    labelName: "New Location Details",
+                    labelName: "Application Details",
                     labelKey: "BK_OSWMCC_NEW_LOC_DETAILS_HEADER",
                 }),
             },
@@ -31,39 +31,95 @@ export const openSpaceSummary = getCommonGrayCard({
         },
     },
     cardOne: {
-        uiFramework: "custom-containers-local",
-        componentPath: "MultiItemsWithImageContainer",
-        moduleName: "egov-services",
+        uiFramework: "custom-containers",
+        componentPath: "MultiItem",
+        // moduleName: "egov-services",
         props: {
-            contents: [
-                {
-                    label: "BK_OSWMCC_NEW_LOC_APPLICATION_NUMBER_LABEL",
-                    jsonPath: "Booking.bkPurpose",
-                },
-                {
-                    label: "BK_OSWMCC_NEW_LOC_APPLICATION_STATUS_LABEL",
-                    jsonPath: "applicationStatus",
-                },
-                {
-                    label: "BK_OSWMCC_LOC_SECTOR_LABEL",
-                    jsonPath: "sector",
-                },
-                {
-                    label: "OSWMCC_NEW_LOC_ADDRESS_LABEL",
-                    jsonPath: "localityAddress",
-                },
-                {
-                    label: "BK_OSWMCC_LOC_LANDMARK_LABEL",
-                    jsonPath: "landmark",
-                },
-                
-                {
-                    label: "BK_OSWMCC_LOC_AREA_REQUIRED_LABEL",
-                    jsonPath: "areaRequirement",
-                }
-            ],
-            moduleName: "egov-services",
+            className: "sellmeatapplicant-summary",
+            scheama: getCommonGrayCard({
+                applicationContainer: getCommonContainer({
+                    fromDate: getLabelWithValue(
+                        {
+                            labelName: "From Date",
+                            labelKey: "BK_OSWMCC_BOOKING_FROM_DATE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkFromDate",
+                        }
+                    ),
+                    toDate: getLabelWithValue(
+                        {
+                            labelName: "To Date",
+                            labelKey: "BK_OSWMCC_BOOKING_TO_DATE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkToDate",
+                        }
+                    ),
+                    sector: getLabelWithValue(
+                        {
+                            labelName: "Locality",
+                            labelKey: "BK_OSWMCC_BOOKING_SECTOR_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkSector",
+                        }
+                    ),
+                    venue: getLabelWithValue(
+                        {
+                            labelName: "Venue",
+                            labelKey: "BK_OSWMCC_BOOKING_VENUE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkBookingVenue",
+                        }
+                    ),
+                    purpose: getLabelWithValue(
+                        {
+                            labelName: "Purpose",
+                            labelKey: "BK_OSWMCC_BOOKING_PURPOSE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkBookingPurpose",
+                        }
+                    )
+                }),
+            }),
+            items: [],
+            hasAddItem: false,
+            isReviewPage: true,
+            sourceJsonPath: "Booking",
         },
+        // props: {
+        //     contents: [
+        //         {
+        //             label: "BK_OSWMCC_BOOKING_FROM_DATE_LABEL",
+        //             jsonPath: "bkFromDate",
+        //         },
+        //         {
+        //             label: "BK_OSWMCC_BOOKING_TO_DATE_LABEL",
+        //             jsonPath: "bkToDate",
+        //         },
+        //         {
+        //             label: "BK_OSWMCC_BOOKING_SECTOR_LABEL",
+        //             jsonPath: "bkSector",
+        //         },
+        //         {
+        //             label: "BK_OSWMCC_BOOKING_VENUE_LABEL",
+        //             jsonPath: "bkBookingVenue",
+        //         },
+        //         {
+        //             label: "BK_OSWMCC_BOOKING_PURPOSE_LABEL",
+        //             jsonPath: "bkBookingPurpose",
+        //         },
+                
+        //         // {
+        //         //     label: "BK_OSWMCC_LOC_AREA_REQUIRED_LABEL",
+        //         //     jsonPath: "areaRequirement",
+        //         // }
+        //     ],
+        //     moduleName: "egov-services",
+        // },
         type: "array",
     },
 });

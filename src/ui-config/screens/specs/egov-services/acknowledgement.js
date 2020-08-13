@@ -365,6 +365,47 @@ let tempdata = {"applicationNumber":"CH-BK-2020-08-12-000838","bookingsRemarks":
     );
 };
 
+// const screenConfig = {
+//     uiFramework: "material-ui",
+//     name: "acknowledgement",
+//     components: {
+//         div: {
+//             uiFramework: "custom-atoms",
+//             componentPath: "Div",
+//             props: {
+//                 className: "common-div-css",
+//             },
+//         },
+//     },
+//     beforeInitScreen: (action, state, dispatch) => {
+//         const purpose = getQueryArg(window.location.href, "purpose");
+//         const status = getQueryArg(window.location.href, "status");
+//         const applicationNumber = getQueryArg(
+//             window.location.href,
+//             "applicationNumber"
+//         );
+//         const secondNumber = getQueryArg(window.location.href, "secondNumber");
+//         const tenantId = getQueryArg(window.location.href, "tenantId");
+//         const businessService = getQueryArg(
+//             window.location.href,
+//             "businessService"
+//         );
+//         const data = getAcknowledgementCard(
+//             state,
+//             dispatch,
+//             purpose,
+//             status,
+//             applicationNumber,
+//             secondNumber,
+//             tenantId,
+//             businessService
+//         );
+//         setApplicationData(dispatch, applicationNumber, tenantId);
+//         set(action, "screenConfig.components.div.children", data);
+//         return action;
+//     },
+// };
+
 const screenConfig = {
     uiFramework: "material-ui",
     name: "acknowledgement",
@@ -406,7 +447,7 @@ const screenConfig = {
             "screenConfiguration.screenConfig.applyNewLocationUnderMCC.name"
         );
         if (bookingTypeIdentifier === "applyNewLocationUnderMCC") {
-            setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
+            // setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
         } else {
             setApplicationData(dispatch, applicationNumber, tenantId);
         }
