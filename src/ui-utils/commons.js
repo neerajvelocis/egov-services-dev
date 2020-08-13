@@ -1113,10 +1113,7 @@ export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => 
         set(payload, "action", action);
         set(payload, "businessService", "NLUJM");
         set(payload, "idProof", "Adhar");
-        
-        var financialYear = getCurrentFinancialYear();
-        
-        set(payload, "financialYear", financialYear);
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {
             response = await httpRequest(
@@ -1223,6 +1220,7 @@ export const createUpdateCgbApplication = async (
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "GFCP");
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
         setapplicationMode(status);
 
         // if (method === "CREATE") {
