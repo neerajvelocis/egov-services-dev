@@ -31,12 +31,87 @@ import {
     setApplicationNumberBox,
 } from "../../../../ui-utils/commons";
 import { getAvailabilityData, getBetweenDays } from "../utils";
+import { httpRequest } from "../../../../ui-utils";
+
+// const getMdmsData = async (action, state, dispatch) => {
+//     try {
+//         let payload = {};
+
+//         payload.sector = [
+//             {
+//                 id: 1,
+//                 code: "SECTOR-17",
+//                 tenantId: "ch.chandigarh",
+//                 name: "SECTOR-17",
+//                 active: true,
+//             },
+//             {
+//                 id: 2,
+//                 code: "EG_SECTOR_34",
+//                 tenantId: "ch.chandigarh",
+//                 name: "EG_SECTOR_34",
+//                 active: true,
+//             },
+//             {
+//                 id: 2,
+//                 code: "MANIMAJRA",
+//                 tenantId: "ch.chandigarh",
+//                 name: "MANIMAJRA",
+//                 active: true,
+//             },
+//         ];
+//         payload.bkBookingVenue = [];
+//         //   payload.bkBookingVenue = [
+//         //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
+//         //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
+//         //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
+//         // ];
+
+//         dispatch(prepareFinalObject("applyScreenMdmsData", payload));
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
 
 const getMdmsData = async (action, state, dispatch) => {
+    let tenantId = getTenantId().split(".")[0];
+    let mdmsBody = {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+                {
+                    moduleName: "tenant",
+                    masterDetails: [
+                        {
+                            name: "tenants",
+                        },
+                    ],
+                },
+                {
+                    moduleName: "Booking",
+                    masterDetails: [
+                        
+                        {
+                            name: "Commerical_Ground_Cat",
+                        },
+                    ],
+                },
+            ],
+        },
+    };
     try {
-        let payload = {};
+        let payload = null;
+        payload = await httpRequest(
+            "post",
+            "/egov-mdms-service/v1/_search",
+            "_search",
+            [],
+            mdmsBody
+		);
+		console.log(payload, "myPayload");
+        // let payload = {};
 
-        payload.sector = [
+        payload.Mdms.sector = [
             {
                 id: 1,
                 code: "SECTOR-17",
@@ -60,82 +135,11 @@ const getMdmsData = async (action, state, dispatch) => {
             },
         ];
         payload.bkBookingVenue = [];
-        //   payload.bkBookingVenue = [
-        //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
-        //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
-        //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
-        // ];
-
-        dispatch(prepareFinalObject("applyScreenMdmsData", payload));
+        dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
     }
 };
-
-// const getMdmsData = async (action, state, dispatch) => {
-// 	alert("this")
-//     let tenantId = getTenantId().split(".")[0];
-//     let mdmsBody = {
-//         MdmsCriteria: {
-//             tenantId: tenantId,
-//             moduleDetails: [
-//                 {
-//                     moduleName: "tenant",
-//                     masterDetails: [
-//                         {
-//                             name: "tenants",
-//                         },
-//                     ],
-//                 },
-//                 {
-//                     moduleName: "Booking",
-//                     masterDetails: [
-//                         {
-//                             name: "Commerical_Ground_Cat",
-//                         },
-//                     ],
-//                 },
-//             ],
-//         },
-//     };
-//     try {
-//         let payload = null;
-//         payload = await httpRequest(
-//             "post",
-//             "/egov-mdms-service/v1/_search",
-//             "_search",
-//             [],
-//             mdmsBody
-// 		);
-// 		console.log(payload, "myPayload");
-// 		// payload.sector = [
-//         //     {
-//         //         id: 1,
-//         //         code: "SECTOR-17",
-//         //         tenantId: "ch.chandigarh",
-//         //         name: "SECTOR-17",
-//         //         active: true,
-//         //     },
-//         //     {
-//         //         id: 2,
-//         //         code: "EG_SECTOR_34",
-//         //         tenantId: "ch.chandigarh",
-//         //         name: "EG_SECTOR_34",
-//         //         active: true,
-//         //     },
-//         //     {
-//         //         id: 2,
-//         //         code: "MANIMAJRA",
-//         //         tenantId: "ch.chandigarh",
-//         //         name: "MANIMAJRA",
-//         //         active: true,
-//         //     },
-//         // ];
-//         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// };
 
 const prepareEditFlow = async (
     state,

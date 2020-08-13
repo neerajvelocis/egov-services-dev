@@ -328,14 +328,14 @@ export const checkAvailabilitySearch = getCommonCard({
                     )
                 );
                 //set(action, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.bkBookingVenue", bkBookingVenue)
-                // dispatch(
-                //     handleField(
-                //         "checkavailability_oswmcc",
-                //         "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.SectorLocations",
-                //         "visible",
-                //         true
-                //     )
-                // );
+                dispatch(
+                    handleField(
+                        "checkavailability_oswmcc",
+                        "components.headerDiv.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                        "props.disabled",
+                        false
+                    )
+                );
 
                 // set(action, "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.SectorLocations", [
                 //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
@@ -344,7 +344,7 @@ export const checkAvailabilitySearch = getCommonCard({
                 // ])
             },
         },
-        SectorLocations: {
+        bkBookingVenue: {
             ...getSelectField({
                 label: {
                     labelName: "Booking Locations",
@@ -367,7 +367,7 @@ export const checkAvailabilitySearch = getCommonCard({
                 props: {
                     className: "applicant-details-error",
                     required: true,
-                    // disabled: true
+                    disabled: true
                 },
             }),
         },

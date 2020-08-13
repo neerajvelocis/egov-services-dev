@@ -274,7 +274,7 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
-                convertDateInYMD(availabilityCheckData.bkFromdate)
+                convertDateInYMD(availabilityCheckData.bkFromDate)
             )
         );
         dispatch(
@@ -416,7 +416,7 @@ const screenConfig = {
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkFromDate",
-                        convertDateInYMD(availabilityCheckData.bkFromdate)
+                        convertDateInYMD(availabilityCheckData.bkFromDate)
                     )
                 );
                 dispatch(
