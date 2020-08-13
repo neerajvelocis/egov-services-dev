@@ -40,12 +40,10 @@ import {
     updateDropDowns,
     searchBill,
     createDemandForAdvNOC,
-    convertDateInDMY,
 } from "../ui-config/screens/specs/utils";
 import { httpRequest } from "./api";
 
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import { convertDateInYMD } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 const role_name = JSON.parse(getUserInfo()).roles[0].code;
 
@@ -1199,7 +1197,7 @@ export const createUpdateCgbApplication = async (
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             console.log(doc, "documents");
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "GFCP_DOCUMENT") {
+                if (doc.documentCode === "GFCP") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -1216,10 +1214,6 @@ export const createUpdateCgbApplication = async (
                 }
             }
         });
-        set(payload, "financialYear", getCurrentFinancialYear());
-
-        // set(payload, "bkFromDate", convertDateInYMD(payload.bkFromDate));
-        // set(payload, "bkToDate", convertDateInYMD(payload.bkToDate));
 
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");

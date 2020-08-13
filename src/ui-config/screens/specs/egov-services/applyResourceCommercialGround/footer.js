@@ -90,7 +90,7 @@ const callBackForNext = async (state, dispatch) => {
                 uploadedDocData &&
                 uploadedDocData.map((item) => {
                     return {
-                        title: "GFCP_DOCUMENT",
+                        title: "GFCP",
                         link: item.fileUrl && item.fileUrl.split(",")[0],
                         linkText: "View",
                         name: item.fileName,
