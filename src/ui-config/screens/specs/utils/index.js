@@ -1800,6 +1800,8 @@ export const downloadApplication = (
         state.screenConfiguration.preparedFinalObject,
         "Booking"
     );
+
+
     let paymentData = get(
         state.screenConfiguration.preparedFinalObject,
         "ReceiptTemp[0].Bill[0]"
@@ -1820,9 +1822,11 @@ export const downloadApplication = (
                         ? "bk-osbm-app-form"
                         : applicationData.businessService == "GFCP"
                             ? "bk-cg-app-form"
-                            : applicationData.bkStatus.includes("Paid")
-                                ? "bk-wt-app-form"
-                                : "bk-wt-unpaid-app-form",
+                            : applicationData.businessService == "NLUJM"
+                                ? "bk-oswmcc-newloc-app-form"
+                                : applicationData.bkStatus.includes("Paid")
+                                    ? "bk-wt-app-form"
+                                    : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1871,49 +1875,75 @@ export const downloadApplication = (
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
         };
+        let appData = '';
+        if (applicationData.businessService == "NLUJM") {
+            appData = [
+                {
+                    applicantDetail: {
+                        name: applicationData.applicantName,
+                        mobileNumber: applicationData.contact,
+                        permanentAddress: applicationData.applicantAddress,
+                        email: applicationData.mailAddress,
 
-        let appData = [
-            {
-                applicantDetail: {
-                    name: applicationData.bkApplicantName,
-                    mobileNumber: applicationData.bkMobileNumber,
-                    houseNo: applicationData.bkHouseNo,
-                    permanentAddress: applicationData.bkCompleteAddress,
-                    permanentCity: tenantId,
-                    sector: applicationData.bkSector,
-                    email: applicationData.bkEmail,
-                    fatherName: applicationData.bkFatherName,
-                    DOB: null,
+                    },
+                    locationDetail: {
+                        applicationNumber: applicationData.applicationNumber,
+                        locality: applicationData.sector,
+                        address: applicationData.localityAddress,
+                        areaReq: applicationData.areaRequirement,
+                        landmark: applicationData.landmark
+                    },
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
+                    }
+                }
+            ];
+        } else {
+            appData = [
+                {
+                    applicantDetail: {
+                        name: applicationData.bkApplicantName,
+                        mobileNumber: applicationData.bkMobileNumber,
+                        houseNo: applicationData.bkHouseNo,
+                        permanentAddress: applicationData.bkCompleteAddress,
+                        permanentCity: tenantId,
+                        sector: applicationData.bkSector,
+                        email: applicationData.bkEmail,
+                        fatherName: applicationData.bkFatherName,
+                        DOB: null,
+                    },
+                    bookingDetail:
+                        applicationData.businessService === "OSBM"
+                            ? bookingDataOsbm
+                            : applicationData.businessService === "GFCP"
+                                ? bookingDataGFCP
+                                : bookingDataWt,
+                    feeDetail: {
+                        baseCharge:
+                            paymentData === undefined
+                                ? null
+                                : paymentData.billDetails[0].billAccountDetails.filter(
+                                    (el) => !el.taxHeadCode.includes("TAX")
+                                )[0].amount,
+                        taxes:
+                            paymentData === undefined
+                                ? null
+                                : paymentData.billDetails[0].billAccountDetails.filter(
+                                    (el) => el.taxHeadCode.includes("TAX")
+                                )[0].amount,
+                        totalAmount:
+                            paymentData === undefined
+                                ? null
+                                : paymentData.totalAmount,
+                    },
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
+                    },
                 },
-                bookingDetail:
-                    applicationData.businessService === "OSBM"
-                        ? bookingDataOsbm
-                        : applicationData.businessService === "GFCP"
-                            ? bookingDataGFCP
-                            : bookingDataWt,
-                feeDetail: {
-                    baseCharge:
-                        paymentData === undefined
-                            ? null
-                            : paymentData.billDetails[0].billAccountDetails.filter(
-                                (el) => !el.taxHeadCode.includes("TAX")
-                            )[0].amount,
-                    taxes:
-                        paymentData === undefined
-                            ? null
-                            : paymentData.billDetails[0].billAccountDetails.filter(
-                                (el) => el.taxHeadCode.includes("TAX")
-                            )[0].amount,
-                    totalAmount:
-                        paymentData === undefined
-                            ? null
-                            : paymentData.totalAmount,
-                },
-                generatedBy: {
-                    generatedBy: JSON.parse(getUserInfo()).name,
-                },
-            },
-        ];
+            ];
+        }
+
+
         httpRequest(
             "post",
             DOWNLOADAPPLICATION.GET.URL,

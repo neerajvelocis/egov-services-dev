@@ -10,8 +10,12 @@ import {
 import {
     checkAvailabilitySearch,
     checkAvailabilityCalendar,
-} from "./checkAvailabilityForm";
-import { setapplicationNumber, lSRemoveItemlocal, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+} from "./checkAvailabilityForm_oswmcc";
+import {
+    setapplicationNumber,
+    lSRemoveItemlocal,
+    getTenantId,
+} from "egov-ui-kit/utils/localStorageUtils";
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     prepareFinalObject,
@@ -35,33 +39,32 @@ const getMdmsData = async (action, state, dispatch) => {
         payload.sector = [
             {
                 id: 1,
-                code: "Circus Ground, Sector 17",
+                code: "SECTOR-17",
                 tenantId: "ch.chandigarh",
-                name: "Circus Ground, Sector 17",
+                name: "SECTOR-17",
                 active: true,
             },
             {
                 id: 2,
-                code: "Exhibition Ground, Sector 34",
+                code: "EG_SECTOR_34",
                 tenantId: "ch.chandigarh",
-                name: "Exhibition Ground, Sector 34",
+                name: "EG_SECTOR_34",
                 active: true,
             },
             {
                 id: 2,
-                code: "Housing Board Ground, Manimajra",
+                code: "MANIMAJRA",
                 tenantId: "ch.chandigarh",
-                name: "Housing Board Ground, Manimajra",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "Circus Ground, Manimajra",
-                tenantId: "ch.chandigarh",
-                name: "Circus Ground, Manimajra",
+                name: "MANIMAJRA",
                 active: true,
             },
         ];
+        payload.bkBookingVenue = [];
+        //   payload.bkBookingVenue = [
+        //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
+        //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
+        //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
+        // ];
 
         dispatch(prepareFinalObject("applyScreenMdmsData", payload));
     } catch (e) {
@@ -149,18 +152,16 @@ const prepareEditFlow = async (
         setApplicationNumberBox(state, dispatch, applicationNumber);
 
         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
-        dispatch(prepareFinalObject("availabilityCheckData", response.bookingsModelList[0]));
-<<<<<<< HEAD
-        // dispatch(prepareFinalObject("availabilityCheckData.bkToDate", response.bookingsModelList[0].bkToDate));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", response.bookingsModelList[0].bkFromDate));
-        // dispatch(prepareFinalObject("availabilityCheckData.bkSector", response.bookingsModelList[0].bkSector));
-=======
-    
-		
-		let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
->>>>>>> d03a4e0c49cdf14231a3111f2428db4316243c76
+        dispatch(
+            prepareFinalObject(
+                "availabilityCheckData",
+                response.bookingsModelList[0]
+            )
+        );
 
-        let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
+        let availabilityData = await getAvailabilityData(
+            response.bookingsModelList[0].bkSector
+        );
 
         if (availabilityData !== undefined) {
             let data = availabilityData.data;
@@ -174,42 +175,12 @@ const prepareEditFlow = async (
                     reservedDates.push(v.toISOString().slice(0, 10));
                 });
             });
-            dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
-            let availabilityCheckData =
-                state.screenConfiguration.preparedFinalObject.availabilityCheckData;
-            reservedDates.map((date) => {
-
-                if (date === availabilityCheckData.bkFromDate || date === availabilityCheckData.bkToDate) {
-
-                    // availabilityCheckData.bkFromDate == null
-                    // availabilityCheckData.bkToDate == null
-
-                    dispatch(
-                        toggleSnackbar(
-                            true,
-                            { labelName: `${availabilityCheckData.bkFromDate} and ${availabilityCheckData.bkToDate} Dates are already Booked`, labelKey: "" },
-                            "warning"
-                        )
-                    );
-                    dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
-                    dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
-                    dispatch(prepareFinalObject("Booking.bkFromDate", null));
-                    dispatch(prepareFinalObject("Booking.bkToDate", null));
-                }
-            })
-            // const actionDefination = [
-            //     {
-            //         path:
-            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-            //         property: "reservedDays",
-            //         value: reservedDates,
-            //     },
-            // ];
-            // dispatchMultipleFieldChangeAction(
-            //     "checkavailability",
-            //     actionDefination,
-            //     dispatch
-            // );
+            dispatch(
+                prepareFinalObject(
+                    "availabilityCheckData.reservedDays",
+                    reservedDates
+                )
+            );
         } else {
             dispatch(
                 toggleSnackbar(
@@ -220,24 +191,23 @@ const prepareEditFlow = async (
             );
         }
 
-
-        let fileStoreIds = Object.keys(response.documentMap);
-        let fileStoreIdsValue = Object.values(response.documentMap);
-        if (fileStoreIds.length > 0) {
-            let fileUrls =
-                fileStoreIds.length > 0
-                    ? await getFileUrlFromAPI(fileStoreIds)
-                    : {};
-            dispatch(
-                prepareFinalObject("documentsUploadReduxOld.documents", [
-                    {
-                        fileName: fileStoreIdsValue[0],
-                        fileStoreId: fileStoreIds[0],
-                        fileUrl: fileUrls[fileStoreIds[0]],
-                    },
-                ])
-            );
-        }
+        // let fileStoreIds = Object.keys(response.documentMap);
+        // let fileStoreIdsValue = Object.values(response.documentMap);
+        // if (fileStoreIds.length > 0) {
+        //     let fileUrls =
+        //         fileStoreIds.length > 0
+        //             ? await getFileUrlFromAPI(fileStoreIds)
+        //             : {};
+        //     dispatch(
+        //         prepareFinalObject("documentsUploadReduxOld.documents", [
+        //             {
+        //                 fileName: fileStoreIdsValue[0],
+        //                 fileStoreId: fileStoreIds[0],
+        //                 fileUrl: fileUrls[fileStoreIds[0]],
+        //             },
+        //         ])
+        //     );
+        // }
     }
 };
 const header = getCommonContainer({
@@ -258,15 +228,92 @@ const header = getCommonContainer({
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "checkavailability",
+    name: "checkavailability_oswmcc",
     beforeInitScreen: (action, state, dispatch) => {
-        // clearlocalstorageAppDetails(state);
         const applicationNumber = getQueryArg(
             window.location.href,
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch);
+        getMdmsData(action, state, dispatch).then((response) => {
+            const sectorWiselocationsObject = {
+                "SECTOR-17": [
+                    {
+                        id: 1,
+                        code: "RamLila Ground",
+                        tenantId: "ch.chandigarh",
+                        name: "RamLila_Ground",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Mohalla RamKishan",
+                        tenantId: "ch.chandigarh",
+                        name: "Mohalla_RamKishan",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Guard Enclave",
+                        tenantId: "ch.chandigarh",
+                        name: "Guard_Enclave",
+                        active: true,
+                    },
+                ],
+                "EG_SECTOR_34": [
+                    {
+                        id: 1,
+                        code: "Choda Mod",
+                        tenantId: "ch.chandigarh",
+                        name: "Choda Mod",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Pari Chok",
+                        tenantId: "ch.chandigarh",
+                        name: "pari_chok",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Cricket Ground",
+                        tenantId: "ch.chandigarh",
+                        name: "Cricket_Ground",
+                        active: true,
+                    },
+                ],
+                "MANIMAJRA": [
+                    {
+                        id: 1,
+                        code: "kakrala",
+                        tenantId: "ch.chandigarh",
+                        name: "kakrala",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Buldapur",
+                        tenantId: "ch.chandigarh",
+                        name: "Buldapur",
+                        active: true,
+                    },
+                    {
+                        id: 2,
+                        code: "Ithera",
+                        tenantId: "ch.chandigarh",
+                        name: "Ithera",
+                        active: true,
+                    },
+                ],
+            };
+            dispatch(
+                prepareFinalObject(
+                    "sectorWiselocationsObject",
+                    sectorWiselocationsObject
+                )
+            );
+        });
 
         if (applicationNumber !== null) {
             set(
@@ -275,23 +322,13 @@ const screenConfig = {
                 true
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-<<<<<<< HEAD
-        } else {
-            // alert("in this")
-            // lSRemoveItemlocal("fromDateCG")
-            // lSRemoveItemlocal("toDateCG")
         }
 
-        // dispatch(prepareFinalObject("bookingCalendar.moduleName", "Calendar"));
-        // dispatch(prepareFinalObject("bookingCalendar.sector", ""));
-        // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
-=======
-        }
->>>>>>> d03a4e0c49cdf14231a3111f2428db4316243c76
+
         return action;
     },
     components: {
-        div: {
+        headerDiv: {
             uiFramework: "custom-atoms",
             componentPath: "Div",
             props: {
@@ -299,19 +336,6 @@ const screenConfig = {
                 id: "search",
             },
             children: {
-                headerDiv: {
-                    uiFramework: "custom-atoms",
-                    componentPath: "Container",
-                    children: {
-                        header: {
-                            gridDefination: {
-                                xs: 12,
-                                sm: 10,
-                            },
-                            ...header,
-                        },
-                    },
-                },
                 checkAvailabilitySearch,
                 checkAvailabilityCalendar,
             },

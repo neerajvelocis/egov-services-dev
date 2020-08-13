@@ -97,7 +97,7 @@ if (role_name === "CITIZEN") {
                     room
                 </i>
             ),
-            route: "",
+            route: "checkavailability_oswmcc",
             // {
             //   screenKey: "home",
             //   jsonPath: "components.adhocDialog"

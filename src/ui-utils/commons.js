@@ -149,6 +149,39 @@ export const getSearchResultsView = async (queryObject) => {
     //alert(JSON.stringify(response));
 };
 
+export const getSearchResultsViewForNewLocOswmcc = async (queryObject) => {
+    try {
+        console.log('Neero OSWMMCC');
+        const response = await httpRequest(
+            "post",
+            "/bookings/api/citizen/_search",
+            "",
+            [],
+            {
+                tenantId: queryObject[0]["value"],
+                applicationNumber: queryObject[1]["value"],
+                applicationStatus: "",
+                mobileNumber: "",
+                fromDate: "",
+                toDate: "",
+                bookingType: "",
+                uuid: JSON.parse(getUserInfo()).uuid,
+            }
+        );
+        return response;
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+    //alert(JSON.stringify(response));
+};
+
+
 export const preparepopupDocumentsUploadData = (
     state,
     dispatch,
@@ -540,6 +573,12 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
             []
         );
+    } else if (type == "apply_openspacewmcc") {
+        documents = get(
+            state,
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Com_Ground_Documents",
+            []
+        );
     } else if (type == "apply_cgb") {
         documents = get(
             state,
@@ -834,6 +873,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "OSBM");
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {
             response = await httpRequest(
@@ -903,7 +943,239 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
         return { status: "failure", message: error };
     }
 };
-export const createUpdateCgbApplication = async (state, dispatch, action) => {
+export const createUpdateOSWMCCApplication = async (state, dispatch, action) => {
+    let response = "";
+    let tenantId = getTenantId().split(".")[0];
+    // let applicationNumber =
+    //     getapplicationNumber() !== "null" && action === "INITIATE"
+    //         ? false
+    //         : getapplicationNumber() === "null" && action === "INITIATE"
+    //         ? false
+    //         : true;
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
+    try {
+        let payload = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking",
+            []
+        );
+        let reduxDocuments = get(
+            state,
+            "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+            {}
+        );
+        let bookingDocuments = [];
+        let otherDocuments = [];
+
+        jp.query(reduxDocuments, "$.*").forEach((doc) => {
+            console.log(doc, "documents");
+            if (doc.documents && doc.documents.length > 0) {
+                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                    bookingDocuments = [
+                        ...bookingDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                } else if (!doc.documentSubCode) {
+                    otherDocuments = [
+                        ...otherDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                }
+            }
+        });
+
+        set(payload, "wfDocuments", bookingDocuments);
+        set(payload, "bkBookingType", "JURISDICTION");
+        set(payload, "tenantId", tenantId);
+        set(payload, "bkAction", action);
+        set(payload, "businessService", "OSUJM");
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_create",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.bkApplicationNumber !== "null" ||
+                response.data.bkApplicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.bkApplicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_update",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response update: ", response);
+            setapplicationNumber(response.data.bkApplicationNumber);
+            dispatch(prepareFinalObject("Booking", response.data));
+            return { status: "success", data: response.data };
+        }
+
+        // response = await httpRequest("post", "/bookings/api/_create", "", [], {
+        //     Booking: payload,
+        // });
+        // if (
+        //     response.applicationId !== "null" ||
+        //     response.applicationId !== ""
+        // ) {
+        //     setapplicationNumber(response.applicationId);
+        //     setapplicationMode(status);
+        //     dispatch(prepareFinalObject("Booking", response));
+        //     setApplicationNumberBox(state, dispatch);
+        //     return { status: "success", message: response };
+        // } else {
+        //     return { status: "fail", message: response };
+        // }
+    } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+        // Revert the changed pfo in case of request failure
+        let fireNocData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking",
+            []
+        );
+        // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
+        dispatch(prepareFinalObject("Booking", fireNocData));
+
+        return { status: "failure", message: error };
+    }
+};
+
+export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => {
+    let response = "";
+    let tenantId = getTenantId().split(".")[0];
+    // let applicationNumber =
+    //     getapplicationNumber() !== "null" && action === "INITIATE"
+    //         ? false
+    //         : getapplicationNumber() === "null" && action === "INITIATE"
+    //         ? false
+    //         : true;
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
+    try {
+        let payload = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking",
+            []
+        );
+        let reduxDocuments = get(
+            state,
+            "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+            {}
+        );
+        let bookingDocuments = [];
+        let otherDocuments = [];
+
+        jp.query(reduxDocuments, "$.*").forEach((doc) => {
+            console.log(doc, "documents");
+            if (doc.documents && doc.documents.length > 0) {
+                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                    bookingDocuments = [
+                        ...bookingDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                } else if (!doc.documentSubCode) {
+                    otherDocuments = [
+                        ...otherDocuments,
+                        {
+                            fileStoreId: doc.documents[0].fileStoreId,
+                        },
+                    ];
+                }
+            }
+        });
+
+        set(payload, "wfDocuments", bookingDocuments);
+
+        set(payload, "tenantId", tenantId);
+        set(payload, "action", action);
+        set(payload, "businessService", "NLUJM");
+        set(payload, "idProof", "Adhar");
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/newLocation/_create",
+                "",
+                [],
+                {
+                    NewLocationDetails: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.applicationNumber !== "null" ||
+                response.data.applicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                setapplicationNumber(response.data.applicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/newLocation/_update",
+                "",
+                [],
+                {
+                    NewLocationDetails: payload,
+                }
+            );
+            console.log("pet response update: ", response);
+            setapplicationNumber(response.data.applicationNumber);
+            dispatch(prepareFinalObject("Booking", response.data));
+            return { status: "success", data: response.data };
+        }
+
+
+    } catch (error) {
+        dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+        // Revert the changed pfo in case of request failure
+        let fireNocData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.Booking",
+            []
+        );
+        // fireNocData = furnishNocResponse({ FireNOCs: fireNocData });
+        dispatch(prepareFinalObject("Booking", fireNocData));
+
+        return { status: "failure", message: error };
+    }
+};
+export const createUpdateCgbApplication = async (
+    state,
+    dispatch,
+    action
+) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
     // let applicationNumber =
@@ -954,6 +1226,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "GFCP");
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
         setapplicationMode(status);
 
         // if (method === "CREATE") {
@@ -1035,7 +1308,8 @@ export const createUpdateWtbApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "BWT");
-        setapplicationMode(status);
+        set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+        // setapplicationMode(status);
 
         if (method === "CREATE") {
             response = await httpRequest(
