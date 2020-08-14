@@ -1075,6 +1075,7 @@ export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => 
     //         : getapplicationNumber() === "null" && action === "INITIATE"
     //         ? false
     //         : true;
+    console.log('In ');
     let method = action === "INITIATE" ? "CREATE" : "UPDATE";
     try {
         let payload = get(
@@ -1088,28 +1089,26 @@ export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => 
             {}
         );
         let bookingDocuments = [];
-        let otherDocuments = [];
-
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             console.log(doc, "documents");
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                if (!doc.documentSubCode) {
+
+
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
                             fileStoreId: doc.documents[0].fileStoreId,
+                            documentType: doc.documentType
                         },
                     ];
-                } else if (!doc.documentSubCode) {
-                    otherDocuments = [
-                        ...otherDocuments,
-                        {
-                            fileStoreId: doc.documents[0].fileStoreId,
-                        },
-                    ];
+
+
                 }
             }
         });
+
+        console.log(bookingDocuments, "Send Documents");
 
         set(payload, "wfDocuments", bookingDocuments);
 
