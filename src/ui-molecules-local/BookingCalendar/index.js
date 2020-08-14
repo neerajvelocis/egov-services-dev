@@ -72,7 +72,16 @@ class BookingCalendar extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if ("reservedDays" in nextProps.availabilityCheckData) {
+        console.log(nextProps.availabilityCheckData, "myNextprops.availabilityCheckData");
+        if(nextProps.availabilityCheckData === undefined){
+            this.setState({ 
+                dselectedDays: [], 
+                from: null,
+                to: null,
+                enteredTo: null,
+            })
+        } else {
+        if("reservedDays" in nextProps.availabilityCheckData){
             let pushReservedDay = [];
             nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
                 pushReservedDay.push(new Date(el));
@@ -103,10 +112,10 @@ class BookingCalendar extends React.Component {
 
 
         }
-
-
-
-
+    }
+        
+            
+           
         // const applicationNumber = getQueryArg(
         //     window.location.href,
         //     "applicationNumber"
@@ -305,19 +314,19 @@ class BookingCalendar extends React.Component {
         let data = new Date();
 
         let newData = new Date(data.setMonth(data.getMonth() + 5));
+        // alert(from)
+        // let initialMonth = (from !== null && from !== undefined && from !== "" && from !== 0) ? from.getMonth() : new Date().getMonth()
+        // alert(initialMonth)
+        // let initialYear = (from !== null && from !== undefined && from !== "" && from !== 0) ? from.getFullYear() : data.getFullYear()
+        // alert(initialYear)
 
-        // alert(from, "from")
-        // alert(to, "to")
-        // alert(enteredTo, "enterd to ")
-        // console.log(this.props, "sankalp");
-        // console.log(this.state, "sankalp state");
         return (
             <div className="calender-wrapper">
                 <div className="calendar-section" style={{ width: "100%" }}>
                     <DayPicker
                         className="Range"
                         numberOfMonths={1}
-                        initialMonth={from}
+                        initialMonth={new Date()}
 
                         disabledDays={this.state.dselectedDays}
                         fromMonth={new Date()}
@@ -328,22 +337,24 @@ class BookingCalendar extends React.Component {
                         onDayMouseEnter={this.handleDayMouseEnter}
                     />
                 </div>
-                <div>
-
-                    {!from && !to && "Please select the first day."}
-                    {from && !to && "Please select the last day."}
-                    {from &&
-                        to &&
-                        `Selected Date from ${from.toLocaleDateString()} to
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>
+                        {!from && !to && "Please select the first day."}
+                        {from && !to && "Please select the last day."}
+                        {from &&
+                            to &&
+                            `Selected Date from ${from.toLocaleDateString()} to
                 ${to.toLocaleDateString()}`}{" "}
-                    {from && to && (
-                        <button
-                            className="link"
-                            onClick={this.handleResetClick}
-                        >
-                            Reset
-                        </button>
-                    )}
+                        {from && to && (
+                            <button
+                                className="link"
+                                onClick={this.handleResetClick}
+                            >
+                                Reset
+                            </button>
+
+                        )}</span>
+                    {from && !to && <span >** Please click same day for booking single Date.</span>}
                 </div>
                 <Helmet>
                     <style>{`
@@ -380,7 +391,7 @@ class BookingCalendar extends React.Component {
           .DayPicker-Day.DayPicker-Day--outside{background-color: #E9E9E9;}
   `}</style>
                 </Helmet>
-            </div>
+            </div >
         );
     }
 }

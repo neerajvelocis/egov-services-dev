@@ -2,7 +2,7 @@ import {
   getBreak,
   getCommonCard,
   getCommonParagraph,
-  getCommonTitle
+  getCommonTitle  
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 export const documentDetails = getCommonCard({
@@ -29,7 +29,7 @@ export const documentDetails = getCommonCard({
     moduleName: "egov-services",
     componentPath: "DocumentListContainer",
     // required:false,
-    props: {      
+    props: {
       buttonLabel: {
         labelName: "UPLOAD FILE",
         labelKey: "BK_OSWMCC_DOCUMENT_UPLOAD_BUTTON"
@@ -39,8 +39,8 @@ export const documentDetails = getCommonCard({
         accept: ".pdf,.png,.jpg,.jpeg"
       },
       maxFileSize: 1025,
-      moduleName : "NLUJM"
+      moduleName: "NLUJM"
     },
     type: "array"
-  } 
+  }
 });

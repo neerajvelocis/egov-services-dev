@@ -156,12 +156,9 @@ export const bookingDetails = getCommonCard({
           labelName: "From Date",
           labelKey: "BK_CGB_FROM_DATE_PLACEHOLDER"
         },
-
+        readOnlyValue: true,
         required: true,
-        props: {
-          disabled: true,
-        },
-        //pattern: getPattern("NoOfEmp"),
+
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
 
         jsonPath: "Display.bkFromDate",
@@ -181,9 +178,10 @@ export const bookingDetails = getCommonCard({
         },
 
         required: true,
-        props: {
-          disabled: true,
-        },
+        readOnlyValue: true,
+        // props: {
+        //   disabled: true,
+        // },
         //pattern: getPattern("NoOfEmp"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "Display.bkToDate",
@@ -201,11 +199,11 @@ export const bookingDetails = getCommonCard({
           labelName: "Select Booking Venue",
           labelKey: "BK_CGB_BOOKING_VENUE_PLACEHOLDER",
         },
-
+        readOnlyValue: true,
         required: true,
-        props: {
-          disabled: true,
-        },
+        // props: {
+        //   disabled: true,
+        // },
         //pattern: getPattern("NoOfEmp"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "Booking.bkBookingVenue",
