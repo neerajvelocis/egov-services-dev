@@ -571,6 +571,12 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
             []
         );
+    }else if (type == "apply_oswmcc_newloc") {
+        documents = get(
+            state,
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.OSWMCC_New_Loc_Documents",
+            []
+        );
     } else if (type == "apply_openspacewmcc") {
         documents = get(
             state,

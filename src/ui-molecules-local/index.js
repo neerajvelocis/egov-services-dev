@@ -77,6 +77,10 @@ const BookingCalendar = Loadable({
   loader: () => import("./BookingCalendar"),
   loading: () => <Loading />
 });
+const ImageList = Loadable({
+  loader: () => import("./ImageList"),
+  loading: () => <Loading />
+});
 
 export {
   TestMolecules,
@@ -94,5 +98,6 @@ export {
   TaskDialog,
   TaskStatusComponents,
   Footer,
-  BookingCalendar
+  BookingCalendar,
+  ImageList
 };

@@ -51,7 +51,7 @@ const callBackForNext = async (state, dispatch) => {
         let responseStatus = get(response, "status", "");
         console.log(responseStatus, response.status, "Response status");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
-            
+
             let tenantId = getTenantId().split(".")[0];
             let applicationNumber = get(
                 response,
@@ -62,7 +62,7 @@ const callBackForNext = async (state, dispatch) => {
             const reviewUrl = `/egov-services/applyNewLocationUnderMCC?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
             dispatch(setRoute(reviewUrl));
 
-            
+
             set(
                 state.screenConfiguration.screenConfig["applyNewLocationUnderMCC"],
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
@@ -87,7 +87,7 @@ const callBackForNext = async (state, dispatch) => {
                 uploadedDocData &&
                 uploadedDocData.map((item) => {
                     return {
-                        title: "DOC_DOC_PICTURE",
+                        title: "OSWMCC_ID_PROOF",
                         link: item.fileUrl && item.fileUrl.split(",")[0],
                         linkText: "View",
                         name: item.fileName,
@@ -96,6 +96,32 @@ const callBackForNext = async (state, dispatch) => {
                 });
 
             dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+
+            const documentsAndLocImages = get(
+                state.screenConfiguration.preparedFinalObject,
+                "documentsUploadRedux",
+                []
+            );
+
+            var documentsAndLocImagesArray = Object.values(documentsAndLocImages);
+
+            let onlyLocationImages = documentsAndLocImagesArray && documentsAndLocImagesArray.filter(item => item.documentType != "IDPROOF");
+
+            const newLocationImagesPreview =
+                onlyLocationImages &&
+                onlyLocationImages.map((item) => {
+                    if ("documents" in item) {
+                        return {
+                            title: item.documentCode,
+                            link: item.documents[0].fileUrl && item.documents[0].fileUrl.split(",")[0],
+                            name: item.documents[0].fileName,
+                            fileStoreId: item.documents[0].fileStoreId,
+                        };
+                    }
+
+                });
+
+            dispatch(prepareFinalObject("mccNewLocImagesPreview", newLocationImagesPreview));
         } else {
             let errorMessage = {
                 labelName: "Submission Falied, Try Again later!",
