@@ -73,49 +73,49 @@ class BookingCalendar extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         console.log(nextProps.availabilityCheckData, "myNextprops.availabilityCheckData");
-        if(nextProps.availabilityCheckData === undefined){
-            this.setState({ 
-                dselectedDays: [], 
+        if (nextProps.availabilityCheckData === undefined) {
+            this.setState({
+                dselectedDays: [],
                 from: null,
                 to: null,
                 enteredTo: null,
             })
         } else {
-        if("reservedDays" in nextProps.availabilityCheckData){
-            let pushReservedDay = [];
-            nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
-                pushReservedDay.push(new Date(el));
-            })
-            this.setState({
-                dselectedDays: pushReservedDay,
-            })
-        }
-
-        if ("bkApplicationNumber" in nextProps.availabilityCheckData) {
-            if (nextProps.availabilityCheckData.bkFromDate !== null && nextProps.availabilityCheckData.bkToDate !== null) {
-                this.setState({
-                    from: new Date(nextProps.availabilityCheckData.bkFromDate),
-                    to: new Date(nextProps.availabilityCheckData.bkToDate),
-                    enteredTo: new Date(nextProps.availabilityCheckData.bkToDate)
+            if ("reservedDays" in nextProps.availabilityCheckData) {
+                let pushReservedDay = [];
+                nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
+                    pushReservedDay.push(new Date(el));
                 })
-            } else if (nextProps.availabilityCheckData.bkFromDate !== null && nextProps.availabilityCheckData.bkToDate === null) {
                 this.setState({
-                    from: new Date(nextProps.availabilityCheckData.bkFromDate),
-                    to: null,
-                    enteredTo: null
+                    dselectedDays: pushReservedDay,
                 })
-
-            } else {
-
-                this.setState(this.getInitialState());
             }
 
+            if ("bkApplicationNumber" in nextProps.availabilityCheckData) {
+                if (nextProps.availabilityCheckData.bkFromDate !== null && nextProps.availabilityCheckData.bkToDate !== null) {
+                    this.setState({
+                        from: new Date(nextProps.availabilityCheckData.bkFromDate),
+                        to: new Date(nextProps.availabilityCheckData.bkToDate),
+                        enteredTo: new Date(nextProps.availabilityCheckData.bkToDate)
+                    })
+                } else if (nextProps.availabilityCheckData.bkFromDate !== null && nextProps.availabilityCheckData.bkToDate === null) {
+                    this.setState({
+                        from: new Date(nextProps.availabilityCheckData.bkFromDate),
+                        to: null,
+                        enteredTo: null
+                    })
 
+                } else {
+
+                    this.setState(this.getInitialState());
+                }
+
+
+            }
         }
-    }
-        
-            
-           
+
+
+
         // const applicationNumber = getQueryArg(
         //     window.location.href,
         //     "applicationNumber"
@@ -312,7 +312,7 @@ class BookingCalendar extends React.Component {
         const selectedDays = [from, { from, to: enteredTo }];
         console.log(this.state.dselectedDays);
         let data = new Date();
-
+        //hello
         let newData = new Date(data.setMonth(data.getMonth() + 5));
         // alert(from)
         // let initialMonth = (from !== null && from !== undefined && from !== "" && from !== 0) ? from.getMonth() : new Date().getMonth()
