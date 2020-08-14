@@ -13,6 +13,8 @@ import jp from "jsonpath";
 
 import { documentDetails } from "./applyResourceOSWMCC/documentDetails";
 import { summaryDetails } from "./applyResourceOSWMCC/summaryDetails";
+//import { documentDetailsImagesNewLoc } from "./applyResourceOSWMCC/documentDetailsImagesNewLoc";
+
 import {
     getFileUrlFromAPI,
     getQueryArg,
@@ -106,7 +108,7 @@ export const formwizardThirdStep = {
         id: "apply_form3",
     },
     children: {
-        documentDetails,
+        documentDetails
     },
     visible: false,
 };
@@ -143,30 +145,9 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
-                        {
-                            name: "CityType",
-                        },
-                        {
-                            name: "PropertyType",
-                        },
-                        {
-                            name: "Area",
-                        },
-                        {
-                            name: "Duration",
-                        },
-                        {
-                            name: "Category",
-                        },
-                        {
-                            name: "VillageCity",
-                        },
-                        {
-                            name: "Type_of_Construction",
-                        },
-                        {
-                            name: "Documents",
-                        },
+                        // {
+                        //     name: "OSWMCC_New_Loc_Documents",
+                        // },
                     ],
                 },
             ],
@@ -181,6 +162,41 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
+
+        payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
+            active: true,
+            code: "OSWMCC_ID_PROOF",
+            description: "OSWMCC_DOCUMENT_ID_DESCRIPTION",
+            documentType: "IDPROOF",
+            dropdownData: [],
+            hasDropdown: false,
+            required: false,
+        }, {
+            active: true,
+            code: "OSWMCC_LOCATION_IMAGE_1",
+            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+            documentType: "MCCNEWLOCATION",
+            dropdownData: [],
+            hasDropdown: false,
+            required: false,
+        }, {
+            active: true,
+            code: "OSWMCC_LOCATION_IMAGE_2",
+            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+            documentType: "MCCNEWLOCATION",
+            dropdownData: [],
+            hasDropdown: false,
+            required: false,
+        }, {
+            active: true,
+            code: "OSWMCC_LOCATION_IMAGE_3",
+            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+            documentType: "MCCNEWLOCATION",
+            dropdownData: [],
+            hasDropdown: false,
+            required: false,
+        }
+        ]
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -250,19 +266,19 @@ const screenConfig = {
                 JSON.parse(getUserInfo()).name
             )
         ),
-        dispatch(
-            prepareFinalObject(
-                "Booking.contact",
-                JSON.parse(getUserInfo()).mobileNumber
-            )
-        );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.contact",
+                    JSON.parse(getUserInfo()).mobileNumber
+                )
+            );
 
         //Set Module Name
         set(state, "screenConfiguration.moduleName", "services");
 
         // Set MDMS Data
         getMdmsData(action, state, dispatch).then((response) => {
-            prepareDocumentsUploadData(state, dispatch, "apply_osbm");
+            prepareDocumentsUploadData(state, dispatch, "apply_oswmcc_newloc");
         });
 
         // Search in case of EDIT flow

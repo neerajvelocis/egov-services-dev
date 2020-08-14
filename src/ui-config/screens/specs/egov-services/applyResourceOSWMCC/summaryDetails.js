@@ -12,6 +12,7 @@ import get from "lodash/get";
 import { openSpaceSummary } from "../summaryResource/openSpaceSummaryNewLocationOSWMCC";
 import { applicantSummary } from "../summaryResource/applicantSummaryNewLocationOSWMCC";
 import { documentsSummary } from "../summaryResource/documentsSummaryNewLocationOSWMCC";
+import { ImageLocationSummary } from "../summaryResource/imagesOfNewLocationOswmcc";
 
 
 export const callBackForPrevious = (state, dispatch) => {
@@ -199,5 +200,6 @@ export const summaryDetails = getCommonCard({
     
     applicantSummary: applicantSummary,
     openSpaceSummary: openSpaceSummary,
-    documentsSummary: documentsSummary
+    documentsSummary: documentsSummary,
+    ImageLocationSummary: ImageLocationSummary
 });
