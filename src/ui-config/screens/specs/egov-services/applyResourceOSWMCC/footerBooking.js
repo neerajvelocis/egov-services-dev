@@ -22,6 +22,7 @@ import {
     localStorageSet,
     getTenantId,
     getapplicationNumber,
+    setapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
@@ -57,20 +58,20 @@ const callBackForNext = async (state, dispatch) => {
             // dispatch(toggleSnackbar(true, successMessage, "success"));
 
             // GET FEE DETAILS
-            let applicationData = get(
-                    response,
-                    "data",
-                    ""
-                );
-            console.log(applicationData, "applicationDataNew");
-            // let tenantId = getTenantId().split(".")[0];
-            // let applicationNumber = get(
-            //     response,
-            //     "data.bkApplicationNumber",
-            //     ""
-            // );
-            // let businessService = get(response, "data.businessService", "");
-            const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}&fromDate=${applicationData.bkFromDate}&toDate=${applicationData.bkToDate}&sector=${applicationData.bkSector}&venue=${applicationData.bkBookingVenue}`;
+            // let applicationData = get(
+            //         response,
+            //         "data",
+            //         ""
+            //     );
+            let tenantId = getTenantId().split(".")[0];
+            let applicationNumber = get(
+                response,
+                "data.bkApplicationNumber",
+                ""
+            );
+            let businessService = get(response, "data.businessService", "");
+            // const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}&fromDate=${applicationData.bkFromDate}&toDate=${applicationData.bkToDate}&sector=${applicationData.bkSector}&venue=${applicationData.bkBookingVenue}`;
+            const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 
             
@@ -80,13 +81,13 @@ const callBackForNext = async (state, dispatch) => {
                 true
             );
 
-            // await generateBill(
-            //     state,
-            //     dispatch,
-            //     applicationNumber,
-            //     tenantId,
-            //     businessService
-            // );
+            await generateBill(
+                state,
+                dispatch,
+                applicationNumber,
+                tenantId,
+                businessService
+            );
 
             // GET DOCUMENT DATA FOR DOWNLOAD
             const uploadedDocData = get(
@@ -98,7 +99,7 @@ const callBackForNext = async (state, dispatch) => {
                 uploadedDocData &&
                 uploadedDocData.map((item) => {
                     return {
-                        title: "DOC_DOC_PICTURE",
+                        title: "OSUJM_DOCUMENT",
                         link: item.fileUrl && item.fileUrl.split(",")[0],
                         linkText: "View",
                         name: item.fileName,
@@ -116,13 +117,19 @@ const callBackForNext = async (state, dispatch) => {
         }
     }
     if (activeStep === 3) {
+        // let applicationData = get(
+        //     state.screenConfiguration.preparedFinalObject,
+        //     "Booking"
+        // );
+        // setapplicationNumber(applicationData.bkApplicationNumber);
+        // const reviewUrl = `/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
+        // dispatch(setRoute(reviewUrl));
         // prepareDocumentsUploadData(state, dispatch);
         let response = await createUpdateOSWMCCApplication(
             state,
             dispatch,
             "APPLY"
         );
-        console.log(response, "step3Response");
         let responseStatus = get(response, "status", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
             // let successMessage = {

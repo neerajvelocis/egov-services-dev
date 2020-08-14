@@ -22,7 +22,7 @@ import {
     handleScreenConfigurationFieldChange as handleField,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getAvailabilityData, getBetweenDays } from "../utils";
+import { getAvailabilityDataOWWMCC, getBetweenDays } from "../utils";
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
@@ -32,36 +32,43 @@ const callBackForReset = (state, dispatch, action) => {
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
-    if (availabilityCheckData.bkSector) {
-        dispatch(
-            handleField(
-                "checkavailability",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
-                "props.value",
-                ""
-            )
-        );
-    }
-    if (availabilityCheckData.bkFromDate) {
-        dispatch(
-            handleField(
-                "checkavailability",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
-                "props.value",
-                ""
-            )
-        );
-    }
-    if (availabilityCheckData.reservedDays) {
-        dispatch(
-            handleField(
-                "checkavailability",
-                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
-                "props.reservedDays",
-                []
-            )
-        );
-    }
+
+    dispatch(
+        prepareFinalObject(
+            "availabilityCheckData",
+            {}
+        )
+    );
+    // if (availabilityCheckData.bkSector) {
+    //     dispatch(
+    //         handleField(
+    //             "checkavailability",
+    //             "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+    //             "props.value",
+    //             ""
+    //         )
+    //     );
+    // }
+    // if (availabilityCheckData.bkFromDate) {
+    //     dispatch(
+    //         handleField(
+    //             "checkavailability",
+    //             "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+    //             "props.value",
+    //             ""
+    //         )
+    //     );
+    // }
+    // if (availabilityCheckData.reservedDays) {
+    //     dispatch(
+    //         handleField(
+    //             "checkavailability",
+    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
+    //             "props.reservedDays",
+    //             []
+    //         )
+    //     );
+    // }
 
     // const actionDefination = [
     //     {
@@ -82,7 +89,6 @@ const callBackForReset = (state, dispatch, action) => {
 const callBackForBook = async (state, dispatch) => {
     let availabilityCheckData =
         state.screenConfiguration.preparedFinalObject.availabilityCheckData;
-    console.log(availabilityCheckData, "availabilityCheckData");
     if (availabilityCheckData === undefined) {
         let warrningMsg = {
             labelName: "Please select Date RANGE",
@@ -115,9 +121,7 @@ const callBackForBook = async (state, dispatch) => {
                 // setRoute(
                 //     `/egov-services/applyopenspacewmcc?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
                 // )
-                 setRoute(
-                    `/egov-services/applyopenspacewmcc`
-                )
+                setRoute(`/egov-services/applyopenspacewmcc`)
             );
         }
     }
@@ -142,12 +146,12 @@ const callBackForSearch = async (state, dispatch) => {
             )
         );
     } else {
-        if ("bkSector" in availabilityCheckData) {
-            let bookingVenue =
-                availabilityCheckData && availabilityCheckData.bkSector;
-            console.log(bookingVenue, "bookingVenue");
-            let response = await getAvailabilityData(bookingVenue);
+        if ("bkSector" in availabilityCheckData && "bkBookingVenue" in availabilityCheckData) {
+            let bookingSector = availabilityCheckData.bkSector;
+            let bookingVenue = availabilityCheckData.bkBookingVenue;
+            let response = await getAvailabilityDataOWWMCC(bookingSector, bookingVenue);
             if (response !== undefined) {
+                console.log(response, "myResponse");
                 let data = response.data;
                 let reservedDates = [];
                 var daylist = [];
@@ -188,7 +192,6 @@ const callBackForSearch = async (state, dispatch) => {
         }
     }
 };
-
 
 export const checkAvailabilitySearch = getCommonCard({
     header: {
@@ -236,42 +239,12 @@ export const checkAvailabilitySearch = getCommonCard({
                 },
                 onClickDefination: {
                     action: "condition",
-                    callBack: callBackForAddNewLocation
+                    callBack: callBackForAddNewLocation,
                 },
                 visible: true,
             },
-           
         },
     },
-    // subHeader: getCommonTitle({
-    //     labelName: "Check Open Space Availability",
-    //     labelKey: "BK_OSWMCC_CHECK_AVAILABILITY_HEADING"
-    // }),
-    // addNewLocButton: {
-    //     componentPath: "Button",
-    //     props: {
-    //         variant: "contained",
-    //         color: "primary",
-    //         style: {
-
-    //             height: "48px",
-
-    //         }
-    //     },
-
-    //     children: {
-    //         resetButtonLabel: getLabel({
-    //             labelName: "Add New Location",
-    //             labelKey: "BK_OSWMCC_NEW_LOCATION_LABEL"
-    //         })
-    //     },
-    //     onClickDefination: {
-    //         action: "condition",
-    //         callBack: callBackForAddNewLocation
-
-    //     },
-    //     visible: true
-    // },
     break: getBreak(),
     availabilitySearchContainer: getCommonContainer({
         bkSector: {
@@ -291,7 +264,7 @@ export const checkAvailabilitySearch = getCommonCard({
                     md: 6,
                 },
 
-                sourceJsonPath: "applyScreenMdmsData.sector",
+                sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "availabilityCheckData.bkSector",
                 required: true,
                 props: {
@@ -301,47 +274,46 @@ export const checkAvailabilitySearch = getCommonCard({
                 },
             }),
             beforeFieldChange: (action, state, dispatch) => {
-                const applyScreenMdmsData = get(
-                    state,
-                    "screenConfiguration.preparedFinalObject.applyScreenMdmsData"
-                );
-                const sectorWiselocationsObject = get(
-                    state,
-                    "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
-                );
-                const bkBookingVenue = get(
-                    sectorWiselocationsObject,
-                    action.value
-                );
+                if (action.value) {
+                    console.log(action.value, "myactionvalue");
+                    const bkBookingVenue = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+                    );
+                    console.log(bkBookingVenue, "myBookingVenue");
 
-                // let payload = {};
-                // let bkBookingVenue = [
-                //         { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
-                //         { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
-                //         { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
-                //     ];
-                applyScreenMdmsData.bkBookingVenue = bkBookingVenue;
-                dispatch(
-                    prepareFinalObject(
-                        "applyScreenMdmsData",
-                        applyScreenMdmsData
-                    )
-                );
-                //set(action, "screenConfiguration.preparedFinalObject.applyScreenMdmsData.bkBookingVenue", bkBookingVenue)
-                dispatch(
-                    handleField(
-                        "checkavailability_oswmcc",
-                        "components.headerDiv.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                        "props.disabled",
-                        false
-                    )
-                );
+                    const sectorWiselocationsObject = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
+                    );
+                    const venueList = get(
+                        sectorWiselocationsObject,
+                        action.value
+                    );
+                    dispatch(
+                        prepareFinalObject(
+                            "applyScreenMdmsData.Booking.venueList",
+                            venueList
+                        )
+                    );
+                    dispatch(
+                        handleField(
+                            "checkavailability_oswmcc",
+                            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                            "props.disabled",
+                            false
+                        )
+                    );
 
-                // set(action, "components.headerDiv.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.SectorLocations", [
-                //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
-                //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
-                //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
-                // ])
+                    dispatch(
+                        handleField(
+                            "checkavailability_oswmcc",
+                            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                            "props.value",
+                            bkBookingVenue === undefined ? null : bkBookingVenue
+                        )
+                    );
+                }
             },
         },
         bkBookingVenue: {
@@ -361,13 +333,13 @@ export const checkAvailabilitySearch = getCommonCard({
                     md: 6,
                 },
 
-                sourceJsonPath: "applyScreenMdmsData.bkBookingVenue",
+                sourceJsonPath: "applyScreenMdmsData.Booking.venueList",
                 jsonPath: "availabilityCheckData.bkBookingVenue",
                 required: true,
                 props: {
                     className: "applicant-details-error",
                     required: true,
-                    disabled: true
+                    disabled: true,
                 },
             }),
         },
@@ -460,19 +432,19 @@ export const checkAvailabilityCalendar = getCommonCard({
                 popup: {},
             },
         },
-        dummyDiv: {
-            uiFramework: "custom-atoms",
-            componentPath: "Div",
-            gridDefination: {
-                xs: 12,
-                sm: 12,
-                md: 9,
-            },
-            visible: true,
-            props: {
-                disabled: true,
-            },
-        },
+        // dummyDiv: {
+        //     uiFramework: "custom-atoms",
+        //     componentPath: "Div",
+        //     gridDefination: {
+        //         xs: 12,
+        //         sm: 12,
+        //         md: 9,
+        //     },
+        //     visible: true,
+        //     props: {
+        //         disabled: true,
+        //     },
+        // },
         bookButton: {
             componentPath: "Button",
             props: {
@@ -483,6 +455,10 @@ export const checkAvailabilityCalendar = getCommonCard({
                     height: "48px",
                     marginTop: "50px",
                 },
+            },
+            gridDefination: {
+                xs: 12,
+                align: "right",
             },
             children: {
                 submitButtonLabel: getLabel({

@@ -69,8 +69,8 @@ export const stepper = getStepperObject(
 
 export const header = getCommonContainer({
     header: getCommonHeader({
-        labelName: `Apply for Open Space Within MCC`,
-        labelKey: "BK_OPENSPACE_WMCC_APPLY",
+        labelName: `Apply for Open Space within MCC jurisdiction`,
+        labelKey: "BK_OSWMCC_APPLY",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
@@ -152,7 +152,7 @@ const getMdmsData = async (action, state, dispatch) => {
                         //     name: "Sector",
                         // },
                         {
-                            name: "Documents",
+                            name: "OSUJM_Documents",
                         },
                         // {
                         //     name: "Purpose",
@@ -298,7 +298,7 @@ export const prepareEditFlow = async (
         );
     } else {
         dispatch(setRoute(
-            `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
+            `/egov-services/checkavailability_oswmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
         ))
         // dispatch(setRoute(`/egov-services/checkavailability_oswmcc?application`));
         console.log("availabilityCheckData in undefined");
@@ -379,7 +379,7 @@ const screenConfig = {
 
         // Set MDMS Data
         getMdmsData(action, state, dispatch).then((response) => {
-            prepareDocumentsUploadData(state, dispatch, "apply_osbm");
+            prepareDocumentsUploadData(state, dispatch, "apply_OSUJM");
         });
 
         // Search in case of EDIT flow

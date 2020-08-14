@@ -28,8 +28,8 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { commercialGroundSummary } from "./summaryResource/commercialGroundSummary";
-import { applicantSummary } from "./summaryResource/applicantSummaryCgb";
+import { openSpaceSummaryOSWMCC } from "./summaryResource/openSpaceSummaryOSWMCC";
+import { applicantSummary } from "./summaryResource/applicantSummaryBookingOSWMCC";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
@@ -81,7 +81,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "GFCP",
+            title: "OSUJM_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
         });
@@ -287,9 +287,9 @@ const screenConfig = {
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     applicantSummary: applicantSummary,
-                    commercialGroundSummary: commercialGroundSummary,
+                    openSpaceSummaryOSWMCC: openSpaceSummaryOSWMCC,
                     documentsSummary: documentsSummary,
-                    // remarksSummary: remarksSummary,
+                    remarksSummary: remarksSummary,
                 }),
                 // break: getBreak(),
                 // footer: footer,

@@ -73,6 +73,7 @@ import { httpRequest } from "../../../../ui-utils";
 //     }
 // };
 
+
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
     let mdmsBody = {
@@ -90,9 +91,8 @@ const getMdmsData = async (action, state, dispatch) => {
                 {
                     moduleName: "Booking",
                     masterDetails: [
-                        
                         {
-                            name: "Commerical_Ground_Cat",
+                            name: "Sector",
                         },
                     ],
                 },
@@ -108,34 +108,20 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
 		);
-		console.log(payload, "myPayload");
-        // let payload = {};
-
-        payload.Mdms.sector = [
-            {
-                id: 1,
-                code: "SECTOR-17",
-                tenantId: "ch.chandigarh",
-                name: "SECTOR-17",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "EG_SECTOR_34",
-                tenantId: "ch.chandigarh",
-                name: "EG_SECTOR_34",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "MANIMAJRA",
-                tenantId: "ch.chandigarh",
-                name: "MANIMAJRA",
-                active: true,
-            },
-        ];
-        payload.bkBookingVenue = [];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+const getVenueData = async (action, state, dispatch) => {
+    try {
+        let payload = null;
+        payload = await httpRequest(
+            "post",
+            "/bookings/newLocation/citizen/osujm/_all",
+        );
+        dispatch(prepareFinalObject("applyScreenMdmsData.Booking.sectorWiselocationsObject", payload.osujmNewlocationMap));
     } catch (e) {
         console.log(e);
     }
@@ -216,8 +202,8 @@ const prepareEditFlow = async (
 };
 const header = getCommonContainer({
     header: getCommonHeader({
-        labelName: `Apply for Commercial Ground`,
-        labelKey: "BK_CGB_APPLY",
+        labelName: `Apply for Open Space within MCC jurisdiction`,
+        labelKey: "BK_OSWMCC_APPLY",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
@@ -240,83 +226,84 @@ const screenConfig = {
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
         getMdmsData(action, state, dispatch).then((response) => {
-            const sectorWiselocationsObject = {
-                "SECTOR-17": [
-                    {
-                        id: 1,
-                        code: "RamLila Ground",
-                        tenantId: "ch.chandigarh",
-                        name: "RamLila_Ground",
-                        active: true,
-                    },
-                    {
-                        id: 2,
-                        code: "Mohalla RamKishan",
-                        tenantId: "ch.chandigarh",
-                        name: "Mohalla_RamKishan",
-                        active: true,
-                    },
-                    {
-                        id: 2,
-                        code: "Guard Enclave",
-                        tenantId: "ch.chandigarh",
-                        name: "Guard_Enclave",
-                        active: true,
-                    },
-                ],
-                "EG_SECTOR_34": [
-                    {
-                        id: 1,
-                        code: "Choda Mod",
-                        tenantId: "ch.chandigarh",
-                        name: "Choda Mod",
-                        active: true,
-                    },
-                    {
-                        id: 2,
-                        code: "Pari Chok",
-                        tenantId: "ch.chandigarh",
-                        name: "pari_chok",
-                        active: true,
-                    },
-                    {
-                        id: 2,
-                        code: "Cricket Ground",
-                        tenantId: "ch.chandigarh",
-                        name: "Cricket_Ground",
-                        active: true,
-                    },
-                ],
-                "MANIMAJRA": [
-                    {
-                        id: 1,
-                        code: "kakrala",
-                        tenantId: "ch.chandigarh",
-                        name: "kakrala",
-                        active: true,
-                    },
-                    {
-                        id: 2,
-                        code: "Buldapur",
-                        tenantId: "ch.chandigarh",
-                        name: "Buldapur",
-                        active: true,
-                    },
-                    {
-                        id: 2,
-                        code: "Ithera",
-                        tenantId: "ch.chandigarh",
-                        name: "Ithera",
-                        active: true,
-                    },
-                ],
-            };
-            dispatch(
-                prepareFinalObject(
-                    "sectorWiselocationsObject",
-                    sectorWiselocationsObject
-                )
-            );
+            getVenueData(action, state, dispatch)
+            // const sectorWiselocationsObject = {
+            //     "SECTOR-17": [
+            //         {
+            //             id: 1,
+            //             code: "RamLila Ground",
+            //             tenantId: "ch.chandigarh",
+            //             name: "RamLila_Ground",
+            //             active: true,
+            //         },
+            //         {
+            //             id: 2,
+            //             code: "Mohalla RamKishan",
+            //             tenantId: "ch.chandigarh",
+            //             name: "Mohalla_RamKishan",
+            //             active: true,
+            //         },
+            //         {
+            //             id: 2,
+            //             code: "Guard Enclave",
+            //             tenantId: "ch.chandigarh",
+            //             name: "Guard_Enclave",
+            //             active: true,
+            //         },
+            //     ],
+            //     "EG_SECTOR_34": [
+            //         {
+            //             id: 1,
+            //             code: "Choda Mod",
+            //             tenantId: "ch.chandigarh",
+            //             name: "Choda Mod",
+            //             active: true,
+            //         },
+            //         {
+            //             id: 2,
+            //             code: "Pari Chok",
+            //             tenantId: "ch.chandigarh",
+            //             name: "pari_chok",
+            //             active: true,
+            //         },
+            //         {
+            //             id: 2,
+            //             code: "Cricket Ground",
+            //             tenantId: "ch.chandigarh",
+            //             name: "Cricket_Ground",
+            //             active: true,
+            //         },
+            //     ],
+            //     "MANIMAJRA": [
+            //         {
+            //             id: 1,
+            //             code: "kakrala",
+            //             tenantId: "ch.chandigarh",
+            //             name: "kakrala",
+            //             active: true,
+            //         },
+            //         {
+            //             id: 2,
+            //             code: "Buldapur",
+            //             tenantId: "ch.chandigarh",
+            //             name: "Buldapur",
+            //             active: true,
+            //         },
+            //         {
+            //             id: 2,
+            //             code: "Ithera",
+            //             tenantId: "ch.chandigarh",
+            //             name: "Ithera",
+            //             active: true,
+            //         },
+            //     ],
+            // };
+            // dispatch(
+            //     prepareFinalObject(
+            //         "applyScreenMdmsData.Booking.sectorWiselocationsObject",
+            //         sectorWiselocationsObject
+            //     )
+            // );
         });
 
         if (applicationNumber !== null) {
@@ -332,7 +319,7 @@ const screenConfig = {
         return action;
     },
     components: {
-        headerDiv: {
+        div: {
             uiFramework: "custom-atoms",
             componentPath: "Div",
             props: {
@@ -340,6 +327,19 @@ const screenConfig = {
                 id: "search",
             },
             children: {
+                headerDiv: {
+                    uiFramework: "custom-atoms",
+                    componentPath: "Container",
+                    children: {
+                        header: {
+                            gridDefination: {
+                                xs: 12,
+                                sm: 10,
+                            },
+                            ...header,
+                        },
+                    },
+                },
                 checkAvailabilitySearch,
                 checkAvailabilityCalendar,
             },

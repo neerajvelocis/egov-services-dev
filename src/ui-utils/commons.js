@@ -538,10 +538,10 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Documents",
             []
         );
-    } else if (type == "apply_openspacewmcc") {
+    } else if (type == "apply_OSUJM") {
         documents = get(
             state,
-            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Com_Ground_Documents",
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.OSUJM_Documents",
             []
         );
     } else if (type == "apply_cgb") {
@@ -911,12 +911,6 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
 export const createUpdateOSWMCCApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
-    // let applicationNumber =
-    //     getapplicationNumber() !== "null" && action === "INITIATE"
-    //         ? false
-    //         : getapplicationNumber() === "null" && action === "INITIATE"
-    //         ? false
-    //         : true;
     let method = action === "INITIATE" ? "CREATE" : "UPDATE";
     try {
         let payload = get(
@@ -933,9 +927,9 @@ export const createUpdateOSWMCCApplication = async (state, dispatch, action) => 
         let otherDocuments = [];
 
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
-            console.log(doc, "documents");
+
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                if (doc.documentCode === "OSUJM_DOCUMENT") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -958,6 +952,7 @@ export const createUpdateOSWMCCApplication = async (state, dispatch, action) => 
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "OSUJM");
+        set(payload, "bkAreaRequired", "55");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {

@@ -31,7 +31,7 @@ export const header = getCommonContainer({
         labelName: `Application for ${
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
-                : getapplicationType() === "GFCP" ? "Commercial Ground" : "Water Tanker"
+                : getapplicationType() === "GFCP" ? "Commercial Ground"  : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : "Water Tanker"
             } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),

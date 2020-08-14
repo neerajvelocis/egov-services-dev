@@ -730,7 +730,6 @@ export const generateBill = async (
                 { key: "consumerCode", value: applicationNumber },
                 { key: "businessService", value: bookingType },
             ];
-            console.log(queryObject, "applicationNumberNew");
             const payload = await getBill(queryObject);
             if (payload) {
                 dispatch(
@@ -1952,6 +1951,27 @@ export const getAvailabilityData = async (sectorData) => {
             requestBody
         );
         console.log(response, "availability response");
+        return response;
+    } catch (exception) {
+        console.log(exception);
+    }
+};
+export const getAvailabilityDataOWWMCC = async (bookingSector, bookingVenue) => {
+    let requestBody = {
+        bookingType: "JURISDICTION",
+        // bkSector: bookingSector,
+        // bookingVenue : bookingVenue,
+        bkSector: "SECTOR-17",
+        bookingVenue : "RamLila Ground",
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/osujm/availability/_search",
+            "",
+            [],
+            requestBody
+        );
         return response;
     } catch (exception) {
         console.log(exception);

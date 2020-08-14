@@ -71,6 +71,15 @@ class BookingCalendar extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        console.log(nextProps.availabilityCheckData, "myNextprops.availabilityCheckData");
+        if(nextProps.availabilityCheckData === undefined){
+            this.setState({ 
+                dselectedDays: [], 
+                from: null,
+                to: null,
+                enteredTo: null,
+            })
+        } else {
         if("reservedDays" in nextProps.availabilityCheckData){
             let pushReservedDay = [];
             nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
@@ -87,6 +96,7 @@ class BookingCalendar extends React.Component {
                 enteredTo : new Date(nextProps.availabilityCheckData.bkToDate)
             })
         }
+    }
         
             
            
