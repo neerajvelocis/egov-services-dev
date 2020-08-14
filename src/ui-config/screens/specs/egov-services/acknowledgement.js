@@ -12,7 +12,7 @@ import { PrintIcon } from "@material-ui/icons/Print";
 // } from "./acknowledgementResource/footers";
 import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { getSearchResultsView } from "../../../../ui-utils/commons";
+import { getSearchResultsView, getSearchResultsViewForNewLocOswmcc } from "../../../../ui-utils/commons";
 import {
     downloadReceipt,
     downloadCertificate,
@@ -31,7 +31,7 @@ export const header = getCommonContainer({
         labelName: `Application for ${
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
-                : getapplicationType() === "GFCP" ? "Commercial Ground" : "Water Tanker"
+                : getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "NLUJM" ? "New Location" : "Water Tanker"
             } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),
@@ -334,13 +334,77 @@ const setApplicationData = async (dispatch, applicationNumber, tenantId) => {
             value: applicationNumber,
         },
     ];
+
+
     const response = await getSearchResultsView(queryObject);
+
     dispatch(
         prepareFinalObject("Booking", get(response, "bookingsModelList[0]", []))
     );
 };
 
+const setApplicationDataForNewLocOSWMCC = async (dispatch, applicationNumber, tenantId) => {
+    const queryObject = [
+        {
+            key: "tenantId",
+            value: tenantId,
+        },
+        {
+            key: "applicationNumber",
+            value: applicationNumber,
+        },
+    ];
 
+
+    const response = await getSearchResultsViewForNewLocOswmcc(queryObject);
+//let tempData = {"applicationNumber":"CH-BK-2020-08-12-000838","bookingsRemarks":null,"applicantName":"Sumit Kumar","applicantAddress":"Shahberi, Gr Noida","areaRequirement":"4644","sector":"SECTOR-1","localityAddress":"New Guar CHok ","landmark":"Cricket Ground","location":null,"contact":"9138912806","idProof":"Adhar","mailAddress":"neeraj@gmail.com","tenantId":"ch","businessService":"NLUJM","action":"INITIATE","applicationStatus":"INITIATED","dateCreated":"2020-08-12","wfDocuments":null,"assignee":null}}
+let tempdata = {"applicationNumber":"CH-BK-2020-08-12-000838","bookingsRemarks":null,"applicantName":"Sumit Kumar","applicantAddress":"Shahberi, Gr Noida","areaRequirement":"4644","sector":"SECTOR-1","localityAddress":"New Guar CHok ","landmark":"Cricket Ground","location":"Cri","contact":"9138912806","idProof":"Adhar","mailAddress":"neeraj@gmail.com","tenantId":"ch","businessService":"NLUJM","action":"INITIATE","applicationStatus":"INITIATED","dateCreated":"2020-08-12","wfDocuments":null,"assignee":null};
+    dispatch(
+        //prepareFinalObject("Booking", get(response, "bookingsModelList[0]", []))
+        prepareFinalObject("Booking", tempdata, [])
+    );
+};
+
+// const screenConfig = {
+//     uiFramework: "material-ui",
+//     name: "acknowledgement",
+//     components: {
+//         div: {
+//             uiFramework: "custom-atoms",
+//             componentPath: "Div",
+//             props: {
+//                 className: "common-div-css",
+//             },
+//         },
+//     },
+//     beforeInitScreen: (action, state, dispatch) => {
+//         const purpose = getQueryArg(window.location.href, "purpose");
+//         const status = getQueryArg(window.location.href, "status");
+//         const applicationNumber = getQueryArg(
+//             window.location.href,
+//             "applicationNumber"
+//         );
+//         const secondNumber = getQueryArg(window.location.href, "secondNumber");
+//         const tenantId = getQueryArg(window.location.href, "tenantId");
+//         const businessService = getQueryArg(
+//             window.location.href,
+//             "businessService"
+//         );
+//         const data = getAcknowledgementCard(
+//             state,
+//             dispatch,
+//             purpose,
+//             status,
+//             applicationNumber,
+//             secondNumber,
+//             tenantId,
+//             businessService
+//         );
+//         setApplicationData(dispatch, applicationNumber, tenantId);
+//         set(action, "screenConfig.components.div.children", data);
+//         return action;
+//     },
+// };
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -377,7 +441,16 @@ const screenConfig = {
             tenantId,
             businessService
         );
-        setApplicationData(dispatch, applicationNumber, tenantId);
+
+        const bookingTypeIdentifier = get(
+            state,
+            "screenConfiguration.screenConfig.applyNewLocationUnderMCC.name"
+        );
+        if (bookingTypeIdentifier === "applyNewLocationUnderMCC") {
+            setApplicationDataForNewLocOSWMCC(dispatch, applicationNumber, tenantId);
+        } else {
+            setApplicationData(dispatch, applicationNumber, tenantId);
+        }
         set(action, "screenConfig.components.div.children", data);
         return action;
     },

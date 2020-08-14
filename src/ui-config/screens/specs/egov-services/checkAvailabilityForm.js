@@ -78,6 +78,16 @@ const callBackForReset = (state, dispatch, action) => {
             // );
         }
     }
+    if (availabilityCheckData.reservedDays) {
+        dispatch(
+            handleField(
+                "checkavailability",
+                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
+                "props.reservedDays",
+                []
+            )
+        );
+    }
 
     // const actionDefination = [
     //     {
