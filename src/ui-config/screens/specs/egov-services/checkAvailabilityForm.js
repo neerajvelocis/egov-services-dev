@@ -26,34 +26,72 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 
 const callBackForReset = (state, dispatch, action) => {
-    const bkSector = get(
+    const availabilityCheckData = get(
         state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
-    if (bkSector) {
-        dispatch(
-            handleField(
+
+    if (availabilityCheckData) {
+        if (availabilityCheckData.bkSector) {
+            dispatch(
+                handleField(
+                    "checkavailability",
+                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                    "props.value",
+                    ""
+                )
+            );
+        }
+        if (availabilityCheckData.bkFromDate) {
+            dispatch(
+                handleField(
+                    "checkavailability",
+                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                    "props.value",
+                    ""
+                )
+            );
+        }
+        if (availabilityCheckData.reservedDays) {
+
+            const actionDefination = [
+                {
+                    path:
+                        "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                    property: "reservedDays",
+                    value: [],
+                },
+            ];
+            dispatchMultipleFieldChangeAction(
                 "checkavailability",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
-                "props.value",
-                ""
-            )
-        );
+                actionDefination,
+                dispatch
+            );
+            // dispatch(
+            //     handleField(
+            //         "checkavailability",
+            //         "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
+
+            //         "props.reservedDays",
+            //         []
+            //     )
+            // );
+        }
     }
 
-    const actionDefination = [
-        {
-            path:
-                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-            property: "reservedDays",
-            value: [],
-        },
-    ];
-    dispatchMultipleFieldChangeAction(
-        "checkavailability",
-        actionDefination,
-        dispatch
-    );
+    // const actionDefination = [
+    //     {
+    //         path:
+    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+    //         property: "reservedDays",
+    //         value: [],
+    //     },
+    // ];
+    // dispatchMultipleFieldChangeAction(
+    //     "checkavailability",
+    //     actionDefination,
+    //     dispatch
+    // );
     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 };
 
@@ -61,7 +99,7 @@ const callBackForBook = async (state, dispatch) => {
     let availabilityCheckData =
         state.screenConfiguration.preparedFinalObject.availabilityCheckData;
     console.log(availabilityCheckData, "availabilityCheckData");
-    if(availabilityCheckData === undefined){
+    if (availabilityCheckData === undefined) {
         let warrningMsg = {
             labelName: "Please select Date RANGE",
             labelKey: "",
@@ -74,12 +112,12 @@ const callBackForBook = async (state, dispatch) => {
                 labelKey: "",
             };
             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-        } else if("bkApplicationNumber" in availabilityCheckData) {
+        } else if ("bkApplicationNumber" in availabilityCheckData) {
             dispatch(setRoute(`/egov-services/applycommercialground?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}`));
         } else
             dispatch(setRoute(`/egov-services/applycommercialground?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}`));
-     }
-    
+    }
+
     // if (availabilityCheckData !== undefined) {
 
 
@@ -147,7 +185,7 @@ const callBackForSearch = async (state, dispatch) => {
 
     console.log(availabilityCheckData, "availabilityCheckData in form");
 
-    if(availabilityCheckData === undefined){
+    if (availabilityCheckData === undefined) {
         dispatch(
             toggleSnackbar(
                 true,
@@ -156,56 +194,56 @@ const callBackForSearch = async (state, dispatch) => {
             )
         );
     } else {
-    if("bkSector" in availabilityCheckData){
-        let bookingVenue = availabilityCheckData && availabilityCheckData.bkSector;
-        console.log(bookingVenue, "bookingVenue");
-        let response = await getAvailabilityData(bookingVenue);
-        if (response !== undefined) {
-            let data = response.data;
-            let reservedDates = [];
-            var daylist = [];
-            data.map((dataitem) => {
-                let start = dataitem.fromDate;
-                let end = dataitem.toDate;
-                daylist = getBetweenDays(start, end);
-                daylist.map((v) => {
-                    reservedDates.push(v.toISOString().slice(0, 10));
+        if ("bkSector" in availabilityCheckData) {
+            let bookingVenue = availabilityCheckData && availabilityCheckData.bkSector;
+            console.log(bookingVenue, "bookingVenue");
+            let response = await getAvailabilityData(bookingVenue);
+            if (response !== undefined) {
+                let data = response.data;
+                let reservedDates = [];
+                var daylist = [];
+                data.map((dataitem) => {
+                    let start = dataitem.fromDate;
+                    let end = dataitem.toDate;
+                    daylist = getBetweenDays(start, end);
+                    daylist.map((v) => {
+                        reservedDates.push(v.toISOString().slice(0, 10));
+                    });
                 });
-            });
-            dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
-            // const actionDefination = [
-            //     {
-            //         path:
-            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-            //         property: "reservedDays",
-            //         value: reservedDates,
-            //     },
-            // ];
-            // dispatchMultipleFieldChangeAction(
-            //     "checkavailability",
-            //     actionDefination,
-            //     dispatch
-            // );
+                dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
+                // const actionDefination = [
+                //     {
+                //         path:
+                //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                //         property: "reservedDays",
+                //         value: reservedDates,
+                //     },
+                // ];
+                // dispatchMultipleFieldChangeAction(
+                //     "checkavailability",
+                //     actionDefination,
+                //     dispatch
+                // );
+            } else {
+                dispatch(
+                    toggleSnackbar(
+                        true,
+                        { labelName: "Please Try After Sometime!", labelKey: "" },
+                        "warning"
+                    )
+                );
+            }
         } else {
             dispatch(
                 toggleSnackbar(
                     true,
-                    { labelName: "Please Try After Sometime!", labelKey: "" },
+                    { labelName: "Please Select Booking Venue!", labelKey: "" },
                     "warning"
                 )
             );
-        }
-    } else {
-        dispatch(
-            toggleSnackbar(
-                true,
-                { labelName: "Please Select Booking Venue!", labelKey: "" },
-                "warning"
-            )
-        );
 
+        }
     }
-}
     // if (availabilityCheckData.bkSector === "" || availabilityCheckData.bkSector === undefined) {
     //     dispatch(
     //         toggleSnackbar(

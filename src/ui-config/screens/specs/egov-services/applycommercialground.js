@@ -7,14 +7,18 @@ import {
     getCurrentFinancialYear,
     clearlocalstorageAppDetails,
     convertDateInYMD,
+    convertDateInDMY
+
 } from "../utils";
+//hello
 import { footer } from "./applyResourceCommercialGround/footer";
 import {
     personalDetails,
     bookingDetails,
+
 } from "./applyResourceCommercialGround/nocDetails";
 import jp from "jsonpath";
-//hello
+
 import { documentDetails } from "./applyResourceCommercialGround/documentDetails";
 import { summaryDetails } from "./applyResourceCommercialGround/summaryDetails";
 import {
@@ -367,7 +371,12 @@ const screenConfig = {
         dispatch(
             prepareFinalObject("Booking.bkSector", venue)
         );
-
+        dispatch(
+            prepareFinalObject("Display.bkFromDate", convertDateInDMY(fromDate))
+        );
+        dispatch(
+            prepareFinalObject("Display.bkToDate", convertDateInDMY(toDate))
+        );
         const step = getQueryArg(window.location.href, "step");
         dispatch(
             prepareFinalObject(
