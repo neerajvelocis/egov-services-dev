@@ -26,31 +26,32 @@ class BookingCalendar extends React.Component {
         };
     }
 
-    getDeselectDays() {}
+    getDeselectDays() { }
     componentDidMount() {
         const { availabilityCheckData } = this.props;
         console.log(availabilityCheckData, "availabilityCheckData");
 
-        if("reservedDays" in availabilityCheckData){
+        if ("reservedDays" in availabilityCheckData) {
             let pushReservedDay = [];
-            availabilityCheckData.reservedDays.length > 0 &&availabilityCheckData.reservedDays.map(el => {
+            availabilityCheckData.reservedDays.length > 0 && availabilityCheckData.reservedDays.map(el => {
                 pushReservedDay.push(new Date(el));
             })
-            this.setState({ 
-                dselectedDays: pushReservedDay, 
-                from :  new Date(availabilityCheckData.bkFromDate), 
-                enteredTo : new Date(availabilityCheckData.bkToDate)
+            this.setState({
+                dselectedDays: pushReservedDay,
+                from: new Date(availabilityCheckData.bkFromDate),
+                to: new Date(availabilityCheckData.bkToDate),
+                enteredTo: new Date(availabilityCheckData.bkToDate)
             })
         }
-        
-        
-      
+
+
+
 
 
         // for (let i = 0; i < this.props.reservedDays.length; i++) {
         //     pushReservedDay.push(new Date(this.props.reservedDays[i]));
         // }
-        
+
 
         //  if(this.props.reservedDays.length > 0) {
 
@@ -71,25 +72,41 @@ class BookingCalendar extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if("reservedDays" in nextProps.availabilityCheckData){
+        if ("reservedDays" in nextProps.availabilityCheckData) {
             let pushReservedDay = [];
             nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
                 pushReservedDay.push(new Date(el));
             })
-            this.setState({ 
-                dselectedDays: pushReservedDay, 
+            this.setState({
+                dselectedDays: pushReservedDay,
             })
         }
 
-        if("bkApplicationNumber" in nextProps.availabilityCheckData){
-            this.setState({ 
-                from :  new Date(nextProps.availabilityCheckData.bkFromDate), 
-                enteredTo : new Date(nextProps.availabilityCheckData.bkToDate)
-            })
+        if ("bkApplicationNumber" in nextProps.availabilityCheckData) {
+            if (nextProps.availabilityCheckData.bkFromDate !== null && nextProps.availabilityCheckData.bkToDate !== null) {
+                this.setState({
+                    from: new Date(nextProps.availabilityCheckData.bkFromDate),
+                    to: new Date(nextProps.availabilityCheckData.bkToDate),
+                    enteredTo: new Date(nextProps.availabilityCheckData.bkToDate)
+                })
+            } else if (nextProps.availabilityCheckData.bkFromDate !== null && nextProps.availabilityCheckData.bkToDate === null) {
+                this.setState({
+                    from: new Date(nextProps.availabilityCheckData.bkFromDate),
+                    to: null,
+                    enteredTo: null
+                })
+
+            } else {
+
+                this.setState(this.getInitialState());
+            }
+
+
         }
-        
-            
-           
+
+
+
+
         // const applicationNumber = getQueryArg(
         //     window.location.href,
         //     "applicationNumber"
@@ -136,7 +153,7 @@ class BookingCalendar extends React.Component {
 
     handleDayClick = (day, modifiers = {}) => {
         const { availabilityCheckData } = this.props;
-        if("reservedDays" in availabilityCheckData){
+        if ("reservedDays" in availabilityCheckData) {
             console.log(modifiers.disabled, "Modifiers");
             const { from, to } = this.state;
             if (from && to && day >= from && day <= to) {
@@ -144,16 +161,23 @@ class BookingCalendar extends React.Component {
                 return;
             }
             if (this.isSelectingFirstDay(from, to, day)) {
-                this.props.prepareFinalObject(
-                    "availabilityCheckData.bkFromDate",
-                    day
-                );
-                
-                this.setState({
-                    from: day,
-                    to: null,
-                    enteredTo: null,
-                });
+
+                if (day >= new Date()) {
+                    this.props.prepareFinalObject(
+                        "availabilityCheckData.bkFromDate",
+                        day
+                    );
+
+                    this.setState({
+                        from: day,
+                        to: null,
+                        enteredTo: null,
+                    });
+                } else {
+                    this.props.showError3();
+                    this.handleResetClick()
+
+                }
             } else {
                 this.setState({
                     to: day,
@@ -165,6 +189,10 @@ class BookingCalendar extends React.Component {
                 );
                 this.checkRangeValidity();
             }
+
+
+
+
         } else {
             this.handleResetClick();
             this.props.showError2();
@@ -218,7 +246,9 @@ class BookingCalendar extends React.Component {
 
     handleResetClick = () => {
         this.setState(this.getInitialState());
-        this.props.prepareFinalObject("availabilityCheckData.bkToDate", "");
+        this.props.prepareFinalObject("availabilityCheckData.bkToDate", null);
+        this.props.prepareFinalObject("availabilityCheckData.bkFromDate", null);
+
     };
 
     // setFromDateHandle = (date) => {
@@ -272,6 +302,13 @@ class BookingCalendar extends React.Component {
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
         console.log(this.state.dselectedDays);
+        let data = new Date();
+
+        let newData = new Date(data.setMonth(data.getMonth() + 5));
+
+        // alert(from, "from")
+        // alert(to, "to")
+        // alert(enteredTo, "enterd to ")
         // console.log(this.props, "sankalp");
         // console.log(this.state, "sankalp state");
         return (
@@ -280,15 +317,19 @@ class BookingCalendar extends React.Component {
                     <DayPicker
                         className="Range"
                         numberOfMonths={1}
-                        fromMonth={from}
-                        selectedDays={selectedDays}
+                        initialMonth={from}
+
                         disabledDays={this.state.dselectedDays}
+                        fromMonth={new Date()}
+                        toMonth={newData}
                         modifiers={modifiers}
+                        selectedDays={selectedDays}
                         onDayClick={this.handleDayClick}
                         onDayMouseEnter={this.handleDayMouseEnter}
                     />
                 </div>
                 <div>
+
                     {!from && !to && "Please select the first day."}
                     {from && !to && "Please select the last day."}
                     {from &&
@@ -387,6 +428,19 @@ const mapDispatchToProps = (dispatch) => {
                     "warning"
                 )
             ),
+        showError3: () =>
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    {
+                        labelName:
+                            "Please select date greater then today",
+                        labelKey: "",
+                    },
+                    "warning"
+                )
+            ),
+
         //showBookButton: () => dispatchMultipleFieldChangeAction("checkavailability", actionDefination, dispatch)
     };
 };

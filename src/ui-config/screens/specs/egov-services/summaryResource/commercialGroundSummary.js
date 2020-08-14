@@ -7,7 +7,7 @@ import {
     getLabelWithValue,
     convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
+import { convertDateInDMY } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
 export const commercialGroundSummary = getCommonGrayCard({
@@ -104,6 +104,13 @@ export const commercialGroundSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkFromDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                    return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            },
                         }
                     ),
                     bookingToDate: getLabelWithValue(
@@ -113,6 +120,14 @@ export const commercialGroundSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkToDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                    return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            },
+
                         }
                     ),
                     BookingVenue: getLabelWithValue(
@@ -122,6 +137,7 @@ export const commercialGroundSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkBookingVenue",
+
                         }
                     ),
                     Category: getLabelWithValue(

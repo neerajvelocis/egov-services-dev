@@ -7,6 +7,7 @@ import {
   getSelectField,
   getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { convertDateInDMY } from "../../utils/index";
 import {
   handleScreenConfigurationFieldChange as handleField,
   prepareFinalObject,
@@ -155,13 +156,17 @@ export const bookingDetails = getCommonCard({
           labelName: "From Date",
           labelKey: "BK_CGB_FROM_DATE_PLACEHOLDER"
         },
+
         required: true,
         props: {
           disabled: true,
         },
         //pattern: getPattern("NoOfEmp"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "Booking.bkFromDate",
+
+        jsonPath: "Display.bkFromDate",
+
+
       })
     },
     todate: {
@@ -174,13 +179,15 @@ export const bookingDetails = getCommonCard({
           labelName: "To Date",
           labelKey: "BK_CGB_TO_DATE_PLACEHOLDER"
         },
+
         required: true,
         props: {
           disabled: true,
         },
         //pattern: getPattern("NoOfEmp"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-        jsonPath: "Booking.bkToDate",
+        jsonPath: "Display.bkToDate",
+
       })
     },
     Venue: {
