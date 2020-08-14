@@ -7,11 +7,15 @@ import {
     getCurrentFinancialYear,
     clearlocalstorageAppDetails,
     convertDateInYMD,
+    convertDateInDMY
+
 } from "../utils";
+//hello
 import { footer } from "./applyResourceCommercialGround/footer";
 import {
     personalDetails,
     bookingDetails,
+
 } from "./applyResourceCommercialGround/nocDetails";
 import jp from "jsonpath";
 
@@ -169,7 +173,7 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Commerical_Ground_Cat",
                         },
-                        
+
                     ],
                 },
             ],
@@ -269,7 +273,7 @@ export const prepareEditFlow = async (
     state,
     dispatch,
     applicationNumber,
-    tenantId, 
+    tenantId,
     fromDate,
     toDate, venue
 ) => {
@@ -367,7 +371,12 @@ const screenConfig = {
         dispatch(
             prepareFinalObject("Booking.bkSector", venue)
         );
-
+        dispatch(
+            prepareFinalObject("Display.bkFromDate", convertDateInDMY(fromDate))
+        );
+        dispatch(
+            prepareFinalObject("Display.bkToDate", convertDateInDMY(toDate))
+        );
         const step = getQueryArg(window.location.href, "step");
         dispatch(
             prepareFinalObject(

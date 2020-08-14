@@ -44,6 +44,7 @@ import {
 import { httpRequest } from "./api";
 
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
+import { getTodaysDateInYMD } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 const role_name = JSON.parse(getUserInfo()).roles[0].code;
 
@@ -84,6 +85,7 @@ export const getSearchResults = async (queryObject) => {
             [],
             queryObject
         );
+        console.log(response, "yoyo")
         return response;
     } catch (error) {
         store.dispatch(
@@ -1169,16 +1171,127 @@ export const createUpdateOSWMCCNewLocation = async (state, dispatch, action) => 
         return { status: "failure", message: error };
     }
 };
-export const createUpdateCgbApplication = async (
-    state,
-    dispatch,
-    action
-) => {
+// export const createUpdateCgbApplication = async (
+//     state,
+//     dispatch,
+//     action
+// ) => {
+//     let response = "";
+//     let tenantId = getTenantId().split(".")[0];
+//     // let applicationNumber =
+//     //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
+//     // let method =  action === "FAILUREAPPLY" ? "CREATE" : "UPDATE";
+
+//     try {
+//         let payload = get(
+//             state.screenConfiguration.preparedFinalObject,
+//             "Booking",
+//             []
+//         );
+//         let reduxDocuments = get(
+//             state,
+//             "screenConfiguration.preparedFinalObject.documentsUploadRedux",
+//             {}
+//         );
+//         let bookingDocuments = [];
+//         let otherDocuments = [];
+
+//         jp.query(reduxDocuments, "$.*").forEach((doc) => {
+//             console.log(doc, "documents");
+//             if (doc.documents && doc.documents.length > 0) {
+//                 if (doc.documentCode === "GFCP_DOCUMENT") {
+//                     bookingDocuments = [
+//                         ...bookingDocuments,
+//                         {
+//                             fileStoreId: doc.documents[0].fileStoreId,
+//                         },
+//                     ];
+//                 } else if (!doc.documentSubCode) {
+//                     otherDocuments = [
+//                         ...otherDocuments,
+//                         {
+//                             fileStoreId: doc.documents[0].fileStoreId,
+//                         },
+//                     ];
+//                 }
+//             }
+//         });
+
+//         set(payload, "wfDocuments", bookingDocuments);
+//         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
+//         set(payload, "tenantId", tenantId);
+//         set(payload, "bkAction", action);
+//         set(payload, "businessService", "GFCP");
+//         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
+//         setapplicationMode(status);
+
+//         // if (method === "CREATE") {
+//         response = await httpRequest("post", "/bookings/api/_create", "", [], {
+//             Booking: payload,
+//         });
+//         console.log("pet response : ", response);
+//         if (
+//             response.data.bkApplicationNumber !== "null" ||
+//             response.data.bkApplicationNumber !== ""
+//         ) {
+//             dispatch(prepareFinalObject("Booking", response.data));
+//             setapplicationNumber(response.data.bkApplicationNumber);
+//             setApplicationNumberBox(state, dispatch);
+//             return { status: "success", data: response.data };
+//         } else {
+//             return { status: "fail", data: response.data };
+//         }
+//         // }
+//         // else if (method === "UPDATE") {
+//         //     response = await httpRequest(
+//         //         "post",
+//         //         "/bookings/api/_update",
+//         //         "",
+//         //         [],
+//         //         {
+//         //             Booking: payload,
+//         //         }
+//         //     );
+//         //     console.log("pet response update: ", response);
+//         //     setapplicationNumber(response.data.bkApplicationNumber);
+//         //     dispatch(prepareFinalObject("Booking", response.data));
+//         //     return { status: "success", data: response.data };
+//         // }
+
+//         // response = await httpRequest("post", "/bookings/api/_create", "", [], {
+//         //     Booking: payload,
+//         // });
+//         // if (
+//         //     response.data.bkApplicationNumber !== "null" ||
+//         //     response.data.bkApplicationNumber !== ""
+//         // ) {
+//         //     dispatch(prepareFinalObject("Booking", response.data));
+//         //     setapplicationNumber(response.data.bkApplicationNumber);
+//         //     setApplicationNumberBox(state, dispatch);
+//         //     return { status: "success", data: response.data };
+//         // } else {
+//         //     return { status: "fail", data: response.data };
+//         // }
+//     } catch (error) {
+//         dispatch(toggleSnackbar(true, { labelName: error.message }, "error"));
+
+//         // Revert the changed pfo in case of request failure
+//         let BookingData = get(
+//             state,
+//             "screenConfiguration.preparedFinalObject.Booking",
+//             []
+//         );
+//         dispatch(prepareFinalObject("Booking", BookingData));
+
+//         return { status: "failure", message: error };
+//     }
+// };
+export const createUpdateCgbApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
     // let applicationNumber =
     //     getapplicationNumber() === "null" ? "" : getapplicationNumber();
-    // let method =  action === "FAILUREAPPLY" ? "CREATE" : "UPDATE";
+    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
 
     try {
         let payload = get(
@@ -1197,7 +1310,7 @@ export const createUpdateCgbApplication = async (
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             console.log(doc, "documents");
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "GFCP") {
+                if (doc.documentCode === "GFCP_DOCUMENT") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -1214,47 +1327,57 @@ export const createUpdateCgbApplication = async (
                 }
             }
         });
-
+        // set(payload, "bkFromDate", getTodaysDateInYMD(payload.bkFromDate));
+        // set(payload, "bkToDate", getTodaysDateInYMD(payload.bkToDate));
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "GROUND_FOR_COMMERCIAL_PURPOSE");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "GFCP");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
-        setapplicationMode(status);
+        // setapplicationMode(status);
 
-        // if (method === "CREATE") {
-        response = await httpRequest("post", "/bookings/api/_create", "", [], {
-            Booking: payload,
-        });
-        console.log("pet response : ", response);
-        if (
-            response.data.bkApplicationNumber !== "null" ||
-            response.data.bkApplicationNumber !== ""
-        ) {
-            dispatch(prepareFinalObject("Booking", response.data));
+        if (method === "CREATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_create",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response : ", response);
+            if (
+                response.data.bkApplicationNumber !== "null" ||
+                response.data.bkApplicationNumber !== ""
+            ) {
+                dispatch(prepareFinalObject("Booking", response.data));
+                // dispatch(prepareFinalObject("Booking.bkFromDate", convertDateInDMY(response.data.bkFromDate)));
+                // dispatch(prepareFinalObject("Booking.bkToDate", convertDateInDMY(response.data.bkToDate)));
+                setapplicationNumber(response.data.bkApplicationNumber);
+                setApplicationNumberBox(state, dispatch);
+                return { status: "success", data: response.data };
+            } else {
+                return { status: "fail", data: response.data };
+            }
+        } else if (method === "UPDATE") {
+            response = await httpRequest(
+                "post",
+                "/bookings/api/_update",
+                "",
+                [],
+                {
+                    Booking: payload,
+                }
+            );
+            console.log("pet response update: ", response);
             setapplicationNumber(response.data.bkApplicationNumber);
-            setApplicationNumberBox(state, dispatch);
+            dispatch(prepareFinalObject("Booking", response.data));
+            // dispatch(prepareFinalObject("Booking.bkFromDate", convertDateInDMY(response.data.bkFromDate)));
+            // dispatch(prepareFinalObject("Booking.bkToDate", convertDateInDMY(response.data.bkToDate)));
             return { status: "success", data: response.data };
-        } else {
-            return { status: "fail", data: response.data };
         }
-        // }
-        // else if (method === "UPDATE") {
-        //     response = await httpRequest(
-        //         "post",
-        //         "/bookings/api/_update",
-        //         "",
-        //         [],
-        //         {
-        //             Booking: payload,
-        //         }
-        //     );
-        //     console.log("pet response update: ", response);
-        //     setapplicationNumber(response.data.bkApplicationNumber);
-        //     dispatch(prepareFinalObject("Booking", response.data));
-        //     return { status: "success", data: response.data };
-        // }
 
         // response = await httpRequest("post", "/bookings/api/_create", "", [], {
         //     Booking: payload,
