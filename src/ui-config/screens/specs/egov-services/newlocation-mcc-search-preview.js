@@ -28,7 +28,7 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { newLocApplicantSummary } from "./searchResource/newLocApplicantSummary";
+import { applicantSummary } from "./searchResource/newLocApplicantSummary";
 import { openSpaceSummary } from "./searchResource/newLocOpenSpaceSummary";
 //import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/newLocDocumentsSummary";
@@ -139,7 +139,7 @@ const setSearchResponse = async (
     ]);
     let recData = get(response, "osujmNewLocationModelList", []);
     dispatch(
-        prepareFinalObject("locationBooking", recData.length > 0 ? recData[0] : {})
+        prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentList", {}))
@@ -153,26 +153,10 @@ const setSearchResponse = async (
     
 
 
-    // localStorageSet("bookingStatus", bookingStatus);
-    // HideshowFooter(action, bookingStatus);
 
-    // prepareDocumentsView(state, dispatch);
+     prepareDocumentsView(state, dispatch);
 
-    // const CitizenprintCont = footerReviewTop(
-    //     action,
-    //     state,
-    //     dispatch,
-    //     bookingStatus,
-    //     applicationNumber,
-    //     tenantId,
-    //     ""
-    // );
-
-    // set(
-    //     action,
-    //     "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-    //     CitizenprintCont
-    // )
+    
 };
 
 const getPaymentGatwayList = async (action, state, dispatch) => {
