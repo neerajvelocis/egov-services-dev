@@ -4,7 +4,9 @@ const NumberRegx = /^[0-9]+\d*$/;
 const StringRegx = /^[a-zA-Z ]{1,250}$/;
 const mobRegx = /^([0-9]{10})$/;
 const alphanum = /^[a-zA-Z0-9]+$/;
-const email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//const email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+const email = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
 let arr = []
 arr = resource
 
