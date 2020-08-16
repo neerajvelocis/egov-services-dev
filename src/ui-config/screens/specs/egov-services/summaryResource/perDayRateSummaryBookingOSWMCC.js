@@ -91,7 +91,7 @@ export const perDayRateSummary = getCommonGrayCard({
                             labelKey: "BK_OSWMCC_BOOKING_TOTAL_AREA_LABEL",
                         },
                         {
-                            jsonPath: "perDayRate.displayArea",
+                            jsonPath: "perDayRate.areaTo",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
                                    return "NA"

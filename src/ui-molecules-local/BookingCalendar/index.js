@@ -29,8 +29,6 @@ class BookingCalendar extends React.Component {
     getDeselectDays() { }
     componentDidMount() {
         const { availabilityCheckData } = this.props;
-        console.log(availabilityCheckData, "availabilityCheckData");
-
         if ("reservedDays" in availabilityCheckData) {
             let pushReservedDay = [];
             availabilityCheckData.reservedDays.length > 0 && availabilityCheckData.reservedDays.map(el => {
@@ -163,7 +161,6 @@ class BookingCalendar extends React.Component {
     handleDayClick = (day, modifiers = {}) => {
         const { availabilityCheckData } = this.props;
         if ("reservedDays" in availabilityCheckData) {
-            console.log(modifiers.disabled, "Modifiers");
             const { from, to } = this.state;
             if (from && to && day >= from && day <= to) {
                 this.handleResetClick();
@@ -310,7 +307,6 @@ class BookingCalendar extends React.Component {
         const modifiers = { start: from, end: enteredTo };
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
-        console.log(this.state.dselectedDays);
         let data = new Date();
         //hello
         let newData = new Date(data.setMonth(data.getMonth() + 5));

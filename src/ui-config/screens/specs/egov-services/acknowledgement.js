@@ -108,7 +108,7 @@ export const paymentSuccessFooter = (
                     );
                 },
             },
-            visible: (businessService === "OSBM" || businessService === "GFCP") ? true : false
+            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM") ? true : false
         },
         gotoHome: {
             componentPath: "Button",
