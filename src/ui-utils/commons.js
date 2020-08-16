@@ -965,6 +965,8 @@ export const createUpdateOSWMCCApplication = async (state, dispatch, action) => 
             "screenConfiguration.preparedFinalObject.documentsUploadRedux",
             {}
         );
+
+
         let bookingDocuments = [];
         let otherDocuments = [];
 
@@ -989,12 +991,13 @@ export const createUpdateOSWMCCApplication = async (state, dispatch, action) => 
             }
         });
 
+
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "JURISDICTION");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "OSUJM");
-        set(payload, "bkAreaRequired", "55");
+        // set(payload, "bkAreaRequired", payload.bkAreaRequired);
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {

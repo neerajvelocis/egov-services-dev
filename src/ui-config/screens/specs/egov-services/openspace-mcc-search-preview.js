@@ -36,7 +36,7 @@ import { remarksSummary } from "./searchResource/remarksSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
     footerReviewTop,
-} from "./searchResource/cgfooter";
+} from "./searchResource/footer";
 import {
     getLocale,
     getUserInfo,
@@ -156,7 +156,7 @@ const setSearchResponse = async (
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
-    if (bookingStatus === "APPLIED") {
+    if (bookingStatus === "APPROVED") {
         await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
@@ -292,7 +292,7 @@ const screenConfig = {
                     remarksSummary: remarksSummary,
                 }),
                 // break: getBreak(),
-                // footer: footer,
+                footer: footer,
             }
         }
     }

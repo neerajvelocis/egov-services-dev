@@ -13,8 +13,8 @@ class ImageList extends Component {
         const { data } = this.props;
 
         return data.length > 0 ? (
-            data.map((item, index) => {
-                return <div style={style}> <Image size="medium" width={200} height={154} source={item.link} /></div>
+            data.map((item, index) => { 
+                return item.link !== undefined && <div style={style}> <Image size="medium" width={200} height={154} source={item.link} /></div>
             })
 
         ) : (

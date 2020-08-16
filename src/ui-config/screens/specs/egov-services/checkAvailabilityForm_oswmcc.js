@@ -8,6 +8,7 @@ import {
     getSelectField,
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import { showHideAdhocPopup } from "../utils";
 import {
     getTenantId,
     setapplicationType,
@@ -22,10 +23,21 @@ import {
     handleScreenConfigurationFieldChange as handleField,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getAvailabilityDataOWWMCC, getBetweenDays } from "../utils";
+import {
+    getFileUrlFromAPI,
+    getQueryArg,
+    getTransformedLocale,
+} from "egov-ui-framework/ui-utils/commons";
+import {
+    getAvailabilityDataOSWMCC,
+    getPerDayRateOSWMCC,
+    getNewLocatonImages,
+    getBetweenDays,
+} from "../utils";
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
+import set from "lodash/set";
 
 const callBackForReset = (state, dispatch, action) => {
     const availabilityCheckData = get(
@@ -33,12 +45,7 @@ const callBackForReset = (state, dispatch, action) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    dispatch(
-        prepareFinalObject(
-            "availabilityCheckData",
-            {}
-        )
-    );
+    dispatch(prepareFinalObject("availabilityCheckData", {}));
     // if (availabilityCheckData.bkSector) {
     //     dispatch(
     //         handleField(
@@ -146,12 +153,19 @@ const callBackForSearch = async (state, dispatch) => {
             )
         );
     } else {
-        if ("bkSector" in availabilityCheckData && "bkBookingVenue" in availabilityCheckData) {
+        if (
+            "bkSector" in availabilityCheckData &&
+            "bkBookingVenue" in availabilityCheckData
+        ) {
             let bookingSector = availabilityCheckData.bkSector;
             let bookingVenue = availabilityCheckData.bkBookingVenue;
-            let response = await getAvailabilityDataOWWMCC(bookingSector, bookingVenue);
-            if (response !== undefined) {
-                console.log(response, "myResponse");
+            let response = await getAvailabilityDataOSWMCC(
+                bookingSector,
+                bookingVenue
+            );
+
+            let responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success") {
                 let data = response.data;
                 let reservedDates = [];
                 var daylist = [];
@@ -170,16 +184,11 @@ const callBackForSearch = async (state, dispatch) => {
                     )
                 );
             } else {
-                dispatch(
-                    toggleSnackbar(
-                        true,
-                        {
-                            labelName: "Please Try After Sometime!",
-                            labelKey: "",
-                        },
-                        "warning"
-                    )
-                );
+                let errorMessage = {
+                    labelName: "Something went wrong, Try Again later!",
+                    labelKey: "", //UPLOAD_FILE_TOAST
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "error"));
             }
         } else {
             dispatch(
@@ -213,7 +222,7 @@ export const checkAvailabilitySearch = getCommonCard({
             addNewLocButton: {
                 componentPath: "Button",
                 props: {
-                    variant: "contained",
+                    // variant: "contained",
                     color: "primary",
                     style: {
                         // marginTop: "-10px",
@@ -225,13 +234,13 @@ export const checkAvailabilitySearch = getCommonCard({
                     align: "right",
                 },
                 children: {
-                    // editIcon: {
-                    //     uiFramework: "custom-atoms",
-                    //     componentPath: "Icon",
-                    //     props: {
-                    //         iconName: "edit",
-                    //     },
-                    // },
+                    addIcon: {
+                        uiFramework: "custom-atoms",
+                        componentPath: "Icon",
+                        props: {
+                            iconName: "add_location_alt",
+                        },
+                    },
                     buttonLabel: getLabel({
                         labelName: "Add New Location",
                         labelKey: "BK_OSWMCC_NEW_LOCATION_LABEL",
@@ -274,47 +283,47 @@ export const checkAvailabilitySearch = getCommonCard({
                 },
             }),
             beforeFieldChange: (action, state, dispatch) => {
+                // alert("in sector")
+                console.log("action.value", action.value);
                 if (action.value) {
-                    console.log(action.value, "myactionvalue");
-                    const bkBookingVenue = get(
-                        state,
-                        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-                    );
-                    console.log(bkBookingVenue, "myBookingVenue");
+                const bkBookingVenue = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+                );
+                const sectorWiselocationsObject = get(
+                    state,
+                    "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
+                );
+                const venueList = get(sectorWiselocationsObject, action.value);
+                console.log(venueList, "venueListNew");
+                venueList !== undefined && dispatch(
+                    prepareFinalObject(
+                        "applyScreenMdmsData.Booking.venueList",
+                        venueList 
+                    )
+                );
+                dispatch(
+                    handleField(
+                        "checkavailability_oswmcc",
+                        "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                        "props.disabled",
+                        false
+                    )
+                );
 
-                    const sectorWiselocationsObject = get(
-                        state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
-                    );
-                    const venueList = get(
-                        sectorWiselocationsObject,
-                        action.value
-                    );
-                    dispatch(
-                        prepareFinalObject(
-                            "applyScreenMdmsData.Booking.venueList",
-                            venueList
-                        )
-                    );
-                    dispatch(
-                        handleField(
-                            "checkavailability_oswmcc",
-                            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                            "props.disabled",
-                            false
-                        )
-                    );
-
-                    dispatch(
-                        handleField(
-                            "checkavailability_oswmcc",
-                            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                            "props.value",
-                            bkBookingVenue === undefined ? null : bkBookingVenue
-                        )
-                    );
+                dispatch(
+                    handleField(
+                        "checkavailability_oswmcc",
+                        "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                        "props.value",
+                        bkBookingVenue === undefined ? null : bkBookingVenue
+                    )
+                );
                 }
             },
+            // afterFieldChange : (action, state, dispatch) => {
+            //     alert("in after sector")
+            // }
         },
         bkBookingVenue: {
             ...getSelectField({
@@ -342,21 +351,127 @@ export const checkAvailabilitySearch = getCommonCard({
                     disabled: true,
                 },
             }),
-        },
-        // dummyDiv: {
-        //     uiFramework: "custom-atoms",
-        //     componentPath: "Div",
-        //     gridDefination: {
-        //         xs: 0,
-        //         sm: 6,
-        //         md: 0,
+            beforeFieldChange: async (action, state, dispatch) => {
+                // alert("in venue")
+                if (action.value) {
+                    const venueList = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.venueList"
+                    );
+                    const selectedVenue = venueList !== undefined &&venueList.filter((el) => el.name == action.value)
+                    const bkAreaRequired = selectedVenue.length > 0 ? selectedVenue[0].areRequirement : "";
+                    const bkSector = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+                    );
+                    dispatch(
+                        prepareFinalObject(
+                            "Booking.bkAreaRequired",
+                            bkAreaRequired
+                        )
+                    );
 
-        //     },
-        //     visible: true,
-        //     props: {
-        //         disabled: true
-        //     }
-        // },
+
+                    let responseImage = await getNewLocatonImages(
+                        bkSector,
+                        action.value
+                    );
+                    let responseImageStatus = get(responseImage, "status", "");
+                    if (
+                        responseImageStatus == "SUCCESS" ||
+                        responseImageStatus == "success"
+                    ) {
+                        let documentsAndLocImages = responseImage.data;
+                        let onlyLocationImages =
+                            documentsAndLocImages &&
+                            documentsAndLocImages.filter(
+                                (item) => item.documentType != "IDPROOF"
+                            );
+
+                        let fileStoreIds =
+                            onlyLocationImages &&
+                            onlyLocationImages
+                                .map((item) => item.fileStoreId)
+                                .join(",");
+                        const fileUrlPayload =
+                            fileStoreIds &&
+                            (await getFileUrlFromAPI(fileStoreIds));
+                        let newLocationImagesPreview = [];
+                        onlyLocationImages &&
+                            onlyLocationImages.forEach((item, index) => {
+                                newLocationImagesPreview[index] = {
+                                    name:
+                                        (fileUrlPayload &&
+                                            fileUrlPayload[item.fileStoreId] &&
+                                            decodeURIComponent(
+                                                fileUrlPayload[item.fileStoreId]
+                                                    .split(",")[0]
+                                                    .split("?")[0]
+                                                    .split("/")
+                                                    .pop()
+                                                    .slice(13)
+                                            )) ||
+                                        `Document - ${index + 1}`,
+                                    fileStoreId: item.fileStoreId,
+                                    link: Object.values(fileUrlPayload)[
+                                        index
+                                    ],
+                                    title: item.documentType,
+                                    // tenantId: item.tenantId,
+                                    // id: item.id,
+                                };
+                            });
+    
+
+                        dispatch(
+                            prepareFinalObject(
+                                "mccNewLocImagesPreview",
+                                newLocationImagesPreview
+                            )
+                        );
+
+                        let response = await getPerDayRateOSWMCC(
+                            bkSector,
+                            bkAreaRequired
+                        );
+                        let responseStatus = get(response, "status", "");
+                        if (
+                            responseStatus == "SUCCESS" ||
+                            responseStatus == "success"
+                        ) {
+                            set(
+                                state.screenConfiguration.screenConfig[
+                                    "checkavailability_oswmcc"
+                                ],
+                                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
+                                true
+                            );
+                            dispatch(
+                                prepareFinalObject("perDayRate", response.data)
+                            );
+                        } else {
+                            let errorMessage = {
+                                labelName:
+                                    "Something went wrong, Try Again later!",
+                                labelKey: "", //UPLOAD_FILE_TOAST
+                            };
+                            dispatch(
+                                toggleSnackbar(true, errorMessage, "error")
+                            );
+                        }
+                    } else {
+                        let errorMessage = {
+                            labelName: "Something went wrong, Try Again later!",
+                            labelKey: "", //UPLOAD_FILE_TOAST
+                        };
+                        dispatch(toggleSnackbar(true, errorMessage, "error"));
+                    }
+                }
+            },
+            // afterFieldChange : (action, state, dispatch) => {
+            //     alert("in after venue")
+            // }
+        },
         searchButton: {
             componentPath: "Button",
             props: {
@@ -365,7 +480,7 @@ export const checkAvailabilitySearch = getCommonCard({
                 style: {
                     minWidth: "200px",
                     height: "48px",
-                    marginRight: "16px",
+                    // marginRight: "16px",
                 },
             },
 
@@ -406,8 +521,45 @@ export const checkAvailabilitySearch = getCommonCard({
             },
             visible: true,
         },
+        viewDetailsButton: {
+            componentPath: "Button",
+            props: {
+                // variant: "outlined",
+                color: "primary",
+                style: {
+                    minWidth: "200px",
+                    height: "48px",
+                    // marginRight: "16px",
+                    marginLeft: "16px",
+                },
+            },
+            children: {
+                viewIcon: {
+                    uiFramework: "custom-atoms",
+                    componentPath: "Icon",
+                    props: {
+                        iconName: "remove_red_eye",
+                    },
+                },
+                buttonLabel: getLabel({
+                    labelName: "View Details",
+                    labelKey: "View Details",
+                }),
+            },
+            onClickDefination: {
+                action: "condition",
+                callBack: (state, dispatch) =>
+                    showHideAdhocPopup(
+                        state,
+                        dispatch,
+                        "checkavailability_oswmcc"
+                    ),
+            },
+            visible: false,
+        },
     }),
 });
+
 export const checkAvailabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
         bookingCalendar: {
