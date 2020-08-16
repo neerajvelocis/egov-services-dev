@@ -10,7 +10,7 @@ import {
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
-export const applicantSummary = getCommonGrayCard({
+export const newLocApplicantSummary = getCommonGrayCard({
   header: {
       uiFramework: "custom-atoms",
       componentPath: "Container",
@@ -75,7 +75,7 @@ export const applicantSummary = getCommonGrayCard({
                           labelKey: "BK_OSB_NAME_LABEL",
                       },
                       {
-                          jsonPath: "Booking.applicantName",
+                          jsonPath: "locationBooking.applicantName",
                       }
                   ),
                   applicantEmail: getLabelWithValue(
@@ -84,7 +84,7 @@ export const applicantSummary = getCommonGrayCard({
                           labelKey: "BK_OSB_EMAIL_LABEL",
                       },
                       {
-                          jsonPath: "Booking.mailAddress",
+                          jsonPath: "locationBooking.mailAddress",
                       }
                   ),
                   applicantMobile: getLabelWithValue(
@@ -93,7 +93,7 @@ export const applicantSummary = getCommonGrayCard({
                           labelKey: "BK_OSB_MOBILE_NO_LABEL",
                       },
                       {
-                          jsonPath: "Booking.contact",
+                          jsonPath: "locationBooking.contact",
                       }
                   )
               }),
@@ -101,10 +101,10 @@ export const applicantSummary = getCommonGrayCard({
           items: [],
           hasAddItem: false,
           isReviewPage: true,
-          sourceJsonPath: "Booking",
-          prefixSourceJsonPath:
-              "children.cardContent.children.applicantContainer.children",
-          afterPrefixJsonPath: "children.value.children.key",
+          sourceJsonPath: "locationBooking",
+        //   prefixSourceJsonPath:
+        //       "children.cardContent.children.applicantContainer.children",
+        //   afterPrefixJsonPath: "children.value.children.key",
       },
       type: "array",
   },

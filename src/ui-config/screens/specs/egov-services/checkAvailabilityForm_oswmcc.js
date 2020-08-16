@@ -45,36 +45,40 @@ const callBackForReset = (state, dispatch, action) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    dispatch(prepareFinalObject("availabilityCheckData", {}));
-    // if (availabilityCheckData.bkSector) {
-    //     dispatch(
-    //         handleField(
-    //             "checkavailability",
-    //             "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-    //             "props.value",
-    //             ""
-    //         )
-    //     );
-    // }
+    if (availabilityCheckData.bkSector) {
+        dispatch(
+            handleField(
+                "checkavailability_oswmcc",
+                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                "props.value",
+                undefined
+            )
+        );
+    }
+    if (availabilityCheckData.bkBookingVenue) {
+        dispatch(
+            handleField(
+                "checkavailability_oswmcc",
+                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                "props.value",
+                undefined
+            )
+        );
+        set(
+            state.screenConfiguration.screenConfig["checkavailability_oswmcc"],
+            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
+            false
+        );
+    }
+    dispatch(prepareFinalObject("availabilityCheckData", undefined))
     // if (availabilityCheckData.bkFromDate) {
-    //     dispatch(
-    //         handleField(
-    //             "checkavailability",
-    //             "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
-    //             "props.value",
-    //             ""
-    //         )
-    //     );
+    //     dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", ""))
+    // }
+    // if (availabilityCheckData.bkToDate) {
+    //     dispatch(prepareFinalObject("availabilityCheckData.bkToDate", ""))
     // }
     // if (availabilityCheckData.reservedDays) {
-    //     dispatch(
-    //         handleField(
-    //             "checkavailability",
-    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
-    //             "props.reservedDays",
-    //             []
-    //         )
-    //     );
+    //     dispatch(prepareFinalObject("availabilityCheckData.reservedDays", []))
     // }
 
     // const actionDefination = [
@@ -214,7 +218,7 @@ export const checkAvailabilitySearch = getCommonCard({
                 gridDefination: {
                     xs: 8,
                 },
-                ...getCommonSubHeader({
+                ...getCommonHeader({
                     labelName: "Check Open Space Availability",
                     labelKey: "BK_OSWMCC_CHECK_AVAILABILITY_HEADING",
                 }),
@@ -254,7 +258,6 @@ export const checkAvailabilitySearch = getCommonCard({
             },
         },
     },
-    break: getBreak(),
     availabilitySearchContainer: getCommonContainer({
         bkSector: {
             ...getSelectField({
@@ -283,42 +286,45 @@ export const checkAvailabilitySearch = getCommonCard({
                 },
             }),
             beforeFieldChange: (action, state, dispatch) => {
-                // alert("in sector")
-                console.log("action.value", action.value);
                 if (action.value) {
-                const bkBookingVenue = get(
-                    state,
-                    "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-                );
-                const sectorWiselocationsObject = get(
-                    state,
-                    "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
-                );
-                const venueList = get(sectorWiselocationsObject, action.value);
-                console.log(venueList, "venueListNew");
-                venueList !== undefined && dispatch(
-                    prepareFinalObject(
-                        "applyScreenMdmsData.Booking.venueList",
-                        venueList 
-                    )
-                );
-                dispatch(
-                    handleField(
-                        "checkavailability_oswmcc",
-                        "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                        "props.disabled",
-                        false
-                    )
-                );
+                    let bkBookingVenue = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+                    );
+                    let sectorWiselocationsObject = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
+                    );
+                    let venueList = get(
+                        sectorWiselocationsObject,
+                        action.value
+                    );
+                    venueList !== undefined &&
+                        dispatch(
+                            prepareFinalObject(
+                                "applyScreenMdmsData.Booking.venueList",
+                                venueList
+                            )
+                        );
+                    dispatch(
+                        handleField(
+                            "checkavailability_oswmcc",
+                            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                            "props.disabled",
+                            false
+                        )
+                    );
 
-                dispatch(
-                    handleField(
-                        "checkavailability_oswmcc",
-                        "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                        "props.value",
-                        bkBookingVenue === undefined ? null : bkBookingVenue
-                    )
-                );
+                    if (bkBookingVenue !== undefined) {
+                        dispatch(
+                            handleField(
+                                "checkavailability_oswmcc",
+                                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                                "props.value",
+                                bkBookingVenue
+                            )
+                        );
+                    }
                 }
             },
             // afterFieldChange : (action, state, dispatch) => {
@@ -328,13 +334,13 @@ export const checkAvailabilitySearch = getCommonCard({
         bkBookingVenue: {
             ...getSelectField({
                 label: {
-                    labelName: "Booking Locations",
-                    labelKey: "BK_OSWMCC_BOOKING_LOCAION_LABEL",
+                    labelName: "Booking Venue",
+                    labelKey: "BK_OSWMCC_BOOKING_VENUE_LABEL",
                 },
 
                 placeholder: {
                     labelName: "Select Booking Location",
-                    labelKey: "BK_OSWMCC_BOOKING_LOCAION_PLACEHOLDER",
+                    labelKey: "BK_OSWMCC_BOOKING_VENUE_PLACEHOLDER",
                 },
                 gridDefination: {
                     xs: 12,
@@ -358,8 +364,13 @@ export const checkAvailabilitySearch = getCommonCard({
                         state,
                         "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.venueList"
                     );
-                    const selectedVenue = venueList !== undefined &&venueList.filter((el) => el.name == action.value)
-                    const bkAreaRequired = selectedVenue.length > 0 ? selectedVenue[0].areRequirement : "";
+                    const selectedVenue =
+                        venueList !== undefined &&
+                        venueList.filter((el) => el.name == action.value);
+                    const bkAreaRequired =
+                        selectedVenue.length > 0
+                            ? selectedVenue[0].areRequirement
+                            : "";
                     const bkSector = get(
                         state,
                         "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
@@ -370,7 +381,6 @@ export const checkAvailabilitySearch = getCommonCard({
                             bkAreaRequired
                         )
                     );
-
 
                     let responseImage = await getNewLocatonImages(
                         bkSector,
@@ -413,15 +423,12 @@ export const checkAvailabilitySearch = getCommonCard({
                                             )) ||
                                         `Document - ${index + 1}`,
                                     fileStoreId: item.fileStoreId,
-                                    link: Object.values(fileUrlPayload)[
-                                        index
-                                    ],
+                                    link: Object.values(fileUrlPayload)[index],
                                     title: item.documentType,
                                     // tenantId: item.tenantId,
                                     // id: item.id,
                                 };
                             });
-    
 
                         dispatch(
                             prepareFinalObject(

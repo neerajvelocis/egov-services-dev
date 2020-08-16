@@ -102,9 +102,9 @@ export const applicantSummary = getCommonGrayCard({
           hasAddItem: false,
           isReviewPage: true,
           sourceJsonPath: "Booking",
-          prefixSourceJsonPath:
-              "children.cardContent.children.applicantContainer.children",
-          afterPrefixJsonPath: "children.value.children.key",
+        //   prefixSourceJsonPath:
+        //       "children.cardContent.children.applicantContainer.children",
+        //   afterPrefixJsonPath: "children.value.children.key",
       },
       type: "array",
   },

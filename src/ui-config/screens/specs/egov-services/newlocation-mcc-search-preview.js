@@ -28,7 +28,7 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { applicantSummary } from "./searchResource/newLocApplicantSummary";
+import { newLocApplicantSummary } from "./searchResource/newLocApplicantSummary";
 import { openSpaceSummary } from "./searchResource/newLocOpenSpaceSummary";
 //import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/newLocDocumentsSummary";
@@ -42,7 +42,7 @@ import {
     getUserInfo,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
-    getSearchResultsView
+    getSearchResultsViewForNewLocOswmcc
 } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
 
@@ -139,13 +139,13 @@ const setSearchResponse = async (
     applicationNumber,
     tenantId
 ) => {
-    const response = await getSearchResultsView([
+    const response = await getSearchResultsViewForNewLocOswmcc([
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },
     ]);
-    let recData = get(response, "bookingsModelList", []);
+    let recData = get(response, "osujmNewLocationModelList", []);
     dispatch(
-        prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
+        prepareFinalObject("locationBooking", recData.length > 0 ? recData[0] : {})
     );
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
@@ -153,21 +153,21 @@ const setSearchResponse = async (
 
     bookingStatus = get(
         state,
-        "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
+        "screenConfiguration.preparedFinalObject.locationBooking.bkApplicationStatus",
         {}
     );
-    if(bookingStatus === "APPROVED"){
-        await generageBillCollection(state, dispatch, applicationNumber, tenantId)
-    } else {
-        await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
-    }
+    // if(bookingStatus === "APPROVED"){
+    //     await generageBillCollection(state, dispatch, applicationNumber, tenantId)
+    // } else {
+    //     await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
+    // }
     
 
     
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
 
-    prepareDocumentsView(state, dispatch);
+    // prepareDocumentsView(state, dispatch);
 
     const CitizenprintCont = footerReviewTop(
         action,
@@ -288,7 +288,7 @@ const screenConfig = {
                 
                 body: getCommonCard({
                     //estimateSummary: estimateSummary,
-                    applicantSummary : applicantSummary,
+                    newLocApplicantSummary : newLocApplicantSummary,
                     openSpaceSummary: openSpaceSummary,
                     documentsSummary: documentsSummary,
                     remarksSummary: remarksSummary,
