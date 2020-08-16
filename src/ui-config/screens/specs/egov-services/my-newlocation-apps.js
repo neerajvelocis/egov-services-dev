@@ -11,7 +11,7 @@ import {
 const header = getCommonHeader(
   {
     labelName: "My New Location Applications",
-    labelKey: "MY_BK_APPLICATIONS_HEADER",
+    labelKey: "BK_OSWMCC_MY_LOCATION_REQUESTS",
   },
   {
     classes: {

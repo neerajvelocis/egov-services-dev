@@ -147,9 +147,9 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
-                        // {
-                        //     name: "OSWMCC_New_Loc_Documents",
-                        // },
+                        {
+                            name: "OSWMCC_New_Loc_Documents",
+                        },
                     ],
                 },
             ],
@@ -165,39 +165,39 @@ const getMdmsData = async (action, state, dispatch) => {
             mdmsBody
         );
 
-        payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
-            active: true,
-            code: "OSWMCC_ID_PROOF",
-            description: "OSWMCC_DOCUMENT_ID_PROOF_DESCRIPTION",
-            documentType: "IDPROOF",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }, {
-            active: true,
-            code: "OSWMCC_LOCATION_IMAGE_1",
-            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-            documentType: "MCCNEWLOCATION",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }, {
-            active: true,
-            code: "OSWMCC_LOCATION_IMAGE_2",
-            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-            documentType: "MCCNEWLOCATION",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }, {
-            active: true,
-            code: "OSWMCC_LOCATION_IMAGE_3",
-            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-            documentType: "MCCNEWLOCATION",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }];
+        // payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
+        //     active: true,
+        //     code: "OSWMCC_ID_PROOF",
+        //     description: "OSWMCC_DOCUMENT_ID_PROOF_DESCRIPTION",
+        //     documentType: "IDPROOF",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: true,
+        // }, {
+        //     active: true,
+        //     code: "OSWMCC_LOCATION_IMAGE_1",
+        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+        //     documentType: "MCCNEWLOCATION",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: true,
+        // }, {
+        //     active: true,
+        //     code: "OSWMCC_LOCATION_IMAGE_2",
+        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+        //     documentType: "MCCNEWLOCATION",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: false,
+        // }, {
+        //     active: true,
+        //     code: "OSWMCC_LOCATION_IMAGE_3",
+        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+        //     documentType: "MCCNEWLOCATION",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: false,
+        // }];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -218,60 +218,50 @@ export const prepareEditFlow = async (
         setapplicationNumber(applicationNumber);
         setApplicationNumberBox(state, dispatch, applicationNumber);
 
-        // let Refurbishresponse = furnishOsbmResponse(response);
+
         dispatch(prepareFinalObject("Booking", response.osujmNewLocationModelList[0]));
 
-        let fileStoreIdsArray = Object.keys(response.documentMap);
-        let fileStoreIds = fileStoreIdsArray.join();
-        //let onlyLocationImages = Object.values(response.documentMap);
-        // console.log(fileStoreIds, "Nero File Keys");
-        // console.log(fileStoreIdsValue, "Nero File Values");
-        // let fileUrls =
-        //     fileStoreIds.length > 0
-        //         ? await getFileUrlFromAPI(fileStoreIds)
-        //         : {};
+        // let fileStoreIdsArray = Object.keys(response.documentMap);
+        // let fileStoreIds = fileStoreIdsArray.join();
 
-        let onlyLocationImages = Object.entries(response.documentMap);
-        // console.log(fileEntriesArray, "File Entries");
-        //let imagesAndPdfs = [];
-        // for (let i = 0; i < fileEntriesArray.length; i++) {
-        /* let fileLinks = getFileUrlFromAPI([fileEntriesArray[i][0]])
-             .then(
-                 (results) => {
-                     console.log(Object.values(results), "Nero Array");
-                     return Object.values(results)[0];
-                 }
-             );
-         console.log(fileLinks, "File Links");
-         imagesAndPdfs.push({
-             fileUrl: fileLinks,
-             fileName: fileEntriesArray[i][1],
-             fileStoreId: fileEntriesArray[i][0]
-         }
-         )
-         */
+        // let onlyLocationImages = Object.entries(response.documentMap);
+        // const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+        // let newLocationImagesPreview = [];
+        // onlyLocationImages && onlyLocationImages.forEach((item, index) => {
+        //     newLocationImagesPreview[index] = {
+        //         fileName:item[1] ||
+        //             `Document - ${index + 1}`,
+        //         fileStoreId: item[0],
+        //         fileUrl: Object.values(fileUrlPayload)[
+        //             index
+        //         ],
+        //         title: item.documentType,
 
-        // let fileStoreIds = onlyLocationImages && onlyLocationImages
-        //     .map((item) => item.fileStoreId)
-        //     .join(",");
+        //     };
+        // });
+        let bookingDocs = response.documentList;
+        if (bookingDocs.length > 0) {
+            let fileStoreIds = bookingDocs.map(e => e.fileStoreId).join(",");
 
-        const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
-        let newLocationImagesPreview = [];
-        onlyLocationImages && onlyLocationImages.forEach((item, index) => {
-            newLocationImagesPreview[index] = {
-                fileName:item[1] ||
-                    `Document - ${index + 1}`,
-                fileStoreId: item[0],
-                fileUrl: Object.values(fileUrlPayload)[
-                    index
-                ],
-                title: item.documentType,
-                
-            };
-        });
+            //let onlyLocationImages = Object.entries(response.documentMap);
+            const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+            let newLocationImagesPreview = [];
+            bookingDocs && bookingDocs.forEach((item, index) => {
 
-        dispatch(prepareFinalObject("documentsUploadReduxOld.documents", newLocationImagesPreview));
-      
+                newLocationImagesPreview[index] = {
+                    fileName: item.fileName ||
+                        `Document - ${index + 1}`,
+                    fileStoreId: item.fileStoreId,
+                    fileUrl: Object.values(fileUrlPayload)[index].split(",")[0],
+                    documentType: item.documentType,
+
+                };
+
+            });
+            let part1 = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.documentType == "IDPROOF");
+            let part2 = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.documentType != "IDPROOF");
+            dispatch(prepareFinalObject("documentsUploadReduxOld.documents", part1.concat(part2)));
+        }
         console.log("hereitis")
 
 

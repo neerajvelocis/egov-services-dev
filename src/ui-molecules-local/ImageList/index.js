@@ -8,7 +8,8 @@ class ImageList extends Component {
     render() {
         let style = {
             display: "inline-block",
-            marginRight: "20px"
+            marginRight: "20px",
+            height: "154px !important"
         }
         const { data } = this.props;
 

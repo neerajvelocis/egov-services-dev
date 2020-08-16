@@ -164,7 +164,6 @@ export const getSearchResultsViewForNewLocOswmcc = async (queryObject) => {
                 mobileNumber: "",
                 fromDate: "",
                 toDate: "",
-                bookingType: "",
                 uuid: JSON.parse(getUserInfo()).uuid,
             }
         );
