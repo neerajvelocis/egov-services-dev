@@ -352,7 +352,7 @@ class BookingCalendar extends React.Component {
                             </button>
 
                         )}</span>
-                    {from && !to && <span >** Please click same day for booking single Date.</span>}
+                    {from && !to && <span>** Please click same day for booking single Date.</span>}
                 </div>
                 <Helmet>
                     <style>{`
