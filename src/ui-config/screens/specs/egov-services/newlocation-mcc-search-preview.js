@@ -139,7 +139,7 @@ const setSearchResponse = async (
     ]);
     let recData = get(response, "osujmNewLocationModelList", []);
     dispatch(
-        prepareFinalObject("locationBooking", recData.length > 0 ? recData[0] : {})
+        prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentList", {}))
