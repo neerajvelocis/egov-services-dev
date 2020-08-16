@@ -7,7 +7,7 @@ import {
   prepareFinalObject,
   handleScreenConfigurationFieldChange as handleField,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 const header = getCommonHeader(
   {
     labelName: "My Applications",
@@ -74,17 +74,17 @@ const getMdmsData = async (action, state, dispatch) => {
     );
     // console.log(payload.MdmsRes, "mdmsRes");
     payload.MdmsRes.Booking.bookingType = [
-      {id : 1, code:'OSBM', tenantId : 'ch.chandigarh', name : "Open Space", active : true},
-      {id : 2, code:'WATER_TANKERS', tenantId : 'ch.chandigarh', name : 'Water Tankers', active : true}
+      { id: 1, code: 'OSBM', tenantId: 'ch.chandigarh', name: "Open Space", active: true },
+      { id: 2, code: 'WATER_TANKERS', tenantId: 'ch.chandigarh', name: 'Water Tankers', active: true }
     ]
     payload.MdmsRes.Booking.applicationStatus = [
-      {id : 1, code:'PENDINGAPPROVAL', tenantId : 'ch.chandigarh', name : "PENDINGAPPROVAL", active : true},
-      {id : 2, code:'PENDINGPAYMENT', tenantId : 'ch.chandigarh', name : 'PENDINGPAYMENT', active : true},
-      {id : 3, code:'REJECTED', tenantId : 'ch.chandigarh', name : 'REJECTED', active : true},
-      {id : 4, code:'APPROVED', tenantId : 'ch.chandigarh', name : 'APPROVED', active : true},
-      {id : 5, code:'PENDINGASSIGNMENTDRIVER', tenantId : 'ch.chandigarh', name : 'PENDINGASSIGNMENTDRIVER', active : true},
-      {id : 6, code:'DELIVERED', tenantId : 'ch.chandigarh', name : 'DELIVERED', active : true},
-      {id : 7, code:'NOTDELIVERED', tenantId : 'ch.chandigarh', name : 'NOTDELIVERED', active : true},
+      { id: 1, code: 'PENDINGAPPROVAL', tenantId: 'ch.chandigarh', name: "PENDINGAPPROVAL", active: true },
+      { id: 2, code: 'PENDINGPAYMENT', tenantId: 'ch.chandigarh', name: 'PENDINGPAYMENT', active: true },
+      { id: 3, code: 'REJECTED', tenantId: 'ch.chandigarh', name: 'REJECTED', active: true },
+      { id: 4, code: 'APPROVED', tenantId: 'ch.chandigarh', name: 'APPROVED', active: true },
+      { id: 5, code: 'PENDINGASSIGNMENTDRIVER', tenantId: 'ch.chandigarh', name: 'PENDINGASSIGNMENTDRIVER', active: true },
+      { id: 6, code: 'DELIVERED', tenantId: 'ch.chandigarh', name: 'DELIVERED', active: true },
+      { id: 7, code: 'NOTDELIVERED', tenantId: 'ch.chandigarh', name: 'NOTDELIVERED', active: true },
     ]
     dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
   } catch (e) {
@@ -92,20 +92,73 @@ const getMdmsData = async (action, state, dispatch) => {
   }
 };
 
-
+const callBackForMyNewLocationApps = async (state, dispatch) => {
+  const myNewLocationAppsURL = `/egov-services/my-newlocation-apps`;
+  dispatch(setRoute(myNewLocationAppsURL));
+};
 const screenConfig = {
   uiFramework: "material-ui",
   name: "my-applications",
   beforeInitScreen: (action, state, dispatch) => {
     // setapplicationType("MyBooking");
-    getMdmsData(action, state, dispatch) .then((response) => {
+    getMdmsData(action, state, dispatch).then((response) => {
       // prepareDocumentsUploadData(state, dispatch, "apply_osbm");
-        fetchData(action, state, dispatch);
+      fetchData(action, state, dispatch);
     });
     return action;
   },
   components: {
-    header,
+    header: {
+      uiFramework: "custom-atoms",
+      componentPath: "Container",
+      props: {
+        style: { marginBottom: "10px" },
+      },
+      children: {
+        header: {
+          gridDefination: {
+            xs: 8,
+          },
+          ...getCommonSubHeader({
+            labelName: "My Applications",
+            labelKey: "MY_BK_APPLICATIONS_HEADER",
+          }),
+        },
+        addNewLocButton: {
+          componentPath: "Button",
+          props: {
+            variant: "contained",
+            color: "primary",
+            style: {
+              // marginTop: "-10px",
+              marginRight: "-18px",
+            },
+          },
+          gridDefination: {
+            xs: 4,
+            align: "right",
+          },
+          children: {
+            // editIcon: {
+            //     uiFramework: "custom-atoms",
+            //     componentPath: "Icon",
+            //     props: {
+            //         iconName: "edit",
+            //     },
+            // },
+            buttonLabel: getLabel({
+              labelName: "My New Location Requests",
+              labelKey: "BK_OSWMCC_MY_LOCATION_REQUESTS",
+            }),
+          },
+          onClickDefination: {
+            action: "condition",
+            callBack: callBackForMyNewLocationApps,
+          },
+          visible: true,
+        },
+      },
+    },
     div: {
       uiFramework: "custom-atoms",
       componentPath: "Div",

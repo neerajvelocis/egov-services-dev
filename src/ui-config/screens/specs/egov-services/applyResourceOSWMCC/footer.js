@@ -37,19 +37,20 @@ const callBackForNext = async (state, dispatch) => {
     let hasFieldToaster = true;
 
     let validatestepformflag = validatestepform(activeStep + 1);
-
     isFormValid = validatestepformflag[0];
     hasFieldToaster = validatestepformflag[1];
+
     if (activeStep === 2 && isFormValid != false) {
+
         // prepareDocumentsUploadData(state, dispatch);
         let response = await createUpdateOSWMCCNewLocation(
             state,
             dispatch,
             "INITIATE"
         );
-        console.log(response, "myResponse Nero");
+        
         let responseStatus = get(response, "status", "");
-        console.log(responseStatus, response.status, "Response status");
+        
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
 
             let tenantId = getTenantId().split(".")[0];
@@ -68,14 +69,6 @@ const callBackForNext = async (state, dispatch) => {
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-
-            // await generateBill(
-            //     state,
-            //     dispatch,
-            //     applicationNumber,
-            //     tenantId,
-            //     businessService
-            // );
 
             // GET DOCUMENT DATA FOR DOWNLOAD
             const uploadedDocData = get(

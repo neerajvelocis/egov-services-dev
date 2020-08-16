@@ -154,7 +154,7 @@ export const getSearchResultsViewForNewLocOswmcc = async (queryObject) => {
         console.log('Neero OSWMMCC');
         const response = await httpRequest(
             "post",
-            "/bookings/api/citizen/_search",
+            "/bookings/newLocation/citizen/osujm/_search",
             "",
             [],
             {
@@ -965,6 +965,8 @@ export const createUpdateOSWMCCApplication = async (state, dispatch, action) => 
             "screenConfiguration.preparedFinalObject.documentsUploadRedux",
             {}
         );
+
+
         let bookingDocuments = [];
         let otherDocuments = [];
 
@@ -989,12 +991,13 @@ export const createUpdateOSWMCCApplication = async (state, dispatch, action) => 
             }
         });
 
+
         set(payload, "wfDocuments", bookingDocuments);
         set(payload, "bkBookingType", "JURISDICTION");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "OSUJM");
-        set(payload, "bkAreaRequired", "55");
+        // set(payload, "bkAreaRequired", payload.bkAreaRequired);
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {
@@ -3183,6 +3186,29 @@ export const UpdateStatus = async (dispatch, url, queryObject, code) => {
             );
             //dispatch(setRoute(url))
         }
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+};
+
+
+export const getNewLocationsSearchResults = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "/bookings/newLocation/citizen/osujm/_search",
+            "",
+            [],
+            queryObject
+        );
+        console.log(response, "New Locationsyoyo")
+        return response;
     } catch (error) {
         store.dispatch(
             toggleSnackbar(
