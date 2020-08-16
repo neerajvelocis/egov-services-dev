@@ -108,7 +108,7 @@ export const paymentSuccessFooter = (
                     );
                 },
             },
-            visible: (businessService === "OSBM" || businessService === "GFCP") ? true : false
+            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM") ? true : false
         },
         gotoHome: {
             componentPath: "Button",
@@ -358,11 +358,11 @@ const setApplicationDataForNewLocOSWMCC = async (dispatch, applicationNumber, te
 
 
     const response = await getSearchResultsViewForNewLocOswmcc(queryObject);
-    //let tempData = {"applicationNumber":"CH-BK-2020-08-12-000838","bookingsRemarks":null,"applicantName":"Sumit Kumar","applicantAddress":"Shahberi, Gr Noida","areaRequirement":"4644","sector":"SECTOR-1","localityAddress":"New Guar CHok ","landmark":"Cricket Ground","location":null,"contact":"9138912806","idProof":"Adhar","mailAddress":"neeraj@gmail.com","tenantId":"ch","businessService":"NLUJM","action":"INITIATE","applicationStatus":"INITIATED","dateCreated":"2020-08-12","wfDocuments":null,"assignee":null}}
+    
     let tempdata = { "applicationNumber": "CH-BK-2020-08-12-000838", "bookingsRemarks": null, "applicantName": "Sumit Kumar", "applicantAddress": "Shahberi, Gr Noida", "areaRequirement": "4644", "sector": "SECTOR-1", "localityAddress": "New Guar CHok ", "landmark": "Cricket Ground", "location": "Cri", "contact": "9138912806", "idProof": "Adhar", "mailAddress": "neeraj@gmail.com", "tenantId": "ch", "businessService": "NLUJM", "action": "INITIATE", "applicationStatus": "INITIATED", "dateCreated": "2020-08-12", "wfDocuments": null, "assignee": null };
     dispatch(
-        //prepareFinalObject("Booking", get(response, "bookingsModelList[0]", []))
-        prepareFinalObject("Booking", tempdata, [])
+        prepareFinalObject("Booking", get(response, "osujmNewLocationModelList[0]", []))
+        //prepareFinalObject("Booking", tempdata, [])
     );
 };
 

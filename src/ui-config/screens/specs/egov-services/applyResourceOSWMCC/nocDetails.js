@@ -14,14 +14,18 @@ import {
     prepareFinalObject,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
+import set from "lodash/set";
 import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
     furnishNocResponse,
     getSearchResults,
 } from "../../../../../ui-utils/commons";
-
+import {
+    getPerDayRateOSWMCC
+} from "../../../../screens/specs/utils";
+import { perDayRateSummary } from "../summaryResource/perDayRateSummaryBookingOSWMCC";
 export const personalDetails = getCommonCard({
-    
+
     personalDetailsContainer: getCommonContainer({
         applicantName: {
             ...getTextField({
@@ -75,7 +79,7 @@ export const personalDetails = getCommonCard({
                 jsonPath: "Booking.contact",
             }),
         },
-        
+
         applicantAddress: {
             ...getTextField({
                 label: {
@@ -109,8 +113,6 @@ export const personalDetails = getCommonCard({
 });
 
 export const bookingDetails = getCommonCard({
-    
-
     applicationDetailsConatiner: getCommonContainer({
         sector: {
             ...getSelectField({
@@ -123,7 +125,7 @@ export const bookingDetails = getCommonCard({
                     labelName: "Select Locality",
                     labelKey: "BK_OSWMCC_LOC_SECTOR_PLACEHOLDER",
                 },
-                
+
                 sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "Booking.sector",
                 required: true,
@@ -188,15 +190,75 @@ export const bookingDetails = getCommonCard({
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
+                maxLength: 3,
                 jsonPath: "Booking.areaRequirement",
                 props: {
                     required: true,
                     helperText: "custom helper text",
+
                 },
             }),
+            beforeFieldChange: async (action, state, dispatch) => {
+                if (action.value) {
+
+                    const sector = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.Booking.sector"
+                    );
+
+                    let response = await getPerDayRateOSWMCC(
+                        sector,
+                        action.value
+                    );
+                    let responseStatus = get(response, "status", "");
+                    if (
+                        responseStatus == "SUCCESS" ||
+                        responseStatus == "success"
+                    ) {
+                        set(
+                            state.screenConfiguration.screenConfig["applyNewLocationUnderMCC"],
+                            "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.venuebasedSummary.visible",
+                            true
+                        );
+                        
+                        response.data.displayArea = response.data.areaFrom +" - "+ response.data.areaTo;
+                        dispatch(
+                            prepareFinalObject("perDayRate", response.data)
+                        );
+                    } else {
+                        let errorMessage = {
+                            labelName:
+                                "Something went wrong, Try Again later!",
+                            labelKey: "", //UPLOAD_FILE_TOAST
+                        };
+                        dispatch(
+                            toggleSnackbar(true, errorMessage, "error")
+                        );
+                    }
+                }
+
+            }
+        },
+        venuebasedSummary: {
+            uiFramework: "custom-atoms",
+            componentPath: "Card",
+            props: {
+                style: {
+                    width: "100%",
+                    margin: "24px 0 0",
+                    backgroundColor: "#fff",
+                    padding: "0 24px 24px",
+                    
+                },
+            },
+            children: {
+                perDayRateSummary,
+
+            },
+            visible: false,
         }
-        
-        
-        
+
+
+
     }),
 });

@@ -1,6 +1,7 @@
 import {
     getCommonContainer,
     getCommonHeader,
+    getLabel
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     getCurrentFinancialYear,
@@ -11,6 +12,9 @@ import {
     checkAvailabilitySearch,
     checkAvailabilityCalendar,
 } from "./checkAvailabilityForm_oswmcc";
+import { ImageLocationSummary } from "./summaryResource/imagesOfNewLocationOswmcc";
+import { perDayRateSummary } from "./summaryResource/perDayRateSummaryBookingOSWMCC";
+import { showHideAdhocPopup } from "../utils";
 import {
     setapplicationNumber,
     lSRemoveItemlocal,
@@ -19,9 +23,9 @@ import {
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     prepareFinalObject,
+    handleScreenConfigurationFieldChange as handleField,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import set from "lodash/set";
 import {
     getFileUrlFromAPI,
     getQueryArg,
@@ -30,8 +34,10 @@ import {
     getSearchResultsView,
     setApplicationNumberBox,
 } from "../../../../ui-utils/commons";
-import { getAvailabilityData, getBetweenDays } from "../utils";
+import { getAvailabilityDataOSWMCC, getBetweenDays } from "../utils";
 import { httpRequest } from "../../../../ui-utils";
+import get from "lodash/get";
+import set from "lodash/set";
 
 // const getMdmsData = async (action, state, dispatch) => {
 //     try {
@@ -73,7 +79,6 @@ import { httpRequest } from "../../../../ui-utils";
 //     }
 // };
 
-
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
     let mdmsBody = {
@@ -100,28 +105,27 @@ const getMdmsData = async (action, state, dispatch) => {
         },
     };
     try {
-        let payload = null;
-        payload = await httpRequest(
+        let payloadMdms = null;
+        payloadMdms = await httpRequest(
             "post",
             "/egov-mdms-service/v1/_search",
             "_search",
             [],
             mdmsBody
-		);
-        dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-const getVenueData = async (action, state, dispatch) => {
-    try {
-        let payload = null;
-        payload = await httpRequest(
-            "post",
-            "/bookings/newLocation/citizen/osujm/_all",
         );
-        dispatch(prepareFinalObject("applyScreenMdmsData.Booking.sectorWiselocationsObject", payload.osujmNewlocationMap));
+
+        let payloadLocation = null;
+        payloadLocation = await httpRequest(
+            "post",
+            "/bookings/newLocation/citizen/osujm/_all"
+        );
+        dispatch(prepareFinalObject("applyScreenMdmsData", payloadMdms.MdmsRes));
+        dispatch(
+            prepareFinalObject(
+                "applyScreenMdmsData.Booking.sectorWiselocationsObject",
+                payloadLocation.osujmNewlocationMap
+            )
+        );
     } catch (e) {
         console.log(e);
     }
@@ -149,8 +153,52 @@ const prepareEditFlow = async (
             )
         );
 
-        let availabilityData = await getAvailabilityData(
-            response.bookingsModelList[0].bkSector
+        const bkSector = response.bookingsModelList[0].bkSector
+        const bkBookingVenue  = response.bookingsModelList[0].bkBookingVenue 
+        let sectorWiselocationsObject = get(
+            state.screenConfiguration.preparedFinalObject,
+            "applyScreenMdmsData.Booking.sectorWiselocationsObject"
+        );
+    
+        // get(
+        //     action.screenConfig,
+        //     "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+        //     true
+        // );
+        console.log(bkSector, "bkSector");
+        console.log(bkBookingVenue, "bkBookingVenue");
+        console.log(sectorWiselocationsObject, "sectorWiselocationsObject");
+        const venueList = get(sectorWiselocationsObject, bkSector);
+        console.log(venueList, "venueListNew");
+        venueList !== undefined && dispatch(
+            prepareFinalObject(
+                "applyScreenMdmsData.Booking.venueList",
+                venueList 
+            )
+        );
+        dispatch(
+            handleField(
+                "checkavailability_oswmcc",
+                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                "props.disabled",
+                false
+            )
+        );
+
+        dispatch(
+            handleField(
+                "checkavailability_oswmcc",
+                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                "props.value",
+                bkBookingVenue === undefined ? null : bkBookingVenue
+            )
+        );
+
+
+
+        let availabilityData = await getAvailabilityDataOSWMCC(
+            response.bookingsModelList[0].bkSector,
+            response.bookingsModelList[0].bkBookingVenue
         );
 
         if (availabilityData !== undefined) {
@@ -181,23 +229,23 @@ const prepareEditFlow = async (
             );
         }
 
-        // let fileStoreIds = Object.keys(response.documentMap);
-        // let fileStoreIdsValue = Object.values(response.documentMap);
-        // if (fileStoreIds.length > 0) {
-        //     let fileUrls =
-        //         fileStoreIds.length > 0
-        //             ? await getFileUrlFromAPI(fileStoreIds)
-        //             : {};
-        //     dispatch(
-        //         prepareFinalObject("documentsUploadReduxOld.documents", [
-        //             {
-        //                 fileName: fileStoreIdsValue[0],
-        //                 fileStoreId: fileStoreIds[0],
-        //                 fileUrl: fileUrls[fileStoreIds[0]],
-        //             },
-        //         ])
-        //     );
-        // }
+        let fileStoreIds = Object.keys(response.documentMap);
+        let fileStoreIdsValue = Object.values(response.documentMap);
+        if (fileStoreIds.length > 0) {
+            let fileUrls =
+                fileStoreIds.length > 0
+                    ? await getFileUrlFromAPI(fileStoreIds)
+                    : {};
+            dispatch(
+                prepareFinalObject("documentsUploadReduxOld.documents", [
+                    {
+                        fileName: fileStoreIdsValue[0],
+                        fileStoreId: fileStoreIds[0],
+                        fileUrl: fileUrls[fileStoreIds[0]],
+                    },
+                ])
+            );
+        }
     }
 };
 const header = getCommonContainer({
@@ -214,6 +262,7 @@ const header = getCommonContainer({
         },
         visible: false,
     },
+    
 });
 
 const screenConfig = {
@@ -225,96 +274,23 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch).then((response) => {
-            getVenueData(action, state, dispatch)
-            // const sectorWiselocationsObject = {
-            //     "SECTOR-17": [
-            //         {
-            //             id: 1,
-            //             code: "RamLila Ground",
-            //             tenantId: "ch.chandigarh",
-            //             name: "RamLila_Ground",
-            //             active: true,
-            //         },
-            //         {
-            //             id: 2,
-            //             code: "Mohalla RamKishan",
-            //             tenantId: "ch.chandigarh",
-            //             name: "Mohalla_RamKishan",
-            //             active: true,
-            //         },
-            //         {
-            //             id: 2,
-            //             code: "Guard Enclave",
-            //             tenantId: "ch.chandigarh",
-            //             name: "Guard_Enclave",
-            //             active: true,
-            //         },
-            //     ],
-            //     "EG_SECTOR_34": [
-            //         {
-            //             id: 1,
-            //             code: "Choda Mod",
-            //             tenantId: "ch.chandigarh",
-            //             name: "Choda Mod",
-            //             active: true,
-            //         },
-            //         {
-            //             id: 2,
-            //             code: "Pari Chok",
-            //             tenantId: "ch.chandigarh",
-            //             name: "pari_chok",
-            //             active: true,
-            //         },
-            //         {
-            //             id: 2,
-            //             code: "Cricket Ground",
-            //             tenantId: "ch.chandigarh",
-            //             name: "Cricket_Ground",
-            //             active: true,
-            //         },
-            //     ],
-            //     "MANIMAJRA": [
-            //         {
-            //             id: 1,
-            //             code: "kakrala",
-            //             tenantId: "ch.chandigarh",
-            //             name: "kakrala",
-            //             active: true,
-            //         },
-            //         {
-            //             id: 2,
-            //             code: "Buldapur",
-            //             tenantId: "ch.chandigarh",
-            //             name: "Buldapur",
-            //             active: true,
-            //         },
-            //         {
-            //             id: 2,
-            //             code: "Ithera",
-            //             tenantId: "ch.chandigarh",
-            //             name: "Ithera",
-            //             active: true,
-            //         },
-            //     ],
-            // };
-            // dispatch(
-            //     prepareFinalObject(
-            //         "applyScreenMdmsData.Booking.sectorWiselocationsObject",
-            //         sectorWiselocationsObject
-            //     )
-            // );
+        getMdmsData(action, state, dispatch).then(response => {
+            if (applicationNumber !== null) {
+                set(
+                    action.screenConfig,
+                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                    true
+                );
+                prepareEditFlow(
+                    state,
+                    dispatch,
+                    applicationNumber,
+                    tenantId
+                );
+            }
         });
 
-        if (applicationNumber !== null) {
-            set(
-                action.screenConfig,
-                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                true
-            );
-            prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        }
-
+        
 
         return action;
     },
@@ -340,8 +316,42 @@ const screenConfig = {
                         },
                     },
                 },
-                checkAvailabilitySearch,
-                checkAvailabilityCalendar,
+                checkAvailabilitySearch: checkAvailabilitySearch,
+                checkAvailabilityCalendar: checkAvailabilityCalendar,
+                adhocDialog: {
+                    uiFramework: "custom-containers-local",
+                    moduleName: "egov-services",
+                    componentPath: "DialogContainer",
+                    props: {
+                        open: false,
+                        maxWidth: "lg",
+                        screenKey: "checkavailability_oswmcc",
+                    },
+                    children: {
+                        popup: getCommonContainer({
+                            venuebasedSummary: {
+                                uiFramework: "custom-atoms",
+                                componentPath: "Card",
+                                props: {
+                                    style: {
+                                        width: "100%",
+                                        margin: "24px 0 0",
+                                        backgroundColor: "#fff",
+                                        padding: "0 24px 24px",
+                                        // borderRadius: 0,
+                                        // boxShadow: "none",
+                                        // overflow: "visible",
+                                    },
+                                },
+                                children: {
+                                    perDayRateSummary,
+                                    ImageLocationSummary,
+                                },
+                                // visible: false,
+                            },
+                        }),
+                    },
+                },
             },
         },
     },

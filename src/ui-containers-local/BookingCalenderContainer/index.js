@@ -17,7 +17,6 @@ const styles = theme => ({
 class BookingCalenderContainer extends Component {
   render() {
     const { ...rest } = this.props;
-    console.log(this.props, "my props container");
     return <BookingCalendar {...rest} />;
   }
 }

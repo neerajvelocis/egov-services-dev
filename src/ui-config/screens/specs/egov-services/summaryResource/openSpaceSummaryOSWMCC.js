@@ -7,7 +7,7 @@ import {
     getLabelWithValue,
     convertEpochToDate,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { gotoApplyWithStep } from "../../utils/index";
+import { convertDateInDMY } from "../../utils";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
 
 export const openSpaceSummaryOSWMCC = getCommonGrayCard({
@@ -45,6 +45,13 @@ export const openSpaceSummaryOSWMCC = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkFromDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     toDate: getLabelWithValue(
@@ -54,6 +61,13 @@ export const openSpaceSummaryOSWMCC = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkToDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     sector: getLabelWithValue(

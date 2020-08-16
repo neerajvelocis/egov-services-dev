@@ -10,6 +10,12 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 
 import {
+    getCurrentFinancialYear,
+    clearlocalstorageAppDetails,
+    convertDateInDMY,
+} from "../../utils";
+
+import {
     handleScreenConfigurationFieldChange as handleField,
     prepareFinalObject,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -145,7 +151,10 @@ export const bookingDetails = getCommonCard({
               //pattern: getPattern("NoOfEmp"),
               errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
               jsonPath: "Booking.bkFromDate",
-            })
+            }),
+            // beforeFieldChange: (action, state, dispatch) => {
+            //   return convertDateInDMY(action.value)
+            // },
           },
           todate: {
             ...getTextField({

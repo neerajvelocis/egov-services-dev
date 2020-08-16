@@ -28,11 +28,11 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { openSpaceSummaryOSWMCC } from "./summaryResource/openSpaceSummaryOSWMCC";
-import { applicantSummary } from "./summaryResource/applicantSummaryBookingOSWMCC";
-import { documentsSummary } from "./summaryResource/documentsSummary";
-import { estimateSummary } from "./summaryResource/estimateSummary";
-import { remarksSummary } from "./searchResource/remarksSummary";
+import { applicantSummary } from "./searchResource/newLocApplicantSummary";
+import { openSpaceSummary } from "./searchResource/newLocOpenSpaceSummary";
+//import { estimateSummary } from "./searchResource/estimateSummary";
+import { documentsSummary } from "./searchResource/newLocDocumentsSummary";
+import { remarksSummary } from "./searchResource/newLocRemarksSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
     footerReviewTop,
@@ -81,7 +81,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "OSUJM_DOCUMENT",
+            title: "DOC_DOC_PICTURE",
             fileStoreId: id,
             linkText: "View",
         });
@@ -156,14 +156,14 @@ const setSearchResponse = async (
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
-    if (bookingStatus === "APPROVED") {
+    if(bookingStatus === "APPROVED"){
         await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     }
+    
 
-
-
+    
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
 
@@ -188,33 +188,33 @@ const setSearchResponse = async (
 
 const getPaymentGatwayList = async (action, state, dispatch) => {
     try {
-        let payload = null;
-        payload = await httpRequest(
-            "post",
-            "/pg-service/gateway/v1/_search",
-            "_search",
-            [],
-            {}
-        );
+      let payload = null;
+      payload = await httpRequest(
+        "post",
+        "/pg-service/gateway/v1/_search",
+        "_search",
+        [],
+        {}
+      );
         let payloadprocess = [];
         for (let index = 0; index < payload.length; index++) {
-            const element = payload[index];
-            let pay = {
-                element: element
-            }
-            payloadprocess.push(pay);
+          const element = payload[index];
+          let pay = {
+            element : element
+          }
+          payloadprocess.push(pay);
         }
-
-        dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
+  
+      dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
     } catch (e) {
-        console.log(e);
+      console.log(e);
     }
 };
 
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "openspace-mcc-search-preview",
+    name: "booking-search-preview",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -234,7 +234,7 @@ const screenConfig = {
         });
         const queryObject = [
             { key: "tenantId", value: tenantId },
-            { key: "businessServices", value: "GFCP" },
+            { key: "businessServices", value: "OSBM" },
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
 
@@ -278,20 +278,22 @@ const screenConfig = {
                   uiFramework: "custom-containers-local",
                   componentPath: "WorkFlowContainer",
                   moduleName: "egov-services",
-                  visible:  true,
-                  props: {
-                    // dataPath: "Licenses",
-                    // moduleName: "SELLMEATNOC",
-                  },
+                //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+                  visible: true,
+                //   props: {
+                //     dataPath: "Booking",
+                //     moduleName: "MyBooking",
+                //   },
                 },
+                
                 body: getCommonCard({
-                    estimateSummary: estimateSummary,
-                    applicantSummary: applicantSummary,
-                    openSpaceSummaryOSWMCC: openSpaceSummaryOSWMCC,
+                    //estimateSummary: estimateSummary,
+                    applicantSummary : applicantSummary,
+                    openSpaceSummary: openSpaceSummary,
                     documentsSummary: documentsSummary,
                     remarksSummary: remarksSummary,
                 }),
-                // break: getBreak(),
+                break: getBreak(),
                 footer: footer,
             }
         }

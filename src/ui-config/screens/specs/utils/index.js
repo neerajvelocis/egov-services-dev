@@ -265,8 +265,8 @@ export const gotoApplyWithStep = (state, dispatch, step) => {
         process.env.REACT_APP_SELF_RUNNING === "true"
             ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
             : applicationType === "Booking"
-                ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
-                : ``;
+            ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
+            : ``;
 
     console.log(applyUrl, "applyUrl");
 
@@ -1596,23 +1596,29 @@ export const downloadReceipt = (
                         bookingPeriod:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "GFCP"
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSUJM"
                                 ? getDurationDate(
-                                    applicationData.bkFromDate,
-                                    applicationData.bkToDate
-                                )
+                                      applicationData.bkFromDate,
+                                      applicationData.bkToDate
+                                  )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem: `Online Payment Against Booking of ${
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "GFCP"
                                 ? "Commercial Ground"
                                 : payloadReceiptDetails.Payments[0]
-                                    .paymentDetails[0].bill
-                                    .businessService === "OSBM"
-                                    ? "Open Space for Building Material"
-                                    : "Water Tanker"
-                            }`,
+                                      .paymentDetails[0].bill
+                                      .businessService === "OSBM"
+                                ? "Open Space for Building Material"
+                                :payloadReceiptDetails.Payments[0]
+                                .paymentDetails[0].bill
+                                .businessService === "OSUJM"
+                          ? "Open Space within MCC jurisdiction"
+                          : "Water Tanker"
+                        }`,
                         amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                             (el) => !el.taxHeadCode.includes("TAX")
                         )[0].amount,
@@ -1627,8 +1633,10 @@ export const downloadReceipt = (
                         paymentItemExtraColumnLabel:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "GFCP"
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSUJM"
                                 ? "Booking Period"
                                 : "Date & Time",
                         paymentMode:
@@ -1696,7 +1704,7 @@ export const downloadCertificate = (
                 value:
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-pl"
-                        : "bk-cg-pl",
+                        :  applicationData.businessService == "OSUJM" ? "bk-oswmcc-booking-pl" :"bk-cg-pl",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1720,6 +1728,7 @@ export const downloadCertificate = (
                     permanentAddress: applicationData.bkCompleteAddress,
                     permanentCity: tenantId,
                     sector: applicationData.bkSector,
+                    fatherName: applicationData.bkFatherName
                 },
                 bookingDetail: {
                     applicationNumber: applicationNumber,
@@ -1739,7 +1748,10 @@ export const downloadCertificate = (
                         applicationData.bkFromDate,
                         applicationData.bkToDate
                     ),
+                    venueName : applicationData.bkBookingVenue,
+                    sector : applicationData.bkSector,
                     groundName: applicationData.bkSector,
+                    bookingPupose : applicationData.bkBookingPurpose,
                     duration:
                         applicationData.bkDuration == "1"
                             ? `${applicationData.bkDuration} Month`
@@ -1750,14 +1762,15 @@ export const downloadCertificate = (
                 },
                 approvedBy: {
                     approvedBy: "Renil Commissioner",
-                    role: "Additional Commissioner"
+                    role: "Additional Commissioner",
                 },
                 tenantInfo: {
                     municipalityName: "Municipal Corporation Chandigarh",
                     address: "New Deluxe Building, Sector 17, Chandigarh",
                     contactNumber: "+91-172-2541002, 0172-2541003",
-                    logoUrl: "https://chstage.blob.core.windows.net/fileshare/logo.png",
-                    webSite: "http://mcchandigarh.gov.in"
+                    // logoUrl:
+                    //     "https://chstage.blob.core.windows.net/fileshare/logo.png",
+                    webSite: "http://mcchandigarh.gov.in",
                 },
                 generatedBy: {
                     generatedBy: JSON.parse(getUserInfo()).name,
@@ -1800,7 +1813,6 @@ export const downloadApplication = (
         "Booking"
     );
 
-
     let paymentData = get(
         state.screenConfiguration.preparedFinalObject,
         "ReceiptTemp[0].Bill[0]"
@@ -1820,12 +1832,14 @@ export const downloadApplication = (
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
                         : applicationData.businessService == "GFCP"
-                            ? "bk-cg-app-form"
-                            : applicationData.businessService == "NLUJM"
-                                ? "bk-oswmcc-newloc-app-form"
-                                : applicationData.bkStatus.includes("Paid")
-                                    ? "bk-wt-app-form"
-                                    : "bk-wt-unpaid-app-form",
+                        ? "bk-cg-app-form"
+                        : applicationData.businessService == "NLUJM"
+                        ? "bk-oswmcc-newloc-app-form"
+                        : applicationData.businessService == "OSUJM"
+                        ? "oswmcc-booking-app-form"
+                        : applicationData.bkStatus.includes("Paid")
+                        ? "bk-wt-app-form"
+                        : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1874,7 +1888,18 @@ export const downloadApplication = (
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
         };
-        let appData = '';
+        let bookingDataOSUJM = {
+            applicationNumber: applicationNumber,
+            applicationDate: applicationData.bkDateCreated,
+            venueName: applicationData.bkBookingVenue,
+            sector : applicationData.bkSector,
+            bookingPeriod: getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            ),
+            bookingPurpose: applicationData.bkBookingPurpose,
+        }
+        let appData = "";
         if (applicationData.businessService == "NLUJM") {
             appData = [
                 {
@@ -1883,19 +1908,18 @@ export const downloadApplication = (
                         mobileNumber: applicationData.contact,
                         permanentAddress: applicationData.applicantAddress,
                         email: applicationData.mailAddress,
-
                     },
                     locationDetail: {
                         applicationNumber: applicationData.applicationNumber,
                         locality: applicationData.sector,
                         address: applicationData.localityAddress,
                         areaReq: applicationData.areaRequirement,
-                        landmark: applicationData.landmark
+                        landmark: applicationData.landmark,
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,
-                    }
-                }
+                    },
+                },
             ];
         } else {
             appData = [
@@ -1915,21 +1939,23 @@ export const downloadApplication = (
                         applicationData.businessService === "OSBM"
                             ? bookingDataOsbm
                             : applicationData.businessService === "GFCP"
-                                ? bookingDataGFCP
-                                : bookingDataWt,
+                            ? bookingDataGFCP
+                            :applicationData.businessService === "OSUJM"
+                            ? bookingDataOSUJM
+                            : bookingDataWt,
                     feeDetail: {
                         baseCharge:
                             paymentData === undefined
                                 ? null
                                 : paymentData.billDetails[0].billAccountDetails.filter(
-                                    (el) => !el.taxHeadCode.includes("TAX")
-                                )[0].amount,
+                                      (el) => !el.taxHeadCode.includes("TAX")
+                                  )[0].amount,
                         taxes:
                             paymentData === undefined
                                 ? null
                                 : paymentData.billDetails[0].billAccountDetails.filter(
-                                    (el) => el.taxHeadCode.includes("TAX")
-                                )[0].amount,
+                                      (el) => el.taxHeadCode.includes("TAX")
+                                  )[0].amount,
                         totalAmount:
                             paymentData === undefined
                                 ? null
@@ -1941,7 +1967,6 @@ export const downloadApplication = (
                 },
             ];
         }
-
 
         httpRequest(
             "post",
@@ -1986,13 +2011,16 @@ export const getAvailabilityData = async (sectorData) => {
         console.log(exception);
     }
 };
-export const getAvailabilityDataOWWMCC = async (bookingSector, bookingVenue) => {
+export const getAvailabilityDataOSWMCC = async (
+    bookingSector,
+    bookingVenue
+) => {
     let requestBody = {
         bookingType: "JURISDICTION",
-        // bkSector: bookingSector,
-        // bookingVenue : bookingVenue,
-        bkSector: "SECTOR-17",
-        bookingVenue: "RamLila Ground",
+        bkSector: bookingSector,
+        bookingVenue : bookingVenue,
+        // bkSector: "SECTOR-17",
+        // bookingVenue: "RamLila Ground",
     };
     try {
         const response = await httpRequest(
@@ -2002,12 +2030,58 @@ export const getAvailabilityDataOWWMCC = async (bookingSector, bookingVenue) => 
             [],
             requestBody
         );
-        return response;
+        return { status: "success", data: response.data };
     } catch (exception) {
         console.log(exception);
     }
 };
 
+// export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
+//     let requestBody = {
+//         Booking: {
+//             bkSector: bookingSector,
+//             bkAreaRequired: bookingArea,
+//             // bkSector: "SECTOR-17",
+//             // bkAreaRequired: "55",
+            
+//         },
+//     };
+//     try {
+//         const response = await httpRequest(
+//             "post",
+//             "bookings/osujm/fee/_search",
+//             "",
+//             [],
+//             requestBody
+//         );
+//         // return response;
+//         return { status: "success", data: response.data };
+//     } catch (exception) {
+//         console.log(exception);
+//     }
+// };
+export const getNewLocatonImages = async (bookingSector, bookingArea) => {
+    let requestBody = {
+            sector: bookingSector,
+            venue: bookingArea,
+            // bkSector: "SECTOR-17",
+            // bkAreaRequired: "55",
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/newLocation/osujm/_document",
+            "",
+            [],
+            requestBody
+        );
+        // return response;
+        console.log(response, "myNew response");
+        return { status: "success", data: response };
+    } catch (exception) {
+        console.log(exception);
+    }
+};
 export const getBetweenDays = function (start, end) {
     let arr = [];
     // let endDate = new Date(end);
@@ -2021,6 +2095,30 @@ export const getBetweenDays = function (start, end) {
     return arr;
 };
 
+export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
+    let requestBody = {
+        Booking: {
+            bkSector: bookingSector,
+            bkAreaRequired: bookingArea,
+            // bkSector: "SECTOR-17",
+            // bkAreaRequired: "55",
+            
+        },
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/osujm/fee/_search",
+            "",
+            [],
+            requestBody
+        );
+        // return response;
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
+}
 export const getTextFieldReadOnly = textScheama => {
     const {
         label = {},
