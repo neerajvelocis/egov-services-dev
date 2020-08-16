@@ -323,8 +323,10 @@ class BookingCalendar extends React.Component {
                         className="Range"
                         numberOfMonths={1}
                         initialMonth={new Date()}
-
-                        disabledDays={this.state.dselectedDays}
+                        disabledDays={{
+                            before: new Date()
+                          }} 
+                        // disabledDays={this.state.dselectedDays}
                         fromMonth={new Date()}
                         toMonth={newData}
                         modifiers={modifiers}
