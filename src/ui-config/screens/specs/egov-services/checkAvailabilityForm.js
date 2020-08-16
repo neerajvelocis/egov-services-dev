@@ -328,7 +328,7 @@ export const checkAvailabilitySearch = getCommonCard({
                     md: 6,
                 },
 
-                sourceJsonPath: "applyScreenMdmsData.sector",
+                sourceJsonPath: "applyScreenMdmsData.Booking.Booking_Vanue",
                 jsonPath: "availabilityCheckData.bkSector",
                 required: true,
                 props: {
