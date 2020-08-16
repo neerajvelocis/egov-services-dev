@@ -33,6 +33,7 @@ import { openSpaceSummary } from "./searchResource/newLocOpenSpaceSummary";
 //import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/newLocDocumentsSummary";
 import { remarksSummary } from "./searchResource/newLocRemarksSummary";
+import { ImageLocationSummary } from "./summaryResource/imagesOfNewLocationOswmcc";
 import { footer } from "./searchResource/citizenFooter";
 import {
     footerReviewTop,
@@ -74,43 +75,36 @@ const prepareDocumentsView = async (state, dispatch) => {
         {}
     );
 
-    if (Object.keys(bookingDocs).length > 0) {
-        let keys = Object.keys(bookingDocs);
-        let values = Object.values(bookingDocs);
-        let id = keys[0],
-            fileName = values[0];
+    //let fileStoreIdsArray = Object.keys(response.documentMap);
 
-        documentsPreview.push({
-            title: "DOC_DOC_PICTURE",
-            fileStoreId: id,
-            linkText: "View",
-        });
-        let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-        let fileUrls =
-            fileStoreIds.length > 0
-                ? await getFileUrlFromAPI(fileStoreIds)
-                : {};
-        documentsPreview = documentsPreview.map(function (doc, index) {
-            doc["link"] =
-                (fileUrls &&
-                    fileUrls[doc.fileStoreId] &&
-                    fileUrls[doc.fileStoreId].split(",")[0]) ||
-                "";
-            doc["name"] =
-                (fileUrls[doc.fileStoreId] &&
-                    decodeURIComponent(
-                        fileUrls[doc.fileStoreId]
-                            .split(",")[0]
-                            .split("?")[0]
-                            .split("/")
-                            .pop()
-                            .slice(13)
-                    )) ||
-                `Document - ${index + 1}`;
-            return doc;
-        });
-        dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-    }
+    //let fileStoreIds = fileStoreIdsArray.join();
+    let fileStoreIds = bookingDocs.map(e => e.fileStoreId).join(",");
+
+    //let onlyLocationImages = Object.entries(response.documentMap);
+    const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+    let newLocationImagesPreview = [];
+    bookingDocs && bookingDocs.forEach((item, index) => {
+
+        newLocationImagesPreview[index] = {
+            title: item.fileName ||
+                `Document - ${index + 1}`,
+            fileStoreId: item.fileStoreId,
+            link: Object.values(fileUrlPayload)[index].split(",")[0],
+            documentType: item.documentType,
+
+        };
+
+    });
+    let documentsAndLocImagesArray = newLocationImagesPreview;
+    let onlyDocs = documentsAndLocImagesArray && documentsAndLocImagesArray.filter(item => item.documentType == "IDPROOF");
+    onlyDocs[0].linkText = "View";
+    dispatch(prepareFinalObject("documentsPreview", onlyDocs));
+    let onlyLocationImages = documentsAndLocImagesArray && documentsAndLocImagesArray.filter(item => item.documentType != "IDPROOF");
+
+    dispatch(prepareFinalObject("mccNewLocImagesPreview", onlyLocationImages));
+
+    
+    
 };
 
 const HideshowFooter = (action, bookingStatus) => {
@@ -148,66 +142,61 @@ const setSearchResponse = async (
         prepareFinalObject("locationBooking", recData.length > 0 ? recData[0] : {})
     );
     dispatch(
-        prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
+        prepareFinalObject("BookingDocument", get(response, "documentList", {}))
     );
 
     bookingStatus = get(
         state,
-        "screenConfiguration.preparedFinalObject.locationBooking.bkApplicationStatus",
+        "screenConfiguration.preparedFinalObject.Booking.applicationStatus",
         {}
     );
-    // if(bookingStatus === "APPROVED"){
-    //     await generageBillCollection(state, dispatch, applicationNumber, tenantId)
-    // } else {
-    //     await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
-    // }
     
 
-    
-    localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
+
+    // localStorageSet("bookingStatus", bookingStatus);
+    // HideshowFooter(action, bookingStatus);
 
     // prepareDocumentsView(state, dispatch);
 
-    const CitizenprintCont = footerReviewTop(
-        action,
-        state,
-        dispatch,
-        bookingStatus,
-        applicationNumber,
-        tenantId,
-        ""
-    );
+    // const CitizenprintCont = footerReviewTop(
+    //     action,
+    //     state,
+    //     dispatch,
+    //     bookingStatus,
+    //     applicationNumber,
+    //     tenantId,
+    //     ""
+    // );
 
-    set(
-        action,
-        "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-        CitizenprintCont
-    )
+    // set(
+    //     action,
+    //     "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+    //     CitizenprintCont
+    // )
 };
 
 const getPaymentGatwayList = async (action, state, dispatch) => {
     try {
-      let payload = null;
-      payload = await httpRequest(
-        "post",
-        "/pg-service/gateway/v1/_search",
-        "_search",
-        [],
-        {}
-      );
+        let payload = null;
+        payload = await httpRequest(
+            "post",
+            "/pg-service/gateway/v1/_search",
+            "_search",
+            [],
+            {}
+        );
         let payloadprocess = [];
         for (let index = 0; index < payload.length; index++) {
-          const element = payload[index];
-          let pay = {
-            element : element
-          }
-          payloadprocess.push(pay);
+            const element = payload[index];
+            let pay = {
+                element: element
+            }
+            payloadprocess.push(pay);
         }
-  
-      dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
+
+        dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
     } catch (e) {
-      console.log(e);
+        console.log(e);
     }
 };
 
@@ -230,8 +219,8 @@ const screenConfig = {
         );
         setapplicationNumber(applicationNumber);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
-        getPaymentGatwayList(action, state, dispatch).then(response => {
-        });
+        //getPaymentGatwayList(action, state, dispatch).then(response => {
+        // });
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "OSBM" },
@@ -275,23 +264,24 @@ const screenConfig = {
                     },
                 },
                 taskStatus: {
-                  uiFramework: "custom-containers-local",
-                  componentPath: "WorkFlowContainer",
-                  moduleName: "egov-services",
-                //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
-                  visible: true,
-                //   props: {
-                //     dataPath: "Booking",
-                //     moduleName: "MyBooking",
-                //   },
+                    uiFramework: "custom-containers-local",
+                    componentPath: "WorkFlowContainer",
+                    moduleName: "egov-services",
+                    //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
+                    visible: true,
+                    //   props: {
+                    //     dataPath: "Booking",
+                    //     moduleName: "MyBooking",
+                    //   },
                 },
-                
+
                 body: getCommonCard({
                     //estimateSummary: estimateSummary,
-                    newLocApplicantSummary : newLocApplicantSummary,
+                    applicantSummary: applicantSummary,
                     openSpaceSummary: openSpaceSummary,
                     documentsSummary: documentsSummary,
-                    remarksSummary: remarksSummary,
+                    ImageLocationSummary: ImageLocationSummary
+                    //remarksSummary: remarksSummary,
                 }),
                 break: getBreak(),
                 footer: footer,

@@ -23,8 +23,8 @@ export const openSpaceSummary = getCommonGrayCard({
                     xs: 8,
                 },
                 ...getCommonSubHeader({
-                    labelName: "Applicant Details",
-                    labelKey: "MY_BK_APPLICATION_DETAILS_HEADER",
+                    labelName: "New Location Details",
+                    labelKey: "BK_OSWMCC_NEW_LOC_DETAILS",
                 }),
             },
 
@@ -45,15 +45,19 @@ export const openSpaceSummary = getCommonGrayCard({
                     jsonPath: "applicationStatus",
                 },
                 {
+                    label: "BK_OSWMCC_LOC_ADDRESS_LABEL",
+                    jsonPath: "localityAddress",
+                },
+                {
                     label: "MY_BK_COMPLETE_ADDRESS_LABEL",
                     jsonPath: "localityAddress",
                 },
                 {
-                    label: "MY_BK_PROPERTY_SECTOR_LABEL",
+                    label: "BK_OSWMCC_LOC_SECTOR_LABEL",
                     jsonPath: "sector",
                 },
                 {
-                    label: "MY_BK_STORAGE_AREA_LABEL",
+                    label: "BK_OSWMCC_LOC_AREA_REQUIRED_LABEL",
                     jsonPath: "areaRequirement",
                 }
             ],
