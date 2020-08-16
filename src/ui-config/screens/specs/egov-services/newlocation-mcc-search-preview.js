@@ -28,7 +28,7 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { newLocApplicantSummary } from "./searchResource/newLocApplicantSummary";
+import { applicantSummary } from "./searchResource/newLocApplicantSummary";
 import { openSpaceSummary } from "./searchResource/newLocOpenSpaceSummary";
 //import { estimateSummary } from "./searchResource/estimateSummary";
 import { documentsSummary } from "./searchResource/newLocDocumentsSummary";
