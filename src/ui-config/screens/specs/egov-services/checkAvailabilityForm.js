@@ -116,7 +116,7 @@ const callBackForBook = async (state, dispatch) => {
         };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
     } else {
-        if (availabilityCheckData.bkToDate === undefined || availabilityCheckData.bkToDate === "") {
+        if (availabilityCheckData.bkToDate === undefined || availabilityCheckData.bkToDate === "" || availabilityCheckData.bkToDate === null) {
             let warrningMsg = {
                 labelName: "Please select Date RANGE",
                 labelKey: "",

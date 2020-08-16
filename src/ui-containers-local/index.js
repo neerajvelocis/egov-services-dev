@@ -86,11 +86,15 @@ const BookingCalenderContainer = Loadable({
   loader: () => import("./BookingCalenderContainer"),
   loading: () => <Loading />
 });
-
+const TextFieldContainerReadOnly = Loadable({
+  loader: () => import("./TextFieldContainerReadOnly"),
+  loading: () => <Loading />
+});
 
 
 export {
   RadioGroupWithIconContainer,
+  TextFieldContainerReadOnly,
   CustomTabContainer,
   LabelContainer,
   CheckboxContainer,
