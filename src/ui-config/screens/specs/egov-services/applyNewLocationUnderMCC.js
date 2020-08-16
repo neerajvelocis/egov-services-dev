@@ -147,9 +147,9 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
-                        // {
-                        //     name: "OSWMCC_New_Loc_Documents",
-                        // },
+                        {
+                            name: "OSWMCC_New_Loc_Documents",
+                        },
                     ],
                 },
             ],
@@ -165,39 +165,39 @@ const getMdmsData = async (action, state, dispatch) => {
             mdmsBody
         );
 
-        payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
-            active: true,
-            code: "OSWMCC_ID_PROOF",
-            description: "OSWMCC_DOCUMENT_ID_PROOF_DESCRIPTION",
-            documentType: "IDPROOF",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }, {
-            active: true,
-            code: "OSWMCC_LOCATION_IMAGE_1",
-            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-            documentType: "MCCNEWLOCATION",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }, {
-            active: true,
-            code: "OSWMCC_LOCATION_IMAGE_2",
-            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-            documentType: "MCCNEWLOCATION",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }, {
-            active: true,
-            code: "OSWMCC_LOCATION_IMAGE_3",
-            description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-            documentType: "MCCNEWLOCATION",
-            dropdownData: [],
-            hasDropdown: false,
-            required: false,
-        }];
+        // payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
+        //     active: true,
+        //     code: "OSWMCC_ID_PROOF",
+        //     description: "OSWMCC_DOCUMENT_ID_PROOF_DESCRIPTION",
+        //     documentType: "IDPROOF",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: true,
+        // }, {
+        //     active: true,
+        //     code: "OSWMCC_LOCATION_IMAGE_1",
+        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+        //     documentType: "MCCNEWLOCATION",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: true,
+        // }, {
+        //     active: true,
+        //     code: "OSWMCC_LOCATION_IMAGE_2",
+        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+        //     documentType: "MCCNEWLOCATION",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: false,
+        // }, {
+        //     active: true,
+        //     code: "OSWMCC_LOCATION_IMAGE_3",
+        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
+        //     documentType: "MCCNEWLOCATION",
+        //     dropdownData: [],
+        //     hasDropdown: false,
+        //     required: false,
+        // }];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
