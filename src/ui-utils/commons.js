@@ -154,7 +154,7 @@ export const getSearchResultsViewForNewLocOswmcc = async (queryObject) => {
         console.log('Neero OSWMMCC');
         const response = await httpRequest(
             "post",
-            "/bookings/api/citizen/_search",
+            "/bookings/newLocation/citizen/osujm/_search",
             "",
             [],
             {
@@ -3183,6 +3183,29 @@ export const UpdateStatus = async (dispatch, url, queryObject, code) => {
             );
             //dispatch(setRoute(url))
         }
+    } catch (error) {
+        store.dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: error.message, labelCode: error.message },
+                "error"
+            )
+        );
+    }
+};
+
+
+export const getNewLocationsSearchResults = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "/bookings/newLocation/citizen/osujm/_search",
+            "",
+            [],
+            queryObject
+        );
+        console.log(response, "New Locationsyoyo")
+        return response;
     } catch (error) {
         store.dispatch(
             toggleSnackbar(

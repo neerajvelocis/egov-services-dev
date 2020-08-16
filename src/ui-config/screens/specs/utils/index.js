@@ -2020,3 +2020,28 @@ export const getBetweenDays = function (start, end) {
     }
     return arr;
 };
+
+export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
+    let requestBody = {
+        Booking: {
+            bkSector: bookingSector,
+            bkAreaRequired: bookingArea,
+            // bkSector: "SECTOR-17",
+            // bkAreaRequired: "55",
+            
+        },
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/osujm/fee/_search",
+            "",
+            [],
+            requestBody
+        );
+        // return response;
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
+};

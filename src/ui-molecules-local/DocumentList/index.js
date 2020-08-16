@@ -178,9 +178,12 @@ class DocumentList extends Component {
                             oldDocType != docType.code ||
                             oldDocCode != card.name
                         ) {
-                            let oldDocumentData = {
-                                documents: documentsUploadReduxOld.documents,
-                            };
+                            let oldDocumentData;
+                            if (Object.keys(documentsUploadReduxOld).length > 0) {
+                                oldDocumentData = {
+                                    documents: [documentsUploadReduxOld.documents[index]],
+                                };
+                            }
                             let newDocumentData = {
                                 documentType: docType.code,
                                 documentCode: card.name,
@@ -192,9 +195,9 @@ class DocumentList extends Component {
                             };
                             Object.keys(documentsUploadReduxOld).length > 0
                                 ? (documentsUploadRedux[index] = {
-                                      ...oldDocumentData,
-                                      ...newDocumentData,
-                                  })
+                                    ...oldDocumentData,
+                                    ...newDocumentData,
+                                })
                                 : (documentsUploadRedux[index] = { ...newDocumentData });
                         }
                         index++;
@@ -255,17 +258,17 @@ class DocumentList extends Component {
             <Grid container={true}>
                 <Grid item={true} xs={2} sm={1} className={classes.iconDiv}>
                     {documentsUploadRedux[key] &&
-                    documentsUploadRedux[key].documents ? (
-                        <div className={classes.documentSuccess}>
-                            <Icon>
-                                <i class="material-icons">done</i>
-                            </Icon>
-                        </div>
-                    ) : (
-                        <div className={classes.documentIcon}>
-                            <span>{key + 1}</span>
-                        </div>
-                    )}
+                        documentsUploadRedux[key].documents ? (
+                            <div className={classes.documentSuccess}>
+                                <Icon>
+                                    <i class="material-icons">done</i>
+                                </Icon>
+                            </div>
+                        ) : (
+                            <div className={classes.documentIcon}>
+                                <span>{key + 1}</span>
+                            </div>
+                        )}
                 </Grid>
                 <Grid
                     item={true}
@@ -314,7 +317,7 @@ class DocumentList extends Component {
                         }
                         uploaded={
                             documentsUploadRedux[key] &&
-                            documentsUploadRedux[key].documents
+                                documentsUploadRedux[key].documents
                                 ? true
                                 : false
                         }

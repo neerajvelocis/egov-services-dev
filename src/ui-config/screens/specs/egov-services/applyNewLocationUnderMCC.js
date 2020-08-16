@@ -20,6 +20,7 @@ import {
     getQueryArg,
     getTransformedLocale,
     setBusinessServiceDataToLocalStorage,
+    decodeURIComponent
 } from "egov-ui-framework/ui-utils/commons";
 import {
     prepareFinalObject,
@@ -45,9 +46,10 @@ import get from "lodash/get";
 import {
     prepareDocumentsUploadData,
     getSearchResults,
-    getSearchResultsView,
+    getNewLocationsSearchResults,
     setApplicationNumberBox,
     furnishOsbmResponse,
+    getSearchResultsViewForNewLocOswmcc
 } from "../../../../ui-utils/commons";
 
 export const stepsData = [
@@ -166,7 +168,7 @@ const getMdmsData = async (action, state, dispatch) => {
         payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
             active: true,
             code: "OSWMCC_ID_PROOF",
-            description: "OSWMCC_DOCUMENT_ID_DESCRIPTION",
+            description: "OSWMCC_DOCUMENT_ID_PROOF_DESCRIPTION",
             documentType: "IDPROOF",
             dropdownData: [],
             hasDropdown: false,
@@ -195,8 +197,7 @@ const getMdmsData = async (action, state, dispatch) => {
             dropdownData: [],
             hasDropdown: false,
             required: false,
-        }
-        ]
+        }];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -210,7 +211,7 @@ export const prepareEditFlow = async (
     tenantId
 ) => {
     if (applicationNumber) {
-        let response = await getSearchResultsView([
+        let response = await getSearchResultsViewForNewLocOswmcc([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
@@ -218,33 +219,62 @@ export const prepareEditFlow = async (
         setApplicationNumberBox(state, dispatch, applicationNumber);
 
         // let Refurbishresponse = furnishOsbmResponse(response);
-        dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
+        dispatch(prepareFinalObject("Booking", response.osujmNewLocationModelList[0]));
 
-        let fileStoreIds = Object.keys(response.documentMap);
-        let fileStoreIdsValue = Object.values(response.documentMap);
-        let fileUrls =
-            fileStoreIds.length > 0
-                ? await getFileUrlFromAPI(fileStoreIds)
-                : {};
-        dispatch(prepareFinalObject("documentsUploadReduxOld.documents", [
-            {
-                fileName: fileStoreIdsValue[0],
-                fileStoreId: fileStoreIds[0],
-                fileUrl: fileUrls[fileStoreIds[0]],
-            },
-        ]));
+        let fileStoreIdsArray = Object.keys(response.documentMap);
+        let fileStoreIds = fileStoreIdsArray.join();
+        //let onlyLocationImages = Object.values(response.documentMap);
+        // console.log(fileStoreIds, "Nero File Keys");
+        // console.log(fileStoreIdsValue, "Nero File Values");
+        // let fileUrls =
+        //     fileStoreIds.length > 0
+        //         ? await getFileUrlFromAPI(fileStoreIds)
+        //         : {};
+
+        let onlyLocationImages = Object.entries(response.documentMap);
+        // console.log(fileEntriesArray, "File Entries");
+        //let imagesAndPdfs = [];
+        // for (let i = 0; i < fileEntriesArray.length; i++) {
+        /* let fileLinks = getFileUrlFromAPI([fileEntriesArray[i][0]])
+             .then(
+                 (results) => {
+                     console.log(Object.values(results), "Nero Array");
+                     return Object.values(results)[0];
+                 }
+             );
+         console.log(fileLinks, "File Links");
+         imagesAndPdfs.push({
+             fileUrl: fileLinks,
+             fileName: fileEntriesArray[i][1],
+             fileStoreId: fileEntriesArray[i][0]
+         }
+         )
+         */
+
+        // let fileStoreIds = onlyLocationImages && onlyLocationImages
+        //     .map((item) => item.fileStoreId)
+        //     .join(",");
+
+        const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+        let newLocationImagesPreview = [];
+        onlyLocationImages && onlyLocationImages.forEach((item, index) => {
+            newLocationImagesPreview[index] = {
+                fileName:item[1] ||
+                    `Document - ${index + 1}`,
+                fileStoreId: item[0],
+                fileUrl: Object.values(fileUrlPayload)[
+                    index
+                ],
+                title: item.documentType,
+                
+            };
+        });
+
+        dispatch(prepareFinalObject("documentsUploadReduxOld.documents", newLocationImagesPreview));
+      
         console.log("hereitis")
-        // prepareFinalObject("documentsUploadRedux", {
-        // 	0: {
-        // 	  documents: [
-        // 		{
-        // 			fileName: fileStoreIdsValue[0],
-        // 			fileStoreId: fileStoreIds[0],
-        // 			fileUrl: fileUrls[fileStoreIds[0]],
-        // 		},
-        // 	  ]
-        // 	}
-        //   });
+
+
     }
 };
 
