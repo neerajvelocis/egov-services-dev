@@ -2118,4 +2118,73 @@ export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
     } catch (exception) {
         console.log(exception);
     }
+}
+export const getTextFieldReadOnly = textScheama => {
+    const {
+        label = {},
+        readOnlyValue,
+        placeholder = {},
+        localePrefix = {},
+        required = false,
+        pattern,
+        jsonPath = "",
+        sourceJsonPath = "",
+        cityDropdown = "",
+        data = [],
+        optionValue = "code",
+        optionLabel = "code",
+        iconObj = {},
+        gridDefination = {
+            xs: 12,
+            sm: 6
+        },
+        props = {},
+        minLength,
+        maxLength,
+        minValue,
+        maxValue,
+        infoIcon,
+        title = {},
+        errorMessage = "",
+        requiredMessage = "",
+        ...rest
+    } = textScheama;
+    return {
+        uiFramework: "custom-containers-local",
+        moduleName: "egov-services",
+        componentPath: "TextFieldContainerReadOnly",
+        props: {
+            label,
+            readOnlyValue,
+            InputLabelProps: {
+                shrink: true
+            },
+            placeholder,
+            localePrefix,
+            fullWidth: true,
+            required,
+            data,
+            optionValue,
+            optionLabel,
+            sourceJsonPath,
+            cityDropdown,
+            jsonPath,
+            iconObj,
+            title,
+            infoIcon,
+            errorMessage,
+            ...props
+        },
+        gridDefination,
+        required,
+        pattern,
+        jsonPath,
+        minLength,
+        maxLength,
+        minValue,
+        maxValue,
+        errorMessage,
+        requiredMessage,
+        ...rest
+    };
 };
