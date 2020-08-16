@@ -84,6 +84,10 @@ class BookingCalendar extends React.Component {
                 nextProps.availabilityCheckData.reservedDays.length > 0 && nextProps.availabilityCheckData.reservedDays.map(el => {
                     pushReservedDay.push(new Date(el));
                 })
+                let previousDates = this.getPreviousTodayDates()
+                previousDates.map(val => {
+                    pushReservedDay.push(val)
+                })
                 this.setState({
                     dselectedDays: pushReservedDay,
                 })
@@ -180,7 +184,7 @@ class BookingCalendar extends React.Component {
                         enteredTo: null,
                     });
                 } else {
-                    this.props.showError3();
+
                     this.handleResetClick()
 
                 }
@@ -287,6 +291,21 @@ class BookingCalendar extends React.Component {
         }
     }
 
+
+    getPreviousTodayDates() {
+        let date = new Date()
+        var d = date.getDate()
+        let m = date.getMonth()
+        let y = date.getFullYear()
+        var defaultDisabledDate = []
+        while (d > 1) {
+            d = d - 1
+            let nd = new Date(y, m, d)
+
+            defaultDisabledDate.push(nd)
+        }
+        return defaultDisabledDate
+    }
     // areaChangeHandle = (e) => {
     //     let area = e.target.value;
     //     this.setState({ area: area });
@@ -307,6 +326,16 @@ class BookingCalendar extends React.Component {
         const modifiers = { start: from, end: enteredTo };
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
+        const DATAE = this.getPreviousTodayDates()
+        const past = {
+
+            value: DATAE.map(val => {
+
+                return new Date(val)
+            })
+        }
+
+        console.log(this.state.dselectedDays);
         let data = new Date();
         //hello
         let newData = new Date(data.setMonth(data.getMonth() + 5));
@@ -317,17 +346,21 @@ class BookingCalendar extends React.Component {
         // alert(initialYear)
 
         return (
-            <div className="calender-wrapper">
+            <div className="calender-wrapper" >
                 <div className="calendar-section" style={{ width: "100%" }}>
                     <DayPicker
                         className="Range"
                         numberOfMonths={1}
                         initialMonth={new Date()}
-
+                        //,
                         disabledDays={this.state.dselectedDays}
                         fromMonth={new Date()}
                         toMonth={newData}
                         modifiers={modifiers}
+
+                        modifiers={past}
+                        // .DayPicker-Day--past
+
                         selectedDays={selectedDays}
                         onDayClick={this.handleDayClick}
                         onDayMouseEnter={this.handleDayMouseEnter}
@@ -384,6 +417,7 @@ class BookingCalendar extends React.Component {
             border: 2px solid white;
           }
           .DayPicker-Day.DayPicker-Day--disabled{background-color: red;}
+          .DayPicker-Day.DayPicker-Day--value{background-color: #E9E9E9;}
           .DayPicker-Day.DayPicker-Day--outside{background-color: #E9E9E9;}
   `}</style>
                 </Helmet>
