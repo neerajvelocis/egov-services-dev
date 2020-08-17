@@ -48,9 +48,9 @@ const callBackForNext = async (state, dispatch) => {
             dispatch,
             "INITIATE"
         );
-        
+
         let responseStatus = get(response, "status", "");
-        
+
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
 
             let tenantId = getTenantId().split(".")[0];
@@ -98,22 +98,27 @@ const callBackForNext = async (state, dispatch) => {
 
             var documentsAndLocImagesArray = Object.values(documentsAndLocImages);
 
-            let onlyLocationImages = documentsAndLocImagesArray && documentsAndLocImagesArray.filter(item => item.documentType != "IDPROOF");
-
+            let onlyLocationImages = documentsAndLocImagesArray && documentsAndLocImagesArray.filter(item => {
+                if (item.documentType != "IDPROOF" && ("documents" in item) && item.documents) {
+                    return true;
+                }
+            });
+            console.log("onlyLocationImages Nero", onlyLocationImages);
             const newLocationImagesPreview =
                 onlyLocationImages &&
                 onlyLocationImages.map((item) => {
-                    if ("documents" in item) {
-                        return {
-                            title: item.documentCode,
-                            link: item.documents[0].fileUrl && item.documents[0].fileUrl.split(",")[0],
-                            name: item.documents[0].fileName,
-                            fileStoreId: item.documents[0].fileStoreId,
-                        };
-                    }
+
+                    return {
+                        title: item.documentCode,
+                        link: item.documents[0].fileUrl && item.documents[0].fileUrl.split(",")[0],
+                        name: item.documents[0].fileName,
+                        fileStoreId: item.documents[0].fileStoreId,
+                    };
+
 
                 });
-
+            console.log("mccNewLocImagesPreview Nero", newLocationImagesPreview);
+            //let onlyLocationImagesFinal = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.link != "NOLINK");
             dispatch(prepareFinalObject("mccNewLocImagesPreview", newLocationImagesPreview));
         } else {
             let errorMessage = {
