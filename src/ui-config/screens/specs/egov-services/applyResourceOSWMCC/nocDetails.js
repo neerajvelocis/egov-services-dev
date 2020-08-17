@@ -191,6 +191,7 @@ export const bookingDetails = getCommonCard({
                 // helperText : "new helper outside",
                 required: true,
                 maxLength: 3,
+                
                 jsonPath: "Booking.areaRequirement",
                 props: {
                     required: true,
@@ -220,8 +221,8 @@ export const bookingDetails = getCommonCard({
                             "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.venuebasedSummary.visible",
                             true
                         );
-                        
-                        response.data.displayArea = response.data.areaFrom +" - "+ response.data.areaTo;
+
+                        response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
                         dispatch(
                             prepareFinalObject("perDayRate", response.data)
                         );
@@ -248,7 +249,7 @@ export const bookingDetails = getCommonCard({
                     margin: "24px 0 0",
                     backgroundColor: "#fff",
                     padding: "0 24px 24px",
-                    
+
                 },
             },
             children: {

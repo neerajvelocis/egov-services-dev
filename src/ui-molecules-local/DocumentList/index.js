@@ -193,12 +193,13 @@ class DocumentList extends Component {
                                     ? card.dropdown.required
                                     : false,
                             };
-                            Object.keys(documentsUploadReduxOld).length > 0
-                                ? (documentsUploadRedux[index] = {
-                                    ...oldDocumentData,
-                                    ...newDocumentData,
-                                })
-                                : (documentsUploadRedux[index] = { ...newDocumentData });
+                            // Object.keys(documentsUploadReduxOld).length > 0
+                            //     ? (documentsUploadRedux[index] = {
+                            //         ...oldDocumentData,
+                            //         ...newDocumentData,
+                            //     })
+                            //     : 
+                            (documentsUploadRedux[index] = { ...newDocumentData });
                         }
                         index++;
                     }
