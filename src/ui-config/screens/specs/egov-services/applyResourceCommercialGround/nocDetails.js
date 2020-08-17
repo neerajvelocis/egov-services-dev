@@ -116,6 +116,7 @@ export const personalDetails = getCommonCard({
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
         jsonPath: "Booking.bkCompleteAddress",
+        maxLength: 500,
       }),
     },
     dummyDiv: {
@@ -228,6 +229,7 @@ export const bookingDetails = getCommonCard({
         //pattern: getPattern("Name"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "Booking.bkBookingPurpose",
+        maxLength: 500,
       }),
     },
 

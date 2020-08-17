@@ -31,14 +31,14 @@ const callBackForReset = (state, dispatch, action) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    if (availabilityCheckData) {
+    if (availabilityCheckData !== undefined) {
         if (availabilityCheckData.bkSector) {
             dispatch(
                 handleField(
                     "checkavailability",
                     "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
                     "props.value",
-                    ""
+                    undefined
                 )
             );
         }
@@ -48,7 +48,7 @@ const callBackForReset = (state, dispatch, action) => {
                     "checkavailability",
                     "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
                     "props.value",
-                    ""
+                    undefined
                 )
             );
         }
@@ -76,7 +76,9 @@ const callBackForReset = (state, dispatch, action) => {
             //         []
             //     )
             // );
+            dispatch(prepareFinalObject("availabilityCheckData", undefined));
         }
+
     }
     if (availabilityCheckData.reservedDays) {
         dispatch(
