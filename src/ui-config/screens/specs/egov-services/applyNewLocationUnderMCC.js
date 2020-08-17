@@ -172,15 +172,15 @@ const getMdmsData = async (action, state, dispatch) => {
         //     documentType: "IDPROOF",
         //     dropdownData: [],
         //     hasDropdown: false,
-        //     required: true,
+        //     required: true
         // }, {
         //     active: true,
         //     code: "OSWMCC_LOCATION_IMAGE_1",
         //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
         //     documentType: "MCCNEWLOCATION",
         //     dropdownData: [],
-        //     hasDropdown: false,
-        //     required: true,
+        //     hasDropdown: true,
+        //     required: true
         // }, {
         //     active: true,
         //     code: "OSWMCC_LOCATION_IMAGE_2",
