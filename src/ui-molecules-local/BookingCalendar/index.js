@@ -71,7 +71,7 @@ class BookingCalendar extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         console.log(nextProps.availabilityCheckData, "myNextprops.availabilityCheckData");
-        if (nextProps.availabilityCheckData === undefined) {
+        if (nextProps.availabilityCheckData === undefined || nextProps.availabilityCheckData.length === 0) {
             this.setState({
                 dselectedDays: [],
                 from: null,
@@ -108,7 +108,7 @@ class BookingCalendar extends React.Component {
                     })
 
                 } else {
-
+                    alert("in else")
                     this.setState(this.getInitialState());
                 }
 
@@ -352,7 +352,9 @@ class BookingCalendar extends React.Component {
                         className="Range"
                         numberOfMonths={1}
                         initialMonth={new Date()}
-                        //,
+                        // disabledDays={this.state.dselectedDays, {
+                        //     before: new Date()
+                        //   }} 
                         disabledDays={this.state.dselectedDays}
                         fromMonth={new Date()}
                         toMonth={newData}
