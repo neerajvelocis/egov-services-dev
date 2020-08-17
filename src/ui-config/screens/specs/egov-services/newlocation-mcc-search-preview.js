@@ -156,6 +156,22 @@ const setSearchResponse = async (
 
      prepareDocumentsView(state, dispatch);
 
+     const CitizenprintCont = footerReviewTop(
+        action,
+        state,
+        dispatch,
+        bookingStatus,
+        applicationNumber,
+        tenantId,
+        ""
+    );
+
+    set(
+        action,
+        "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+        CitizenprintCont
+    )
+
     
 };
 

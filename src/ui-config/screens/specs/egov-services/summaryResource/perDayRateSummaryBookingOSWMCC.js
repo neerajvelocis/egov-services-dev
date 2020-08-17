@@ -24,7 +24,7 @@ export const perDayRateSummary = getCommonGrayCard({
                 },
                 ...getCommonSubHeader({
                     labelName: "Venue Details",
-                    labelKey: "BK_OSWMCC_BOOKING_VENUE_DETAILS",
+                    labelKey: "BK_OSWMCC_BOOKING_RATE_DETAILS",
                 }),
             },
             // editSection: {
