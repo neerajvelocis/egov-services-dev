@@ -45,32 +45,36 @@ const callBackForReset = (state, dispatch, action) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    if (availabilityCheckData.bkSector) {
-        dispatch(
-            handleField(
-                "checkavailability_oswmcc",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
-                "props.value",
-                undefined
-            )
-        );
-    }
-    if (availabilityCheckData.bkBookingVenue) {
-        dispatch(
-            handleField(
-                "checkavailability_oswmcc",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                "props.value",
-                undefined
-            )
-        );
+    if (availabilityCheckData !== undefined) {
+        if (availabilityCheckData.bkSector) {
+            dispatch(
+                handleField(
+                    "checkavailability_oswmcc",
+                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                    "props.value",
+                    undefined
+                )
+            );
+        }
+        if (availabilityCheckData.bkBookingVenue) {
+            dispatch(
+                handleField(
+                    "checkavailability_oswmcc",
+                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                    "props.value",
+                    undefined
+                )
+            );
+        }
         set(
-            state.screenConfiguration.screenConfig["checkavailability_oswmcc"],
+            state.screenConfiguration.screenConfig[
+                "checkavailability_oswmcc"
+            ],
             "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
             false
         );
+        dispatch(prepareFinalObject("availabilityCheckData", undefined));
     }
-    dispatch(prepareFinalObject("availabilityCheckData", undefined))
     // if (availabilityCheckData.bkFromDate) {
     //     dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", ""))
     // }
@@ -109,32 +113,54 @@ const callBackForBook = async (state, dispatch) => {
     } else {
         if (
             availabilityCheckData.bkToDate === undefined ||
-            availabilityCheckData.bkToDate === ""
+            availabilityCheckData.bkToDate === "" ||
+            availabilityCheckData.bkToDate === null
         ) {
             let warrningMsg = {
-                labelName: "Please select Date RANGE",
+                labelName: "Please Select Date Range",
                 labelKey: "",
             };
             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-        } else if ("bkApplicationNumber" in availabilityCheckData) {
-            // dispatch(
-            //     setRoute(
-            //         `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
-            //     )
-            // );
-            dispatch(
-                setRoute(
-                    `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
-                )
-            );
         } else {
-            dispatch(
-                // setRoute(
-                //     `/egov-services/applyopenspacewmcc?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
-                // )
-                setRoute(`/egov-services/applyopenspacewmcc`)
-            );
+            if ("bkApplicationNumber" in availabilityCheckData) {
+                dispatch(
+                    setRoute(
+                        `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
+                    )
+                );
+            } else {
+                dispatch(setRoute(`/egov-services/applyopenspacewmcc`));
+            }
         }
+
+        // if (
+        //     availabilityCheckData.bkToDate === undefined ||
+        //     availabilityCheckData.bkToDate === ""
+        // ) {
+        //     let warrningMsg = {
+        //         labelName: "Please select Date RANGE",
+        //         labelKey: "",
+        //     };
+        //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+        // } else if ("bkApplicationNumber" in availabilityCheckData) {
+        //     // dispatch(
+        //     //     setRoute(
+        //     //         `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
+        //     //     )
+        //     // );
+        //     dispatch(
+        //         setRoute(
+        //             `/egov-services/applyopenspacewmcc?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
+        //         )
+        //     );
+        // } else {
+        //     dispatch(
+        //         // setRoute(
+        //         //     `/egov-services/applyopenspacewmcc?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
+        //         // )
+        //         setRoute(`/egov-services/applyopenspacewmcc`)
+        //     );
+        // }
     }
 };
 
