@@ -4,9 +4,8 @@ import { connect } from "react-redux";
 import get from "lodash/get";
 
 class EstimateCardContainer extends Component {
-
     render() {
-        return <FeesEstimateCard estimate={this.props.estimate} baseCharge={this.props.baseCharge} />;
+        return <FeesEstimateCard estimate={this.props.estimate} />;
     }
 }
 
@@ -52,11 +51,6 @@ const mapStateToProps = (state, ownProps) => {
             )
         )[0]
     );
-    const baseCharge = get(
-        screenConfiguration,
-        "preparedFinalObject.BaseCharge",
-        []
-    )
     // const fees = get(screenConfiguration, "preparedFinalObject.applyScreenMdmsData.estimateCardData", []);
     const billDetails = get(
         screenConfiguration,
@@ -77,7 +71,7 @@ const mapStateToProps = (state, ownProps) => {
         totalAmount,
         arrears,
     };
-    return { estimate, baseCharge };
+    return { estimate };
 };
 
 export default connect(mapStateToProps, null)(EstimateCardContainer);
