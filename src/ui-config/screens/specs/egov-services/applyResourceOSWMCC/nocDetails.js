@@ -186,7 +186,7 @@ export const bookingDetails = getCommonCard({
                     labelName: "Area requirement",
                     labelKey: "BK_OSWMCC_LOC_AREA_REQUIRED_PLACEHOLDER",
                 },
-                pattern: getPattern("Address"),
+                pattern: getPattern("areaRequired"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
