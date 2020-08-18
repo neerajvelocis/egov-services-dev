@@ -5,6 +5,9 @@ import get from "lodash/get";
 import set from "lodash/set";
 import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { getUserInfo, setTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import ParkIcon from "../../../../ui-atoms-local/Icons/ParkIcon";
+import OpenSpaceIcon from "../../../../ui-atoms-local/Icons/OpenSpaceIcon";
+
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
     {
@@ -26,17 +29,7 @@ if (role_name === "CITIZEN") {
                 labelKey: "BK_HOME_OPEN_SPACE_BOOKING",
                 labelName: "Book Open Space to Store Building Materials",
             },
-            icon: (
-                <i
-                    viewBox="0 -8 35 42"
-                    color="primary"
-                    class="material-icons module-page-icon"
-                    style={{ fontSize: "50px" }}
-                >
-                    store
-                    {/* account_balance */}
-                </i>
-            ),
+            icon: <OpenSpaceIcon width={40} height={50}/>,
             route: "applyopenspace",
             // {
             //   screenKey: "home",
@@ -48,17 +41,18 @@ if (role_name === "CITIZEN") {
                 labelKey: "BK_HOME_COMMUNITY_CENTRE_BOOKING",
                 labelName: "Book Parks & Community Center/Banquet Halls",
             },
-            icon: (
-                <i
-                    viewBox="0 -8 35 42"
-                    color="primary"
-                    font-size="40px"
-                    class="material-icons module-page-icon"
-                    style={{ fontSize: "50px" }}
-                >
-                    event
-                </i>
-            ),
+            icon : <ParkIcon width={40} height={50}/>,
+            // icon: (
+            //     <i
+            //         viewBox="0 -8 35 42"
+            //         color="primary"
+            //         font-size="40px"
+            //         class="material-icons module-page-icon"
+            //         style={{ fontSize: "50px" }}
+            //     >
+            //         event
+            //     </i>
+            // ),
             route: "",
         },
         {

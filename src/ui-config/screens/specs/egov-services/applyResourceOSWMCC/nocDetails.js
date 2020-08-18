@@ -222,7 +222,7 @@ export const bookingDetails = getCommonCard({
                             true
                         );
 
-                        response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
+                        // response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
                         dispatch(
                             prepareFinalObject("perDayRate", response.data)
                         );

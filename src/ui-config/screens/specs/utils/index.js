@@ -1568,7 +1568,6 @@ export const downloadReceipt = (
                 console.log("Could not find any receipts");
                 return;
             }
-            console.log("payloadReceiptDetails", payloadReceiptDetails);
             let receiptData = [
                 {
                     applicantDetail: {
@@ -1680,12 +1679,46 @@ export const downloadReceipt = (
     }
 };
 
-export const downloadCertificate = (
+
+const getMdmsTenantsData = async () => {
+    let tenantId = getTenantId().split(".")[0];
+    let mdmsBody = {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+                {
+                    moduleName: "tenant",
+                    masterDetails: [
+                        {
+                            name: "tenants",
+                        },
+                    ],
+                }
+            ],
+        },
+    };
+    try {
+        let payload = await httpRequest(
+            "post",
+            "/egov-mdms-service/v1/_search",
+            "_search",
+            [],
+            mdmsBody
+        );
+        return payload.MdmsRes.tenant 
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+export const downloadCertificate = async(
     state,
     applicationNumber,
     tenantId,
     mode = "download"
 ) => {
+
+    let tenantData = await getMdmsTenantsData()
     let applicationData = get(
         state.screenConfiguration.preparedFinalObject,
         "Booking"
@@ -1726,7 +1759,7 @@ export const downloadCertificate = (
                     mobileNumber: applicationData.bkMobileNumber,
                     houseNo: applicationData.bkHouseNo,
                     permanentAddress: applicationData.bkCompleteAddress,
-                    permanentCity: tenantId,
+                    permanentCity: tenantData.tenants[0].city.name,
                     sector: applicationData.bkSector,
                     fatherName: applicationData.bkFatherName
                 },
@@ -1765,12 +1798,10 @@ export const downloadCertificate = (
                     role: "Additional Commissioner",
                 },
                 tenantInfo: {
-                    municipalityName: "Municipal Corporation Chandigarh",
-                    address: "New Deluxe Building, Sector 17, Chandigarh",
-                    contactNumber: "+91-172-2541002, 0172-2541003",
-                    // logoUrl:
-                    //     "https://chstage.blob.core.windows.net/fileshare/logo.png",
-                    webSite: "http://mcchandigarh.gov.in",
+                    municipalityName: tenantData.tenants[0].city.municipalityName,
+                    address: tenantData.tenants[0].address,
+                    contactNumber: tenantData.tenants[0].contactNumber,
+                    webSite: tenantData.tenants[0].domainUrl,
                 },
                 generatedBy: {
                     generatedBy: JSON.parse(getUserInfo()).name,
@@ -1802,17 +1833,19 @@ export const downloadCertificate = (
     }
 };
 
-export const downloadApplication = (
+export const downloadApplication = async (
     state,
     applicationNumber,
     tenantId,
     mode = "download"
 ) => {
+
+    let tenantData = await getMdmsTenantsData()
+    console.log(tenantData, "response tenantData");
     let applicationData = get(
         state.screenConfiguration.preparedFinalObject,
         "Booking"
     );
-
     let paymentData = get(
         state.screenConfiguration.preparedFinalObject,
         "ReceiptTemp[0].Bill[0]"
@@ -1929,7 +1962,7 @@ export const downloadApplication = (
                         mobileNumber: applicationData.bkMobileNumber,
                         houseNo: applicationData.bkHouseNo,
                         permanentAddress: applicationData.bkCompleteAddress,
-                        permanentCity: tenantId,
+                        permanentCity: tenantData.tenants[0].city.name,
                         sector: applicationData.bkSector,
                         email: applicationData.bkEmail,
                         fatherName: applicationData.bkFatherName,
