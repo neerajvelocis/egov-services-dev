@@ -85,13 +85,29 @@ export const perDayRateSummary = getCommonGrayCard({
                             },
                         }
                     ),
+                    // areaRange: getLabelWithValue(
+                    //     {
+                    //         labelName: "Area Range",
+                    //         labelKey: "BK_OSWMCC_BOOKING_PER_DAY_RANGE_LABEL"                            
+                    //     },
+                    //     {
+                    //         jsonPath: "perDayRate.displayArea",
+                    //         callBack: (value) => {
+                    //             if (value === undefined || value === "" || value === null) {
+                    //                return "NA"
+                    //             } else {
+                    //                 return `${value} Sq.ft`
+                    //             }
+                    //         },
+                    //     }
+                    // ),
                     totalArea: getLabelWithValue(
                         {
                             labelName: "Total Area",
                             labelKey: "BK_OSWMCC_BOOKING_TOTAL_AREA_LABEL",
                         },
                         {
-                            jsonPath: "perDayRate.areaTo",
+                            jsonPath: "Booking.bkAreaRequired",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
                                    return "NA"
@@ -101,15 +117,15 @@ export const perDayRateSummary = getCommonGrayCard({
                             },
                         }
                     ),
-                    areaSlab: getLabelWithValue(
-                        {
-                            labelName: "Slab",
-                            labelKey: "BK_OSWMCC_BOOKING_PER_DAY_RATE_SLAB_LABEL",
-                        },
-                        {
-                            jsonPath: "perDayRate.slab",
-                        }
-                    ),
+                    // areaSlab: getLabelWithValue(
+                    //     {
+                    //         labelName: "Slab",
+                    //         labelKey: "BK_OSWMCC_BOOKING_PER_DAY_RATE_SLAB_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "perDayRate.slab",
+                    //     }
+                    // ),
                 }),
             }),
             items: [],

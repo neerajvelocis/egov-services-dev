@@ -39,6 +39,61 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import set from "lodash/set";
 
+export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
+    let allAreFilled = true;
+    document
+        .getElementById("apply_form" + activeStep)
+        .querySelectorAll("[required]")
+        .forEach(function (i) {
+            i.parentNode.classList.remove("MuiInput-error-853");
+            i.parentNode.parentNode.classList.remove("MuiFormLabel-error-844");
+            if (!i.value) {
+                i.focus();
+                allAreFilled = false;
+                i.parentNode.classList.add("MuiInput-error-853");
+                i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+            }
+            if (i.getAttribute("aria-invalid") === "true" && allAreFilled) {
+                i.parentNode.classList.add("MuiInput-error-853");
+                i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+                allAreFilled = false;
+                isFormValid = false;
+                hasFieldToaster = true;
+            }
+        });
+
+    document
+        .getElementById("apply_form" + activeStep)
+        .querySelectorAll("input[type='hidden']")
+        .forEach(function (i) {
+            i.parentNode.classList.remove("MuiInput-error-853");
+            i.parentNode.parentNode.parentNode.classList.remove(
+                "MuiFormLabel-error-844"
+            );
+            if (i.value == i.placeholder) {
+                i.focus();
+                allAreFilled = false;
+                i.parentNode.classList.add("MuiInput-error-853");
+                i.parentNode.parentNode.parentNode.classList.add(
+                    "MuiFormLabel-error-844"
+                );
+                allAreFilled = false;
+                isFormValid = false;
+                hasFieldToaster = true;
+            }
+        });
+    if (!allAreFilled) {
+        //alert('Fill all fields')
+        isFormValid = false;
+        hasFieldToaster = true;
+    } else {
+        //alert('Submit')
+        isFormValid = true;
+        hasFieldToaster = false;
+    }
+    return [isFormValid, hasFieldToaster];
+};
+
 const callBackForReset = (state, dispatch, action) => {
     const availabilityCheckData = get(
         state,
@@ -50,7 +105,7 @@ const callBackForReset = (state, dispatch, action) => {
             dispatch(
                 handleField(
                     "checkavailability_oswmcc",
-                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                    "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkSector",
                     "props.value",
                     undefined
                 )
@@ -60,17 +115,15 @@ const callBackForReset = (state, dispatch, action) => {
             dispatch(
                 handleField(
                     "checkavailability_oswmcc",
-                    "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                    "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
                     "props.value",
                     undefined
                 )
             );
         }
         set(
-            state.screenConfiguration.screenConfig[
-                "checkavailability_oswmcc"
-            ],
-            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
+            state.screenConfiguration.screenConfig["checkavailability_oswmcc"],
+            "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
             false
         );
         dispatch(prepareFinalObject("availabilityCheckData", undefined));
@@ -88,7 +141,7 @@ const callBackForReset = (state, dispatch, action) => {
     // const actionDefination = [
     //     {
     //         path:
-    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+    //             "components.div.children.availabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
     //         property: "reservedDays",
     //         value: [],
     //     },
@@ -106,7 +159,7 @@ const callBackForBook = async (state, dispatch) => {
         state.screenConfiguration.preparedFinalObject.availabilityCheckData;
     if (availabilityCheckData === undefined) {
         let warrningMsg = {
-            labelName: "Please select Date RANGE",
+            labelName: "Please Select Date Range",
             labelKey: "",
         };
         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
@@ -170,19 +223,28 @@ const callBackForAddNewLocation = async (state, dispatch) => {
 };
 
 const callBackForSearch = async (state, dispatch) => {
-    let availabilityCheckData = get(
-        state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData"
-    );
-    if (availabilityCheckData === undefined) {
-        dispatch(
-            toggleSnackbar(
-                true,
-                { labelName: "Please Select Booking Venue!", labelKey: "" },
-                "warning"
-            )
+    let isFormValid = false;
+    let hasFieldToaster = true;
+
+    let validatestepformflag = validatestepform(1);
+
+    isFormValid = validatestepformflag[0];
+    hasFieldToaster = validatestepformflag[1];
+
+    if (isFormValid !== false) {
+        let availabilityCheckData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
-    } else {
+        // if (availabilityCheckData === undefined) {
+        //     dispatch(
+        //         toggleSnackbar(
+        //             true,
+        //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+        //             "warning"
+        //         )
+        //     );
+        // } else {
         if (
             "bkSector" in availabilityCheckData &&
             "bkBookingVenue" in availabilityCheckData
@@ -220,19 +282,115 @@ const callBackForSearch = async (state, dispatch) => {
                 };
                 dispatch(toggleSnackbar(true, errorMessage, "error"));
             }
-        } else {
-            dispatch(
-                toggleSnackbar(
-                    true,
-                    { labelName: "Please Select Booking Venue!", labelKey: "" },
-                    "warning"
-                )
-            );
         }
+        // else {
+        //     let errorMessage = {
+        //         labelName: "Please fill all mandatory fields! new",
+        //         labelKey: "Please fill all mandatory fields! new",
+        //     };
+
+        //     dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        // }
+        // }
+    } else {
+        let errorMessage = {
+            labelName: "Please fill all mandatory fields!",
+            labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS",
+        };
+
+        dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
 
-export const checkAvailabilitySearch = getCommonCard({
+const callBackForVenue = async (state, dispatch) => {
+    let bkSector = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+    );
+    let bkBookingVenue = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+    );
+    let bkAreaRequired = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.bkAreaRequired"
+    );
+    try {
+        let responseImage = await getNewLocatonImages(bkSector, bkBookingVenue);
+        let responseImageStatus = get(responseImage, "status", "");
+        if (
+            responseImageStatus == "SUCCESS" ||
+            responseImageStatus == "success"
+        ) {
+            let documentsAndLocImages = responseImage.data;
+            let onlyLocationImages =
+                documentsAndLocImages &&
+                documentsAndLocImages.filter(
+                    (item) => item.documentType != "IDPROOF"
+                );
+
+            let fileStoreIds =
+                onlyLocationImages &&
+                onlyLocationImages.map((item) => item.fileStoreId).join(",");
+            const fileUrlPayload =
+                fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+            let newLocationImagesPreview = [];
+            onlyLocationImages &&
+                onlyLocationImages.forEach((item, index) => {
+                    newLocationImagesPreview[index] = {
+                        name:
+                            (fileUrlPayload &&
+                                fileUrlPayload[item.fileStoreId] &&
+                                decodeURIComponent(
+                                    fileUrlPayload[item.fileStoreId]
+                                        .split(",")[0]
+                                        .split("?")[0]
+                                        .split("/")
+                                        .pop()
+                                        .slice(13)
+                                )) ||
+                            `Document - ${index + 1}`,
+                        fileStoreId: item.fileStoreId,
+                        link: Object.values(fileUrlPayload)[index],
+                        title: item.documentType,
+                    };
+                });
+
+            dispatch(
+                prepareFinalObject(
+                    "mccNewLocImagesPreview",
+                    newLocationImagesPreview
+                )
+            );
+
+            let response = await getPerDayRateOSWMCC(bkSector, bkAreaRequired);
+            let responseStatus = get(response, "status", "");
+            if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
+                dispatch(prepareFinalObject("perDayRate", response.data));
+            } 
+            // else {
+            //     let errorMessage = {
+            //         labelName: "Something went wrong, Try Again later!",
+            //         labelKey: "", //UPLOAD_FILE_TOAST
+            //     };
+            //     dispatch(toggleSnackbar(true, errorMessage, "error"));
+            // }
+        } 
+        // else {
+        //     let errorMessage = {
+        //         labelName: "Something went wrong, Try Again later!",
+        //         labelKey: "", //UPLOAD_FILE_TOAST
+        //     };
+        //     dispatch(toggleSnackbar(true, errorMessage, "error"));
+        // }
+        showHideAdhocPopup(state, dispatch, "checkavailability_oswmcc");
+    } catch (error) {
+        console.log(error, "myerror");
+    }
+};
+
+export const availabilityForm = getCommonCard({
     header: {
         uiFramework: "custom-atoms",
         componentPath: "Container",
@@ -284,7 +442,7 @@ export const checkAvailabilitySearch = getCommonCard({
             },
         },
     },
-    availabilitySearchContainer: getCommonContainer({
+    availabilityFields: getCommonContainer({
         bkSector: {
             ...getSelectField({
                 label: {
@@ -305,6 +463,7 @@ export const checkAvailabilitySearch = getCommonCard({
                 sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "availabilityCheckData.bkSector",
                 required: true,
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -313,44 +472,48 @@ export const checkAvailabilitySearch = getCommonCard({
             }),
             beforeFieldChange: (action, state, dispatch) => {
                 if (action.value) {
-                    let bkBookingVenue = get(
-                        state,
-                        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-                    );
+                    // let bkBookingVenue = get(
+                    //     state,
+                    //     "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+                    // );
+                    // console.log(action.value, "my new value sector");
                     let sectorWiselocationsObject = get(
                         state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
+                        "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
                     );
+                    
                     let venueList = get(
                         sectorWiselocationsObject,
                         action.value
                     );
+                    console.log(sectorWiselocationsObject, "sectorWiselocationsObject in sector");
+                    console.log(venueList, "venueList in sector");
                     venueList !== undefined &&
                         dispatch(
                             prepareFinalObject(
-                                "applyScreenMdmsData.Booking.venueList",
+                                "venueList",
                                 venueList
                             )
                         );
                     dispatch(
                         handleField(
                             "checkavailability_oswmcc",
-                            "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                            "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
                             "props.disabled",
                             false
                         )
                     );
 
-                    if (bkBookingVenue !== undefined) {
-                        dispatch(
-                            handleField(
-                                "checkavailability_oswmcc",
-                                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                                "props.value",
-                                bkBookingVenue
-                            )
-                        );
-                    }
+                    // if (bkBookingVenue !== undefined) {
+                    //     dispatch(
+                    //         handleField(
+                    //             "checkavailability_oswmcc",
+                    //             "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
+                    //             "props.value",
+                    //             bkBookingVenue
+                    //         )
+                    //     );
+                    // }
                 }
             },
             // afterFieldChange : (action, state, dispatch) => {
@@ -374,9 +537,10 @@ export const checkAvailabilitySearch = getCommonCard({
                     md: 6,
                 },
 
-                sourceJsonPath: "applyScreenMdmsData.Booking.venueList",
+                sourceJsonPath: "venueList",
                 jsonPath: "availabilityCheckData.bkBookingVenue",
                 required: true,
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 props: {
                     className: "applicant-details-error",
                     required: true,
@@ -384,23 +548,21 @@ export const checkAvailabilitySearch = getCommonCard({
                 },
             }),
             beforeFieldChange: async (action, state, dispatch) => {
-                // alert("in venue")
                 if (action.value) {
-                    const venueList = get(
-                        state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.venueList"
+                    set(
+                        state.screenConfiguration.screenConfig[
+                            "checkavailability_oswmcc"
+                        ],
+                        "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityActions.children.viewDetailsButton.visible",
+                        true
                     );
-                    const selectedVenue =
-                        venueList !== undefined &&
-                        venueList.filter((el) => el.name == action.value);
-                    const bkAreaRequired =
-                        selectedVenue.length > 0
-                            ? selectedVenue[0].areRequirement
-                            : "";
-                    const bkSector = get(
+
+                    let venueList = get(
                         state,
-                        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+                        "screenConfiguration.preparedFinalObject.venueList"
                     );
+                    let selectedVenue = venueList !== undefined && venueList.filter((el) => el.name == action.value);
+                    let bkAreaRequired = selectedVenue.length > 0 ? selectedVenue[0].areRequirement : "";
                     dispatch(
                         prepareFinalObject(
                             "Booking.bkAreaRequired",
@@ -408,103 +570,105 @@ export const checkAvailabilitySearch = getCommonCard({
                         )
                     );
 
-                    let responseImage = await getNewLocatonImages(
-                        bkSector,
-                        action.value
-                    );
-                    let responseImageStatus = get(responseImage, "status", "");
-                    if (
-                        responseImageStatus == "SUCCESS" ||
-                        responseImageStatus == "success"
-                    ) {
-                        let documentsAndLocImages = responseImage.data;
-                        let onlyLocationImages =
-                            documentsAndLocImages &&
-                            documentsAndLocImages.filter(
-                                (item) => item.documentType != "IDPROOF"
-                            );
+                    //     let responseImage = await getNewLocatonImages(
+                    //         bkSector,
+                    //         action.value
+                    //     );
+                    //     let responseImageStatus = get(responseImage, "status", "");
+                    //     if (
+                    //         responseImageStatus == "SUCCESS" ||
+                    //         responseImageStatus == "success"
+                    //     ) {
+                    //         let documentsAndLocImages = responseImage.data;
+                    //         let onlyLocationImages =
+                    //             documentsAndLocImages &&
+                    //             documentsAndLocImages.filter(
+                    //                 (item) => item.documentType != "IDPROOF"
+                    //             );
 
-                        let fileStoreIds =
-                            onlyLocationImages &&
-                            onlyLocationImages
-                                .map((item) => item.fileStoreId)
-                                .join(",");
-                        const fileUrlPayload =
-                            fileStoreIds &&
-                            (await getFileUrlFromAPI(fileStoreIds));
-                        let newLocationImagesPreview = [];
-                        onlyLocationImages &&
-                            onlyLocationImages.forEach((item, index) => {
-                                newLocationImagesPreview[index] = {
-                                    name:
-                                        (fileUrlPayload &&
-                                            fileUrlPayload[item.fileStoreId] &&
-                                            decodeURIComponent(
-                                                fileUrlPayload[item.fileStoreId]
-                                                    .split(",")[0]
-                                                    .split("?")[0]
-                                                    .split("/")
-                                                    .pop()
-                                                    .slice(13)
-                                            )) ||
-                                        `Document - ${index + 1}`,
-                                    fileStoreId: item.fileStoreId,
-                                    link: Object.values(fileUrlPayload)[index],
-                                    title: item.documentType,
-                                    // tenantId: item.tenantId,
-                                    // id: item.id,
-                                };
-                            });
+                    //         let fileStoreIds =
+                    //             onlyLocationImages &&
+                    //             onlyLocationImages
+                    //                 .map((item) => item.fileStoreId)
+                    //                 .join(",");
+                    //         const fileUrlPayload =
+                    //             fileStoreIds &&
+                    //             (await getFileUrlFromAPI(fileStoreIds));
+                    //         let newLocationImagesPreview = [];
+                    //         onlyLocationImages &&
+                    //             onlyLocationImages.forEach((item, index) => {
+                    //                 newLocationImagesPreview[index] = {
+                    //                     name:
+                    //                         (fileUrlPayload &&
+                    //                             fileUrlPayload[item.fileStoreId] &&
+                    //                             decodeURIComponent(
+                    //                                 fileUrlPayload[item.fileStoreId]
+                    //                                     .split(",")[0]
+                    //                                     .split("?")[0]
+                    //                                     .split("/")
+                    //                                     .pop()
+                    //                                     .slice(13)
+                    //                             )) ||
+                    //                         `Document - ${index + 1}`,
+                    //                     fileStoreId: item.fileStoreId,
+                    //                     link: Object.values(fileUrlPayload)[index],
+                    //                     title: item.documentType,
+                    //                     // tenantId: item.tenantId,
+                    //                     // id: item.id,
+                    //                 };
+                    //             });
 
-                        dispatch(
-                            prepareFinalObject(
-                                "mccNewLocImagesPreview",
-                                newLocationImagesPreview
-                            )
-                        );
+                    //         dispatch(
+                    //             prepareFinalObject(
+                    //                 "mccNewLocImagesPreview",
+                    //                 newLocationImagesPreview
+                    //             )
+                    //         );
 
-                        let response = await getPerDayRateOSWMCC(
-                            bkSector,
-                            bkAreaRequired
-                        );
-                        let responseStatus = get(response, "status", "");
-                        if (
-                            responseStatus == "SUCCESS" ||
-                            responseStatus == "success"
-                        ) {
-                            set(
-                                state.screenConfiguration.screenConfig[
-                                    "checkavailability_oswmcc"
-                                ],
-                                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
-                                true
-                            );
-                            dispatch(
-                                prepareFinalObject("perDayRate", response.data)
-                            );
-                        } else {
-                            let errorMessage = {
-                                labelName:
-                                    "Something went wrong, Try Again later!",
-                                labelKey: "", //UPLOAD_FILE_TOAST
-                            };
-                            dispatch(
-                                toggleSnackbar(true, errorMessage, "error")
-                            );
-                        }
-                    } else {
-                        let errorMessage = {
-                            labelName: "Something went wrong, Try Again later!",
-                            labelKey: "", //UPLOAD_FILE_TOAST
-                        };
-                        dispatch(toggleSnackbar(true, errorMessage, "error"));
-                    }
+                    //         let response = await getPerDayRateOSWMCC(
+                    //             bkSector,
+                    //             bkAreaRequired
+                    //         );
+                    //         let responseStatus = get(response, "status", "");
+                    //         if (
+                    //             responseStatus == "SUCCESS" ||
+                    //             responseStatus == "success"
+                    //         ) {
+                    //             set(
+                    //                 state.screenConfiguration.screenConfig[
+                    //                     "checkavailability_oswmcc"
+                    //                 ],
+                    //                 "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
+                    //                 true
+                    //             );
+                    //             dispatch(
+                    //                 prepareFinalObject("perDayRate", response.data)
+                    //             );
+                    //         } else {
+                    //             let errorMessage = {
+                    //                 labelName:
+                    //                     "Something went wrong, Try Again later!",
+                    //                 labelKey: "", //UPLOAD_FILE_TOAST
+                    //             };
+                    //             dispatch(
+                    //                 toggleSnackbar(true, errorMessage, "error")
+                    //             );
+                    //         }
+                    //     } else {
+                    //         let errorMessage = {
+                    //             labelName: "Something went wrong, Try Again later!",
+                    //             labelKey: "", //UPLOAD_FILE_TOAST
+                    //         };
+                    //         dispatch(toggleSnackbar(true, errorMessage, "error"));
+                    //     }
                 }
             },
             // afterFieldChange : (action, state, dispatch) => {
             //     alert("in after venue")
             // }
         },
+    }),
+    availabilityActions: getCommonContainer({
         searchButton: {
             componentPath: "Button",
             props: {
@@ -581,19 +745,14 @@ export const checkAvailabilitySearch = getCommonCard({
             },
             onClickDefination: {
                 action: "condition",
-                callBack: (state, dispatch) =>
-                    showHideAdhocPopup(
-                        state,
-                        dispatch,
-                        "checkavailability_oswmcc"
-                    ),
+                callBack: callBackForVenue,
             },
             visible: false,
         },
     }),
 });
 
-export const checkAvailabilityCalendar = getCommonCard({
+export const availabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
         bookingCalendar: {
             uiFramework: "custom-containers-local",
@@ -617,19 +776,6 @@ export const checkAvailabilityCalendar = getCommonCard({
                 popup: {},
             },
         },
-        // dummyDiv: {
-        //     uiFramework: "custom-atoms",
-        //     componentPath: "Div",
-        //     gridDefination: {
-        //         xs: 12,
-        //         sm: 12,
-        //         md: 9,
-        //     },
-        //     visible: true,
-        //     props: {
-        //         disabled: true,
-        //     },
-        // },
         bookButton: {
             componentPath: "Button",
             props: {

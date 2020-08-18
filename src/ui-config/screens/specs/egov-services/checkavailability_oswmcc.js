@@ -1,7 +1,7 @@
 import {
     getCommonContainer,
     getCommonHeader,
-    getLabel
+    getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     getCurrentFinancialYear,
@@ -9,8 +9,8 @@ import {
     convertDateInYMD,
 } from "../utils";
 import {
-    checkAvailabilitySearch,
-    checkAvailabilityCalendar,
+    availabilityForm,
+    availabilityCalendar,
 } from "./checkAvailabilityForm_oswmcc";
 import { ImageLocationSummary } from "./summaryResource/imagesOfNewLocationOswmcc";
 import { perDayRateSummary } from "./summaryResource/perDayRateSummaryBookingOSWMCC";
@@ -39,46 +39,6 @@ import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
 
-// const getMdmsData = async (action, state, dispatch) => {
-//     try {
-//         let payload = {};
-
-//         payload.sector = [
-//             {
-//                 id: 1,
-//                 code: "SECTOR-17",
-//                 tenantId: "ch.chandigarh",
-//                 name: "SECTOR-17",
-//                 active: true,
-//             },
-//             {
-//                 id: 2,
-//                 code: "EG_SECTOR_34",
-//                 tenantId: "ch.chandigarh",
-//                 name: "EG_SECTOR_34",
-//                 active: true,
-//             },
-//             {
-//                 id: 2,
-//                 code: "MANIMAJRA",
-//                 tenantId: "ch.chandigarh",
-//                 name: "MANIMAJRA",
-//                 active: true,
-//             },
-//         ];
-//         payload.bkBookingVenue = [];
-//         //   payload.bkBookingVenue = [
-//         //     { id: 1, code: 'Choda Mod', tenantId: 'ch.chandigarh', name: 'Choda Mod', active: true },
-//         //     { id: 2, code: 'Pari Chok', tenantId: 'ch.chandigarh', name: 'pari_chok', active: true },
-//         //     { id: 2, code: 'Cricket Ground', tenantId: 'ch.chandigarh', name: 'Cricket_Ground', active: true }
-//         // ];
-
-//         dispatch(prepareFinalObject("applyScreenMdmsData", payload));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// };
-
 const getMdmsData = async (action, state, dispatch) => {
     let tenantId = getTenantId().split(".")[0];
     let mdmsBody = {
@@ -105,147 +65,199 @@ const getMdmsData = async (action, state, dispatch) => {
         },
     };
     try {
-        let payloadMdms = null;
-        payloadMdms = await httpRequest(
+        let payload = await httpRequest(
             "post",
             "/egov-mdms-service/v1/_search",
             "_search",
             [],
             mdmsBody
         );
-
-        let payloadLocation = null;
-        payloadLocation = await httpRequest(
-            "post",
-            "/bookings/newLocation/citizen/osujm/_all"
-        );
-        dispatch(prepareFinalObject("applyScreenMdmsData", payloadMdms.MdmsRes));
         dispatch(
-            prepareFinalObject(
-                "applyScreenMdmsData.Booking.sectorWiselocationsObject",
-                payloadLocation.osujmNewlocationMap
-            )
+            prepareFinalObject("applyScreenMdmsData", payload.MdmsRes)
         );
     } catch (e) {
         console.log(e);
     }
 };
 
+const getVenueData = async (action, state, dispatch) => {
+    try {
+        let payload = await httpRequest(
+            "post",
+            "/bookings/newLocation/citizen/osujm/_all"
+        );
+        return payload
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+const getData = async (action, state, dispatch) => {
+    try {
+        let response = await getVenueData(action, state, dispatch);
+        dispatch(
+            prepareFinalObject(
+                "sectorWiselocationsObject",
+                response.osujmNewlocationMap
+            )
+        );
+        return response    
+    } catch (error) {
+        console.log(error, "my error")
+    }
+    
+  };
+
+const setDataAutofill = (action, state, dispatch) => {
+    // console.log("in set data autofill")
+    let sectorWiselocationsObject = get(
+        state,
+        "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
+    );
+    // let bkSector = get(
+    //     state,
+    //     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.bkSector"
+    // );
+    // console.log(sectorWiselocationsObject, "sectorWiselocationsObject out");
+    if (sectorWiselocationsObject !== undefined) {
+        let bkSector = get(
+            state,
+            "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+        );
+        let bkBookingVenue = get(
+            state,
+            "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+        );
+        let venueList = get(sectorWiselocationsObject, bkSector);
+
+        // console.log(sectorWiselocationsObject, "sectorWiselocationsObject");
+        // console.log(bkSector, "bkSector");
+        // console.log(venueList, "venueList");
+        venueList !== undefined &&
+            dispatch(
+                prepareFinalObject(
+                    "venueList",
+                    venueList
+                )
+            );
+        
+
+        dispatch(
+            handleField(
+                "checkavailability_oswmcc",
+                "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
+                "props.disabled",
+                bkSector  !== undefined || bkSector !== "" ? true : false
+            )
+        );
+
+        if (bkBookingVenue !== undefined) {
+            dispatch(
+                handleField(
+                    "checkavailability_oswmcc",
+                    "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
+                    "props.value",
+                    bkBookingVenue
+                )
+            );
+        }
+    }
+};
+
 const prepareEditFlow = async (
+    action,
     state,
     dispatch,
     applicationNumber,
     tenantId
 ) => {
+    // console.log("in edit flow")
     if (applicationNumber) {
+        // console.log("application number present")
+        setapplicationNumber(applicationNumber);
+        setApplicationNumberBox(state, dispatch, applicationNumber);
+
         let response = await getSearchResultsView([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
-        setapplicationNumber(applicationNumber);
-        setApplicationNumberBox(state, dispatch, applicationNumber);
 
-        dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
-        dispatch(
-            prepareFinalObject(
-                "availabilityCheckData",
-                response.bookingsModelList[0]
-            )
-        );
-
-        const bkSector = response.bookingsModelList[0].bkSector
-        const bkBookingVenue  = response.bookingsModelList[0].bkBookingVenue 
-        let sectorWiselocationsObject = get(
-            state.screenConfiguration.preparedFinalObject,
-            "applyScreenMdmsData.Booking.sectorWiselocationsObject"
-        );
-    
-        // get(
-        //     action.screenConfig,
-        //     "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-        //     true
-        // );
-        console.log(bkSector, "bkSector");
-        console.log(bkBookingVenue, "bkBookingVenue");
-        console.log(sectorWiselocationsObject, "sectorWiselocationsObject");
-        const venueList = get(sectorWiselocationsObject, bkSector);
-        console.log(venueList, "venueListNew");
-        venueList !== undefined && dispatch(
-            prepareFinalObject(
-                "applyScreenMdmsData.Booking.venueList",
-                venueList 
-            )
-        );
-        dispatch(
-            handleField(
-                "checkavailability_oswmcc",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                "props.disabled",
-                false
-            )
-        );
-
-        dispatch(
-            handleField(
-                "checkavailability_oswmcc",
-                "components.div.children.checkAvailabilitySearch.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                "props.value",
-                bkBookingVenue === undefined ? null : bkBookingVenue
-            )
-        );
-
-
-
-        let availabilityData = await getAvailabilityDataOSWMCC(
-            response.bookingsModelList[0].bkSector,
-            response.bookingsModelList[0].bkBookingVenue
-        );
-
-        if (availabilityData !== undefined) {
-            let data = availabilityData.data;
-            let reservedDates = [];
-            var daylist = [];
-            data.map((dataitem) => {
-                let start = dataitem.fromDate;
-                let end = dataitem.toDate;
-                daylist = getBetweenDays(start, end);
-                daylist.map((v) => {
-                    reservedDates.push(v.toISOString().slice(0, 10));
-                });
-            });
+        if (response.bookingsModelList.length > 0) {
+            dispatch(
+                prepareFinalObject("Booking", response.bookingsModelList[0])
+            );
             dispatch(
                 prepareFinalObject(
-                    "availabilityCheckData.reservedDays",
-                    reservedDates
+                    "availabilityCheckData",
+                    response.bookingsModelList[0]
                 )
             );
-        } else {
-            dispatch(
-                toggleSnackbar(
-                    true,
-                    { labelName: "Please Try After Sometime!", labelKey: "" },
-                    "warning"
-                )
-            );
-        }
 
-        let fileStoreIds = Object.keys(response.documentMap);
-        let fileStoreIdsValue = Object.values(response.documentMap);
-        if (fileStoreIds.length > 0) {
-            let fileUrls =
-                fileStoreIds.length > 0
-                    ? await getFileUrlFromAPI(fileStoreIds)
-                    : {};
-            dispatch(
-                prepareFinalObject("documentsUploadReduxOld.documents", [
-                    {
-                        fileName: fileStoreIdsValue[0],
-                        fileStoreId: fileStoreIds[0],
-                        fileUrl: fileUrls[fileStoreIds[0]],
-                    },
-                ])
+            set(
+                action.screenConfig,
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
             );
+
+            setDataAutofill(action, state, dispatch);
+
+            let availabilityData = await getAvailabilityDataOSWMCC(
+                response.bookingsModelList[0].bkSector,
+                response.bookingsModelList[0].bkBookingVenue
+            );
+
+            if (availabilityData !== undefined) {
+                let data = availabilityData.data;
+                let reservedDates = [];
+                var daylist = [];
+                data.map((dataitem) => {
+                    let start = dataitem.fromDate;
+                    let end = dataitem.toDate;
+                    daylist = getBetweenDays(start, end);
+                    daylist.map((v) => {
+                        reservedDates.push(v.toISOString().slice(0, 10));
+                    });
+                });
+                dispatch(
+                    prepareFinalObject(
+                        "availabilityCheckData.reservedDays",
+                        reservedDates
+                    )
+                );
+            } else {
+                dispatch(
+                    toggleSnackbar(
+                        true,
+                        {
+                            labelName: "Please Try After Sometime!",
+                            labelKey: "",
+                        },
+                        "warning"
+                    )
+                );
+            }
+
+            let fileStoreIds = Object.keys(response.documentMap);
+            let fileStoreIdsValue = Object.values(response.documentMap);
+            if (fileStoreIds.length > 0) {
+                let fileUrls =
+                    fileStoreIds.length > 0
+                        ? await getFileUrlFromAPI(fileStoreIds)
+                        : {};
+                dispatch(
+                    prepareFinalObject("documentsUploadReduxOld.documents", [
+                        {
+                            fileName: fileStoreIdsValue[0],
+                            fileStoreId: fileStoreIds[0],
+                            fileUrl: fileUrls[fileStoreIds[0]],
+                        },
+                    ])
+                );
+            }
         }
+    } else {
+        // console.log("in edit flow not application number")
+        setDataAutofill(action, state, dispatch);
     }
 };
 const header = getCommonContainer({
@@ -262,8 +274,18 @@ const header = getCommonContainer({
         },
         visible: false,
     },
-    
 });
+
+const availabilitySearch = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+        id: "apply_form1",
+    },
+    children: {
+        availabilityForm,
+    },
+};
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -274,24 +296,23 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch).then(response => {
-            if (applicationNumber !== null) {
-                set(
-                    action.screenConfig,
-                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                    true
-                );
-                prepareEditFlow(
-                    state,
-                    dispatch,
-                    applicationNumber,
-                    tenantId
-                );
+        getMdmsData(action, state, dispatch);
+        getData(action, state, dispatch).then(response => {
+            // console.log(response, "my new response")
+            if(response){
+                // console.log("if response true")
+                // console.log("call prepare edit flow")
+                prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
             }
-        });
+        })
+        // if (applicationNumber !== null) {
 
         
 
+       
+        // } else {
+        //     setDataAutofill(action, state, dispatch);
+        // }
         return action;
     },
     components: {
@@ -316,8 +337,8 @@ const screenConfig = {
                         },
                     },
                 },
-                checkAvailabilitySearch: checkAvailabilitySearch,
-                checkAvailabilityCalendar: checkAvailabilityCalendar,
+                availabilitySearch,
+                availabilityCalendar,
                 adhocDialog: {
                     uiFramework: "custom-containers-local",
                     moduleName: "egov-services",
@@ -329,25 +350,122 @@ const screenConfig = {
                     },
                     children: {
                         popup: getCommonContainer({
+                            children: {
+                                perDayRateSummary,
+                                ImageLocationSummary,
+                            },
+                        }),
+                        popup: getCommonContainer({
                             venuebasedSummary: {
                                 uiFramework: "custom-atoms",
                                 componentPath: "Card",
                                 props: {
                                     style: {
                                         width: "100%",
-                                        margin: "24px 0 0",
-                                        backgroundColor: "#fff",
-                                        padding: "0 24px 24px",
-                                        // borderRadius: 0,
-                                        // boxShadow: "none",
-                                        // overflow: "visible",
+                                        margin: "0",
+                                        boxShadow: "none",
                                     },
                                 },
                                 children: {
+                                    header: {
+                                        uiFramework: "custom-atoms",
+                                        componentPath: "Container",
+                                        props: {
+                                            style: {
+                                                // width: "100%",
+                                                // float: "right"
+                                            },
+                                        },
+                                        children: {
+                                            div1: {
+                                                uiFramework: "custom-atoms",
+                                                componentPath: "Div",
+                                                gridDefination: {
+                                                    xs: 10,
+                                                    sm: 10,
+                                                },
+                                                props: {
+                                                    style: {
+                                                        // width: "100%",
+                                                        // float: "right"
+                                                    },
+                                                },
+                                                children: {
+                                                    div: getCommonHeader(
+                                                        {
+                                                            labelName:
+                                                                "Venue Details",
+                                                            labelKey:
+                                                                "BK_OSWMCC_BOOKING_VENUE_DETAILS",
+                                                        },
+                                                        {
+                                                            style: {
+                                                                fontSize:
+                                                                    "18px",
+                                                                marginTop:
+                                                                    "8px",
+                                                            },
+                                                        }
+                                                    ),
+                                                },
+                                            },
+                                            div2: {
+                                                uiFramework: "custom-atoms",
+                                                componentPath: "Div",
+                                                gridDefination: {
+                                                    xs: 2,
+                                                    sm: 2,
+                                                },
+                                                props: {
+                                                    style: {
+                                                        width: "100%",
+                                                        float: "right",
+                                                        cursor: "pointer",
+                                                    },
+                                                },
+                                                children: {
+                                                    closeButton: {
+                                                        componentPath: "Button",
+                                                        props: {
+                                                            style: {
+                                                                float: "right",
+                                                                color:
+                                                                    "rgba(0, 0, 0, 0.60)",
+                                                            },
+                                                        },
+                                                        children: {
+                                                            previousButtonIcon: {
+                                                                uiFramework:
+                                                                    "custom-atoms",
+                                                                componentPath:
+                                                                    "Icon",
+                                                                props: {
+                                                                    iconName:
+                                                                        "close",
+                                                                },
+                                                            },
+                                                        },
+                                                        onClickDefination: {
+                                                            action: "condition",
+                                                            callBack: (
+                                                                state,
+                                                                dispatch
+                                                            ) =>
+                                                                showHideAdhocPopup(
+                                                                    state,
+                                                                    dispatch,
+                                                                    "checkavailability_oswmcc"
+                                                                ),
+                                                        },
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
                                     perDayRateSummary,
                                     ImageLocationSummary,
                                 },
-                                // visible: false,
+                                visible: true,
                             },
                         }),
                     },

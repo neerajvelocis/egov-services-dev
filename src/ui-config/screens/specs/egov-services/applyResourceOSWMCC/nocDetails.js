@@ -23,7 +23,7 @@ import {
 import {
     getPerDayRateOSWMCC
 } from "../../../../screens/specs/utils";
-import { perDayRateSummary } from "../summaryResource/perDayRateSummaryBookingOSWMCC";
+import { perDayRateSummary } from "../summaryResource/perDayRateSummaryLocationOSWMCC";
 export const personalDetails = getCommonCard({
 
     personalDetailsContainer: getCommonContainer({
@@ -186,7 +186,7 @@ export const bookingDetails = getCommonCard({
                     labelName: "Area requirement",
                     labelKey: "BK_OSWMCC_LOC_AREA_REQUIRED_PLACEHOLDER",
                 },
-                pattern: getPattern("Address"),
+                pattern: getPattern("areaRequired"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
@@ -222,7 +222,7 @@ export const bookingDetails = getCommonCard({
                             true
                         );
 
-                        response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
+                        // response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
                         dispatch(
                             prepareFinalObject("perDayRate", response.data)
                         );
