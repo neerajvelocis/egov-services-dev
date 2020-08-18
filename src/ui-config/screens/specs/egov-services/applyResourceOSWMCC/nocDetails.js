@@ -23,7 +23,7 @@ import {
 import {
     getPerDayRateOSWMCC
 } from "../../../../screens/specs/utils";
-import { perDayRateSummary } from "../summaryResource/perDayRateSummaryBookingOSWMCC";
+import { perDayRateSummary } from "../summaryResource/perDayRateSummaryLocationOSWMCC";
 export const personalDetails = getCommonCard({
 
     personalDetailsContainer: getCommonContainer({
@@ -186,18 +186,18 @@ export const bookingDetails = getCommonCard({
                     labelName: "Area requirement",
                     labelKey: "BK_OSWMCC_LOC_AREA_REQUIRED_PLACEHOLDER",
                 },
-                pattern: getPattern("Address"),
+                pattern: getPattern("areaMeasurement"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
                 maxLength: 3,
-                
+                //inputProps: { maxLength: 3 },
                 jsonPath: "Booking.areaRequirement",
-                props: {
-                    required: true,
-                    helperText: "custom helper text",
+                // props: {
+                //     required: true,
+                //     helperText: "custom helper text",
 
-                },
+                // },
             }),
             beforeFieldChange: async (action, state, dispatch) => {
                 if (action.value) {
