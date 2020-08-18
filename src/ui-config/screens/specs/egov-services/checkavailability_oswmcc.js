@@ -97,7 +97,7 @@ const getData = async (action, state, dispatch) => {
         let response = await getVenueData(action, state, dispatch);
         dispatch(
             prepareFinalObject(
-                "applyScreenMdmsData.Booking.sectorWiselocationsObject",
+                "sectorWiselocationsObject",
                 response.osujmNewlocationMap
             )
         );
@@ -112,7 +112,7 @@ const setDataAutofill = (action, state, dispatch) => {
     // console.log("in set data autofill")
     let sectorWiselocationsObject = get(
         state,
-        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
+        "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
     );
     // let bkSector = get(
     //     state,
@@ -136,16 +136,18 @@ const setDataAutofill = (action, state, dispatch) => {
         venueList !== undefined &&
             dispatch(
                 prepareFinalObject(
-                    "applyScreenMdmsData.Booking.venueList",
+                    "venueList",
                     venueList
                 )
             );
+        
+
         dispatch(
             handleField(
                 "checkavailability_oswmcc",
                 "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
                 "props.disabled",
-                false
+                bkSector  !== undefined || bkSector !== "" ? true : false
             )
         );
 

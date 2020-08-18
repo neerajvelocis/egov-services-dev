@@ -479,19 +479,19 @@ export const availabilityForm = getCommonCard({
                     // console.log(action.value, "my new value sector");
                     let sectorWiselocationsObject = get(
                         state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.sectorWiselocationsObject"
+                        "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
                     );
                     
                     let venueList = get(
                         sectorWiselocationsObject,
                         action.value
                     );
-                    // console.log(sectorWiselocationsObject, "sectorWiselocationsObject in sector");
-                    // console.log(venueList, "venueList in sector");
+                    console.log(sectorWiselocationsObject, "sectorWiselocationsObject in sector");
+                    console.log(venueList, "venueList in sector");
                     venueList !== undefined &&
                         dispatch(
                             prepareFinalObject(
-                                "applyScreenMdmsData.Booking.venueList",
+                                "venueList",
                                 venueList
                             )
                         );
@@ -537,7 +537,7 @@ export const availabilityForm = getCommonCard({
                     md: 6,
                 },
 
-                sourceJsonPath: "applyScreenMdmsData.Booking.venueList",
+                sourceJsonPath: "venueList",
                 jsonPath: "availabilityCheckData.bkBookingVenue",
                 required: true,
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -559,7 +559,7 @@ export const availabilityForm = getCommonCard({
 
                     let venueList = get(
                         state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.venueList"
+                        "screenConfiguration.preparedFinalObject.venueList"
                     );
                     let selectedVenue = venueList !== undefined && venueList.filter((el) => el.name == action.value);
                     let bkAreaRequired = selectedVenue.length > 0 ? selectedVenue[0].areRequirement : "";

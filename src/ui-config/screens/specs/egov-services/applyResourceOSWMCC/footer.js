@@ -25,70 +25,6 @@ import {
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
-const moveToReview = (state, dispatch, applnid) => {
-    const documentsFormat = Object.values(
-        get(
-            state.screenConfiguration.preparedFinalObject,
-            "documentsUploadRedux"
-        )
-    );
-
-    let validateDocumentField = false;
-
-    for (let i = 0; i < documentsFormat.length; i++) {
-        let isDocumentRequired = get(documentsFormat[i], "isDocumentRequired");
-        let isDocumentTypeRequired = get(
-            documentsFormat[i],
-            "isDocumentTypeRequired"
-        );
-
-        let documents = get(documentsFormat[i], "documents");
-        if (isDocumentRequired) {
-            if (documents && documents.length > 0) {
-                if (isDocumentTypeRequired) {
-                    if (get(documentsFormat[i], "dropdown.value")) {
-                        validateDocumentField = true;
-                    } else {
-                        dispatch(
-                            toggleSnackbar(
-                                true,
-                                {
-                                    labelName:
-                                        "Please select type of Document!",
-                                    labelKey: "",
-                                },
-                                "warning"
-                            )
-                        );
-                        validateDocumentField = false;
-                        break;
-                    }
-                } else {
-                    validateDocumentField = true;
-                }
-            } else {
-                dispatch(
-                    toggleSnackbar(
-                        true,
-                        {
-                            labelName: "Please uplaod mandatory documents!",
-                            labelKey: "",
-                        },
-                        "warning"
-                    )
-                );
-                validateDocumentField = false;
-                break;
-            }
-        } else {
-            validateDocumentField = true;
-        }
-    }
-
-    //validateDocumentField = true;
-
-    return validateDocumentField;
-};
 
 const moveToReview = (state, dispatch, applnid) => {
     const documentsFormat = Object.values(get(state.screenConfiguration.preparedFinalObject, "documentsUploadRedux")
@@ -125,7 +61,7 @@ const moveToReview = (state, dispatch, applnid) => {
                 dispatch(
                     toggleSnackbar(
                         true,
-                        { labelName: "Please uplaod mandatory documents!", labelKey: "" },
+                        { labelName: "Please upload mandatory documents!", labelKey: "" },
                         "warning"
                     )
                 );
@@ -191,109 +127,91 @@ const callBackForNext = async (state, dispatch) => {
         isFormValid = moveToReview(state, dispatch);
     }
     if (activeStep === 2 && isFormValid != false) {
-        isFormValid = moveToReview(state, dispatch);
-        if (isFormValid) {
-            let response = await createUpdateOSWMCCNewLocation(
-                state,
-                dispatch,
-                "INITIATE"
+
+        // prepareDocumentsUploadData(state, dispatch);
+        let response = await createUpdateOSWMCCNewLocation(
+            state,
+            dispatch,
+            "INITIATE"
+        );
+
+        let responseStatus = get(response, "status", "");
+
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+
+            let tenantId = getTenantId().split(".")[0];
+            let applicationNumber = get(
+                response,
+                "data.applicationNumber",
+                ""
+            );
+            //let businessService = get(response, "data.businessService", "");
+            const reviewUrl = `/egov-services/applyNewLocationUnderMCC?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
+            dispatch(setRoute(reviewUrl));
+
+
+            set(
+                state.screenConfiguration.screenConfig["applyNewLocationUnderMCC"],
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
             );
 
-            let responseStatus = get(response, "status", "");
+            // GET DOCUMENT DATA FOR DOWNLOAD
+            const uploadedDocData = get(
+                state.screenConfiguration.preparedFinalObject,
+                "documentsUploadRedux[0].documents",
+                []
+            );
+            const documentsPreview =
+                uploadedDocData &&
+                uploadedDocData.map((item) => {
+                    return {
+                        title: "OSWMCC_ID_PROOF",
+                        link: item.fileUrl && item.fileUrl.split(",")[0],
+                        linkText: "View",
+                        name: item.fileName,
+                        fileStoreId: item.fileStoreId,
+                    };
+                });
 
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                let tenantId = getTenantId().split(".")[0];
-                let applicationNumber = get(
-                    response,
-                    "data.applicationNumber",
-                    ""
-                );
-                //let businessService = get(response, "data.businessService", "");
-                const reviewUrl = `/egov-services/applyNewLocationUnderMCC?applicationNumber=${applicationNumber}&tenantId=${tenantId}`;
-                dispatch(setRoute(reviewUrl));
+            dispatch(prepareFinalObject("documentsPreview", documentsPreview));
 
-                set(
-                    state.screenConfiguration.screenConfig[
-                        "applyNewLocationUnderMCC"
-                    ],
-                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                    true
-                );
+            const documentsAndLocImages = get(
+                state.screenConfiguration.preparedFinalObject,
+                "documentsUploadRedux",
+                []
+            );
 
-                // GET DOCUMENT DATA FOR DOWNLOAD
-                const uploadedDocData = get(
-                    state.screenConfiguration.preparedFinalObject,
-                    "documentsUploadRedux[0].documents",
-                    []
-                );
-                const documentsPreview =
-                    uploadedDocData &&
-                    uploadedDocData.map((item) => {
-                        return {
-                            title: "OSWMCC_ID_PROOF",
-                            link: item.fileUrl && item.fileUrl.split(",")[0],
-                            linkText: "View",
-                            name: item.fileName,
-                            fileStoreId: item.fileStoreId,
-                        };
-                    });
+            var documentsAndLocImagesArray = Object.values(documentsAndLocImages);
 
-                dispatch(
-                    prepareFinalObject("documentsPreview", documentsPreview)
-                );
+            let onlyLocationImages = documentsAndLocImagesArray && documentsAndLocImagesArray.filter(item => {
+                if (item.documentType != "IDPROOF" && ("documents" in item) && item.documents) {
+                    return true;
+                }
+            });
+            console.log("onlyLocationImages Nero", onlyLocationImages);
+            const newLocationImagesPreview =
+                onlyLocationImages &&
+                onlyLocationImages.map((item) => {
 
-                const documentsAndLocImages = get(
-                    state.screenConfiguration.preparedFinalObject,
-                    "documentsUploadRedux",
-                    []
-                );
+                    return {
+                        title: item.documentCode,
+                        link: item.documents[0].fileUrl && item.documents[0].fileUrl.split(",")[0],
+                        name: item.documents[0].fileName,
+                        fileStoreId: item.documents[0].fileStoreId,
+                    };
 
-                var documentsAndLocImagesArray = Object.values(
-                    documentsAndLocImages
-                );
 
-                let onlyLocationImages =
-                    documentsAndLocImagesArray &&
-                    documentsAndLocImagesArray.filter((item) => {
-                        if (
-                            item.documentType != "IDPROOF" &&
-                            "documents" in item &&
-                            item.documents
-                        ) {
-                            return true;
-                        }
-                    });
-                console.log("onlyLocationImages Nero", onlyLocationImages);
-                const newLocationImagesPreview =
-                    onlyLocationImages &&
-                    onlyLocationImages.map((item) => {
-                        return {
-                            title: item.documentCode,
-                            link:
-                                item.documents[0].fileUrl &&
-                                item.documents[0].fileUrl.split(",")[0],
-                            name: item.documents[0].fileName,
-                            fileStoreId: item.documents[0].fileStoreId,
-                        };
-                    });
-                console.log(
-                    "mccNewLocImagesPreview Nero",
-                    newLocationImagesPreview
-                );
-                //let onlyLocationImagesFinal = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.link != "NOLINK");
-                dispatch(
-                    prepareFinalObject(
-                        "mccNewLocImagesPreview",
-                        newLocationImagesPreview
-                    )
-                );
-            } else {
-                let errorMessage = {
-                    labelName: "Submission Falied, Try Again later!",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                dispatch(toggleSnackbar(true, errorMessage, "error"));
-            }
+                });
+            console.log("mccNewLocImagesPreview Nero", newLocationImagesPreview);
+            //let onlyLocationImagesFinal = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.link != "NOLINK");
+            dispatch(prepareFinalObject("mccNewLocImagesPreview", newLocationImagesPreview));
+        } else {
+            let errorMessage = {
+                labelName: "Submission Falied, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            dispatch(toggleSnackbar(true, errorMessage, "error"));
         }
     }
     if (activeStep === 3) {
@@ -312,9 +230,13 @@ const callBackForNext = async (state, dispatch) => {
             // };
             // dispatch(toggleSnackbar(true, successMessage, "success"));
             let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(response, "data.applicationNumber", "");
+            let applicationNumber = get(
+                response,
+                "data.applicationNumber",
+                ""
+            );
             let businessService = get(response, "data.businessService", "");
-            const reviewUrl = `/egov-services/acknowledgement?purpose=${"apply"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            const reviewUrl = `/egov-services/acknowledgement?purpose=${"apply"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
             dispatch(setRoute(reviewUrl));
         } else {
             let errorMessage = {
@@ -631,3 +553,5 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
     }
     return [isFormValid, hasFieldToaster];
 };
+
+
