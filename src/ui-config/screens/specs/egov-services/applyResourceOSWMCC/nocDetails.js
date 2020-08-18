@@ -186,18 +186,18 @@ export const bookingDetails = getCommonCard({
                     labelName: "Area requirement",
                     labelKey: "BK_OSWMCC_LOC_AREA_REQUIRED_PLACEHOLDER",
                 },
-                pattern: getPattern("areaMeasurement"),
+                pattern: getPattern("Address"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // helperText : "new helper outside",
                 required: true,
                 maxLength: 3,
-                //inputProps: { maxLength: 3 },
+                
                 jsonPath: "Booking.areaRequirement",
-                // props: {
-                //     required: true,
-                //     helperText: "custom helper text",
+                props: {
+                    required: true,
+                    helperText: "custom helper text",
 
-                // },
+                },
             }),
             beforeFieldChange: async (action, state, dispatch) => {
                 if (action.value) {
