@@ -78,11 +78,12 @@ function totalAmount(arr) {
 }
 
 function FeesEstimateCard(props) {
-  const { classes, estimate } = props;
+  const { classes, estimate, baseCharge } = props;
   const total = totalAmount(estimate.fees);
   const totalHeadClassName = "pm-total-amount-value " + classes.bigheader;
 
-    return (
+
+  return (
     <Grid container>
       <Grid xs={12} sm={7}>
         <LabelContainer
@@ -93,23 +94,28 @@ function FeesEstimateCard(props) {
         <div style={{ marginTop: 48, maxWidth: 400 }}>
           <Grid container>
             {estimate.fees.map((fee, key) => {
+
+
               let tooltip = fee.info ? (
-              ""
-              ) : (
                 ""
-              );
+              ) : (
+                  ""
+                );
               let textLeft = fee.name ? (
-                <Grid container xs={8}>
+                <Grid container xs={8} direction='row'>
                   <LabelContainer
                     labelName={fee.name.labelName}
                     labelKey={fee.name.labelKey}
                     style={styles.taxStylesLeft}
                   />
+                  {key == 0 && <Typography variant="h5">
+                    {baseCharge}
+                  </Typography>}
                   {tooltip}
                 </Grid>
               ) : (
-                <Grid xs={8} />
-              );
+                  <Grid xs={8} />
+                );
               let textRight = fee.value ? (
                 <Grid xs={4} align="right">
                   <LabelContainer
@@ -119,14 +125,14 @@ function FeesEstimateCard(props) {
                   />
                 </Grid>
               ) : (
-                <Grid xs={4} align="right">
-                  <LabelContainer
-                    labelName={0}
-                    labelKey={0}
-                    style={styles.taxStyles}
-                  />
-                </Grid>
-              );
+                  <Grid xs={4} align="right">
+                    <LabelContainer
+                      labelName={0}
+                      labelKey={0}
+                      style={styles.taxStyles}
+                    />
+                  </Grid>
+                );
               return (
                 <Grid key={key} container>
                   {textLeft}
@@ -143,6 +149,7 @@ function FeesEstimateCard(props) {
                   labelName="Total Amount"
                   labelKey="MY_BK_TOTAL_AMT"
                 />
+
               </Typography>
             </Grid>
             <Grid
@@ -171,6 +178,7 @@ function FeesEstimateCard(props) {
         <Typography className={totalHeadClassName} align="right">
           Rs {total}
         </Typography>
+
         {estimate.extra && estimate.extra.length !== 0 ? (
           <Card className={classes.whiteCard}>
             {estimate.extra.map((item, key) => {

@@ -45,6 +45,10 @@ import {
     getSearchResultsView
 } from "../../../../ui-utils/commons";
 import { httpRequest } from "../../../../ui-utils";
+import {
+    getPerDayRateCgb
+
+} from "../utils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
@@ -143,10 +147,20 @@ const setSearchResponse = async (
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },
     ]);
+
     let recData = get(response, "bookingsModelList", []);
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
+
+    let venue = get(
+        state.screenConfiguration.preparedFinalObject,
+        "Booking.bkBookingVenue",
+        []
+    );
+
+    let baseCharge = await getPerDayRateCgb(venue)
+    dispatch(prepareFinalObject("BaseCharge", `  @ Rs.${baseCharge.data.ratePerDay}/day`));
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
@@ -230,6 +244,8 @@ const screenConfig = {
         );
         setapplicationNumber(applicationNumber);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+
+
         getPaymentGatwayList(action, state, dispatch).then(response => {
         });
         const queryObject = [
