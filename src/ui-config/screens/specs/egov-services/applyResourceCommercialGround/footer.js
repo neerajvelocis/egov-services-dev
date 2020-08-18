@@ -24,6 +24,10 @@ import {
     getapplicationNumber,
     setapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
+import {
+    getPerDayRateCgb
+
+} from "../../utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
 
@@ -45,6 +49,16 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
+        let venue = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkBookingVenue",
+            []
+        );
+
+        let baseCharge = await getPerDayRateCgb(venue)
+
+        dispatch(prepareFinalObject("BaseCharge", `  @ Rs.${baseCharge.data.ratePerDay}/day`));
+
         response = await createUpdateCgbApplication(state, dispatch, "INITIATE");
         console.log(response, "myResponse");
         let responseStatus = get(response, "status", "");
@@ -63,6 +77,7 @@ const callBackForNext = async (state, dispatch) => {
                 response,
                 "data.bkApplicationNumber",
                 ""
+
             );
             let businessService = get(response, "data.businessService", "");
             const reviewUrl = `/egov-services/applycommercialground?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;

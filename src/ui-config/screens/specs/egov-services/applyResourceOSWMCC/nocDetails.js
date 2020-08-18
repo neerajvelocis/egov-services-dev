@@ -23,7 +23,7 @@ import {
 import {
     getPerDayRateOSWMCC
 } from "../../../../screens/specs/utils";
-import { perDayRateSummary } from "../summaryResource/perDayRateSummaryBookingOSWMCC";
+import { perDayRateSummary } from "../summaryResource/perDayRateSummaryLocationOSWMCC";
 export const personalDetails = getCommonCard({
 
     personalDetailsContainer: getCommonContainer({
