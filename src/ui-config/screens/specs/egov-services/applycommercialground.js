@@ -11,6 +11,7 @@ import {
 
 } from "../utils";
 import { footer } from "./applyResourceCommercialGround/footer";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import {
     personalDetails,
     bookingDetails,
@@ -268,12 +269,35 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        const venue = getQueryArg(window.location.href, "venue");
-        const fromDate = getQueryArg(window.location.href, "fromDate");
-        const toDate = getQueryArg(window.location.href, "toDate");
+        // const venue = getQueryArg(window.location.href, "venue");
+        // const fromDate = getQueryArg(window.location.href, "fromDate");
+        // const toDate = getQueryArg(window.location.href, "toDate");
         // const from = convertDateInYMD(queryfrom);
         // const to = convertDateInYMD(queryto);
+        const availabilityCheckData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.availabilityCheckData"
+        );
+        if (availabilityCheckData !== undefined) {
+            var venue = get(
+                state,
+                "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+            );
 
+            var fromDate = get(
+                state,
+                "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate"
+            );
+
+            var toDate = get(
+                state,
+                "screenConfiguration.preparedFinalObject.availabilityCheckData.bkToDate"
+            );
+        } else {
+            dispatch(setRoute(`/egov-services/checkavailability`));
+            console.log("availabilityCheckData in undefined");
+
+        }
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
@@ -341,6 +365,46 @@ const screenConfig = {
                 true
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId, fromDate, toDate, venue);
+
+        } else {
+            // const locality = getQueryArg(window.location.href, "sector");
+            // const venue = getQueryArg(window.location.href, "venue");
+            // const fromDate = getQueryArg(window.location.href, "fromDate");
+            // const toDate = getQueryArg(window.location.href, "toDate");
+            // const from = convertDateInYMD(queryfrom);
+            // const to = convertDateInYMD(queryto);
+
+            const availabilityCheckData = get(
+                state,
+                "screenConfiguration.preparedFinalObject.availabilityCheckData"
+            );
+            if (availabilityCheckData !== undefined) {
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkFromDate",
+                        convertDateInYMD(fromDate)
+                    )
+                );
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkToDate",
+                        convertDateInYMD(toDate)
+                    )
+                );
+
+                dispatch(
+                    prepareFinalObject(
+                        "Booking.bkBookingVenue",
+                        venue
+                    )
+                );
+                dispatch(
+                    prepareFinalObject("Booking.bkSector", venue)
+                );
+            } else {
+                dispatch(setRoute(`/egov-services/checkavailability`));
+                console.log("availabilityCheckData in undefined");
+            }
         }
 
         // Code to goto a specific step through URL
@@ -372,6 +436,7 @@ const screenConfig = {
         }
 
         return action;
+
     },
     components: {
         div: {

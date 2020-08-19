@@ -239,17 +239,23 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch);
-
-        if (applicationNumber !== null) {
-            set(
-                action.screenConfig,
-                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                true
-            );
-            prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        }
+        getMdmsData(action, state, dispatch).then(response => {
+            if (applicationNumber !== null) {
+                set(
+                    action.screenConfig,
+                    "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                    true
+                );
+                prepareEditFlow(
+                    state,
+                    dispatch,
+                    applicationNumber,
+                    tenantId
+                );
+            }
+        });
         return action;
+
     },
     components: {
         div: {
