@@ -3,6 +3,7 @@ import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils
 import MyApplicationIcon from "../../../../ui-atoms-local/Icons/MyApplicationIcon";
 import FormIcon from "../../../../ui-atoms-local/Icons/FormIcon";
 import TradeLicenseIcon from "../../../../ui-atoms-local/Icons/TradeLicenseIcon";
+import AddBookingIcon from "../../../../ui-atoms-local/Icons/AddBookingIcon";
 import { getRequiredDocData, clearlocalstorageAppDetails } from "../utils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -33,7 +34,7 @@ if(role_name === 'CITIZEN'){
         labelKey: "BK_APPLY",
         labelName: "Apply for Booking"
       },
-      icon : <TradeLicenseIcon />,
+      icon : <AddBookingIcon />,
       // icon: <i 
       // viewBox="0 -8 35 42"
       // color="primary"

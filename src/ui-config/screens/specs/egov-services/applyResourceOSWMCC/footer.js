@@ -61,7 +61,9 @@ const moveToReview = (state, dispatch, applnid) => {
                 dispatch(
                     toggleSnackbar(
                         true,
-                        { labelName: "Please uplaod mandatory documents!", labelKey: "" },
+
+    
+                        { labelName: "Please upload mandatory documents!", labelKey: "" },
                         "warning"
                     )
                 );
