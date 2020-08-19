@@ -125,9 +125,13 @@ const callBackForBook = async (state, dispatch) => {
             };
             dispatch(toggleSnackbar(true, warrningMsg, "warning"));
         } else if ("bkApplicationNumber" in availabilityCheckData) {
-            dispatch(setRoute(`/egov-services/applycommercialground?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}`));
-        } else
-            dispatch(setRoute(`/egov-services/applycommercialground?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}`));
+            //&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}
+            dispatch(setRoute(`/egov-services/applycommercialground?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`));
+        } else {
+            //?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&venue=${availabilityCheckData.bkSector}
+            dispatch(setRoute(`/egov-services/applycommercialground`));
+        }
+
     }
 
     // if (availabilityCheckData !== undefined) {

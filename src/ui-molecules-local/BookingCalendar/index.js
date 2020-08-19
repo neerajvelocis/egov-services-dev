@@ -108,7 +108,7 @@ class BookingCalendar extends React.Component {
                     })
 
                 } else {
-                    alert("in else")
+
                     this.setState(this.getInitialState());
                 }
 
