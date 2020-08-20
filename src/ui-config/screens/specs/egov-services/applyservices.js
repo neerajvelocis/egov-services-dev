@@ -53,7 +53,7 @@ if (role_name === "CITIZEN") {
             //         event
             //     </i>
             // ),
-            route: "",
+            route: "applyparkcommunitycentre",
         },
         {
             label: {

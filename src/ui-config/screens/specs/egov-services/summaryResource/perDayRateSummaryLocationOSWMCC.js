@@ -52,7 +52,7 @@ export const perDayRateSummary = getCommonGrayCard({
                             },
                         }
                     ),
-                    totalArea: getLabelWithValue(
+                    areaRange: getLabelWithValue(
                         {
                             labelName: "Entered Area falls in Range",
                             labelKey: "BK_OSWMCC_LOC_TOTAL_AREA_LABEL",
