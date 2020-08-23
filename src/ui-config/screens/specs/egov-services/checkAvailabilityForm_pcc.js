@@ -8,7 +8,7 @@ import {
     getSelectField,
     getDateField,
     getLabel,
-    getPattern
+    getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { showHideAdhocPopup } from "../utils";
 import {
@@ -370,9 +370,10 @@ const callBackForVenue = async (state, dispatch) => {
             let response = await getPerDayRateOSWMCC(bkSector, bkAreaRequired);
             let responseStatus = get(response, "status", "");
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                response.data.displayArea = response.data.areaFrom + " - " + response.data.areaTo;
+                response.data.displayArea =
+                    response.data.areaFrom + " - " + response.data.areaTo;
                 dispatch(prepareFinalObject("perDayRate", response.data));
-            } 
+            }
             // else {
             //     let errorMessage = {
             //         labelName: "Something went wrong, Try Again later!",
@@ -380,7 +381,7 @@ const callBackForVenue = async (state, dispatch) => {
             //     };
             //     dispatch(toggleSnackbar(true, errorMessage, "error"));
             // }
-        } 
+        }
         // else {
         //     let errorMessage = {
         //         labelName: "Something went wrong, Try Again later!",
@@ -472,9 +473,10 @@ export const availabilityForm = getCommonCard({
                         label: "Parks",
                         labelKey: "Parks",
                         value: "Parks",
-                    }
+                    },
                 ],
-                jsonPath: "Booking.bkCategory",
+                jsonPath: "availabilityCheckData.bkCategory",
+                defaultValue: "Parks",
                 required: true,
             },
             required: true,
@@ -509,342 +511,186 @@ export const availabilityForm = getCommonCard({
             }),
             beforeFieldChange: (action, state, dispatch) => {
                 if (action.value) {
-                    // let bkBookingVenue = get(
-                    //     state,
-                    //     "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-                    // );
-                    // console.log(action.value, "my new value sector");
-                    let sectorWiselocationsObject = get(
-                        state,
-                        "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
+                    set(
+                        state.screenConfiguration.screenConfig[
+                            "checkavailability_pcc"
+                        ],
+                        "components.div.children.availabilityMediaCardWrapper.visible",
+                        true
                     );
-                    
-                    let venueList = get(
-                        sectorWiselocationsObject,
-                        action.value
+                    set(
+                        state.screenConfiguration.screenConfig[
+                            "checkavailability_pcc"
+                        ],
+                        "components.div.children.availabilityCalendarWrapper.visible",
+                        true
                     );
-                    console.log(sectorWiselocationsObject, "sectorWiselocationsObject in sector");
-                    console.log(venueList, "venueList in sector");
-                    venueList !== undefined &&
-                        dispatch(
-                            prepareFinalObject(
-                                "venueList",
-                                venueList
-                            )
-                        );
-                    dispatch(
-                        handleField(
-                            "checkavailability_oswmcc",
-                            "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
-                            "props.disabled",
-                            false
-                        )
-                    );
-
-                    // if (bkBookingVenue !== undefined) {
-                    //     dispatch(
-                    //         handleField(
-                    //             "checkavailability_oswmcc",
-                    //             "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
-                    //             "props.value",
-                    //             bkBookingVenue
-                    //         )
-                    //     );
-                    // }
+                 
                 }
             },
             // afterFieldChange : (action, state, dispatch) => {
             //     alert("in after sector")
             // }
         },
-        bkFromDate: {
-            ...getDateField({
-                label: {
-                    labelName: "Booking Date",
-                    labelKey: "BK_PCC_FROM_DATE_LABEL",
-                },
-                placeholder: {
-                    labelName: "Booking Data",
-                    labelName: "BK_PCC_FROM_DATE_PLACEHOLDER",
-                },
-                // required: true,
-                pattern: getPattern("Date"),
-                jsonPath: "Booking.bkFromDate",
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                props: {
-                    className: "applicant-details-error",
-                    inputProps: {
-                        min: getTodaysDateInYMD(),
-                        max: getFinancialYearDates("yyyy-mm-dd").endDate,
-                    },
-                },
-                gridDefination: {
-                    xs: 12,
-                    sm: 6,
-                    md: 6,
-                },
-            }),
-        },
-        bkToDate: {
-            ...getDateField({
-                label: {
-                    labelName: "Booking Date",
-                    labelKey: "BK_PCC_TO_DATE_LABEL",
-                },
-                placeholder: {
-                    labelName: "Booking Data",
-                    labelName: "BK_PCC_TO_DATE_PLACEHOLDER",
-                },
-                // required: true,
-                pattern: getPattern("Date"),
-                jsonPath: "Booking.bkToDate",
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                props: {
-                    className: "applicant-details-error",
-                    inputProps: {
-                        min: getTodaysDateInYMD(),
-                        max: getFinancialYearDates("yyyy-mm-dd").endDate,
-                    },
-                },
-                gridDefination: {
-                    xs: 12,
-                    sm: 6,
-                    md: 6,
-                },
-            }),
-        },
-        // bkBookingVenue: {
-        //     ...getSelectField({
+        // bkFromDate: {
+        //     ...getDateField({
         //         label: {
-        //             labelName: "Booking Venue",
-        //             labelKey: "BK_OSWMCC_BOOKING_VENUE_LABEL",
+        //             labelName: "Booking Date",
+        //             labelKey: "BK_PCC_FROM_DATE_LABEL",
         //         },
-
         //         placeholder: {
-        //             labelName: "Select Booking Location",
-        //             labelKey: "BK_OSWMCC_BOOKING_VENUE_PLACEHOLDER",
+        //             labelName: "Booking Data",
+        //             labelName: "BK_PCC_FROM_DATE_PLACEHOLDER",
+        //         },
+        //         // required: true,
+        //         pattern: getPattern("Date"),
+        //         jsonPath: "Booking.bkFromDate",
+        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         props: {
+        //             className: "applicant-details-error",
+        //             inputProps: {
+        //                 min: getTodaysDateInYMD(),
+        //                 max: getFinancialYearDates("yyyy-mm-dd").endDate,
+        //             },
         //         },
         //         gridDefination: {
         //             xs: 12,
         //             sm: 6,
         //             md: 6,
         //         },
-
-        //         sourceJsonPath: "venueList",
-        //         jsonPath: "availabilityCheckData.bkBookingVenue",
-        //         required: true,
+        //     }),
+        // },
+        // bkToDate: {
+        //     ...getDateField({
+        //         label: {
+        //             labelName: "Booking Date",
+        //             labelKey: "BK_PCC_TO_DATE_LABEL",
+        //         },
+        //         placeholder: {
+        //             labelName: "Booking Data",
+        //             labelName: "BK_PCC_TO_DATE_PLACEHOLDER",
+        //         },
+        //         // required: true,
+        //         pattern: getPattern("Date"),
+        //         jsonPath: "Booking.bkToDate",
         //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         //         props: {
         //             className: "applicant-details-error",
-        //             required: true,
-        //             disabled: true,
+        //             inputProps: {
+        //                 min: getTodaysDateInYMD(),
+        //                 max: getFinancialYearDates("yyyy-mm-dd").endDate,
+        //             },
+        //         },
+        //         gridDefination: {
+        //             xs: 12,
+        //             sm: 6,
+        //             md: 6,
         //         },
         //     }),
-        //     beforeFieldChange: async (action, state, dispatch) => {
-        //         if (action.value) {
-        //             set(
-        //                 state.screenConfiguration.screenConfig[
-        //                     "checkavailability_oswmcc"
-        //                 ],
-        //                 "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityActions.children.viewDetailsButton.visible",
-        //                 true
-        //             );
-
-        //             let venueList = get(
-        //                 state,
-        //                 "screenConfiguration.preparedFinalObject.venueList"
-        //             );
-        //             let selectedVenue = venueList !== undefined && venueList.filter((el) => el.name == action.value);
-        //             let bkAreaRequired = selectedVenue.length > 0 ? selectedVenue[0].areRequirement : "";
-        //             dispatch(
-        //                 prepareFinalObject(
-        //                     "Booking.bkAreaRequired",
-        //                     bkAreaRequired
-        //                 )
-        //             );
-
-        //             //     let responseImage = await getNewLocatonImages(
-        //             //         bkSector,
-        //             //         action.value
-        //             //     );
-        //             //     let responseImageStatus = get(responseImage, "status", "");
-        //             //     if (
-        //             //         responseImageStatus == "SUCCESS" ||
-        //             //         responseImageStatus == "success"
-        //             //     ) {
-        //             //         let documentsAndLocImages = responseImage.data;
-        //             //         let onlyLocationImages =
-        //             //             documentsAndLocImages &&
-        //             //             documentsAndLocImages.filter(
-        //             //                 (item) => item.documentType != "IDPROOF"
-        //             //             );
-
-        //             //         let fileStoreIds =
-        //             //             onlyLocationImages &&
-        //             //             onlyLocationImages
-        //             //                 .map((item) => item.fileStoreId)
-        //             //                 .join(",");
-        //             //         const fileUrlPayload =
-        //             //             fileStoreIds &&
-        //             //             (await getFileUrlFromAPI(fileStoreIds));
-        //             //         let newLocationImagesPreview = [];
-        //             //         onlyLocationImages &&
-        //             //             onlyLocationImages.forEach((item, index) => {
-        //             //                 newLocationImagesPreview[index] = {
-        //             //                     name:
-        //             //                         (fileUrlPayload &&
-        //             //                             fileUrlPayload[item.fileStoreId] &&
-        //             //                             decodeURIComponent(
-        //             //                                 fileUrlPayload[item.fileStoreId]
-        //             //                                     .split(",")[0]
-        //             //                                     .split("?")[0]
-        //             //                                     .split("/")
-        //             //                                     .pop()
-        //             //                                     .slice(13)
-        //             //                             )) ||
-        //             //                         `Document - ${index + 1}`,
-        //             //                     fileStoreId: item.fileStoreId,
-        //             //                     link: Object.values(fileUrlPayload)[index],
-        //             //                     title: item.documentType,
-        //             //                     // tenantId: item.tenantId,
-        //             //                     // id: item.id,
-        //             //                 };
-        //             //             });
-
-        //             //         dispatch(
-        //             //             prepareFinalObject(
-        //             //                 "mccNewLocImagesPreview",
-        //             //                 newLocationImagesPreview
-        //             //             )
-        //             //         );
-
-        //             //         let response = await getPerDayRateOSWMCC(
-        //             //             bkSector,
-        //             //             bkAreaRequired
-        //             //         );
-        //             //         let responseStatus = get(response, "status", "");
-        //             //         if (
-        //             //             responseStatus == "SUCCESS" ||
-        //             //             responseStatus == "success"
-        //             //         ) {
-        //             //             set(
-        //             //                 state.screenConfiguration.screenConfig[
-        //             //                     "checkavailability_oswmcc"
-        //             //                 ],
-        //             //                 "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
-        //             //                 true
-        //             //             );
-        //             //             dispatch(
-        //             //                 prepareFinalObject("perDayRate", response.data)
-        //             //             );
-        //             //         } else {
-        //             //             let errorMessage = {
-        //             //                 labelName:
-        //             //                     "Something went wrong, Try Again later!",
-        //             //                 labelKey: "", //UPLOAD_FILE_TOAST
-        //             //             };
-        //             //             dispatch(
-        //             //                 toggleSnackbar(true, errorMessage, "error")
-        //             //             );
-        //             //         }
-        //             //     } else {
-        //             //         let errorMessage = {
-        //             //             labelName: "Something went wrong, Try Again later!",
-        //             //             labelKey: "", //UPLOAD_FILE_TOAST
-        //             //         };
-        //             //         dispatch(toggleSnackbar(true, errorMessage, "error"));
-        //             //     }
-        //         }
-        //     },
-        //     // afterFieldChange : (action, state, dispatch) => {
-        //     //     alert("in after venue")
-        //     // }
         // },
+        
     }),
-    availabilityActions: getCommonContainer({
-        searchButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    // marginRight: "16px",
-                },
-            },
+    // availabilityActions: getCommonContainer({
+    //     searchButton: {
+    //         componentPath: "Button",
+    //         props: {
+    //             variant: "contained",
+    //             color: "primary",
+    //             style: {
+    //                 minWidth: "200px",
+    //                 height: "48px",
+    //                 // marginRight: "16px",
+    //             },
+    //         },
 
-            children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Check Availability",
-                    labelKey: "BK_OSWMCC_CHECK_AVAILABILITY_LABEL",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForSearch,
-            },
-            visible: true,
-        },
-        resetButton: {
-            componentPath: "Button",
-            props: {
-                variant: "outlined",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    // marginRight: "16px",
-                    marginLeft: "16px",
-                },
-            },
+    //         children: {
+    //             submitButtonLabel: getLabel({
+    //                 labelName: "Check Availability",
+    //                 labelKey: "BK_OSWMCC_CHECK_AVAILABILITY_LABEL",
+    //             }),
+    //         },
+    //         onClickDefination: {
+    //             action: "condition",
+    //             callBack: callBackForSearch,
+    //         },
+    //         visible: true,
+    //     },
+    //     resetButton: {
+    //         componentPath: "Button",
+    //         props: {
+    //             variant: "outlined",
+    //             color: "primary",
+    //             style: {
+    //                 minWidth: "200px",
+    //                 height: "48px",
+    //                 // marginRight: "16px",
+    //                 marginLeft: "16px",
+    //             },
+    //         },
 
+    //         children: {
+    //             resetButtonLabel: getLabel({
+    //                 labelName: "Reset",
+    //                 labelKey: "BK_OSWMCC_BOOKING_CHECK_RESET_LABEL",
+    //             }),
+    //         },
+    //         onClickDefination: {
+    //             action: "condition",
+    //             callBack: callBackForReset,
+    //         },
+    //         visible: true,
+    //     },
+    //     viewDetailsButton: {
+    //         componentPath: "Button",
+    //         props: {
+    //             // variant: "outlined",
+    //             color: "primary",
+    //             style: {
+    //                 minWidth: "200px",
+    //                 height: "48px",
+    //                 // marginRight: "16px",
+    //                 marginLeft: "16px",
+    //             },
+    //         },
+    //         children: {
+    //             viewIcon: {
+    //                 uiFramework: "custom-atoms",
+    //                 componentPath: "Icon",
+    //                 props: {
+    //                     iconName: "remove_red_eye",
+    //                 },
+    //             },
+    //             buttonLabel: getLabel({
+    //                 labelName: "View Details",
+    //                 labelKey: "View Details",
+    //             }),
+    //         },
+    //         onClickDefination: {
+    //             action: "condition",
+    //             callBack: callBackForVenue,
+    //         },
+    //         visible: false,
+    //     },
+    // }),
+});
+
+export const availabilityMediaCard = getCommonCard({
+    Calendar: getCommonContainer({
+        bookingCalendar: {
+            uiFramework: "custom-containers-local",
+            moduleName: "egov-services",
+            componentPath: "BookingMediaContainer",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 12,
+            },
             children: {
-                resetButtonLabel: getLabel({
-                    labelName: "Reset",
-                    labelKey: "BK_OSWMCC_BOOKING_CHECK_RESET_LABEL",
-                }),
+                popup: {},
             },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForReset,
-            },
-            visible: true,
-        },
-        viewDetailsButton: {
-            componentPath: "Button",
-            props: {
-                // variant: "outlined",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    // marginRight: "16px",
-                    marginLeft: "16px",
-                },
-            },
-            children: {
-                viewIcon: {
-                    uiFramework: "custom-atoms",
-                    componentPath: "Icon",
-                    props: {
-                        iconName: "remove_red_eye",
-                    },
-                },
-                buttonLabel: getLabel({
-                    labelName: "View Details",
-                    labelKey: "View Details",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForVenue,
-            },
-            visible: false,
         },
     }),
 });
-
 export const availabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
         bookingCalendar: {

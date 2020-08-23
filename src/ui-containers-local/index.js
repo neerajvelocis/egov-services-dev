@@ -86,6 +86,10 @@ const BookingCalenderContainer = Loadable({
   loader: () => import("./BookingCalenderContainer"),
   loading: () => <Loading />
 });
+const BookingMediaContainer = Loadable({
+  loader: () => import("./BookingMediaContainer"),
+  loading: () => <Loading />
+});
 const TextFieldContainerReadOnly = Loadable({
   loader: () => import("./TextFieldContainerReadOnly"),
   loading: () => <Loading />
@@ -113,5 +117,6 @@ export {
   UnderTakingContainer,
   MultiItemsWithImageContainer,
   WorkFlowContainer,
-  BookingCalenderContainer
+  BookingCalenderContainer,
+  BookingMediaContainer
 };

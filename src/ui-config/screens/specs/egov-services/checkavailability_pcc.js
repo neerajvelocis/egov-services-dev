@@ -10,6 +10,7 @@ import {
 } from "../utils";
 import {
     availabilityForm,
+    availabilityMediaCard,
     availabilityCalendar,
 } from "./checkAvailabilityForm_pcc";
 import { ImageLocationSummary } from "./summaryResource/imagesOfNewLocationOswmcc";
@@ -286,6 +287,30 @@ const availabilitySearch = {
         availabilityForm,
     },
 };
+const availabilityMediaCardWrapper = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+        id: "apply_form1",
+    },
+    children: {
+        availabilityMediaCard,
+    },
+    visible: false
+};
+const availabilityCalendarWrapper = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+        id: "apply_form1",
+    },
+    children: {
+        availabilityCalendar,
+    },
+    visible: false
+};
+
+
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -338,7 +363,8 @@ const screenConfig = {
                     },
                 },
                 availabilitySearch,
-                availabilityCalendar,
+                availabilityMediaCardWrapper,
+                availabilityCalendarWrapper,
                 adhocDialog: {
                     uiFramework: "custom-containers-local",
                     moduleName: "egov-services",
