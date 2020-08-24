@@ -591,6 +591,12 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Com_Ground_Documents",
             []
         );
+    }else if (type == "apply_pcc") {
+        documents = get(
+            state,
+            "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.PCC_Document",
+            []
+        );
     } else {
         documents = get(
             state,
@@ -995,16 +1001,16 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         });
 
         set(payload, "wfDocuments", bookingDocuments);
-        set(payload, "bkBookingType", "OSBM");
+        set(payload, "bkBookingType", "PACC");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
-        set(payload, "businessService", "OSBM");
+        set(payload, "businessService", "PACC");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {
             response = await httpRequest(
                 "post",
-                "/bookings/api/_create",
+                "/bookings/park/community/_create",
                 "",
                 [],
                 {
@@ -1026,7 +1032,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         } else if (method === "UPDATE") {
             response = await httpRequest(
                 "post",
-                "/bookings/api/_update",
+                "/bookings/park/community/_update",
                 "",
                 [],
                 {

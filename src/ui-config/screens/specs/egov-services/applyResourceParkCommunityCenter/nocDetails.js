@@ -196,7 +196,7 @@ export const bookingDetails = getCommonCard({
                 // },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkCleaningCharges",
+                jsonPath: "Booking.bkDimension",
             }),
         },
         bkLoction: {
@@ -216,7 +216,7 @@ export const bookingDetails = getCommonCard({
                 // },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkCleaningCharges",
+                jsonPath: "Booking.bkLocation",
             }),
         },
         bkFromDate: {
@@ -291,7 +291,7 @@ export const bookingDetails = getCommonCard({
             required: true,
             type: "array",
         },
-        bkCleaningCharges: {
+        bkCleansingCharges: {
             ...getTextField({
                 label: {
                     labelName: "Cleaning Charges",
@@ -308,7 +308,7 @@ export const bookingDetails = getCommonCard({
                 // },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkCleaningCharges",
+                jsonPath: "Booking.bkCleansingCharges",
             }),
         },
         bkRent: {
@@ -351,7 +351,27 @@ export const bookingDetails = getCommonCard({
                 jsonPath: "Booking.bkFacilitationCharges",
             }),
         },
-        bkUTGST: {
+        bkSurchargeRent : {
+            ...getTextField({
+                label: {
+                    labelName: "Facilitation Charges",
+                    labelKey: "BK_PCC_SURCHARGE_RENT_LABEL",
+                },
+                placeholder: {
+                    labelName: "Facilitation Charges",
+                    labelKey: "BK_PCC_SURCHARGE_RENT_PLACEHOLDER",
+                },
+
+                required: true,
+                // props: {
+                //     disabled: true,
+                // },
+                //pattern: getPattern("NoOfEmp"),
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                jsonPath: "Booking.bkSurchargeRent",
+            }),
+        },
+        bkUtgst: {
             ...getTextField({
                 label: {
                     labelName: "UTGST",
@@ -368,10 +388,10 @@ export const bookingDetails = getCommonCard({
                 // },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkUTGST",
+                jsonPath: "Booking.bkUtgst",
             }),
         },
-        bkCGST: {
+        bkCgst: {
             ...getTextField({
                 label: {
                     labelName: "CGST",
@@ -388,10 +408,10 @@ export const bookingDetails = getCommonCard({
                 // },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkCGST",
+                jsonPath: "Booking.bkCgst",
             }),
         },
-        bkCustomerGST: {
+        bkCustomerGstNo: {
             ...getTextField({
                 label: {
                     labelName: "Customer GST",
@@ -402,13 +422,13 @@ export const bookingDetails = getCommonCard({
                     labelKey: "BK_PCC_CUSTOMER_GST_PLACEHOLDER",
                 },
 
-                required: true,
+                // required: true,
                 // props: {
                 //   disabled: true,
                 // },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkCustomerGST",
+                jsonPath: "Booking.bkCustomerGstNo",
             }),
         },
     }),

@@ -182,9 +182,6 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Type_of_Construction",
                         },
-                        {
-                            name: "Documents",
-                        },
                     ],
                 },
             ],
@@ -199,14 +196,14 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        payload.MdmsRes.PCC_Document = [{
+        payload.MdmsRes.Booking.PCC_Document = [{
                 active: true,
                 code: "PCC_DOCUMENT",
                 description: "PCC_DOCUMENT_DESCRIPTION",
                 documentType: "DOC",
                 dropdownData: [],
                 hasDropdown: false,
-                required: false,
+                required: true,
         }]
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
@@ -264,7 +261,7 @@ const screenConfig = {
     name: "applyparkcommunitycenter",
     beforeInitScreen: (action, state, dispatch) => {
         clearlocalstorageAppDetails(state);
-        setapplicationType("OSBM");
+        setapplicationType("PACC");
         const applicationNumber = getQueryArg(
             window.location.href,
             "applicationNumber"
@@ -283,22 +280,30 @@ const screenConfig = {
                     JSON.parse(getUserInfo()).mobileNumber
                 )
             );
-        // dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-        // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
-        // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
-        // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-2"));
-        // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
-        // dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
-        // dispatch(prepareFinalObject("Booking.bkDuration", "2"));
-        // dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
-        // dispatch(prepareFinalObject("Booking.bkVillCity", "City"));
-        // dispatch(prepareFinalObject("Booking.bkConstructionType", "New"));
+        dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+        dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
+        dispatch(prepareFinalObject("Booking.bkBookingPurpose", "hello address"));
+        dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-2"));
+        dispatch(prepareFinalObject("Booking.bkDimension", "5484"));
+        dispatch(prepareFinalObject("Booking.bkLocation", "DELHI"));
+        dispatch(prepareFinalObject("Booking.bkFromDate", "2020-08-25"));
+        dispatch(prepareFinalObject("Booking.bkToDate", "2020-08-26"));
+        dispatch(prepareFinalObject("Booking.bkType", "Parks"));
+        dispatch(prepareFinalObject("Booking.bkCleansingCharges", "200"));
+        dispatch(prepareFinalObject("Booking.bkRent", "2000"));
+        dispatch(prepareFinalObject("Booking.bkSurchargeRent", "200"));
+        
+        dispatch(prepareFinalObject("Booking.bkFacilitationCharges", "300"));
+        dispatch(prepareFinalObject("Booking.bkUtgst", "30"));
+        dispatch(prepareFinalObject("Booking.bkCgst", "30"));
+        dispatch(prepareFinalObject("Booking.bkCustomerGstNo", "JHDUE54E5FLS"));
+
         //Set Module Name
         set(state, "screenConfiguration.moduleName", "services");
 
         // Set MDMS Data
         getMdmsData(action, state, dispatch).then((response) => {
-            prepareDocumentsUploadData(state, dispatch, "apply_osbm");
+            prepareDocumentsUploadData(state, dispatch, "apply_pcc");
         });
 
 		// Search in case of EDIT flow
