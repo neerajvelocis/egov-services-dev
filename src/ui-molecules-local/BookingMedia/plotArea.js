@@ -52,7 +52,11 @@ class ConnectedPlotArea extends React.Component {
                     alt=""
                     title="custom-text"
                     onClick={(event) => {
-                        alert("clicked")
+                        
+                        window.scrollTo({
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        })
                     }}
                     shape="circle"
                     coords={coords}
