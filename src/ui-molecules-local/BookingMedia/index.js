@@ -16,14 +16,15 @@ import {
 import "react-day-picker/lib/style.css";
 import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
 import PlotArea from "./plotArea";
-import Image from "./Sector 39_CG1731_Photo.jpg"
-class connectedBookingMedia extends React.Component {
+//import Image from "./Sector 39_CG1731_Photo.jpg"
+import Image from "./park11.jpeg"
+class BookingMedia extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
-        return (
-            <div>
+
+        return ( <div>
                 <img
                     id="Image-Maps-Com-image-maps-2017-04-25-084654"
                     src={Image}
@@ -38,32 +39,24 @@ class connectedBookingMedia extends React.Component {
                     <PlotArea innerCellRef={this.props} />
                 </map>
             </div>
-        );
+        )
+
     }
 }
-// const mapStateToProps = (state) => {
-//     return {
-//         availabilityCheckData:
-//             state.screenConfiguration.preparedFinalObject.availabilityCheckData,
-//     };
-// };
-
-const mapDispatchToProps = (dispatch) => {
+const mapStateToProps = (state) => {
     return {
-        prepareFinalObject: (jsonPath, value) =>
-            dispatch(prepareFinalObject(jsonPath, value)),
-        changeRoute: (path) => dispatch(setRoute(path)),
+        availabilityCheckData: state.screenConfiguration.preparedFinalObject.availabilityCheckData,
     };
 };
 
-// const BookingMedia = withStyles(styles)(
-//     connect(mapStateToProps, null)(connectedBookingMedia)
-// );
+// const mapDispatchToProps = (dispatch) => {
+//     return {
+//         prepareFinalObject: (jsonPath, value) =>
+//             dispatch(prepareFinalObject(jsonPath, value)),
+//         changeRoute: (path) => dispatch(setRoute(path)),
+//     };
+// };
 
-// export default forwardRef((props, ref) => {
-//     <BookingMedia {...props} innerRef={ref} />;
-// });
 
-const BookingMedia = connect(null, null, null, { forwardRef: true })(connectedBookingMedia);
 
-export default BookingMedia;
+export default connect(mapStateToProps, null, null, { forwardRef: true })(BookingMedia);
