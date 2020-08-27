@@ -9,8 +9,8 @@ import {
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import { commercialGroundSummary } from "../summaryResource/commercialGroundSummary";
-import { applicantSummary } from "../summaryResource/applicantSummaryCgb";
+import { pccSummary } from "../summaryResource/pccSummary";
+import { applicantSummary } from "../summaryResource/applicantSummary";
 import { documentsSummary } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
@@ -24,7 +24,7 @@ export const changeStep = (
     defaultActiveStep = -1
 ) => {
     let activeStep = get(
-        state.screenConfiguration.screenConfig["applycommercialground"],
+        state.screenConfiguration.screenConfig["applyopenspace"],
         "components.div.children.stepper.props.activeStep",
         0
     );
@@ -60,7 +60,7 @@ export const changeStep = (
         },
     ];
     dispatchMultipleFieldChangeAction(
-        "applycommercialground",
+        "applyopenspace",
         actionDefination,
         dispatch
     );
@@ -70,7 +70,7 @@ export const renderSteps = (activeStep, dispatch) => {
     switch (activeStep) {
         case 0:
             dispatchMultipleFieldChangeAction(
-                "applycommercialground",
+                "applyopenspace",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFirstStep"
                 ),
@@ -79,7 +79,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 1:
             dispatchMultipleFieldChangeAction(
-                "applycommercialground",
+                "applyopenspace",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardSecondStep"
                 ),
@@ -88,7 +88,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 2:
             dispatchMultipleFieldChangeAction(
-                "applycommercialground",
+                "applyopenspace",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardThirdStep"
                 ),
@@ -97,7 +97,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         default:
             dispatchMultipleFieldChangeAction(
-                "applycommercialground",
+                "applyopenspace",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFourthStep"
                 ),
@@ -198,6 +198,6 @@ export const summaryDetails = getCommonCard({
     },
     estimateSummary: estimateSummary,
     applicantSummary: applicantSummary,
-    commercialGroundSummary: commercialGroundSummary,
+    pccSummary: pccSummary,
     documentsSummary: documentsSummary
 });

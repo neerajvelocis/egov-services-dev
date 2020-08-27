@@ -9,7 +9,7 @@ export const documentDetails = getCommonCard({
   header: getCommonTitle(
     {
       labelName: "Required Documents",
-      labelKey: "BK_CGB_HEADER_STEP_3",
+      labelKey: "BK_PCC_HEADER_STEP_3",
     },
     {
       style: {
@@ -20,7 +20,7 @@ export const documentDetails = getCommonCard({
   subText: getCommonParagraph({
     labelName:
       "Only one file can be uploaded for one document. If multiple files need to be uploaded then please combine all files in a pdf and then upload",
-    labelKey: "BK_CGB_DOCUMENT_SUBTEXT"
+    labelKey: "BK_PCC_DOCUMENT_SUBTEXT"
   }),
   break: getBreak(),
   documentList: {
@@ -28,18 +28,18 @@ export const documentDetails = getCommonCard({
     moduleName: "egov-services",
     componentPath: "DocumentListContainer",
     // required:false,
-    props: {
+    props: {      
       buttonLabel: {
         labelName: "UPLOAD FILE",
-        labelKey: "BK_CGB_DOCUMENT_UPLOAD_BUTTON"
+        labelKey: "BK_OSB_DOCUMENT_UPLOAD_BUTTON"
       },
       description: "Only .jpg, .jpeg, .png and .pdf files. 1MB max file size.",
       inputProps: {
         accept: ".pdf,.png,.jpg,.jpeg"
       },
       maxFileSize: 1025,
-      moduleName: "GFCP"
+      moduleName : "PCC"
     },
     type: "array"
-  }
+  } 
 });

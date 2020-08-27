@@ -28,8 +28,8 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { openSpaceSummaryOSWMCC } from "./summaryResource/openSpaceSummaryOSWMCC";
-import { applicantSummary } from "./summaryResource/applicantSummaryBookingOSWMCC";
+import { pccSummary } from "./summaryResource/pccSummary";
+import { applicantSummary } from "./summaryResource/applicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
@@ -81,7 +81,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "OSUJM_DOCUMENT",
+            title: "PCC_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
         });
@@ -214,7 +214,7 @@ const getPaymentGatwayList = async (action, state, dispatch) => {
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "openspace-mcc-search-preview",
+    name: "pcc-search-preview",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -283,7 +283,7 @@ const screenConfig = {
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
                     applicantSummary: applicantSummary,
-                    openSpaceSummaryOSWMCC: openSpaceSummaryOSWMCC,
+                    pccSummary: pccSummary,
                     documentsSummary: documentsSummary,
                     remarksSummary: remarksSummary,
                 }),

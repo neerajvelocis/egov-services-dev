@@ -20,7 +20,6 @@ import {
     getQueryArg,
     setBusinessServiceDataToLocalStorage,
 } from "egov-ui-framework/ui-utils/commons";
-import { fetchLocalizationLabel } from "egov-ui-kit/redux/app/actions";
 import jp from "jsonpath";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -38,7 +37,6 @@ import {
     footerReviewTop,
 } from "./searchResource/footer";
 import {
-    getLocale,
     getUserInfo,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
@@ -114,17 +112,10 @@ const prepareDocumentsView = async (state, dispatch) => {
 };
 
 const HideshowFooter = (action, bookingStatus) => {
-    // Hide edit Footer
-    // console.log("actionnew", action);
     let showFooter = false;
     if (bookingStatus === "PENDINGPAYMENT") {
         showFooter = true;
     }
-    // set(
-    //     action,
-    //     "screenConfig.components.div.children.footer.children.cancelButton.visible",
-    //     role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-    // );
     set(
         action,
         "screenConfig.components.div.children.footer.children.submitButton.visible",
@@ -278,12 +269,7 @@ const screenConfig = {
                   uiFramework: "custom-containers-local",
                   componentPath: "WorkFlowContainer",
                   moduleName: "egov-services",
-                //   visible: process.env.REACT_APP_NAME === "Citizen" ? false : true,
                   visible: true,
-                //   props: {
-                //     dataPath: "Booking",
-                //     moduleName: "MyBooking",
-                //   },
                 },
                 
                 body: getCommonCard({

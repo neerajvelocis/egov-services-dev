@@ -7,14 +7,21 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import {
     getCommonApplyFooter,
+    validateFields,
     generateBill,
 } from "../../utils";
 import "./index.css";
+import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { httpRequest } from "../../../../../ui-utils";
 import {
-    createUpdateOsbApplication,
+    createUpdatePCCApplication,
+    prepareDocumentsUploadData,
 } from "../../../../../ui-utils/commons";
 import {
+    localStorageGet,
+    localStorageSet,
     getTenantId,
+    getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
@@ -22,7 +29,7 @@ import { set } from "lodash";
 const callBackForNext = async (state, dispatch) => {
     let errorMessage = "";
     let activeStep = get(
-        state.screenConfiguration.screenConfig["applyopenspace"],
+        state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
         "components.div.children.stepper.props.activeStep",
         0
     );
@@ -35,7 +42,7 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdatePCCApplication(
             state,
             dispatch,
             "INITIATE"
@@ -58,11 +65,16 @@ const callBackForNext = async (state, dispatch) => {
                 ""
             );
             let businessService = get(response, "data.businessService", "");
-            const reviewUrl = `/egov-services/applyopenspace?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
+            const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 
+            // set(
+            //     state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
+            //     "components.div.children.headerDiv.children.header.children.applicationNumber.props.number",
+            //     applicationNumber
+            // );
             set(
-                state.screenConfiguration.screenConfig["applyopenspace"],
+                state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
@@ -85,7 +97,7 @@ const callBackForNext = async (state, dispatch) => {
                 uploadedDocData &&
                 uploadedDocData.map((item) => {
                     return {
-                        title: "DOC_DOC_PICTURE",
+                        title: "PCC_DOCUMENT",
                         link: item.fileUrl && item.fileUrl.split(",")[0],
                         linkText: "View",
                         name: item.fileName,
@@ -104,7 +116,7 @@ const callBackForNext = async (state, dispatch) => {
     }
     if (activeStep === 3) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdateOsbApplication(
+        let response = await createUpdatePCCApplication(
             state,
             dispatch,
             "APPLY"
@@ -170,7 +182,7 @@ export const changeStep = (
     defaultActiveStep = -1
 ) => {
     let activeStep = get(
-        state.screenConfiguration.screenConfig["applyopenspace"],
+        state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
         "components.div.children.stepper.props.activeStep",
         0
     );
@@ -206,7 +218,7 @@ export const changeStep = (
         },
     ];
     dispatchMultipleFieldChangeAction(
-        "applyopenspace",
+        "applyparkcommunitycenter",
         actionDefination,
         dispatch
     );
@@ -217,7 +229,7 @@ export const renderSteps = (activeStep, dispatch) => {
     switch (activeStep) {
         case 0:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applyparkcommunitycenter",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFirstStep"
                 ),
@@ -226,7 +238,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 1:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applyparkcommunitycenter",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardSecondStep"
                 ),
@@ -235,7 +247,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         case 2:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applyparkcommunitycenter",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardThirdStep"
                 ),
@@ -244,7 +256,7 @@ export const renderSteps = (activeStep, dispatch) => {
             break;
         default:
             dispatchMultipleFieldChangeAction(
-                "applyopenspace",
+                "applyparkcommunitycenter",
                 getActionDefinationForStepper(
                     "components.div.children.formwizardFourthStep"
                 ),
@@ -431,11 +443,64 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
             }
         });
     if (!allAreFilled) {
+        //alert('Fill all fields')
         isFormValid = false;
         hasFieldToaster = true;
     } else {
+        //alert('Submit')
         isFormValid = true;
         hasFieldToaster = false;
     }
     return [isFormValid, hasFieldToaster];
 };
+
+// export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
+//     let allAreFilled = true;
+
+//     document
+//         .getElementById("apply_form" + activeStep)
+//         .querySelectorAll("[required]")
+//         .forEach(function (i) {
+//             // console.log(i, "fields");
+
+//             if (!i.value) {
+//                 i.focus();
+//                 allAreFilled = false;
+//                 i.parentNode.classList.add("MuiInput-error-853");
+//                 i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+//             }
+//             if (i.getAttribute("aria-invalid") === "true" && allAreFilled) {
+//                 i.parentNode.classList.add("MuiInput-error-853");
+//                 i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
+//                 allAreFilled = false;
+//                 isFormValid = false;
+//                 hasFieldToaster = true;
+//             }
+//         });
+
+//     document
+//         .getElementById("apply_form" + activeStep)
+//         .querySelectorAll("input[type='hidden']")
+//         .forEach(function (i) {
+//             if (i.value == i.placeholder) {
+//                 i.focus();
+//                 allAreFilled = false;
+//                 i.parentNode.classList.add("MuiInput-error-853");
+//                 i.parentNode.parentNode.parentNode.classList.add(
+//                     "MuiFormLabel-error-844"
+//                 );
+//                 allAreFilled = false;
+//                 isFormValid = false;
+//                 hasFieldToaster = true;
+//             }
+//         });
+//     //
+//     if (allAreFilled == false) {
+//         isFormValid = false;
+//         hasFieldToaster = true;
+//     } else {
+//         isFormValid = true;
+//         hasFieldToaster = false;
+//     }
+//     return [isFormValid, hasFieldToaster];
+// };

@@ -1,8 +1,6 @@
 import {
-    getBreak,
     getCommonCard,
     getCommonContainer,
-    getCommonTitle,
     getTextField,
     getDateField,
     getTimeField,
@@ -11,14 +9,8 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
-    prepareFinalObject,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import get from "lodash/get";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import {
-    furnishNocResponse,
-    getSearchResults,
-} from "../../../../../ui-utils/commons";
 import { getTodaysDateInYMD, getFinancialYearDates } from "../../utils";
 
 export const personalDetails = getCommonCard({
@@ -137,7 +129,6 @@ export const bookingDetails = getCommonCard({
                     labelName: "Enter Complete Address",
                     labelKey: "BK_WTB_COMPLETE_ADDRESS_PLACEHOLDER",
                 },
-                // pattern: getPattern("DoorHouseNo"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 required: true,
                 jsonPath: "Booking.bkCompleteAddress",
@@ -150,16 +141,11 @@ export const bookingDetails = getCommonCard({
                     labelName: "Sector",
                     labelKey: "BK_WTB_PROPERTY_SECTOR_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
                 optionLabel: "name",
                 placeholder: {
                     labelName: "Select Sector",
                     labelKey: "BK_WTB_PROPERTY_SECTOR_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
                 sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "Booking.bkSector",
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -177,16 +163,11 @@ export const bookingDetails = getCommonCard({
                     labelName: "Residential/Commercial",
                     labelKey: "BK_WTB_PROPERTY_TYPE_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
-                // optionLabel: "name",
                 placeholder: {
                     labelName: "Select Residential/Commercial",
                     labelKey: "BK_WTB_PROPERTY_TYPE_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+
                 sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
                 jsonPath: "Booking.bkType",
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -314,10 +295,6 @@ export const bookingDetails = getCommonCard({
                     md: 6,
                 },
                 props: {
-                    // inputProps: {
-                    //   min: getTodaysDateInYMD(),
-                    //   max: getFinancialYearDates("yyyy-mm-dd").endDate,
-                    // },
                     defaultValue: "00:00",
                 },
 			}),

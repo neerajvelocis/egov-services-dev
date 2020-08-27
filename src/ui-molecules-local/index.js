@@ -77,6 +77,10 @@ const BookingCalendar = Loadable({
   loader: () => import("./BookingCalendar"),
   loading: () => <Loading />
 });
+const BookingMedia = Loadable({
+  loader: () => import("./BookingMedia"),
+  loading: () => <Loading />
+});
 const ImageList = Loadable({
   loader: () => import("./ImageList"),
   loading: () => <Loading />
@@ -99,5 +103,6 @@ export {
   TaskStatusComponents,
   Footer,
   BookingCalendar,
+  BookingMedia,
   ImageList
 };

@@ -3,19 +3,21 @@ import {
     getCommonHeader,
     getStepperObject,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { clearlocalstorageAppDetails } from "../utils";
-import { footer } from "./applyResourceOpenSpace/footer";
+import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
+import { footer } from "./applyResourceParkCommunityCenter/footer";
 import {
     personalDetails,
     bookingDetails,
-} from "./applyResourceOpenSpace/nocDetails";
+} from "./applyResourceParkCommunityCenter/nocDetails";
 import jp from "jsonpath";
 
-import { documentDetails } from "./applyResourceOpenSpace/documentDetails";
-import { summaryDetails } from "./applyResourceOpenSpace/summaryDetails";
+import { documentDetails } from "./applyResourceParkCommunityCenter/documentDetails";
+import { summaryDetails } from "./applyResourceParkCommunityCenter/summaryDetails";
 import {
     getFileUrlFromAPI,
     getQueryArg,
+    getTransformedLocale,
+    setBusinessServiceDataToLocalStorage,
 } from "egov-ui-framework/ui-utils/commons";
 import {
     prepareFinalObject,
@@ -24,33 +26,62 @@ import {
 import {
     getTenantId,
     setapplicationType,
+    lSRemoveItem,
+    lSRemoveItemlocal,
     setapplicationNumber,
     getUserInfo,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
+import {
+    sampleSearch,
+    sampleSingleSearch,
+    sampleDocUpload,
+} from "../../../../ui-utils/sampleResponses";
 import set from "lodash/set";
 import get from "lodash/get";
 
 import {
     prepareDocumentsUploadData,
+    getSearchResults,
     getSearchResultsView,
     setApplicationNumberBox,
+    furnishOsbmResponse,
 } from "../../../../ui-utils/commons";
 
 export const stepsData = [
-    { labelName: "Applicant Details", labelKey: "BK_OSB_APPLICANT_DETAILS" },
-    { labelName: "Booking Details", labelKey: "BK_OSB_BOOKING_DETAILS" },
-    { labelName: "Documents", labelKey: "BK_OSB_DOCUMENTS" },
-    { labelName: "Summary", labelKey: "BK_OSB_SUMMARY" },
+    { labelName: "Applicant Details", labelKey: "BK_PCC_APPLICANT_DETAILS" },
+    { labelName: "Booking Details", labelKey: "BK_PCC_BOOKING_DETAILS" },
+    { labelName: "Documents", labelKey: "BK_PCC_DOCUMENTS" },
+    { labelName: "Summary", labelKey: "BK_PCC_SUMMARY" },
 ];
 export const stepper = getStepperObject(
     { props: { activeStep: 0 } },
     stepsData
 );
+
+// const applicationNumberContainer = () => {
+//     const applicationNumber = getQueryArg(
+//         window.location.href,
+//         "applicationNumber"
+//     );
+//     if (applicationNumber)
+//         return {
+//             uiFramework: "custom-atoms-local",
+//             moduleName: "egov-services",
+//             componentPath: "ApplicationNoContainer",
+//             props: {
+//                 number: `${applicationNumber}`,
+//                 visibility: "hidden",
+//             },
+//             visible: true,
+//         };
+//     else return {};
+// };
+
 export const header = getCommonContainer({
     header: getCommonHeader({
-        labelName: `Apply for open space`,
-        labelKey: "BK_OSB_APPLY",
+        labelName: `Apply for Parks & Community Center/Banquet Halls`,
+        labelKey: "BK_PCC_APPLY",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
@@ -151,9 +182,6 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Type_of_Construction",
                         },
-                        {
-                            name: "Documents",
-                        },
                     ],
                 },
             ],
@@ -168,6 +196,15 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
+        payload.MdmsRes.Booking.PCC_Document = [{
+                active: true,
+                code: "PCC_DOCUMENT",
+                description: "PCC_DOCUMENT_DESCRIPTION",
+                documentType: "DOC",
+                dropdownData: [],
+                hasDropdown: false,
+                required: true,
+        }]
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -186,8 +223,9 @@ export const prepareEditFlow = async (
             { key: "applicationNumber", value: applicationNumber },
         ]);
         setapplicationNumber(applicationNumber);
-        // setApplicationNumberBox(state, dispatch, applicationNumber);
+        setApplicationNumberBox(state, dispatch, applicationNumber);
 
+        // let Refurbishresponse = furnishOsbmResponse(response);
         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
 
         let fileStoreIds = Object.keys(response.documentMap);
@@ -203,15 +241,27 @@ export const prepareEditFlow = async (
 				fileUrl: fileUrls[fileStoreIds[0]],
 			},
 		]));
+		console.log("hereitis")
+		// prepareFinalObject("documentsUploadRedux", {
+		// 	0: {
+		// 	  documents: [
+		// 		{
+		// 			fileName: fileStoreIdsValue[0],
+		// 			fileStoreId: fileStoreIds[0],
+		// 			fileUrl: fileUrls[fileStoreIds[0]],
+		// 		},
+		// 	  ]
+		// 	}
+		//   });
     }
 };
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "applyopenspace",
+    name: "applyparkcommunitycenter",
     beforeInitScreen: (action, state, dispatch) => {
         clearlocalstorageAppDetails(state);
-        setapplicationType("OSBM");
+        setapplicationType("PACC");
         const applicationNumber = getQueryArg(
             window.location.href,
             "applicationNumber"
@@ -230,22 +280,30 @@ const screenConfig = {
                     JSON.parse(getUserInfo()).mobileNumber
                 )
             );
-        // dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-        // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
-        // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
-        // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-2"));
-        // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
-        // dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
-        // dispatch(prepareFinalObject("Booking.bkDuration", "2"));
-        // dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
-        // dispatch(prepareFinalObject("Booking.bkVillCity", "City"));
-        // dispatch(prepareFinalObject("Booking.bkConstructionType", "New"));
+        dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
+        dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
+        dispatch(prepareFinalObject("Booking.bkBookingPurpose", "hello address"));
+        dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-2"));
+        dispatch(prepareFinalObject("Booking.bkDimension", "5484"));
+        dispatch(prepareFinalObject("Booking.bkLocation", "DELHI"));
+        dispatch(prepareFinalObject("Booking.bkFromDate", "2020-08-25"));
+        dispatch(prepareFinalObject("Booking.bkToDate", "2020-08-26"));
+        dispatch(prepareFinalObject("Booking.bkType", "Parks"));
+        dispatch(prepareFinalObject("Booking.bkCleansingCharges", "200"));
+        dispatch(prepareFinalObject("Booking.bkRent", "2000"));
+        dispatch(prepareFinalObject("Booking.bkSurchargeRent", "200"));
+        
+        dispatch(prepareFinalObject("Booking.bkFacilitationCharges", "300"));
+        dispatch(prepareFinalObject("Booking.bkUtgst", "30"));
+        dispatch(prepareFinalObject("Booking.bkCgst", "30"));
+        dispatch(prepareFinalObject("Booking.bkCustomerGstNo", "JHDUE54E5FLS"));
+
         //Set Module Name
         set(state, "screenConfiguration.moduleName", "services");
 
         // Set MDMS Data
         getMdmsData(action, state, dispatch).then((response) => {
-            prepareDocumentsUploadData(state, dispatch, "apply_osbm");
+            prepareDocumentsUploadData(state, dispatch, "apply_pcc");
         });
 
 		// Search in case of EDIT flow

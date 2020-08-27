@@ -3,12 +3,8 @@ import {
     getCommonContainer,
     getCommonHeader,
     getLabel,
-    getCommonSubHeader,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {
-    setapplicationType,
-    getTenantId,
-} from "egov-ui-kit/utils/localStorageUtils";
+import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import { searchForm } from "./searchResource/searchForm";
 import { httpRequest } from "../../../../ui-utils";
 import {
@@ -29,12 +25,10 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 // );
 
 const header = getCommonContainer({
-    header: getCommonHeader(
-        {
-            labelName: `My Applications`,
-            labelKey: "MY_BK_APPLICATIONS_HEADER",
-        }
-    ),
+    header: getCommonHeader({
+        labelName: `My Applications`,
+        labelKey: "MY_BK_APPLICATIONS_HEADER",
+    }),
 });
 
 const getMdmsData = async (action, state, dispatch) => {
@@ -171,9 +165,7 @@ const screenConfig = {
     uiFramework: "material-ui",
     name: "my-applications",
     beforeInitScreen: (action, state, dispatch) => {
-        // setapplicationType("MyBooking");
         getMdmsData(action, state, dispatch).then((response) => {
-            // prepareDocumentsUploadData(state, dispatch, "apply_osbm");
             fetchData(action, state, dispatch);
         });
         return action;
@@ -203,10 +195,7 @@ const screenConfig = {
                             props: {
                                 variant: "contained",
                                 color: "primary",
-                                style: {
-                                    // marginTop: "-10px",
-                                    // marginRight: "-18px",
-                                },
+                                style: {},
                             },
                             gridDefination: {
                                 xs: 4,
@@ -272,100 +261,6 @@ const screenConfig = {
                 },
             },
         },
-        // header: {
-        //   uiFramework: "custom-atoms",
-        //   componentPath: "Container",
-        //   props: {
-        //     style: { marginBottom: "10px" },
-        //   },
-        //   children: {
-        //     header: {
-        //       // gridDefination: {
-        //       //   xs: 8,
-        //       // },
-        //       ...getCommonHeader({
-        //         labelName: "My Applications",
-        //         labelKey: "MY_BK_APPLICATIONS_HEADER",
-        //       }),
-        //     },
-        //     addNewLocButton: {
-        //       componentPath: "Button",
-        //       props: {
-        //         variant: "contained",
-        //         color: "primary",
-        //         style: {
-        //           // marginTop: "-10px",
-        //           marginRight: "-18px",
-        //         },
-        //       },
-        //       gridDefination: {
-        //         xs: 4,
-        //         align: "right",
-        //       },
-        //       children: {
-        //         // editIcon: {
-        //         //     uiFramework: "custom-atoms",
-        //         //     componentPath: "Icon",
-        //         //     props: {
-        //         //         iconName: "edit",
-        //         //     },
-        //         // },
-        //         buttonLabel: getLabel({
-        //           labelName: "My New Location Requests",
-        //           labelKey: "BK_OSWMCC_MY_LOCATION_REQUESTS",
-        //         }),
-        //       },
-        //       onClickDefination: {
-        //         action: "condition",
-        //         callBack: callBackForMyNewLocationApps,
-        //       },
-        //       visible: true,
-        //     },
-        //   },
-        // // },
-        // div: {
-        //     uiFramework: "custom-atoms",
-        //     componentPath: "Div",
-        //     children: {
-        //         applicationSearch: {
-        //             uiFramework: "custom-atoms",
-        //             componentPath: "Form",
-        //             props: {
-        //                 id: "apply_form1",
-        //                 style: {
-        //                     marginLeft: 8,
-        //                     marginRight: 8,
-        //                 },
-        //             },
-        //             children: {
-        //                 searchForm,
-        //             },
-        //         },
-        //         applicationsCard: {
-        //             uiFramework: "custom-molecules",
-        //             componentPath: "SingleApplication",
-        //             visible: true,
-        //             props: {
-        //                 contents: [
-        //                     {
-        //                         label: "MY_BK_APPLICATION_NUMBER_LABEL",
-        //                         jsonPath: "bkApplicationNumber",
-        //                     },
-        //                     {
-        //                         label: "MY_BK_APPLICATION_STATUS_LABEL",
-        //                         jsonPath: "bkApplicationStatus",
-        //                     },
-        //                     {
-        //                         label: "MY_BK_APPLICATION_TYPE_LABEL",
-        //                         jsonPath: "bkBookingType",
-        //                     },
-        //                 ],
-        //                 moduleName: "MyBooking",
-        //                 homeURL: "/egov-services/applyservices",
-        //             },
-        //         },
-        //     },
-        // },
     },
 };
 

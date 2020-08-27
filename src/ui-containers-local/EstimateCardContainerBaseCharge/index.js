@@ -66,7 +66,7 @@ const mapStateToProps = (state, ownProps) => {
         arrears = totalAmount - billDetails[0].amount;
     }
     const estimate = {
-        header: { labelName: "Fee Estimate", labelKey: "NOC_SUMMARY_FEE_EST" },
+        header: { labelName: "Fee Estimate", labelKey: "BK_SUMMARY_FEE_EST" },
         fees,
         totalAmount,
         arrears,

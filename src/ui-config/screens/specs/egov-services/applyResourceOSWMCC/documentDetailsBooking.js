@@ -10,7 +10,7 @@ export const documentDetails = getCommonCard({
     {
       labelName: "Required Documents",
       labelKey: "BK_OSB_HEADER_STEP_3",
-      // labelKey: "NOC_DOCUMENT_DETAILS_HEADER_POPUP"
+  
     },
     {
       style: {
