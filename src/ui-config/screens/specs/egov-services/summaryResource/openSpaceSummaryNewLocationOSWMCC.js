@@ -37,11 +37,11 @@ export const openSpaceSummary = getCommonGrayCard({
         props: {
             contents: [
                 {
-                    label: "MY_BK_APPLICATION_NUMBER_LABEL",
+                    label: "BK_MY_BK_APPLICATION_NUMBER_LABEL",
                     jsonPath: "applicationNumber",
                 },
                 {
-                    label: "MY_BK_APPLICATION_STATUS_LABEL",
+                    label: "BK_MY_BK_APPLICATION_STATUS_LABEL",
                     jsonPath: "applicationStatus",
                 },
                 {

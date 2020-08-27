@@ -22,7 +22,7 @@ export const waterTankerSummary = getCommonGrayCard({
                 },
                 ...getCommonSubHeader({
                     labelName: "Applicant Details",
-                    labelKey: "MY_BK_APPLICATION_DETAILS_HEADER",
+                    labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
                 }),
             },
             // editSection: {
@@ -70,7 +70,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     applicationNumber: getLabelWithValue(
                         {
                             labelName: "Application Number",
-                            labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
+                            labelKey: "BK_MY_BK_APPLICATION_NUMBER_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkApplicationNumber",
@@ -79,16 +79,17 @@ export const waterTankerSummary = getCommonGrayCard({
                     applicationStatus: getLabelWithValue(
                         {
                             labelName: "Application Status",
-                            labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
+                            labelKey: "BK_MY_BK_APPLICATION_STATUS_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkApplicationStatus",
+                            callBack: (value) => `BK_${value}`
                         }
                     ),
                     // applicantName: getLabelWithValue(
                     //     {
                     //         labelName: "Name",
-                    //         labelKey: "MY_BK_NAME_LABEL",
+                    //         labelKey: "BK_MY_BK_NAME_LABEL",
                     //     },
                     //     {
                     //         jsonPath: "Booking.bkApplicantName",
@@ -97,7 +98,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     // applicantEmail: getLabelWithValue(
                     //     {
                     //         labelName: "Email Address",
-                    //         labelKey: "MY_BK_EMAIL_LABEL",
+                    //         labelKey: "BK_MY_BK_EMAIL_LABEL",
                     //     },
                     //     {
                     //         jsonPath: "Booking.bkEmail",
@@ -106,7 +107,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     // applicantMobile: getLabelWithValue(
                     //     {
                     //         labelName: "Mobile Number",
-                    //         labelKey: "MY_BK_MOBILE_NUMBER_LABEL",
+                    //         labelKey: "BK_MY_BK_MOBILE_NUMBER_LABEL",
                     //     },
                     //     {
                     //         jsonPath: "Booking.bkMobileNumber",
@@ -115,7 +116,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     HouseNo: getLabelWithValue(
                         {
                             labelName: "House No.",
-                            labelKey: "MY_BK_HOUSE_NO_LABEL",
+                            labelKey: "BK_MY_BK_HOUSE_NO_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkHouseNo",
@@ -124,7 +125,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     CompleteAddress: getLabelWithValue(
                         {
                             labelName: "House No.",
-                            labelKey: "MY_BK_COMPLETE_ADDRESS_LABEL",
+                            labelKey: "BK_MY_BK_COMPLETE_ADDRESS_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkCompleteAddress",
@@ -133,7 +134,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     Sector: getLabelWithValue(
                         {
                             labelName: "Sector",
-                            labelKey: "MY_BK_PROPERTY_SECTOR_LABEL",
+                            labelKey: "BK_MY_BK_PROPERTY_SECTOR_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkSector",
@@ -142,7 +143,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     PropertyType: getLabelWithValue(
                         {
                             labelName: "Residential/Commercial",
-                            labelKey: "MY_BK_PROPERTY_TYPE_LABEL",
+                            labelKey: "BK_MY_BK_PROPERTY_TYPE_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkType",
@@ -151,7 +152,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     BookingCase: getLabelWithValue(
                         {
                             labelName: "Case",
-                            labelKey: "MY_BK_CASE_LABEL",
+                            labelKey: "BK_MY_BK_CASE_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkStatus",
@@ -160,7 +161,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     BookingDate: getLabelWithValue(
                         {
                             labelName: "Booking Date",
-                            labelKey: "MY_BK_DATE_LABEL",
+                            labelKey: "BK_MY_BK_DATE_LABEL",
                         },
                         {
 							jsonPath: "Booking.bkDate",
@@ -176,7 +177,7 @@ export const waterTankerSummary = getCommonGrayCard({
                     BookingTime: getLabelWithValue(
                         {
                             labelName: "Booking Time",
-                            labelKey: "MY_BK_TIME_LABEL",
+                            labelKey: "BK_MY_BK_TIME_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkTime",
@@ -196,9 +197,9 @@ export const waterTankerSummary = getCommonGrayCard({
             hasAddItem: false,
             isReviewPage: true,
             sourceJsonPath: "Booking",
-            prefixSourceJsonPath:
-                "children.cardContent.children.applicantContainer.children",
-            afterPrefixJsonPath: "children.value.children.key",
+            // prefixSourceJsonPath:
+            //     "children.cardContent.children.applicantContainer.children",
+            // afterPrefixJsonPath: "children.value.children.key",
         },
         type: "array",
     },

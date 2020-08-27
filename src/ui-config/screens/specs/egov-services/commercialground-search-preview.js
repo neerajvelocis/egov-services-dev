@@ -56,7 +56,7 @@ let bookingStatus = "";
 const titlebar = getCommonContainer({
     header: getCommonHeader({
         labelName: "Task Details",
-        labelKey: "MY_BK_APPLICATION_DETAILS_HEADER",
+        labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
@@ -85,7 +85,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "GFCP_DOCUMENT",
+            title: "BK_GFCP_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
         });
