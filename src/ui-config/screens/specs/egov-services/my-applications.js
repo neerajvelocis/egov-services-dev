@@ -15,7 +15,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 // const header = getCommonHeader(
 //     {
 //         labelName: "My Applications",
-//         labelKey: "MY_BK_APPLICATIONS_HEADER",
+//         labelKey: "BK_MY_BK_APPLICATIONS_HEADER",
 //     },
 //     {
 //         classes: {
@@ -27,7 +27,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 const header = getCommonContainer({
     header: getCommonHeader({
         labelName: `My Applications`,
-        labelKey: "MY_BK_APPLICATIONS_HEADER",
+        labelKey: "BK_MY_BK_APPLICATIONS_HEADER",
     }),
 });
 
@@ -51,24 +51,6 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
-                        {
-                            name: "CityType",
-                        },
-                        {
-                            name: "PropertyType",
-                        },
-                        {
-                            name: "Area",
-                        },
-                        {
-                            name: "Duration",
-                        },
-                        {
-                            name: "Category",
-                        },
-                        {
-                            name: "Documents",
-                        },
                     ],
                 },
             ],
@@ -83,74 +65,65 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        // console.log(payload.MdmsRes, "mdmsRes");
-        payload.MdmsRes.Booking.bookingType = [
-            {
-                id: 1,
-                code: "OSBM",
-                tenantId: "ch.chandigarh",
-                name: "Open Space",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "WATER_TANKERS",
-                tenantId: "ch.chandigarh",
-                name: "Water Tankers",
-                active: true,
-            },
-        ];
-        payload.MdmsRes.Booking.applicationStatus = [
-            {
-                id: 1,
-                code: "PENDINGAPPROVAL",
-                tenantId: "ch.chandigarh",
-                name: "PENDINGAPPROVAL",
-                active: true,
-            },
-            {
-                id: 2,
-                code: "PENDINGPAYMENT",
-                tenantId: "ch.chandigarh",
-                name: "PENDINGPAYMENT",
-                active: true,
-            },
-            {
-                id: 3,
-                code: "REJECTED",
-                tenantId: "ch.chandigarh",
-                name: "REJECTED",
-                active: true,
-            },
-            {
-                id: 4,
-                code: "APPROVED",
-                tenantId: "ch.chandigarh",
-                name: "APPROVED",
-                active: true,
-            },
-            {
-                id: 5,
-                code: "PENDINGASSIGNMENTDRIVER",
-                tenantId: "ch.chandigarh",
-                name: "PENDINGASSIGNMENTDRIVER",
-                active: true,
-            },
-            {
-                id: 6,
-                code: "DELIVERED",
-                tenantId: "ch.chandigarh",
-                name: "DELIVERED",
-                active: true,
-            },
-            {
-                id: 7,
-                code: "NOTDELIVERED",
-                tenantId: "ch.chandigarh",
-                name: "NOTDELIVERED",
-                active: true,
-            },
-        ];
+        // payload.MdmsRes.Booking.bookingType = [
+        //     {
+        //     "name": "Open space for building material",
+        //     "id": "1",
+        //     "code": "OSBM",
+        //     "tenantId":"ch.chandigarh",
+        //     "active":"true",
+        //     "status": [
+        //            {
+        //                "name": "Initiate",
+        //                "code": "INITIATE",
+        //                "active": true
+        //            },
+        //            {
+        //                "name": "Approved",
+        //                "code": "APPROVED",
+        //                "active": true
+        //            },
+        //            {
+        //                "name": "Rejected",
+        //                "code": "REJECT",
+        //                "active": true
+        //            },
+        //            {
+        //                "name": "Panding Payment",
+        //                "code": "PENDINGPAYMENT",
+        //                "active": true
+        //            },
+        //            {
+        //                "name": "Panding Approval",
+        //                "code": "PENDINGAPPROVAL",
+        //                "active": true
+        //            }
+        //        ]
+            
+        // },
+        // {
+        //     "name": "Water Tankers",
+        //     "id": "1",
+        //     "code": "WTB",
+        //     "tenantId":"ch.chandigarh",
+        //     "active":"true",
+        //     "status": [
+        //            {
+        //                "name": "Initiate",
+        //                "code": "INITIATE",
+        //                "active": true
+        //            },
+        //            {
+        //                "name": "Approved",
+        //                "code": "APPROVED",
+        //                "active": true
+        //            },
+
+                   
+        //        ]
+            
+        // },
+        // ]
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -243,16 +216,23 @@ const screenConfig = {
                     props: {
                         contents: [
                             {
-                                label: "MY_BK_APPLICATION_NUMBER_LABEL",
+                                label: "BK_MY_BK_APPLICATION_NUMBER_LABEL",
                                 jsonPath: "bkApplicationNumber",
+                                
                             },
                             {
-                                label: "MY_BK_APPLICATION_STATUS_LABEL",
+                                label: "BK_MY_BK_APPLICATION_STATUS_LABEL",
                                 jsonPath: "bkApplicationStatus",
+                                prefix : "BK_"
                             },
+                            // {
+                            //     label: "BK_MY_BK_APPLICATION_TYPE_LABEL",
+                            //     jsonPath: "bkBookingType",
+                            // },
                             {
-                                label: "MY_BK_APPLICATION_TYPE_LABEL",
-                                jsonPath: "bkBookingType",
+                                label: "BK_MY_BK_APPLICATION_TYPE_LABEL",
+                                jsonPath: "businessService",
+                                prefix : "BK_"
                             },
                         ],
                         moduleName: "MyBooking",

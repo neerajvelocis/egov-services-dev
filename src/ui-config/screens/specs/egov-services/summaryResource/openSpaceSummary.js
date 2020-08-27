@@ -35,49 +35,50 @@ export const openSpaceSummary = getCommonGrayCard({
         moduleName: "egov-services",
         props: {
             contents: [
+                // {
+                //     label: "BK_MY_BK_APPLICATION_NUMBER_LABEL",
+                //     jsonPath: "bkApplicationNumber",
+                // },
+                // {
+                //     label: "BK_MY_BK_APPLICATION_STATUS_LABEL",
+                //     jsonPath: "bkApplicationStatus",
+                //     prefix:"BK_"
+                // },
                 {
-                    label: "MY_BK_APPLICATION_NUMBER_LABEL",
-                    jsonPath: "bkApplicationNumber",
-                },
-                {
-                    label: "MY_BK_APPLICATION_STATUS_LABEL",
-                    jsonPath: "bkApplicationStatus",
-                },
-                {
-                    label: "MY_BK_HOUSE_NO_LABEL",
+                    label: "BK_MY_BK_HOUSE_NO_LABEL",
                     jsonPath: "bkHouseNo",
                 },
                 {
-                    label: "MY_BK_COMPLETE_ADDRESS_LABEL",
+                    label: "BK_MY_BK_COMPLETE_ADDRESS_LABEL",
                     jsonPath: "bkCompleteAddress",
                 },
                 {
-                    label: "MY_BK_PROPERTY_SECTOR_LABEL",
+                    label: "BK_MY_BK_PROPERTY_SECTOR_LABEL",
                     jsonPath: "bkSector",
                 },
 
                 {
-                    label: "MY_BK_STORAGE_AREA_LABEL",
+                    label: "BK_MY_BK_STORAGE_AREA_LABEL",
                     jsonPath: "bkAreaRequired",
                 },
                 {
-                    label: "MY_BK_CITY_LABEL",
+                    label: "BK_MY_BK_CITY_LABEL",
                     jsonPath: "bkVillCity",
                 },
                 {
-                    label: "MY_BK_CONSTRUCTION_TYPE_LABEL",
+                    label: "BK_MY_BK_CONSTRUCTION_TYPE_LABEL",
                     jsonPath: "bkConstructionType",
                 },
                 {
-                    label: "MY_BK_PROPERTY_TYPE_LABEL",
+                    label: "BK_MY_BK_PROPERTY_TYPE_LABEL",
                     jsonPath: "bkType",
                 },
                 {
-                    label: "MY_BK_DURATION_LABEL",
+                    label: "BK_MY_BK_DURATION_LABEL",
                     jsonPath: "bkDuration",
                 },
                 {
-                    label: "MY_BK_CATEGORY_LABEL",
+                    label: "BK_MY_BK_CATEGORY_LABEL",
                     jsonPath: "bkCategory",
                 },
             ],

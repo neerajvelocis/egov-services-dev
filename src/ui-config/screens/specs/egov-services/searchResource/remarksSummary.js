@@ -19,7 +19,7 @@ export const remarksSummary = getCommonGrayCard({
                 },
                 ...getCommonSubHeader({
                     labelName: "Remarks",
-                    labelKey: "MY_BK_REMARKS_DETAILS_HEADER",
+                    labelKey: "BK_MY_BK_REMARKS_DETAILS_HEADER",
                 }),
             }
         },

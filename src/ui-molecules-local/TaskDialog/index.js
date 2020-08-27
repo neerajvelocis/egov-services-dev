@@ -44,7 +44,7 @@ const TaskDialog = props => {
                   <Typography component="h2" variant="subheading">
                     <LabelContainer
                       labelName="Task Status"
-                      labelKey="TL_TASK_STATUS"
+                      labelKey="BK_TASK_STATUS"
                     />
                   </Typography>
                   <Grid

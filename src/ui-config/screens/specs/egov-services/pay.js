@@ -28,7 +28,7 @@ const header = getCommonContainer({
                 ? "Open Space to Store Building Material"
                 : getapplicationType() === "GFCP"
                 ? "Commercial Ground"
-                : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" :  "Water Tanker"
+                : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" :  "Water Tankers"
         } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         // labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"}` //later use getFinancialYearDates
     }),

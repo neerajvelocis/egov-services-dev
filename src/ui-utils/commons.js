@@ -167,7 +167,7 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
     documents.forEach((doc) => {
         // Handle the case for multiple
         if (
-            doc.code === "DOC_DOC_PICTURE" &&
+            doc.code === "BK_DOC_DOC_PICTURE" &&
             doc.hasMultipleRows &&
             doc.options
         ) {
@@ -193,8 +193,8 @@ export const prepareDocumentsUploadData = (state, dispatch, type) => {
             });
         } else {
             let card = {};
-            card["name"] = doc.code;
-            card["code"] = doc.code;
+            card["name"] = `BK_${doc.code}`;
+            card["code"] = `BK_${doc.code}`;
             card["required"] = doc.required ? true : false;
             if (doc.hasDropdown && doc.dropdownData) {
                 let dropdown = {};
@@ -243,7 +243,7 @@ export const createUpdateOsbApplication = async (state, dispatch, action) => {
 
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                if (doc.documentCode === "BK_DOC.DOC_PICTURE") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -437,7 +437,7 @@ export const createUpdateOSWMCCApplication = async (
 
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "OSUJM_DOCUMENT") {
+                if (doc.documentCode === "BK_OSUJM_DOCUMENT") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -456,7 +456,7 @@ export const createUpdateOSWMCCApplication = async (
         });
 
         set(payload, "wfDocuments", bookingDocuments);
-        set(payload, "bkBookingType", "JURISDICTION");
+        set(payload, "bkBookingType", "OSUJM");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "OSUJM");
@@ -627,7 +627,7 @@ export const createUpdateCgbApplication = async (state, dispatch, action) => {
 
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "GFCP_DOCUMENT") {
+                if (doc.documentCode === "BK_GFCP_DOCUMENT") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {

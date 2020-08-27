@@ -16,7 +16,7 @@ export const footerReviewTop = (
     let certificateDownloadObject = {
         label: {
             labelName: "Booking Certificate",
-            labelKey: "MY_BK_CERTIFICATE_DOWNLOAD",
+            labelKey: "BK_MY_BK_CERTIFICATE_DOWNLOAD",
         },
         link: () => {
             downloadCertificate(state, applicationNumber, tenantId);
@@ -26,7 +26,7 @@ export const footerReviewTop = (
     let certificatePrintObject = {
         label: {
             labelName: "Booking Certificate",
-            labelKey: "MY_BK_CERTIFICATE_PRINT",
+            labelKey: "BK_MY_BK_CERTIFICATE_PRINT",
         },
         link: () => {
             downloadCertificate(state, applicationNumber, tenantId, "print");
@@ -35,14 +35,14 @@ export const footerReviewTop = (
     };
 
     let receiptDownloadObject = {
-        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_DOWNLOAD" },
+        label: { labelName: "Receipt", labelKey: "BK_MY_BK_RECEIPT_DOWNLOAD" },
         link: () => {
             downloadReceipt(state, applicationNumber, tenantId);
         },
         leftIcon: "receipt",
     };
     let receiptPrintObject = {
-        label: { labelName: "Receipt", labelKey: "MY_BK_RECEIPT_PRINT" },
+        label: { labelName: "Receipt", labelKey: "BK_MY_BK_RECEIPT_PRINT" },
         link: () => {
             downloadReceipt(state, applicationNumber, tenantId, "print");
         },
@@ -51,7 +51,7 @@ export const footerReviewTop = (
     let applicationDownloadObject = {
         label: {
             labelName: "Application",
-            labelKey: "MY_BK_APPLICATION_DOWNLOAD",
+            labelKey: "BK_MY_BK_APPLICATION_DOWNLOAD",
         },
         link: () => {
             downloadApplication(state, applicationNumber, tenantId);
@@ -61,7 +61,7 @@ export const footerReviewTop = (
     let applicationPrintObject = {
         label: {
             labelName: "Application",
-            labelKey: "MY_BK_APPLICATION_PRINT",
+            labelKey: "BK_MY_BK_APPLICATION_PRINT",
         },
         link: () => {
             downloadApplication(state, applicationNumber, tenantId, "print");
@@ -107,7 +107,7 @@ export const footerReviewTop = (
                         data: {
                             label: {
                                 labelName: "DOWNLOAD",
-                                labelKey: "MY_BK_DOWNLOAD",
+                                labelKey: "BK_MY_BK_DOWNLOAD",
                             },
                             leftIcon: "cloud_download",
                             rightIcon: "arrow_drop_down",
@@ -128,7 +128,7 @@ export const footerReviewTop = (
                         data: {
                             label: {
                                 labelName: "PRINT",
-                                labelKey: "MY_BK_PRINT",
+                                labelKey: "BK_MY_BK_PRINT",
                             },
                             leftIcon: "print",
                             rightIcon: "arrow_drop_down",

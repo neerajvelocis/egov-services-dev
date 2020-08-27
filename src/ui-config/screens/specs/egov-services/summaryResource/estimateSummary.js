@@ -11,7 +11,7 @@ export const estimateSummary = getCommonGrayCard({
             estimate: {
                 header: {
                     labelName: "Fee Estimate",
-                    labelKey: "MY_BK_ESTIMATE_DETAILS_HEADER",
+                    labelKey: "BK_MY_BK_ESTIMATE_DETAILS_HEADER",
                 },
                 fees: [{ name: "ASD", value: 123 }],
                 extra: [

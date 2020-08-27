@@ -52,7 +52,7 @@ let bookingStatus = "";
 const titlebar = getCommonContainer({
     header: getCommonHeader({
         labelName: "Task Details",
-        labelKey: "MY_BK_APPLICATION_DETAILS_HEADER",
+        labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
