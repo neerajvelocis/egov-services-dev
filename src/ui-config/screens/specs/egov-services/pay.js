@@ -6,13 +6,17 @@ import {
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import set from "lodash/set";
 import {
     getCurrentFinancialYear,
     generateBill,
     showHideAdhocPopup,
+    checkAvaialbilityAtSubmitCgb,
+    checkAvaialbilityAtSubmitOsujm
 } from "../utils";
+
 import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import capturePaymentDetails from "./payResource/capture-payment-details";
 import estimateDetails from "./payResource/estimate-details";
@@ -40,9 +44,9 @@ const header = getCommonContainer({
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
                 : getapplicationType() === "GFCP"
-                ? "Commercial Ground"
-                : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" :  "Water Tanker"
-        } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+                    ? "Commercial Ground"
+                    : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : "Water Tanker"
+            } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         // labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"}` //later use getFinancialYearDates
     }),
     applicationNumber: {
@@ -54,6 +58,10 @@ const header = getCommonContainer({
         },
     },
 });
+
+
+var bookedDates = []
+var allowRedirection = false
 
 const setSearchResponse = async (
     state,
@@ -73,6 +81,14 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
+   
+
+
+
+
+
+
+
 
     await generateBill(
         state,
@@ -101,6 +117,7 @@ const setPaymentMethods = async (action, state, dispatch) => {
     }
 };
 
+
 const screenConfig = {
     uiFramework: "material-ui",
     name: "pay",
@@ -116,6 +133,8 @@ const screenConfig = {
         );
         setPaymentMethods(action, state, dispatch);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+
+
 
         return action;
     },

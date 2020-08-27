@@ -25,14 +25,17 @@ import {
     setapplicationNumber
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
-    getPerDayRateCgb
+    getPerDayRateCgb,
+    checkAvaialbilityAtSubmitCgb
 
 } from "../../utils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
 
 var response;
-
+var applicationNumber
+var businessService
+var tenantId
 const callBackForNext = async (state, dispatch) => {
     let errorMessage = "";
     let activeStep = get(
@@ -57,7 +60,7 @@ const callBackForNext = async (state, dispatch) => {
 
         let baseCharge = await getPerDayRateCgb(venue)
 
-        dispatch(prepareFinalObject("BaseCharge", `  @ Rs.${baseCharge.data.ratePerDay}/day`));
+        dispatch(prepareFinalObject("BaseCharge", `@Rs.${baseCharge.data.ratePerDay}/day`));
 
         response = await createUpdateCgbApplication(state, dispatch, "INITIATE");
         console.log(response, "myResponse");
@@ -72,22 +75,18 @@ const callBackForNext = async (state, dispatch) => {
             // dispatch(toggleSnackbar(true, successMessage, "success"));
 
             // GET FEE DETAILS
-            let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(
+            tenantId = getTenantId().split(".")[0];
+            applicationNumber = get(
                 response,
                 "data.bkApplicationNumber",
                 ""
 
             );
-            let businessService = get(response, "data.businessService", "");
+            businessService = get(response, "data.businessService", "");
             const reviewUrl = `/egov-services/applycommercialground?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 
-            // set(
-            //     state.screenConfiguration.screenConfig["applycommercialground"],
-            //     "components.div.children.headerDiv.children.header.children.applicationNumber.props.number",
-            //     applicationNumber
-            // );
+            
             set(
                 state.screenConfiguration.screenConfig["applycommercialground"],
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
@@ -123,16 +122,36 @@ const callBackForNext = async (state, dispatch) => {
         }
     }
     if (activeStep === 3) {
-        // prepareDocumentsUploadData(state, dispatch);
-        // let response = await createUpdateCgbApplication(state, dispatch, "APPLY");
-        // console.log(response, "step3Response");
-        // let responseStatus = get(response, "status", "");
-        // if (responseStatus == "SUCCESS" || responseStatus == "success") {
-        //     let successMessage = {
-        //         labelName: "APPLICATION SUBMITTED SUCCESSFULLY! ",
-        //         labelKey: "", //UPLOAD_FILE_TOAST
-        //     };
-        //     dispatch(toggleSnackbar(true, successMessage, "success"));
+
+        //FOR CHECKING AVAILABILITY AT SUBMIT
+
+        // let venue = get(
+        //     state.screenConfiguration.preparedFinalObject,
+        //     "Booking.bkBookingVenue",
+        //     []
+        // );
+        // let from = get(
+        //     state.screenConfiguration.preparedFinalObject,
+        //     "Booking.bkFromDate",
+        //     []
+        // );
+        // let to = get(
+        //     state.screenConfiguration.preparedFinalObject,
+        //     "Booking.bkToDate",
+        //     []
+        // );
+        // let bookedDates = await checkAvaialbilityAtSubmitCgb(venue, from, to)
+
+        // bookedDates.data.map(val => {
+        //     if (val === from || val === to) {
+
+
+        //         dispatch(setRoute(`/egov-services/checkavailability?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`));
+              
+        //     }
+        // })
+
+
         let applicationData = get(
             state.screenConfiguration.preparedFinalObject,
             "Booking"
@@ -146,21 +165,8 @@ const callBackForNext = async (state, dispatch) => {
                 : "";
         const reviewUrl = `/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
         dispatch(setRoute(reviewUrl));
-        // setTimeout(() => {
-        // const appendUrl =
-        //     process.env.REACT_APP_SELF_RUNNING === "true"
-        //         ? "/egov-ui-framework"
-        //         : "";
-        // const reviewUrl = `${appendUrl}/egov-services/my-applications`;
-        // dispatch(setRoute(reviewUrl));
-        // }, 1000);
-        //     } else {
-        //         let errorMessage = {
-        //             labelName: "Submission Falied, Try Again later!",
-        //             labelKey: "", //UPLOAD_FILE_TOAST
-        //         };
-        //         dispatch(toggleSnackbar(true, errorMessage, "error"));
-        //     }
+
+
     }
     if (activeStep !== 3) {
         if (isFormValid) {

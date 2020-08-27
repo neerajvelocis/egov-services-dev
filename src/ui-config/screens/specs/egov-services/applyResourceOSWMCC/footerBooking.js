@@ -9,6 +9,7 @@ import {
     getCommonApplyFooter,
     validateFields,
     generateBill,
+    getPerDayRateOSWMCC
 } from "../../utils";
 import "./index.css";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
@@ -43,6 +44,45 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
+        let from = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkFromDate",
+            []
+        );
+        let to = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkToDate",
+            []
+        );
+
+        let totalArea = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkAreaRequired",
+            []
+        );
+
+        let sector = get(
+            state.screenConfiguration.preparedFinalObject,
+            "Booking.bkSector",
+            []
+        );
+
+        let rateData = await getPerDayRateOSWMCC(sector, totalArea);
+
+
+        var date1 = new Date(from);
+        var date2 = new Date(to);
+
+        // To calculate the time difference of two dates 
+        var Difference_In_Time = date2.getTime() - date1.getTime();
+
+        // To calculate the no. of days between two dates 
+        var Difference_In_Days = (Difference_In_Time / (1000 * 3600 * 24)) + 1;
+
+
+
+        dispatch(prepareFinalObject("BaseCharge", `for ${totalArea} sqft X ${Difference_In_Days} days 
+                                                                            (@Rs.${rateData.data.ratePerSqrFeetPerDay}/sqft)`));
         let response = await createUpdateOSWMCCApplication(
             state,
             dispatch,
@@ -74,7 +114,7 @@ const callBackForNext = async (state, dispatch) => {
             const reviewUrl = `/egov-services/applyopenspacewmcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 
-            
+
             set(
                 state.screenConfiguration.screenConfig["applyopenspacewmcc"],
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",

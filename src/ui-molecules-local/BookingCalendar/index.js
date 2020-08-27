@@ -326,6 +326,7 @@ class BookingCalendar extends React.Component {
         const modifiers = { start: from, end: enteredTo };
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
+        const WEEK_DAY_LONG=['Sunday','Monday', 'Tuesday' ,'Wednesday' ,'Thursday', 'Friday' ,'Saturday' ]
         const DATAE = this.getPreviousTodayDates()
         const past = {
 
@@ -359,6 +360,7 @@ class BookingCalendar extends React.Component {
                         fromMonth={new Date()}
                         toMonth={newData}
                         modifiers={modifiers}
+                        weekdaysShort={WEEK_DAY_LONG}
 
                         modifiers={past}
                         // .DayPicker-Day--past
@@ -379,6 +381,7 @@ class BookingCalendar extends React.Component {
                         {from && to && (
                             <button
                                 className="link"
+                               
                                 onClick={this.handleResetClick}
                             >
                                 Reset
