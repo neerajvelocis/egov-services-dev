@@ -3,7 +3,6 @@ import {
     getCommonContainer,
     getCommonHeader,
     getCommonTitle,
-    getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
@@ -11,29 +10,17 @@ import set from "lodash/set";
 import {
     getCurrentFinancialYear,
     generateBill,
-    showHideAdhocPopup,
 } from "../utils";
-import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
-import capturePaymentDetails from "./payResource/capture-payment-details";
 import estimateDetails from "./payResource/estimate-details";
 import { footer, callPGService } from "./payResource/footer";
-import g8Details from "./payResource/g8-details";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
-    getSearchResults,
     getPaymentGateways,
     getSearchResultsView,
 } from "../../../../ui-utils/commons";
-import { httpRequest } from "../../../../ui-utils";
 
-import {
-    getUserInfo,
-    getTenantId,
-    getapplicationType,
-    localStorageGet,
-    lSRemoveItem,
-    lSRemoveItemlocal,
-} from "egov-ui-kit/utils/localStorageUtils";
+import { getapplicationType, setapplicationType, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+
 const header = getCommonContainer({
     header: getCommonHeader({
         labelName: `Application for ${
@@ -114,6 +101,8 @@ const screenConfig = {
             window.location.href,
             "businessService"
         );
+        setapplicationNumber(applicationNumber);
+        setapplicationType(businessService);
         setPaymentMethods(action, state, dispatch);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
 
@@ -148,36 +137,9 @@ const screenConfig = {
                         paymentDetails: getCommonCard({
                             header: getCommonTitle({
                                 labelName: "Payment Collection Details",
-                                labelKey: "NOC_PAYMENT_HEAD",
+                                labelKey: "BK_PAYMENT_HEADER",
                             }),
-                            // paragraph: getCommonParagraph({
-                            //   labelName: ""
-                            // }),
                             estimateDetails,
-                            // addPenaltyRebateButton: {
-                            //   componentPath: "Button",
-                            //   props: {
-                            //     color: "primary",
-                            //     style: {}
-                            //   },
-                            //   // children: {
-                            //   //   previousButtonLabel: getLabel({
-                            //   //     labelName: "ADD REBATE/PENALTY",
-                            //   //     labelKey: "NOC_PAYMENT_ADD_RBT_PEN"
-                            //   //   })
-                            //   // },
-                            //   onClickDefination: {
-                            //     action: "condition",
-                            //     callBack: (state, dispatch) => showHideAdhocPopup(state, dispatch, "pay")
-                            //   }
-                            // },
-                            // viewBreakupButton: getDialogButton(
-                            //   "VIEW BREAKUP",
-                            //   "PM_PAYMENT_VIEW_BREAKUP",
-                            //   "pay"
-                            // ),
-                            // capturePaymentDetails,
-                            //  g8Details
                         }),
                     },
                 },

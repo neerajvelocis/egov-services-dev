@@ -279,10 +279,6 @@ const screenConfig = {
                   componentPath: "WorkFlowContainer",
                   moduleName: "egov-services",
                   visible:  true,
-                  props: {
-                    // dataPath: "Licenses",
-                    // moduleName: "SELLMEATNOC",
-                  },
                 },
                 body: getCommonCard({
                     estimateSummary: estimateSummary,

@@ -127,7 +127,6 @@ export const bookingDetails = getCommonCard({
                 },
                 pattern: getPattern("DoorHouseNo"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                // helperText : "new helper outside",
                 required: true,
                 jsonPath: "Booking.bkHouseNo",
                 props: {
@@ -159,16 +158,11 @@ export const bookingDetails = getCommonCard({
                     labelName: "Sector",
                     labelKey: "BK_OSB_PROPERTY_SECTOR_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
                 optionLabel: "name",
                 placeholder: {
                     labelName: "Select Sector",
                     labelKey: "BK_OSB_PROPERTY_SECTOR_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
                 sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
                 jsonPath: "Booking.bkSector",
                 required: true,
@@ -186,16 +180,11 @@ export const bookingDetails = getCommonCard({
                     labelName: "Storage Area",
                     labelKey: "BK_OSB_STORAGE_AREA_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
                 optionLabel: "name",
                 placeholder: {
                     labelName: "Select Storage Area",
                     labelKey: "BK_OSB_STORAGE_AREA_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
                 sourceJsonPath: "applyScreenMdmsData.Booking.Area",
                 jsonPath: "Booking.bkAreaRequired",
                 required: true,
@@ -212,16 +201,11 @@ export const bookingDetails = getCommonCard({
                     labelName: "Village/City",
                     labelKey: "BK_OSB_CITY_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
                 optionLabel: "name",
                 placeholder: {
                     labelName: "Select Village/City",
                     labelKey: "BK_OSB_CITY_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
                 sourceJsonPath: "applyScreenMdmsData.Booking.VillageCity",
                 jsonPath: "Booking.bkVillCity",
                 required: true,
@@ -297,16 +281,10 @@ export const bookingDetails = getCommonCard({
                     labelName: "Residential/Commercial",
                     labelKey: "BK_OSB_PROPERTY_TYPE_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
-                // optionLabel: "name",
                 placeholder: {
                     labelName: "Select Residential/Commercial",
                     labelKey: "BK_OSB_PROPERTY_TYPE_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
                 sourceJsonPath: "applyScreenMdmsData.Booking.CityType",
                 jsonPath: "Booking.bkType",
                 required: true,
@@ -376,16 +354,11 @@ export const bookingDetails = getCommonCard({
                     labelName: "Duration",
                     labelKey: "BK_OSB_DURATION_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
                 optionLabel: "name",
                 placeholder: {
                     labelName: "Select Duration",
                     labelKey: "BK_OSB_DURATION_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
                 sourceJsonPath: "applyScreenMdmsData.Booking.Duration",
                 jsonPath: "Booking.bkDuration",
                 required: true,

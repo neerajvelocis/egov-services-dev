@@ -27,39 +27,6 @@ export const perDayRateSummary = getCommonGrayCard({
                     labelKey: "BK_OSWMCC_BOOKING_RATE_DETAILS",
                 }),
             },
-            // editSection: {
-            //   componentPath: "Button",
-            //   props: {
-            //     color: "primary",
-            //     style: {
-            //       marginTop: "-10px",
-            //       marginRight: "-18px",
-            //     },
-            //   },
-            //   gridDefination: {
-            //     xs: 4,
-            //     align: "right",
-            //   },
-            //   children: {
-            //     editIcon: {
-            //       uiFramework: "custom-atoms",
-            //       componentPath: "Icon",
-            //       props: {
-            //         iconName: "edit",
-            //       },
-            //     },
-            //     buttonLabel: getLabel({
-            //       labelName: "Edit",
-            //       labelKey: "NOC_SUMMARY_EDIT",
-            //     }),
-            //   },
-            //   onClickDefination: {
-            //     action: "condition",
-            //     callBack: (state, dispatch) => {
-            //       gotoApplyWithStep(state, dispatch, 0);
-            //     },
-            //   },
-            // },
         },
     },
     cardOne: {

@@ -18,7 +18,7 @@ export const remarksSummary = getCommonGrayCard({
                     xs: 8,
                 },
                 ...getCommonSubHeader({
-                    labelName: "NOC_REMARK",
+                    labelName: "Remarks",
                     labelKey: "MY_BK_REMARKS_DETAILS_HEADER",
                 }),
             }

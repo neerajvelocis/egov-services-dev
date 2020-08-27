@@ -27,17 +27,13 @@ const mapStateToProps = state => {
     "screenConfiguration.preparedFinalObject.documentsContract",
     []
   );
-  let popupdocumentsContract = get(
-    state,
-    "screenConfiguration.preparedFinalObject.popupdocumentsContract",
-    []
-  );
+
   const documentsUploadReduxOld = get(
     state,
     "screenConfiguration.preparedFinalObject.documentsUploadReduxOld",
     {}
   );
-  return { documentsList, popupdocumentsContract, documentsUploadReduxOld};
+  return { documentsList, documentsUploadReduxOld};
 };
 
 export default withStyles(styles)(

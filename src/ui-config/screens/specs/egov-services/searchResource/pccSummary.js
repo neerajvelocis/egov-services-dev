@@ -50,7 +50,7 @@ export const pccSummary = getCommonGrayCard({
             //     },
             //     buttonLabel: getLabel({
             //       labelName: "Edit",
-            //       labelKey: "NOC_SUMMARY_EDIT",
+            //       labelKey: "BK_SUMMARY_EDIT",
             //     }),
             //   },
             //   onClickDefination: {

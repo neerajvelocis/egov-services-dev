@@ -1,10 +1,5 @@
 import {
-    getBreak,
-    getCommonContainer,
     getCommonCard,
-    getCommonHeader,
-    getCommonTitle,
-    getCommonSubHeader,
     getLabel,
     dispatchMultipleFieldChangeAction,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
@@ -183,7 +178,7 @@ export const summaryDetails = getCommonCard({
                     },
                     buttonLabel: getLabel({
                         labelName: "Edit",
-                        labelKey: "NOC_SUMMARY_EDIT",
+                        labelKey: "BK_SUMMARY_EDIT",
                     }),
                 },
                 onClickDefination: {
