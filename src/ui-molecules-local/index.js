@@ -85,7 +85,10 @@ const ImageList = Loadable({
   loader: () => import("./ImageList"),
   loading: () => <Loading />
 });
-
+const BookingTimeSlot = Loadable({
+  loader: () => import("./BookingTimeSlot"),
+  loading: () => <Loading />
+});
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -104,5 +107,6 @@ export {
   Footer,
   BookingCalendar,
   BookingMedia,
-  ImageList
+  ImageList,
+  BookingTimeSlot
 };
