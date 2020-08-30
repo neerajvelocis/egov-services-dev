@@ -16,7 +16,7 @@ export const documentDetailsImagesNewLoc = getCommonCard({
     {
       labelName: "Required Documents",
       labelKey: "BK_OSWMCC_HEADER_STEP_3",
-      // labelKey: "NOC_DOCUMENT_DETAILS_HEADER_POPUP"
+  
     },
     {
       style: {
@@ -37,7 +37,7 @@ export const documentDetailsImagesNewLoc = getCommonCard({
       uploadFileHeader: getCommonSubHeader(
         {
           labelName: "Supporting Documents",
-          labelKey: "NOC_SUPPORTING_DOCUMENTS_LABEL"
+          labelKey: "BK_SUPPORTING_DOCUMENTS_LABEL"
         },
         {
           style: { marginTop: 15, width: "100%" }
@@ -66,9 +66,9 @@ export const documentDetailsImagesNewLoc = getCommonCard({
           inputProps: {
             accept: "image/*, .pdf, .png, .jpeg"
           },
-          buttonLabel: { labelName: "UPLOAD FILES", labelKey: "NOC_UPLOAD_BUTTON_LABEL" },
+          buttonLabel: { labelName: "UPLOAD FILES", labelKey: "BK_UPLOAD_BUTTON_LABEL" },
           maxFileSize: 5000,
-          moduleName: "NOC",
+          moduleName: "NLUJM",
           hasLocalization: false
         }
       }

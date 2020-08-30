@@ -2,14 +2,6 @@ import {
     getCommonHeader,
     getCommonContainer,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { CloudDownloadIcon } from "@material-ui/icons/CloudDownload";
-import { PrintIcon } from "@material-ui/icons/Print";
-// import {
-//     // applicationSuccessFooter,
-//     gotoHomeFooter,
-//     approvalSuccessFooter,
-//     paymentFailureFooter,
-// } from "./acknowledgementResource/footers";
 import acknowledgementCard from "./acknowledgementResource/acknowledgementUtils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import { getSearchResultsView, getSearchResultsViewForNewLocOswmcc } from "../../../../ui-utils/commons";
@@ -24,7 +16,7 @@ import get from "lodash/get";
 import { getCurrentFinancialYear } from "../utils";
 
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
+import { getapplicationType, setapplicationType, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
 
 export const header = getCommonContainer({
     header: getCommonHeader({
@@ -359,53 +351,10 @@ const setApplicationDataForNewLocOSWMCC = async (dispatch, applicationNumber, te
 
     const response = await getSearchResultsViewForNewLocOswmcc(queryObject);
     
-    let tempdata = { "applicationNumber": "CH-BK-2020-08-12-000838", "bookingsRemarks": null, "applicantName": "Sumit Kumar", "applicantAddress": "Shahberi, Gr Noida", "areaRequirement": "4644", "sector": "SECTOR-1", "localityAddress": "New Guar CHok ", "landmark": "Cricket Ground", "location": "Cri", "contact": "9138912806", "idProof": "Adhar", "mailAddress": "neeraj@gmail.com", "tenantId": "ch", "businessService": "NLUJM", "action": "INITIATE", "applicationStatus": "INITIATED", "dateCreated": "2020-08-12", "wfDocuments": null, "assignee": null };
     dispatch(
         prepareFinalObject("Booking", get(response, "osujmNewLocationModelList[0]", []))
-        //prepareFinalObject("Booking", tempdata, [])
     );
 };
-
-// const screenConfig = {
-//     uiFramework: "material-ui",
-//     name: "acknowledgement",
-//     components: {
-//         div: {
-//             uiFramework: "custom-atoms",
-//             componentPath: "Div",
-//             props: {
-//                 className: "common-div-css",
-//             },
-//         },
-//     },
-//     beforeInitScreen: (action, state, dispatch) => {
-//         const purpose = getQueryArg(window.location.href, "purpose");
-//         const status = getQueryArg(window.location.href, "status");
-//         const applicationNumber = getQueryArg(
-//             window.location.href,
-//             "applicationNumber"
-//         );
-//         const secondNumber = getQueryArg(window.location.href, "secondNumber");
-//         const tenantId = getQueryArg(window.location.href, "tenantId");
-//         const businessService = getQueryArg(
-//             window.location.href,
-//             "businessService"
-//         );
-//         const data = getAcknowledgementCard(
-//             state,
-//             dispatch,
-//             purpose,
-//             status,
-//             applicationNumber,
-//             secondNumber,
-//             tenantId,
-//             businessService
-//         );
-//         setApplicationData(dispatch, applicationNumber, tenantId);
-//         set(action, "screenConfig.components.div.children", data);
-//         return action;
-//     },
-// };
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -432,6 +381,8 @@ const screenConfig = {
             window.location.href,
             "businessService"
         );
+        setapplicationNumber(applicationNumber);
+        setapplicationType(businessService);
         const data = getAcknowledgementCard(
             state,
             dispatch,

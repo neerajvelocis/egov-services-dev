@@ -1,36 +1,23 @@
-import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { validate } from "egov-ui-framework/ui-redux/screen-configuration/utils";
 import {
     getUserInfo,
     getTenantId,
-    getapplicationType,
-    localStorageGet,
     lSRemoveItem,
-    setOPMSTenantId,
     lSRemoveItemlocal,
-    getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 import set from "lodash/set";
-import {
-    getQueryArg,
-    getTransformedLocalStorgaeLabels,
-    getLocaleLabels,
-    getFileUrlFromAPI,
-} from "egov-ui-framework/ui-utils/commons";
 import { handleScreenConfigurationFieldChange as handleField } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { toggleSnackbar } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { httpRequest } from "../../../../ui-utils/api";
-import isUndefined from "lodash/isUndefined";
 import {
     getCommonCard,
-    getCommonValue,
     getCommonCaption,
-    getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
+import {
+    getFileUrlFromAPI,
+} from "egov-ui-framework/ui-utils/commons";
 import axios from "axios";
-import { sampleGetBill } from "../../../../ui-utils/sampleResponses";
 
 export const getCommonApplyFooter = (children) => {
     return {
@@ -137,14 +124,6 @@ export const sortByEpoch = (data, order) => {
     }
 };
 
-export const ifUserRoleExists = (role) => {
-    let userInfo = JSON.parse(getUserInfo());
-    const roles = get(userInfo, "roles");
-    const roleCodes = roles ? roles.map((role) => role.code) : [];
-    if (roleCodes.indexOf(role) > -1) {
-        return true;
-    } else return false;
-};
 
 export const convertEpochToDate = (dateEpoch) => {
     const dateFromApi = new Date(dateEpoch);
@@ -219,76 +198,6 @@ export const getFinancialYearDates = (format, et) => {
     return financialDates;
 };
 
-export const showCityPicker = (state, dispatch) => {
-    let toggle = get(
-        state.screenConfiguration.screenConfig["home"],
-        "components.cityPickerDialog.props.open",
-        false
-    );
-    dispatch(
-        handleField(
-            "home",
-            "components.cityPickerDialog",
-            "props.open",
-            !toggle
-        )
-    );
-};
-
-export const OPMSTenantId = (state, dispatch) => {
-    const tenantId = get(
-        state.screenConfiguration.preparedFinalObject,
-        "citiesByModule.citizenTenantId"
-    );
-    setOPMSTenantId(tenantId);
-    window.location.href =
-        process.env.NODE_ENV === "production"
-            ? `/egov-services/home?tenantId=${tenantId}`
-            : `/egov-services/home?tenantId=${tenantId}`;
-};
-
-export const gotoApplyWithStep = (state, dispatch, step) => {
-    const applicationNumber = getQueryArg(
-        window.location.href,
-        "applicationNumber"
-    );
-    const applicationNumberQueryString = applicationNumber
-        ? `&applicationNumber=${applicationNumber}`
-        : ``;
-    const tetantQueryString = applicationNumber
-        ? `&tenantId=${getTenantId()}`
-        : ``;
-    const applicationType = getapplicationType();
-    let applyUrl = "";
-
-    applyUrl =
-        process.env.REACT_APP_SELF_RUNNING === "true"
-            ? `/egov-ui-framework/egov-services/applyopenspace?step=${step}`
-            : applicationType === "Booking"
-                ? `/egov-services/applyopenspace?step=${step}${tetantQueryString}`
-                : ``;
-
-    console.log(applyUrl, "applyUrl");
-
-    dispatch(setRoute(applyUrl));
-};
-export const showHideAdhocPopups = (state, dispatch, screenKey) => {
-    //alert(JSON.stringify( state.screenConfiguration.screenConfig[screenKey]))
-
-    let toggle = get(
-        state.screenConfiguration.screenConfig[screenKey],
-        "components.undertakingdialog.props.open",
-        false
-    );
-    dispatch(
-        handleField(
-            screenKey,
-            "components.undertakingdialog",
-            "props.open",
-            !toggle
-        )
-    );
-};
 
 export const showHideAdhocPopup = (state, dispatch, screenKey) => {
     let toggle = get(
@@ -301,88 +210,6 @@ export const showHideAdhocPopup = (state, dispatch, screenKey) => {
     );
 };
 
-export const showHideAdhocPopupopms = (state, dispatch, screenKey, type) => {
-    localStorage.setItem("updateNocType", type);
-    // //alert(  localStorage.getItem('updateNocType')+type)
-    // set(
-    //   state,
-    //   "screenConfig.components.adhocDialog.children.popup",
-    //   adhocPopup2
-    // );
-    ////alert(JSON.stringify( state.screenConfiguration.screenConfig[screenKey]))
-
-    setTimeout(function () {
-        let toggle = get(
-            state.screenConfiguration.screenConfig[screenKey],
-            "components.adhocDialog.props.open",
-            false
-        );
-        dispatch(
-            handleField(
-                screenKey,
-                "components.adhocDialog",
-                "props.open",
-                !toggle
-            )
-        );
-    }, 500);
-
-    /*
-  
-  export const showHideAdhocPopupopmsReject = (state, dispatch, screenKey, type) => {
-  
-    setTimeout(function () {
-      let toggle = get(
-        state.screenConfiguration.screenConfig[screenKey],
-        "components.adhocDialog3.props.open",
-        false
-      );
-      dispatch(
-        handleField(screenKey, "components.adhocDialog3", "props.open", !toggle)
-      );
-  
-      }, 500);
-    
-   };
-   */
-};
-export const showHideAdhocPopupopmsReassign = (
-    state,
-    dispatch,
-    screenKey,
-    type
-) => {
-    setTimeout(function () {
-        let toggle = get(
-            state.screenConfiguration.screenConfig[screenKey],
-            "components.adhocDialog2.props.open",
-            false
-        );
-        dispatch(
-            handleField(
-                screenKey,
-                "components.adhocDialog2",
-                "props.open",
-                !toggle
-            )
-        );
-    }, 500);
-};
-/* export const showHideAdhocPopupopmsApprove = (state, dispatch, screenKey,type) => {
-     
-     setTimeout(function(){ 
-      let toggle = get(
-        state.screenConfiguration.screenConfig[screenKey],
-        "components.adhocDialog1.props.open",
-        false
-      );
-      dispatch(
-        handleField(screenKey, "components.adhocDialog1", "props.open", !toggle)
-      ); 
-  
-      }, 500);
-    
-   }; */
 export const getCommonGrayCard = (children) => {
     return {
         uiFramework: "custom-atoms",
@@ -465,20 +292,6 @@ export const getReceiptData = async (queryObject) => {
     }
 };
 
-export const getMdmsData = async (queryObject) => {
-    try {
-        const response = await httpRequest(
-            "post",
-            "egov-mdms-service/v1/_get",
-            "",
-            queryObject
-        );
-        return response;
-    } catch (error) {
-        console.log(error);
-        return {};
-    }
-};
 
 export const getBill = async (queryObject) => {
     try {
@@ -491,203 +304,6 @@ export const getBill = async (queryObject) => {
         return response;
     } catch (error) {
         console.log(error, "errornew");
-    }
-};
-export const getWaterTankerBill = async (requestBody) => {
-    try {
-        const response = await httpRequest(
-            "post",
-            "/bookings/osbm/fee/_search",
-            "",
-            [],
-            requestBody
-        );
-        return response;
-    } catch (error) {
-        console.log(error, "errornew");
-    }
-};
-
-export const searchBill = async (dispatch, applicationNumber, tenantId) => {
-    try {
-        let queryObject = [
-            { key: "tenantId", value: tenantId },
-            { key: "consumerCodes", value: applicationNumber },
-        ];
-
-        // Get Receipt
-        let payload = await httpRequest(
-            "post",
-            "/collection-services/payments/_search",
-            "",
-            queryObject
-        );
-
-        // Get Bill
-        const response = await getBill([
-            { key: "tenantId", value: tenantId },
-            { key: "consumerCode", value: applicationNumber },
-            { key: "businessService", value: "OPMS" },
-        ]);
-
-        // If pending payment then get bill else get receipt
-        let billData = get(payload, "Receipt[0].Bill") || get(response, "Bill");
-        if (billData) {
-            dispatch(prepareFinalObject("ReceiptTemp[0].Bill", billData));
-            const estimateData = createEstimateData(billData[0]);
-            estimateData &&
-                estimateData.length &&
-                dispatch(
-                    prepareFinalObject(
-                        "applyScreenMdmsData.estimateCardData",
-                        estimateData
-                    )
-                );
-        }
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const createDemandForRoadCutNOC = async (
-    state,
-    ispatch,
-    applicationNumber,
-    tenantId
-) => {
-    try {
-        let amount = get(
-            state.screenConfiguration.preparedFinalObject,
-            "nocApplicationDetail.[0].amount"
-        );
-        let performancebankguaranteecharges = get(
-            state.screenConfiguration.preparedFinalObject,
-            "nocApplicationDetail.[0].performancebankguaranteecharges"
-        );
-        let gstamount = get(
-            state.screenConfiguration.preparedFinalObject,
-            "nocApplicationDetail.[0].gstamount"
-        );
-        let userInfo = JSON.parse(getUserInfo());
-        userInfo.pwdExpiryDate = 0;
-        userInfo.createdDate = 0;
-        userInfo.lastModifiedDate = 0;
-        userInfo.dob = 0;
-        let currentFinancialYr = getCurrentFinancialYear();
-        //Changing the format of FY
-        let fY1 = currentFinancialYr.split("-")[1];
-        fY1 = fY1.substring(2, 4);
-        currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
-
-        let queryObject = [
-            { key: "tenantId", value: tenantId },
-            { key: "consumerCodes", value: applicationNumber },
-        ];
-        let querydemand = {
-            CalulationCriteria: [
-                {
-                    opmsDetail: {
-                        financialYear: currentFinancialYr,
-                        applicationNumber: applicationNumber,
-                        applicationType: getapplicationType(), // "ROADCUTNOC",
-                        amountRoadCut: amount,
-                        bankPerformanceRoadCut: performancebankguaranteecharges,
-                        gstRoadCut: gstamount,
-                        owners: [userInfo],
-                        tenantId: getTenantId(),
-                    },
-                    applicationNumber: applicationNumber,
-                    tenantId: getTenantId(),
-                },
-            ],
-        };
-
-        // Get Receipt
-        let payload = await httpRequest(
-            "post",
-            "/pm-calculator/v1/_calculate",
-            "",
-            queryObject,
-            querydemand
-        );
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const searchdemand = async (dispatch, applicationNumber, tenantId) => {
-    try {
-        let currentFinancialYr = getCurrentFinancialYear();
-        //Changing the format of FY
-        let fY1 = currentFinancialYr.split("-")[1];
-        fY1 = fY1.substring(2, 4);
-        currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
-        let userInfo = JSON.parse(getUserInfo());
-
-        console.log("userInfo", userInfo);
-        userInfo.pwdExpiryDate = 0;
-        userInfo.createdDate = 0;
-        userInfo.lastModifiedDate = 0;
-        userInfo.dob = 0;
-
-        let queryObject = [
-            { key: "tenantId", value: tenantId },
-            { key: "consumerCodes", value: applicationNumber },
-        ];
-        let querydemand = {
-            CalulationCriteria: [
-                {
-                    opmsDetail: {
-                        financialYear: currentFinancialYr, // "2019-20",
-                        applicationNumber: applicationNumber,
-                        applicationType: getapplicationType(), //"PETNOC",
-                        owners: [userInfo],
-                        tenantId: getTenantId(),
-                    },
-                    applicationNumber: applicationNumber,
-                    tenantId: getTenantId(),
-                },
-            ],
-        };
-
-        // Get Receipt
-        let payload = await httpRequest(
-            "post",
-            "/pm-calculator/v1/_calculate",
-            "",
-            queryObject,
-            querydemand
-        );
-
-        // Get Bill
-        // const response = await getBill([
-        // {
-        // key: "tenantId",
-        // value: tenantId
-        // },
-        // {
-        // key: "applicationNumber",
-        // value: applicationNumber
-        // }
-        // ]);
-
-        // If pending payment then get bill else get receipt
-        // let billData = get(payload, "Receipt[0].Bill") || get(response, "Bill");
-
-        // if (billData) {
-        // dispatch(prepareFinalObject("ReceiptTemp[0].Bill", billData));
-        // const estimateData = createEstimateData(billData[0]);
-        // estimateData &&
-        // estimateData.length &&
-        // dispatch(
-        // prepareFinalObject(
-        // "applyScreenMdmsData.estimateCardData",
-        // estimateData
-        // )
-        // );
-        // }
-    } catch (e) {
-        console.log(e);
     }
 };
 
@@ -752,509 +368,6 @@ export const generateBill = async (
     }
 };
 
-export const generageBillCollection = async (
-    state,
-    dispatch,
-    applicationNumber,
-    tenantId
-) => {
-    try {
-        if (applicationNumber && tenantId) {
-            let queryObject = [
-                { key: "tenantId", value: tenantId },
-                { key: "consumerCodes", value: applicationNumber },
-            ];
-            const payload = await httpRequest(
-                "post",
-                "/collection-services/payments/_search",
-                "",
-                queryObject
-            );
-            if (payload) {
-                dispatch(
-                    prepareFinalObject("ReceiptTemp[0].Bill", [
-                        payload.Payments[0].paymentDetails[0].bill,
-                    ])
-                );
-                const estimateData = createEstimateData(
-                    payload.Payments[0].paymentDetails[0].bill.billDetails
-                );
-                estimateData &&
-                    estimateData.length &&
-                    dispatch(
-                        prepareFinalObject(
-                            "applyScreenMdmsData.estimateCardData",
-                            estimateData
-                        )
-                    );
-            }
-        }
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-export const resetFields = (state, dispatch) => {
-    dispatch(
-        handleField(
-            "search",
-            "components.div.children.NOCApplication.children.cardContent.children.appNOCAndMobNumContainer.children.NOCNo",
-            "props.value",
-            ""
-        )
-    );
-    dispatch(
-        handleField(
-            "search",
-            "components.div.children.NOCApplication.children.cardContent.children.appNOCAndMobNumContainer.children.applicationNo",
-            "props.value",
-            ""
-        )
-    );
-    dispatch(
-        handleField(
-            "search",
-            "components.div.children.NOCApplication.children.cardContent.children.appNOCAndMobNumContainer.children.ownerMobNo",
-            "props.value",
-            ""
-        )
-    );
-    dispatch(
-        handleField(
-            "search",
-            "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.applicationNo",
-            "props.value",
-            ""
-        )
-    );
-    dispatch(
-        handleField(
-            "search",
-            "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.fromDate",
-            "props.value",
-            ""
-        )
-    );
-    dispatch(
-        handleField(
-            "search",
-            "components.div.children.NOCApplication.children.cardContent.children.appStatusAndToFromDateContainer.children.toDate",
-            "props.value",
-            ""
-        )
-    );
-};
-
-export const getTextToLocalMapping = (label) => {
-    const localisationLabels = getTransformedLocalStorgaeLabels();
-    switch (label) {
-        case "Application No":
-            return getLocaleLabels(
-                "Application No",
-                "applicationId",
-                localisationLabels
-            );
-        case "Application Status":
-            return getLocaleLabels(
-                "Application Status",
-                "applicationStatus",
-                localisationLabels
-            );
-        case "Applicant Name":
-            return getLocaleLabels(
-                "Applicant Name",
-                "applicantName",
-                localisationLabels
-            );
-        case "NOC No":
-            return getLocaleLabels(
-                "NOC No",
-                "NOC_COMMON_TABLE_COL_NOC_NO_LABEL",
-                localisationLabels
-            );
-
-        case "NOC Type":
-            return getLocaleLabels(
-                "NOC Type",
-                "NOC_TYPE_LABEL",
-                localisationLabels
-            );
-        case "Owner Name":
-            return getLocaleLabels(
-                "Owner Name",
-                "NOC_COMMON_TABLE_COL_OWN_NAME_LABEL",
-                localisationLabels
-            );
-
-        case "Application Date":
-            return getLocaleLabels(
-                "Application Date",
-                "NOC_COMMON_TABLE_COL_APP_DATE_LABEL",
-                localisationLabels
-            );
-
-        case "Status":
-            return getLocaleLabels(
-                "Status",
-                "NOC_COMMON_TABLE_COL_STATUS_LABEL",
-                localisationLabels
-            );
-
-        //master
-        case "Price Book Id":
-            return getLocaleLabels(
-                "Price Book Id",
-                "priceBookId",
-                localisationLabels
-            );
-
-        case "categoryId":
-            return getLocaleLabels(
-                "categoryId",
-                "categoryId",
-                localisationLabels
-            );
-        case "subCategoryId":
-            return getLocaleLabels(
-                "subCategoryId",
-                "subCategoryId",
-                localisationLabels
-            );
-        case "perDayPrice":
-            return getLocaleLabels(
-                "perDayPrice",
-                "perDayPrice",
-                localisationLabels
-            );
-        case "perWeekPrice":
-            return getLocaleLabels(
-                "perWeekPrice",
-                "perWeekPrice",
-                localisationLabels
-            );
-        case "perMonthPrice":
-            return getLocaleLabels(
-                "perMonthPrice",
-                "perMonthPrice",
-                localisationLabels
-            );
-        case "annualPrice":
-            return getLocaleLabels(
-                "annualPrice",
-                "annualPrice",
-                localisationLabels
-            );
-        case "effectiveFromDate":
-            return getLocaleLabels(
-                "effectiveFromDate",
-                "effectiveFromDate",
-                localisationLabels
-            );
-        case "effectiveToDate":
-            return getLocaleLabels(
-                "effectiveToDate",
-                "effectiveToDate",
-                localisationLabels
-            );
-        //reprt1
-
-        case "Application Date":
-            return getLocaleLabels(
-                "Application Date",
-                "NOC_COMMON_TABLE_COL_APP_DATE_LABEL",
-                localisationLabels
-            );
-
-        case "Status":
-            return getLocaleLabels(
-                "Status",
-                "NOC_COMMON_TABLE_COL_STATUS_LABEL",
-                localisationLabels
-            );
-
-        //master
-        case "applcationType":
-            return getLocaleLabels(
-                "applcationType",
-                "applcationType",
-                localisationLabels
-            );
-
-        case "totalNoOfApplicationReceived":
-            return getLocaleLabels(
-                "totalNoOfApplicationReceived",
-                "totalNoOfApplicationReceived",
-                localisationLabels
-            );
-        case "noOfApplicationProcessed":
-            return getLocaleLabels(
-                "noOfApplicationProcessed",
-                "noOfApplicationProcessed",
-                localisationLabels
-            );
-        case "noOfApplicationPending":
-            return getLocaleLabels(
-                "noOfApplicationPending",
-                "noOfApplicationPending",
-                localisationLabels
-            );
-        case "noOfApplicationRejected":
-            return getLocaleLabels(
-                "noOfApplicationRejected",
-                "noOfApplicationRejected",
-                localisationLabels
-            );
-
-        case "totalNoOfApplicationApproved":
-            return getLocaleLabels(
-                "totalNoOfApplicationApproved",
-                "totalNoOfApplicationApproved",
-                localisationLabels
-            );
-        case "revenueCollected":
-            return getLocaleLabels(
-                "revenueCollected",
-                "revenueCollected",
-                localisationLabels
-            );
-        case "totalNoApplicationApprovedWithNilCharges":
-            return getLocaleLabels(
-                "totalNoApplicationApprovedWithNilCharges",
-                "totalNoApplicationApprovedWithNilCharges",
-                localisationLabels
-            );
-
-        case "avgTimeTakenToProcessRequest":
-            return getLocaleLabels(
-                "avgTimeTakenToProcessRequest",
-                "avgTimeTakenToProcessRequest",
-                localisationLabels
-            );
-
-        case "pendingMoreThan10AndLessThan30Days":
-            return getLocaleLabels(
-                "pendingMoreThan10AndLessThan30Days",
-                "pendingMoreThan10AndLessThan30Days",
-                localisationLabels
-            );
-        case "sector":
-            return getLocaleLabels("sector", "sector", localisationLabels);
-        case "pendingMoreThan30Days":
-            return getLocaleLabels(
-                "pendingMoreThan30Days",
-                "pendingMoreThan30Days",
-                localisationLabels
-            );
-
-        case "YearMonth":
-            return getLocaleLabels(
-                "YearMonth",
-                "YearMonth",
-                localisationLabels
-            );
-
-        case "approve":
-            return getLocaleLabels("approve", "approve", localisationLabels);
-        case "rev":
-            return getLocaleLabels("rev", "rev", localisationLabels);
-
-        case "exempted":
-            return getLocaleLabels("exempted", "exempted", localisationLabels);
-
-        case "INITIATED":
-            return getLocaleLabels(
-                "Initiated,",
-                "NOC_INITIATED",
-                localisationLabels
-            );
-        case "APPLIED":
-            getLocaleLabels("Applied", "NOC_APPLIED", localisationLabels);
-        case "PAID":
-            getLocaleLabels(
-                "Paid",
-                "WF_NEWPM_PENDINGAPPROVAL",
-                localisationLabels
-            );
-
-        case "APPROVED":
-            return getLocaleLabels(
-                "Approved",
-                "NOC_APPROVED",
-                localisationLabels
-            );
-        case "REJECTED":
-            return getLocaleLabels(
-                "Rejected",
-                "NOC_REJECTED",
-                localisationLabels
-            );
-        case "CANCELLED":
-            return getLocaleLabels(
-                "Cancelled",
-                "NOC_CANCELLED",
-                localisationLabels
-            );
-    }
-};
-
-export const showHideAdhocPopupopmsReject = (
-    state,
-    dispatch,
-    screenKey,
-    type
-) => {
-    setTimeout(function () {
-        let toggle = get(
-            state.screenConfiguration.screenConfig[screenKey],
-            "components.adhocDialog3.props.open",
-            false
-        );
-        dispatch(
-            handleField(
-                screenKey,
-                "components.adhocDialog3",
-                "props.open",
-                !toggle
-            )
-        );
-    }, 500);
-};
-/*
-export const showHideAdhocPopupopmsReassign = (state, dispatch, screenKey,type) => {
-    
-    setTimeout(function(){ 
-     let toggle = get(
-       state.screenConfiguration.screenConfig[screenKey],
-       "components.adhocDialog2.props.open",
-       false
-     );
-     dispatch(
-       handleField(screenKey, "components.adhocDialog2", "props.open", !toggle)
-     ); 
- 
-     }, 500);
-   
-  };
-  */
-
-export const showHideAdhocPopupopmsApprove = (
-    state,
-    dispatch,
-    screenKey,
-    type
-) => {
-    setTimeout(function () {
-        let toggle = get(
-            state.screenConfiguration.screenConfig[screenKey],
-            "components.adhocDialog1.props.open",
-            false
-        );
-        dispatch(
-            handleField(
-                screenKey,
-                "components.adhocDialog1",
-                "props.open",
-                !toggle
-            )
-        );
-    }, 500);
-};
-export const showHideAdhocPopupopmsForward = (
-    state,
-    dispatch,
-    screenKey,
-    type
-) => {
-    setTimeout(function () {
-        let toggle = get(
-            state.screenConfiguration.screenConfig[screenKey],
-            "components.adhocDialogForward.props.open",
-            false
-        );
-        dispatch(
-            handleField(
-                screenKey,
-                "components.adhocDialogForward",
-                "props.open",
-                !toggle
-            )
-        );
-    }, 500);
-};
-
-export const getOPMSPattern = (type) => {
-    switch (type) {
-        case "cin":
-            return /^([L|U]{1})([0-9]{5})([A-Za-z]{2})([0-9]{4})([A-Za-z]{3})([0-9]{6})$/i;
-    }
-};
-
-export const createDemandForAdvNOC = async (state, ispatch) => {
-    try {
-        let advdetails = get(
-            state.screenConfiguration.preparedFinalObject,
-            "ADVTCALCULATENOC"
-        );
-
-        let durationAdvertisement = advdetails.duration; // JSON.parse(advdetails).duration;
-        let fromDateAdvertisement = advdetails.fromDateToDisplay;
-        let toDateAdvertisement = advdetails.toDateToDisplay;
-        let squareFeetAdvertisement = advdetails.space;
-        let exemptedCategory = advdetails.exemptedCategory;
-        let userInfo = JSON.parse(getUserInfo());
-        userInfo.pwdExpiryDate = 0;
-        userInfo.createdDate = 0;
-        userInfo.lastModifiedDate = 0;
-        userInfo.dob = 0;
-        let currentFinancialYr = getCurrentFinancialYear();
-        //Changing the format of FY
-        let fY1 = currentFinancialYr.split("-")[1];
-        fY1 = fY1.substring(2, 4);
-        currentFinancialYr = currentFinancialYr.split("-")[0] + "-" + fY1;
-
-        let queryObject = [
-            { key: "tenantId", value: getTenantId() },
-            { key: "consumerCodes", value: getapplicationNumber() },
-        ];
-        let querydemand = {
-            CalulationCriteria: [
-                {
-                    opmsDetail: {
-                        financialYear: currentFinancialYr,
-                        applicationNumber: getapplicationNumber(),
-                        applicationType: getapplicationType(), //"ADVERTISEMENTNOC",
-                        isExamptedAdvertisement: exemptedCategory,
-                        categoryIdAdvertisement: localStorageGet("this_adv_id"),
-                        subCategotyIdAdvertisement: localStorageGet(
-                            "this_sub_adv_id"
-                        ),
-                        durationAdvertisement: durationAdvertisement,
-                        fromDateAdvertisement: fromDateAdvertisement,
-                        toDateAdvertisement: toDateAdvertisement,
-                        squareFeetAdvertisement: squareFeetAdvertisement,
-                        owners: [userInfo],
-                        tenantId: getTenantId(),
-                    },
-                    applicationNumber: getapplicationNumber(),
-                    tenantId: getTenantId(),
-                },
-            ],
-        };
-
-        // Get Receipt
-        let payload = await httpRequest(
-            "post",
-            "/pm-calculator/v1/_calculate",
-            "",
-            queryObject,
-            querydemand
-        );
-        return payload;
-    } catch (e) {
-        console.log(e);
-    }
-};
-
 export const clearlocalstorageAppDetails = (state) => {
     set(state, "screenConfiguration.preparedFinalObject", {});
     lSRemoveItemlocal("applicationType");
@@ -1291,45 +404,6 @@ export const clearlocalstorageAppDetails = (state) => {
     lSRemoveItem("this_sub_adv_id");
     lSRemoveItem("undertaking");
 };
-
-// export const validateFields = (
-//     objectJsonPath,
-//     state,
-//     dispatch,
-//     screen = "apply"
-//   ) => {
-//     const fields = get(
-//       state.screenConfiguration.screenConfig[screen],
-//       objectJsonPath,
-//       {}
-//     );
-//     let isFormValid = true;
-//     for (var variable in fields) {
-//       if (fields.hasOwnProperty(variable)) {
-//         if (
-//           fields[variable] &&
-//           fields[variable].props &&
-//           (fields[variable].props.disabled === undefined ||
-//             !fields[variable].props.disabled) &&
-//           !validate(
-//             screen,
-//             {
-//               ...fields[variable],
-//               value: get(
-//                 state.screenConfiguration.preparedFinalObject,
-//                 fields[variable].jsonPath
-//               )
-//             },
-//             dispatch,
-//             true
-//           )
-//         ) {
-//           isFormValid = false;
-//         }
-//       }
-//     }
-//     return isFormValid;
-//   };
 
 export const convertDateInDMY = (inputDate) => {
     if (inputDate) {
@@ -1517,6 +591,36 @@ export const getDurationDate = (fromDate, toDate) => {
     let finalDate = finalStartDate + " to " + finalEndDate;
     return finalDate;
 };
+const getMdmsTenantsData = async () => {
+    let tenantId = getTenantId().split(".")[0];
+    let mdmsBody = {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+                {
+                    moduleName: "tenant",
+                    masterDetails: [
+                        {
+                            name: "tenants",
+                        },
+                    ],
+                }
+            ],
+        },
+    };
+    try {
+        let payload = await httpRequest(
+            "post",
+            "/egov-mdms-service/v1/_search",
+            "_search",
+            [],
+            mdmsBody
+        );
+        return payload.MdmsRes.tenant 
+    } catch (e) {
+        console.log(e);
+    }
+};
 export const downloadReceipt = (
     state,
     applicationNumber,
@@ -1679,39 +783,7 @@ export const downloadReceipt = (
     }
 };
 
-
-const getMdmsTenantsData = async () => {
-    let tenantId = getTenantId().split(".")[0];
-    let mdmsBody = {
-        MdmsCriteria: {
-            tenantId: tenantId,
-            moduleDetails: [
-                {
-                    moduleName: "tenant",
-                    masterDetails: [
-                        {
-                            name: "tenants",
-                        },
-                    ],
-                }
-            ],
-        },
-    };
-    try {
-        let payload = await httpRequest(
-            "post",
-            "/egov-mdms-service/v1/_search",
-            "_search",
-            [],
-            mdmsBody
-        );
-        return payload.MdmsRes.tenant
-    } catch (e) {
-        console.log(e);
-    }
-};
-
-export const downloadCertificate = async (
+export const downloadCertificate = async(
     state,
     applicationNumber,
     tenantId,
@@ -2069,36 +1141,10 @@ export const getAvailabilityDataOSWMCC = async (
     }
 };
 
-// export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
-//     let requestBody = {
-//         Booking: {
-//             bkSector: bookingSector,
-//             bkAreaRequired: bookingArea,
-//             // bkSector: "SECTOR-17",
-//             // bkAreaRequired: "55",
-
-//         },
-//     };
-//     try {
-//         const response = await httpRequest(
-//             "post",
-//             "bookings/osujm/fee/_search",
-//             "",
-//             [],
-//             requestBody
-//         );
-//         // return response;
-//         return { status: "success", data: response.data };
-//     } catch (exception) {
-//         console.log(exception);
-//     }
-// };
 export const getNewLocatonImages = async (bookingSector, bookingArea) => {
     let requestBody = {
         sector: bookingSector,
         venue: bookingArea,
-        // bkSector: "SECTOR-17",
-        // bkAreaRequired: "55",
     };
     try {
         const response = await httpRequest(
@@ -2132,10 +1178,6 @@ export const getPerDayRateCgb = async (bookingVenue) => {
     let requestBody = {
         bookingVenue: bookingVenue,
         category: "Company",
-        // bkSector: "SECTOR-17",
-        // bkAreaRequired: "55",
-
-
     };
     try {
         const response = await httpRequest(
@@ -2213,9 +1255,6 @@ export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
         Booking: {
             bkSector: bookingSector,
             bkAreaRequired: bookingArea,
-            // bkSector: "SECTOR-17",
-            // bkAreaRequired: "55",
-
         },
     };
     try {

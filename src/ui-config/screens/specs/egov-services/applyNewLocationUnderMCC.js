@@ -3,24 +3,19 @@ import {
     getCommonHeader,
     getStepperObject,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getCurrentFinancialYear, clearlocalstorageAppDetails } from "../utils";
+import { clearlocalstorageAppDetails } from "../utils";
 import { footer } from "./applyResourceOSWMCC/footer";
 import {
     personalDetails,
     bookingDetails,
 } from "./applyResourceOSWMCC/nocDetails";
-import jp from "jsonpath";
 
 import { documentDetails } from "./applyResourceOSWMCC/documentDetails";
 import { summaryDetails } from "./applyResourceOSWMCC/summaryDetails";
-//import { documentDetailsImagesNewLoc } from "./applyResourceOSWMCC/documentDetailsImagesNewLoc";
 
 import {
     getFileUrlFromAPI,
     getQueryArg,
-    getTransformedLocale,
-    setBusinessServiceDataToLocalStorage,
-    decodeURIComponent
 } from "egov-ui-framework/ui-utils/commons";
 import {
     prepareFinalObject,
@@ -29,26 +24,16 @@ import {
 import {
     getTenantId,
     setapplicationType,
-    lSRemoveItem,
-    lSRemoveItemlocal,
     setapplicationNumber,
     getUserInfo,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";
-import {
-    sampleSearch,
-    sampleSingleSearch,
-    sampleDocUpload,
-} from "../../../../ui-utils/sampleResponses";
 import set from "lodash/set";
 import get from "lodash/get";
-
 import {
     prepareDocumentsUploadData,
-    getSearchResults,
     getNewLocationsSearchResults,
     setApplicationNumberBox,
-    furnishOsbmResponse,
     getSearchResultsViewForNewLocOswmcc
 } from "../../../../ui-utils/commons";
 
@@ -164,40 +149,6 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-
-        // payload.MdmsRes.Booking.OSWMCC_New_Loc_Documents = [{
-        //     active: true,
-        //     code: "OSWMCC_ID_PROOF",
-        //     description: "OSWMCC_DOCUMENT_ID_PROOF_DESCRIPTION",
-        //     documentType: "IDPROOF",
-        //     dropdownData: [],
-        //     hasDropdown: false,
-        //     required: true
-        // }, {
-        //     active: true,
-        //     code: "OSWMCC_LOCATION_IMAGE_1",
-        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-        //     documentType: "MCCNEWLOCATION",
-        //     dropdownData: [],
-        //     hasDropdown: true,
-        //     required: true
-        // }, {
-        //     active: true,
-        //     code: "OSWMCC_LOCATION_IMAGE_2",
-        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-        //     documentType: "MCCNEWLOCATION",
-        //     dropdownData: [],
-        //     hasDropdown: false,
-        //     required: false,
-        // }, {
-        //     active: true,
-        //     code: "OSWMCC_LOCATION_IMAGE_3",
-        //     description: "OSWMCC_DOCUMENT_LOCATION_DESCRIPTION",
-        //     documentType: "MCCNEWLOCATION",
-        //     dropdownData: [],
-        //     hasDropdown: false,
-        //     required: false,
-        // }];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -218,32 +169,11 @@ export const prepareEditFlow = async (
         setapplicationNumber(applicationNumber);
         setApplicationNumberBox(state, dispatch, applicationNumber);
 
-
         dispatch(prepareFinalObject("Booking", response.osujmNewLocationModelList[0]));
-
-        // let fileStoreIdsArray = Object.keys(response.documentMap);
-        // let fileStoreIds = fileStoreIdsArray.join();
-
-        // let onlyLocationImages = Object.entries(response.documentMap);
-        // const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
-        // let newLocationImagesPreview = [];
-        // onlyLocationImages && onlyLocationImages.forEach((item, index) => {
-        //     newLocationImagesPreview[index] = {
-        //         fileName:item[1] ||
-        //             `Document - ${index + 1}`,
-        //         fileStoreId: item[0],
-        //         fileUrl: Object.values(fileUrlPayload)[
-        //             index
-        //         ],
-        //         title: item.documentType,
-
-        //     };
-        // });
         let bookingDocs = response.documentList;
         if (bookingDocs.length > 0) {
             let fileStoreIds = bookingDocs.map(e => e.fileStoreId).join(",");
 
-            //let onlyLocationImages = Object.entries(response.documentMap);
             const fileUrlPayload = fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
             let newLocationImagesPreview = [];
             bookingDocs && bookingDocs.forEach((item, index) => {
@@ -262,7 +192,6 @@ export const prepareEditFlow = async (
             let part2 = newLocationImagesPreview && newLocationImagesPreview.filter(item => item.documentType != "IDPROOF");
             dispatch(prepareFinalObject("documentsUploadReduxOld.documents", part1.concat(part2)));
         }
-        console.log("hereitis")
 
 
     }

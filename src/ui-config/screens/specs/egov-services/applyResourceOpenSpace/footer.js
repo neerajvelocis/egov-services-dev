@@ -7,21 +7,14 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import {
     getCommonApplyFooter,
-    validateFields,
     generateBill,
 } from "../../utils";
 import "./index.css";
-import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
-import { httpRequest } from "../../../../../ui-utils";
 import {
     createUpdateOsbApplication,
-    prepareDocumentsUploadData,
 } from "../../../../../ui-utils/commons";
 import {
-    localStorageGet,
-    localStorageSet,
     getTenantId,
-    getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
@@ -68,11 +61,6 @@ const callBackForNext = async (state, dispatch) => {
             const reviewUrl = `/egov-services/applyopenspace?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 
-            // set(
-            //     state.screenConfiguration.screenConfig["applyopenspace"],
-            //     "components.div.children.headerDiv.children.header.children.applicationNumber.props.number",
-            //     applicationNumber
-            // );
             set(
                 state.screenConfiguration.screenConfig["applyopenspace"],
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
@@ -329,7 +317,7 @@ export const footer = getCommonApplyFooter({
             },
             previousButtonLabel: getLabel({
                 labelName: "Previous Step",
-                labelKey: "NOC_COMMON_BUTTON_PREV_STEP",
+                labelKey: "BK_COMMON_BUTTON_PREV_STEP",
             }),
         },
         onClickDefination: {
@@ -352,7 +340,7 @@ export const footer = getCommonApplyFooter({
         children: {
             nextButtonLabel: getLabel({
                 labelName: "Next Step",
-                labelKey: "NOC_COMMON_BUTTON_NXT_STEP",
+                labelKey: "BK_COMMON_BUTTON_NXT_STEP",
             }),
             nextButtonIcon: {
                 uiFramework: "custom-atoms",
@@ -381,7 +369,7 @@ export const footer = getCommonApplyFooter({
         children: {
             submitButtonLabel: getLabel({
                 labelName: "Submit",
-                labelKey: "NOC_COMMON_BUTTON_SUBMIT",
+                labelKey: "BK_COMMON_BUTTON_SUBMIT",
             }),
             submitButtonIcon: {
                 uiFramework: "custom-atoms",
@@ -443,64 +431,11 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
             }
         });
     if (!allAreFilled) {
-        //alert('Fill all fields')
         isFormValid = false;
         hasFieldToaster = true;
     } else {
-        //alert('Submit')
         isFormValid = true;
         hasFieldToaster = false;
     }
     return [isFormValid, hasFieldToaster];
 };
-
-// export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
-//     let allAreFilled = true;
-
-//     document
-//         .getElementById("apply_form" + activeStep)
-//         .querySelectorAll("[required]")
-//         .forEach(function (i) {
-//             // console.log(i, "fields");
-
-//             if (!i.value) {
-//                 i.focus();
-//                 allAreFilled = false;
-//                 i.parentNode.classList.add("MuiInput-error-853");
-//                 i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-//             }
-//             if (i.getAttribute("aria-invalid") === "true" && allAreFilled) {
-//                 i.parentNode.classList.add("MuiInput-error-853");
-//                 i.parentNode.parentNode.classList.add("MuiFormLabel-error-844");
-//                 allAreFilled = false;
-//                 isFormValid = false;
-//                 hasFieldToaster = true;
-//             }
-//         });
-
-//     document
-//         .getElementById("apply_form" + activeStep)
-//         .querySelectorAll("input[type='hidden']")
-//         .forEach(function (i) {
-//             if (i.value == i.placeholder) {
-//                 i.focus();
-//                 allAreFilled = false;
-//                 i.parentNode.classList.add("MuiInput-error-853");
-//                 i.parentNode.parentNode.parentNode.classList.add(
-//                     "MuiFormLabel-error-844"
-//                 );
-//                 allAreFilled = false;
-//                 isFormValid = false;
-//                 hasFieldToaster = true;
-//             }
-//         });
-//     //
-//     if (allAreFilled == false) {
-//         isFormValid = false;
-//         hasFieldToaster = true;
-//     } else {
-//         isFormValid = true;
-//         hasFieldToaster = false;
-//     }
-//     return [isFormValid, hasFieldToaster];
-// };

@@ -60,7 +60,10 @@ const callBackForNext = async (state, dispatch) => {
 
         let baseCharge = await getPerDayRateCgb(venue)
 
-        dispatch(prepareFinalObject("BaseCharge", `@Rs.${baseCharge.data.ratePerDay}/day`));
+        if(baseCharge!==undefined){
+            dispatch(prepareFinalObject("BaseCharge", `@Rs.${baseCharge.data.ratePerDay}/day`));
+        }
+        
 
         response = await createUpdateCgbApplication(state, dispatch, "INITIATE");
         console.log(response, "myResponse");

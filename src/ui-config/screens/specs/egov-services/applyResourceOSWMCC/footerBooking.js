@@ -377,7 +377,7 @@ export const footer = getCommonApplyFooter({
             },
             previousButtonLabel: getLabel({
                 labelName: "Previous Step",
-                labelKey: "NOC_COMMON_BUTTON_PREV_STEP",
+                labelKey: "BK_COMMON_BUTTON_PREV_STEP",
             }),
         },
         onClickDefination: {
@@ -400,7 +400,7 @@ export const footer = getCommonApplyFooter({
         children: {
             nextButtonLabel: getLabel({
                 labelName: "Next Step",
-                labelKey: "NOC_COMMON_BUTTON_NXT_STEP",
+                labelKey: "BK_COMMON_BUTTON_NXT_STEP",
             }),
             nextButtonIcon: {
                 uiFramework: "custom-atoms",
@@ -429,7 +429,7 @@ export const footer = getCommonApplyFooter({
         children: {
             submitButtonLabel: getLabel({
                 labelName: "Submit",
-                labelKey: "NOC_COMMON_BUTTON_SUBMIT",
+                labelKey: "BK_COMMON_BUTTON_SUBMIT",
             }),
             submitButtonIcon: {
                 uiFramework: "custom-atoms",

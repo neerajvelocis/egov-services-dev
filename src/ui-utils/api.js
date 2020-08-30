@@ -19,7 +19,7 @@ const instance = axios.create({
   baseURL: window.location.origin,
   headers: {
     "Content-Type": "application/json",
-    "Authorization" : "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0"
+    // "Authorization" : "Basic ZWdvdi11c2VyLWNsaWVudDplZ292LXVzZXItc2VjcmV0"
   }
 });
 
@@ -41,7 +41,7 @@ const wrapRequestBody = (requestBody, action, customRequestInfo) => {
 
   };
   let ExtraPayload = {
-    applicationType: getapplicationType(),// 'PETNOC',
+    applicationType: getapplicationType(),// 'OSBM',
     applicationStatus: getapplicationMode(),  //'INITIATED',
     applicationId: applicationnumber === 'null' ? '' : applicationnumber,
     tenantId: getTenantId().split(".")[0],

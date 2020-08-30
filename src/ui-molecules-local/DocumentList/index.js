@@ -133,6 +133,7 @@ class DocumentList extends Component {
         } = this.props;
         let index = 0;
 
+        console.log(documentsList, "documentsList");
         console.log(documentsUploadRedux, "documentsUploadRedux");
         console.log(documentsUploadReduxOld, "documentsUploadReduxOld");
         documentsList.forEach((docType) => {
@@ -408,7 +409,6 @@ const mapStateToProps = (state) => {
         "documentsUploadRedux",
         {}
     );
-    console.log(documentsUploadRedux, "newDocument");
     return { documentsUploadRedux, moduleName };
 };
 
