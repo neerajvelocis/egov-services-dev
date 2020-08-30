@@ -98,303 +98,303 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
     return [isFormValid, hasFieldToaster];
 };
 
-const callBackForReset = (state, dispatch, action) => {
-    const availabilityCheckData = get(
-        state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData"
-    );
+// const callBackForReset = (state, dispatch, action) => {
+//     const availabilityCheckData = get(
+//         state,
+//         "screenConfiguration.preparedFinalObject.availabilityCheckData"
+//     );
 
-    if (availabilityCheckData !== undefined) {
-        if (availabilityCheckData.bkSector) {
-            dispatch(
-                handleField(
-                    "checkavailability_oswmcc",
-                    "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkSector",
-                    "props.value",
-                    undefined
-                )
-            );
-        }
-        if (availabilityCheckData.bkBookingVenue) {
-            dispatch(
-                handleField(
-                    "checkavailability_oswmcc",
-                    "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
-                    "props.value",
-                    undefined
-                )
-            );
-        }
-        set(
-            state.screenConfiguration.screenConfig["checkavailability_oswmcc"],
-            "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
-            false
-        );
-        dispatch(prepareFinalObject("availabilityCheckData", undefined));
-    }
-    // if (availabilityCheckData.bkFromDate) {
-    //     dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", ""))
-    // }
-    // if (availabilityCheckData.bkToDate) {
-    //     dispatch(prepareFinalObject("availabilityCheckData.bkToDate", ""))
-    // }
-    // if (availabilityCheckData.reservedDays) {
-    //     dispatch(prepareFinalObject("availabilityCheckData.reservedDays", []))
-    // }
+//     if (availabilityCheckData !== undefined) {
+//         if (availabilityCheckData.bkSector) {
+//             dispatch(
+//                 handleField(
+//                     "checkavailability_oswmcc",
+//                     "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+//                     "props.value",
+//                     undefined
+//                 )
+//             );
+//         }
+//         if (availabilityCheckData.bkBookingVenue) {
+//             dispatch(
+//                 handleField(
+//                     "checkavailability_oswmcc",
+//                     "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+//                     "props.value",
+//                     undefined
+//                 )
+//             );
+//         }
+//         set(
+//             state.screenConfiguration.screenConfig["checkavailability_oswmcc"],
+//             "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.viewDetailsButton.visible",
+//             false
+//         );
+//         dispatch(prepareFinalObject("availabilityCheckData", undefined));
+//     }
+//     // if (availabilityCheckData.bkFromDate) {
+//     //     dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", ""))
+//     // }
+//     // if (availabilityCheckData.bkToDate) {
+//     //     dispatch(prepareFinalObject("availabilityCheckData.bkToDate", ""))
+//     // }
+//     // if (availabilityCheckData.reservedDays) {
+//     //     dispatch(prepareFinalObject("availabilityCheckData.reservedDays", []))
+//     // }
 
-    // const actionDefination = [
-    //     {
-    //         path:
-    //             "components.div.children.availabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-    //         property: "reservedDays",
-    //         value: [],
-    //     },
-    // ];
-    // dispatchMultipleFieldChangeAction(
-    //     "checkavailability",
-    //     actionDefination,
-    //     dispatch
-    // );
-    // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
-};
+//     // const actionDefination = [
+//     //     {
+//     //         path:
+//     //             "components.div.children.availabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+//     //         property: "reservedDays",
+//     //         value: [],
+//     //     },
+//     // ];
+//     // dispatchMultipleFieldChangeAction(
+//     //     "checkavailability",
+//     //     actionDefination,
+//     //     dispatch
+//     // );
+//     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
+// };
 
 const callBackForBook = async (state, dispatch) => {
-    dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
-    // let availabilityCheckData =
-    //     state.screenConfiguration.preparedFinalObject.availabilityCheckData;
-    // if (availabilityCheckData === undefined) {
-    //     let warrningMsg = {
-    //         labelName: "Please Select Date Range",
-    //         labelKey: "",
-    //     };
-    //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-    // } else {
-    //     if (
-    //         availabilityCheckData.bkToDate === undefined ||
-    //         availabilityCheckData.bkToDate === "" ||
-    //         availabilityCheckData.bkToDate === null
-    //     ) {
-    //         let warrningMsg = {
-    //             labelName: "Please Select Date Range",
-    //             labelKey: "",
-    //         };
-    //         dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-    //     } else {
-    //         if ("bkApplicationNumber" in availabilityCheckData) {
-    //             dispatch(
-    //                 setRoute(
-    //                     `/egov-services/applyparkcommunitycentre?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
-    //                 )
-    //             );
-    //         } else {
-    //             dispatch(setRoute(`/egov-services/applyparkcommunitycentre`));
-    //         }
-    //     }
-
-    //     // if (
-    //     //     availabilityCheckData.bkToDate === undefined ||
-    //     //     availabilityCheckData.bkToDate === ""
-    //     // ) {
-    //     //     let warrningMsg = {
-    //     //         labelName: "Please select Date RANGE",
-    //     //         labelKey: "",
-    //     //     };
-    //     //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
-    //     // } else if ("bkApplicationNumber" in availabilityCheckData) {
-    //     //     // dispatch(
-    //     //     //     setRoute(
-    //     //     //         `/egov-services/applyparkcommunitycentre?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
-    //     //     //     )
-    //     //     // );
-    //     //     dispatch(
-    //     //         setRoute(
-    //     //             `/egov-services/applyparkcommunitycentre?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
-    //     //         )
-    //     //     );
-    //     // } else {
-    //     //     dispatch(
-    //     //         // setRoute(
-    //     //         //     `/egov-services/applyparkcommunitycentre?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
-    //     //         // )
-    //     //         setRoute(`/egov-services/applyparkcommunitycentre`)
-    //     //     );
-    //     // }
-    // }
-};
-
-const callBackForAddNewLocation = async (state, dispatch) => {
-    const addLocationURL = `/egov-services/applyNewLocationUnderMCC`;
-    dispatch(setRoute(addLocationURL));
-};
-
-const callBackForSearch = async (state, dispatch) => {
-    let isFormValid = false;
-    let hasFieldToaster = true;
-
-    let validatestepformflag = validatestepform(1);
-
-    isFormValid = validatestepformflag[0];
-    hasFieldToaster = validatestepformflag[1];
-
-    if (isFormValid !== false) {
-        let availabilityCheckData = get(
-            state,
-            "screenConfiguration.preparedFinalObject.availabilityCheckData"
-        );
-        // if (availabilityCheckData === undefined) {
-        //     dispatch(
-        //         toggleSnackbar(
-        //             true,
-        //             { labelName: "Please Select Booking Venue!", labelKey: "" },
-        //             "warning"
-        //         )
-        //     );
-        // } else {
+    // dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
+    let availabilityCheckData =
+        state.screenConfiguration.preparedFinalObject.availabilityCheckData;
+    if (availabilityCheckData === undefined) {
+        let warrningMsg = {
+            labelName: "Please Select Date Range",
+            labelKey: "",
+        };
+        dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+    } else {
         if (
-            "bkSector" in availabilityCheckData &&
-            "bkBookingVenue" in availabilityCheckData
+            availabilityCheckData.bkToDate === undefined ||
+            availabilityCheckData.bkToDate === "" ||
+            availabilityCheckData.bkToDate === null
         ) {
-            let bookingSector = availabilityCheckData.bkSector;
-            let bookingVenue = availabilityCheckData.bkBookingVenue;
-            let response = await getAvailabilityDataOSWMCC(
-                bookingSector,
-                bookingVenue
-            );
-
-            let responseStatus = get(response, "status", "");
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                let data = response.data;
-                let reservedDates = [];
-                var daylist = [];
-                data.map((dataitem) => {
-                    let start = dataitem.fromDate;
-                    let end = dataitem.toDate;
-                    daylist = getBetweenDays(start, end);
-                    daylist.map((v) => {
-                        reservedDates.push(v.toISOString().slice(0, 10));
-                    });
-                });
+            let warrningMsg = {
+                labelName: "Please Select Date Range",
+                labelKey: "",
+            };
+            dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+        } else {
+            if ("bkApplicationNumber" in availabilityCheckData) {
                 dispatch(
-                    prepareFinalObject(
-                        "availabilityCheckData.reservedDays",
-                        reservedDates
+                    setRoute(
+                        `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
                     )
                 );
             } else {
-                let errorMessage = {
-                    labelName: "Something went wrong, Try Again later!",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                dispatch(toggleSnackbar(true, errorMessage, "error"));
+                dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
             }
         }
-        // else {
-        //     let errorMessage = {
-        //         labelName: "Please fill all mandatory fields! new",
-        //         labelKey: "Please fill all mandatory fields! new",
+
+        // if (
+        //     availabilityCheckData.bkToDate === undefined ||
+        //     availabilityCheckData.bkToDate === ""
+        // ) {
+        //     let warrningMsg = {
+        //         labelName: "Please select Date RANGE",
+        //         labelKey: "",
         //     };
-
-        //     dispatch(toggleSnackbar(true, errorMessage, "warning"));
+        //     dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+        // } else if ("bkApplicationNumber" in availabilityCheckData) {
+        //     // dispatch(
+        //     //     setRoute(
+        //     //         `/egov-services/applyparkcommunitycentre?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}&fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
+        //     //     )
+        //     // );
+        //     dispatch(
+        //         setRoute(
+        //             `/egov-services/applyparkcommunitycentre?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
+        //         )
+        //     );
+        // } else {
+        //     dispatch(
+        //         // setRoute(
+        //         //     `/egov-services/applyparkcommunitycentre?fromDate=${availabilityCheckData.bkFromDate}&toDate=${availabilityCheckData.bkToDate}&sector=${availabilityCheckData.bkSector}&venue=${availabilityCheckData.bkBookingVenue}`
+        //         // )
+        //         setRoute(`/egov-services/applyparkcommunitycentre`)
+        //     );
         // }
-        // }
-    } else {
-        let errorMessage = {
-            labelName: "Please fill all mandatory fields!",
-            labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS",
-        };
-
-        dispatch(toggleSnackbar(true, errorMessage, "warning"));
     }
 };
 
-const callBackForVenue = async (state, dispatch) => {
-    let bkSector = get(
-        state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
-    );
-    let bkBookingVenue = get(
-        state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-    );
-    let bkAreaRequired = get(
-        state,
-        "screenConfiguration.preparedFinalObject.Booking.bkAreaRequired"
-    );
-    try {
-        let responseImage = await getNewLocatonImages(bkSector, bkBookingVenue);
-        let responseImageStatus = get(responseImage, "status", "");
-        if (
-            responseImageStatus == "SUCCESS" ||
-            responseImageStatus == "success"
-        ) {
-            let documentsAndLocImages = responseImage.data;
-            let onlyLocationImages =
-                documentsAndLocImages &&
-                documentsAndLocImages.filter(
-                    (item) => item.documentType != "IDPROOF"
-                );
+// const callBackForAddNewLocation = async (state, dispatch) => {
+//     const addLocationURL = `/egov-services/applyNewLocationUnderMCC`;
+//     dispatch(setRoute(addLocationURL));
+// };
 
-            let fileStoreIds =
-                onlyLocationImages &&
-                onlyLocationImages.map((item) => item.fileStoreId).join(",");
-            const fileUrlPayload =
-                fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
-            let newLocationImagesPreview = [];
-            onlyLocationImages &&
-                onlyLocationImages.forEach((item, index) => {
-                    newLocationImagesPreview[index] = {
-                        name:
-                            (fileUrlPayload &&
-                                fileUrlPayload[item.fileStoreId] &&
-                                decodeURIComponent(
-                                    fileUrlPayload[item.fileStoreId]
-                                        .split(",")[0]
-                                        .split("?")[0]
-                                        .split("/")
-                                        .pop()
-                                        .slice(13)
-                                )) ||
-                            `Document - ${index + 1}`,
-                        fileStoreId: item.fileStoreId,
-                        link: Object.values(fileUrlPayload)[index],
-                        title: item.documentType,
-                    };
-                });
+// const callBackForSearch = async (state, dispatch) => {
+//     let isFormValid = false;
+//     let hasFieldToaster = true;
 
-            dispatch(
-                prepareFinalObject(
-                    "mccNewLocImagesPreview",
-                    newLocationImagesPreview
-                )
-            );
+//     let validatestepformflag = validatestepform(1);
 
-            let response = await getPerDayRateOSWMCC(bkSector, bkAreaRequired);
-            let responseStatus = get(response, "status", "");
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                response.data.displayArea =
-                    response.data.areaFrom + " - " + response.data.areaTo;
-                dispatch(prepareFinalObject("perDayRate", response.data));
-            }
-            // else {
-            //     let errorMessage = {
-            //         labelName: "Something went wrong, Try Again later!",
-            //         labelKey: "", //UPLOAD_FILE_TOAST
-            //     };
-            //     dispatch(toggleSnackbar(true, errorMessage, "error"));
-            // }
-        }
-        // else {
-        //     let errorMessage = {
-        //         labelName: "Something went wrong, Try Again later!",
-        //         labelKey: "", //UPLOAD_FILE_TOAST
-        //     };
-        //     dispatch(toggleSnackbar(true, errorMessage, "error"));
-        // }
-        showHideAdhocPopup(state, dispatch, "checkavailability_oswmcc");
-    } catch (error) {
-        console.log(error, "myerror");
-    }
-};
+//     isFormValid = validatestepformflag[0];
+//     hasFieldToaster = validatestepformflag[1];
+
+//     if (isFormValid !== false) {
+//         let availabilityCheckData = get(
+//             state,
+//             "screenConfiguration.preparedFinalObject.availabilityCheckData"
+//         );
+//         // if (availabilityCheckData === undefined) {
+//         //     dispatch(
+//         //         toggleSnackbar(
+//         //             true,
+//         //             { labelName: "Please Select Booking Venue!", labelKey: "" },
+//         //             "warning"
+//         //         )
+//         //     );
+//         // } else {
+//         if (
+//             "bkSector" in availabilityCheckData &&
+//             "bkBookingVenue" in availabilityCheckData
+//         ) {
+//             let bookingSector = availabilityCheckData.bkSector;
+//             let bookingVenue = availabilityCheckData.bkBookingVenue;
+//             let response = await getAvailabilityDataOSWMCC(
+//                 bookingSector,
+//                 bookingVenue
+//             );
+
+//             let responseStatus = get(response, "status", "");
+//             if (responseStatus == "SUCCESS" || responseStatus == "success") {
+//                 let data = response.data;
+//                 let reservedDates = [];
+//                 var daylist = [];
+//                 data.map((dataitem) => {
+//                     let start = dataitem.fromDate;
+//                     let end = dataitem.toDate;
+//                     daylist = getBetweenDays(start, end);
+//                     daylist.map((v) => {
+//                         reservedDates.push(v.toISOString().slice(0, 10));
+//                     });
+//                 });
+//                 dispatch(
+//                     prepareFinalObject(
+//                         "availabilityCheckData.reservedDays",
+//                         reservedDates
+//                     )
+//                 );
+//             } else {
+//                 let errorMessage = {
+//                     labelName: "Something went wrong, Try Again later!",
+//                     labelKey: "", //UPLOAD_FILE_TOAST
+//                 };
+//                 dispatch(toggleSnackbar(true, errorMessage, "error"));
+//             }
+//         }
+//         // else {
+//         //     let errorMessage = {
+//         //         labelName: "Please fill all mandatory fields! new",
+//         //         labelKey: "Please fill all mandatory fields! new",
+//         //     };
+
+//         //     dispatch(toggleSnackbar(true, errorMessage, "warning"));
+//         // }
+//         // }
+//     } else {
+//         let errorMessage = {
+//             labelName: "Please fill all mandatory fields!",
+//             labelKey: "BK_ERR_FILL_ALL_MANDATORY_FIELDS",
+//         };
+
+//         dispatch(toggleSnackbar(true, errorMessage, "warning"));
+//     }
+// };
+
+// const callBackForVenue = async (state, dispatch) => {
+//     let bkSector = get(
+//         state,
+//         "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
+//     );
+//     let bkBookingVenue = get(
+//         state,
+//         "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
+//     );
+//     let bkAreaRequired = get(
+//         state,
+//         "screenConfiguration.preparedFinalObject.Booking.bkAreaRequired"
+//     );
+//     try {
+//         let responseImage = await getNewLocatonImages(bkSector, bkBookingVenue);
+//         let responseImageStatus = get(responseImage, "status", "");
+//         if (
+//             responseImageStatus == "SUCCESS" ||
+//             responseImageStatus == "success"
+//         ) {
+//             let documentsAndLocImages = responseImage.data;
+//             let onlyLocationImages =
+//                 documentsAndLocImages &&
+//                 documentsAndLocImages.filter(
+//                     (item) => item.documentType != "IDPROOF"
+//                 );
+
+//             let fileStoreIds =
+//                 onlyLocationImages &&
+//                 onlyLocationImages.map((item) => item.fileStoreId).join(",");
+//             const fileUrlPayload =
+//                 fileStoreIds && (await getFileUrlFromAPI(fileStoreIds));
+//             let newLocationImagesPreview = [];
+//             onlyLocationImages &&
+//                 onlyLocationImages.forEach((item, index) => {
+//                     newLocationImagesPreview[index] = {
+//                         name:
+//                             (fileUrlPayload &&
+//                                 fileUrlPayload[item.fileStoreId] &&
+//                                 decodeURIComponent(
+//                                     fileUrlPayload[item.fileStoreId]
+//                                         .split(",")[0]
+//                                         .split("?")[0]
+//                                         .split("/")
+//                                         .pop()
+//                                         .slice(13)
+//                                 )) ||
+//                             `Document - ${index + 1}`,
+//                         fileStoreId: item.fileStoreId,
+//                         link: Object.values(fileUrlPayload)[index],
+//                         title: item.documentType,
+//                     };
+//                 });
+
+//             dispatch(
+//                 prepareFinalObject(
+//                     "mccNewLocImagesPreview",
+//                     newLocationImagesPreview
+//                 )
+//             );
+
+//             let response = await getPerDayRateOSWMCC(bkSector, bkAreaRequired);
+//             let responseStatus = get(response, "status", "");
+//             if (responseStatus == "SUCCESS" || responseStatus == "success") {
+//                 response.data.displayArea =
+//                     response.data.areaFrom + " - " + response.data.areaTo;
+//                 dispatch(prepareFinalObject("perDayRate", response.data));
+//             }
+//             // else {
+//             //     let errorMessage = {
+//             //         labelName: "Something went wrong, Try Again later!",
+//             //         labelKey: "", //UPLOAD_FILE_TOAST
+//             //     };
+//             //     dispatch(toggleSnackbar(true, errorMessage, "error"));
+//             // }
+//         }
+//         // else {
+//         //     let errorMessage = {
+//         //         labelName: "Something went wrong, Try Again later!",
+//         //         labelKey: "", //UPLOAD_FILE_TOAST
+//         //     };
+//         //     dispatch(toggleSnackbar(true, errorMessage, "error"));
+//         // }
+//         showHideAdhocPopup(state, dispatch, "checkavailability_oswmcc");
+//     } catch (error) {
+//         console.log(error, "myerror");
+//     }
+// };
 
 export const availabilityForm = getCommonCard({
     header: {
@@ -483,342 +483,20 @@ export const availabilityForm = getCommonCard({
                         state,
                         "screenConfiguration.preparedFinalObject.availabilityCheckData"
                     );
-                    let bkBookingType =
-                        "bkBookingType" in availabilityCheckData
-                            ? availabilityCheckData.bkBookingType
-                            : "Parks";
-                    let requestBody = {
-                        bookingType: bkBookingType,
-                        sector: availabilityCheckData.bkSector,
-                    };
-                    let response = await getMasterDataPCC(requestBody);
-                    let responseStatus = get(response, "status", "");
-                    // if (
-                    //     responseStatus == "SUCCESS" ||
-                    //     responseStatus == "success"
-                    // ) {
+                    
 
-                    let masterData = {
-                        status: "200",
-                        message:
-                            "Park And Community Master Data Fetched Successfully ",
-                        data: [
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c085",
-                                sccid: "2054",
-                                scid: "1005",
-                                sector: "SECTOR-1",
-                                x: "417.35",
-                                y: "209",
-                                amount: "1718",
-                                dimensionSqrYards: "1491",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name:
-                                    "PARK NO 5 NEAR H NO 21 SECTOR 2 CHANDIGARH",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c086",
-                                sccid: "2058",
-                                scid: "1005",
-                                sector: "SECTOR-2",
-                                x: "500.35",
-                                y: "253",
-                                amount: "1718",
-                                dimensionSqrYards: "19380",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name:
-                                    "PARK NO 6 NEAR V-3 Road Sector 11 Road SECTOR 2 CHANDIGARH",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c087",
-                                sccid: "3817",
-                                scid: "1005",
-                                sector: "SECTOR-1",
-                                x: "242.35",
-                                y: "394",
-                                amount: "1710",
-                                dimensionSqrYards: "4940",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name: "PARK NO 1 NEAR H NO 2 SEC 2 CHD",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: false,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c088",
-                                sccid: "3831",
-                                scid: "1005",
-                                sector: "SECTOR-1",
-                                x: "519.35",
-                                y: "318",
-                                amount: "1718",
-                                dimensionSqrYards: "1105",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name: "PARK NO 2 NEAR H NO 68 SEC 2 CHD",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c089",
-                                sccid: "3832",
-                                scid: "1005",
-                                sector: "SECTOR-1",
-                                x: "213.35",
-                                y: "431",
-                                amount: "1718",
-                                dimensionSqrYards: "7236",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name: "PARK NO 3 NEAR H NO 88-91 SEC 2 CHD",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: false,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c090",
-                                sccid: "3833",
-                                scid: "1005",
-                                sector: "SECTOR-1",
-                                x: "864.35",
-                                y: "416",
-                                amount: "1718",
-                                dimensionSqrYards: "1000",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name: "PARK NO 4 NEAR H NO 87 SEC 2 CHD",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: false,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c091",
-                                sccid: "1025",
-                                scid: "1006",
-                                sector: "SECTOR-1",
-                                x: "892.35",
-                                y: "519",
-                                amount: "1710",
-                                dimensionSqrYards: "90604",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name: "BOUGANVILLEA GARDEN SEC 3 CHD",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c092",
-                                sccid: "1026",
-                                scid: "1007",
-                                sector: "SECTOR-1",
-                                x: "755.35",
-                                y: "632",
-                                amount: "1718",
-                                dimensionSqrYards: "2188",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name:
-                                    "Park No 4 Opposite House No 53-54 Sector 4 Chandigarh",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c093",
-                                sccid: "1023",
-                                scid: "1007",
-                                sector: "SECTOR-2",
-                                x: "660.35",
-                                y: "663",
-                                amount: "1718",
-                                dimensionSqrYards: "23230",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name:
-                                    "Park No 2 In Front of House No 3 Sector 4 Chandigarh",
-                                radius: "50",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c094",
-                                sccid: "1024",
-                                scid: "1007",
-                                sector: "SECTOR-2",
-                                x: "261.35",
-                                y: "772",
-                                amount: "1718",
-                                dimensionSqrYards: "3320",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name:
-                                    "Park No 3 Adjoining House No 56 Sector 4 Chandigarh",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: true,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                            {
-                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c095",
-                                sccid: "3815",
-                                scid: "1007",
-                                sector: "SECTOR-1",
-                                x: "564.35",
-                                y: "770",
-                                amount: "1718",
-                                dimensionSqrYards: "6808",
-                                rent: "2420",
-                                cleaningCharges: "1000",
-                                surcharge: "18",
-                                luxuryTax: "0",
-                                name: "PARK NO 1 NEAR H.NO 35 SEC 4 CHD",
-                                radius: "20",
-                                locationChangeAmount: "150",
-                                isActive: false,
-                                utgstRate: "9",
-                                cgstRate: "9",
-                                refundabelSecurity: "0",
-                                normalType: "N",
-                                reviserate1: "200",
-                                oldrent1: "2000",
-                                rentNextSession: "2420",
-                                imagePath: "",
-                                venueType: "Parks",
-                                bookingAllowedFor: "",
-                            },
-                        ],
-                    };
-                    dispatch(prepareFinalObject("masterData", masterData.data));
+                    let bkBookingType = availabilityCheckData !== undefined ? availabilityCheckData.bkBookingType : "Parks"
+
+                    dispatch(
+                        prepareFinalObject(
+                            "availabilityCheckData.bkBookingType" , bkBookingType
+                        )
+                    );
+                    dispatch(
+                        prepareFinalObject(
+                            "Booking.bkBookingType" , bkBookingType
+                        )
+                    );
 
                     set(
                         state.screenConfiguration.screenConfig[
@@ -834,7 +512,28 @@ export const availabilityForm = getCommonCard({
                         "components.div.children.availabilityCalendarWrapper.visible",
                         true
                     );
-                    // }
+
+                    let requestBody = {
+                        venueType: bkBookingType,
+                        sector: action.value,
+                    };
+                    let response = await getMasterDataPCC(requestBody);
+                    let responseStatus = get(response, "status", "");
+                    console.log(responseStatus, "responseStatus");
+                    if (
+                        responseStatus == "SUCCESS" ||
+                        responseStatus == "success"
+                    ) {
+                        dispatch(
+                            prepareFinalObject("masterData", response.data)
+                        );
+                    } else {
+                        let errorMessage = {
+                            labelName: "Something went wrong, Try Again later!",
+                            labelKey: "", //UPLOAD_FILE_TOAST
+                        };
+                        dispatch(toggleSnackbar(true, errorMessage, "error"));
+                    }
                 }
             },
         },

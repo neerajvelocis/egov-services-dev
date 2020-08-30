@@ -357,7 +357,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         });
 
         set(payload, "wfDocuments", bookingDocuments);
-        set(payload, "bkBookingType", "PACC");
+        // set(payload, "bkBookingType", "PACC");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "PACC");

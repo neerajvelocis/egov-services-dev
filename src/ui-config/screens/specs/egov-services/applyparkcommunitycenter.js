@@ -338,7 +338,7 @@ export const prepareEditFlow = async (
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "applyparkcommunitycenter",
+    name: "applyparkcommunitycentre",
     beforeInitScreen: (action, state, dispatch) => {
         setapplicationType("PACC");
         const applicationNumber = getQueryArg(
@@ -388,10 +388,9 @@ const screenConfig = {
                     state,
                     "screenConfiguration.preparedFinalObject.masterData"
                 );
-                console.log(masterData, "masterData");
 
                 const masterDataItem = masterData.filter(
-                    (el) => el.id === availabilityCheckData.venueId
+                    (el) => el.id === availabilityCheckData.bkBookingVenue
                 );
                 console.log(masterDataItem, "masterDataItem");
 

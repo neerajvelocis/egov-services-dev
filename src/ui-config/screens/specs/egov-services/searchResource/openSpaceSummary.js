@@ -75,6 +75,7 @@ export const openSpaceSummary = getCommonGrayCard({
                 {
                     label: "BK_MY_BK_APPLICATION_STATUS_LABEL",
                     jsonPath: "bkApplicationStatus",
+                    prefix: "BK_"
                 },
                 {
                     label: "BK_MY_BK_HOUSE_NO_LABEL",

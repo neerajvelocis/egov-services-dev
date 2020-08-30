@@ -24,7 +24,7 @@ export const header = getCommonContainer({
             getapplicationType() === "OSBM"
                 ? "Open Space to Store Building Material"
                 : getapplicationType() === "NLUJM" ? "New Location" :
-                    getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : "Water Tanker"
+                    getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : getapplicationType() === "PACC" ? "Parks & Community Center/Banquet Halls" : "Water Tanker"
             } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
         labelKey: "",
     }),
@@ -100,7 +100,7 @@ export const paymentSuccessFooter = (
                     );
                 },
             },
-            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM") ? true : false
+            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM" || businessService === "PACC") ? true : false
         },
         gotoHome: {
             componentPath: "Button",

@@ -27,7 +27,13 @@ const mapStateToProps = (state) => {
         "screenConfiguration.preparedFinalObject.masterData",
         []
     );
-    return { masterDataPCC };
+
+    let availabilityCheckData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData",
+        []
+    );
+    return { masterDataPCC, availabilityCheckData };
 };
 
 export default withStyles(styles)(

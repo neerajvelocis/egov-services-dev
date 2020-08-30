@@ -20,18 +20,21 @@ class PlotArea extends React.Component {
     }
 
     getAvailabilityData = async (e, venueId) => {
-        console.log(e, "E");
-        console.log(venueId, "venueId");
+        const { masterDataPCC, availabilityCheckData } = this.props;
         if (venueId !== undefined) {
             this.props.prepareFinalObject(
-                "availabilityCheckData.venueId",
+                "availabilityCheckData.bkBookingVenue",
+                venueId
+            );
+            this.props.prepareFinalObject(
+                "Booking.bkBookingVenue",
                 venueId
             );
 
             let requestBody = {
-                bookingType: "JURISDICTION",
-                bookingVenue: "Circus Ground, Sector 17",
-                sector: "SECTOR-17",
+                bookingType: availabilityCheckData.bkBookingType,
+                bookingVenue: venueId,
+                sector: availabilityCheckData.bkSector,
             };
 
             const response = await getAvailabilityDataPCC(requestBody);
@@ -68,7 +71,7 @@ class PlotArea extends React.Component {
     };
 
     render() {
-        const { masterDataPCC } = this.props;
+        const { masterDataPCC, availabilityCheckData } = this.props;
         return masterDataPCC.map((item) => {
             let coords = `${item.X},${item.Y},${item.Radius}`;
             let venueId = item.id;
@@ -76,9 +79,7 @@ class PlotArea extends React.Component {
                 <area
                     alt={item.name}
                     title={item.name}
-                    onClick={(e) =>
-                        this.getAvailabilityData(e, item.id)
-                    }
+                    onClick={(e) => this.getAvailabilityData(e, item.id)}
                     // onClick={(item.id) => {
                     //     window.scrollTo({
                     //         top: document.body.scrollHeight,

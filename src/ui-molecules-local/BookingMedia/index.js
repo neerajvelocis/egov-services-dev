@@ -10,13 +10,13 @@ class BookingMedia extends React.Component {
         super(props);
     }
     render() {
-        const { masterDataPCC } = this.props;
-        console.log(this.props, "masterDataPCC");
+        const { masterDataPCC, availabilityCheckData } = this.props;
         return (
             <div>
                 <img
                     id="Image-Maps-Com-image-maps-2017-04-25-084654"
-                    src={Image}
+                    src={`https://zfunds3.s3.ap-south-1.amazonaws.com/park11.jpeg`}
+                    // src={`https://zfunds3.s3.ap-south-1.amazonaws.com/${masterDataPCC[0].imagePath}`}
                     border="0"
                     usemap="#image-maps-2017-04-25-084654"
                     alt=""
@@ -25,7 +25,7 @@ class BookingMedia extends React.Component {
                     name="image-maps-2017-04-25-084654"
                     id="ImageMapsCom-image-maps-2017-04-25-084654"
                 >
-                    <PlotArea masterDataPCC={masterDataPCC} />
+                    <PlotArea masterDataPCC={masterDataPCC} availabilityCheckData={availabilityCheckData} />
                 </map>
             </div>
         );

@@ -72,10 +72,21 @@ export const pccSummary = getCommonGrayCard({
                     HouseNo: getLabelWithValue(
                         {
                             labelName: "House No.",
-                            labelKey: "BK_PCC_HOUSE_LABEL",
+                            labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkHouseNo",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
                         }
                     ),
                     Purpose: getLabelWithValue(
@@ -85,6 +96,17 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkBookingPurpose",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
                         }
                     ),
                     Sector: getLabelWithValue(
@@ -150,15 +172,15 @@ export const pccSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkRent",
                         }
                     ),
-                    FacilitationCharges: getLabelWithValue(
-                        {
-                            labelName: "Facilitation Charges",
-                            labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkFacilitationCharges",
-                        }
-                    ),
+                    // FacilitationCharges: getLabelWithValue(
+                    //     {
+                    //         labelName: "Facilitation Charges",
+                    //         labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkFacilitationCharges",
+                    //     }
+                    // ),
                     SurchargeRent: getLabelWithValue(
                         {
                             labelName: "Surcharge on Rent",
@@ -189,13 +211,23 @@ export const pccSummary = getCommonGrayCard({
                     CustomerGstNo: getLabelWithValue(
                         {
                             labelName: "Customer Gst No",
-                            labelKey: "BK_PCC_UTGST_LABEL",
+                            labelKey: "BK_PCC_CUSTOMER_GST_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkCustomerGstNo",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
                         }
                     ),
-                    
                 }),
             }),
             items: [],
