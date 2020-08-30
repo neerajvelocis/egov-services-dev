@@ -338,7 +338,7 @@ export const prepareEditFlow = async (
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "applyparkcommunitycentre",
+    name: "applyparkcommunitycenter",
     beforeInitScreen: (action, state, dispatch) => {
         setapplicationType("PACC");
         const applicationNumber = getQueryArg(
