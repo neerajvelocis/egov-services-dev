@@ -69,7 +69,7 @@ export const footerReviewTop = (
         leftIcon: "assignment",
     };
 
-    if (status === "APPROVED" && bookingCase === "") {
+    if (status === "APPLIED" && bookingCase === "") {
         downloadMenu = [
             applicationDownloadObject,
             receiptDownloadObject,

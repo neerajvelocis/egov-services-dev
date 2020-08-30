@@ -736,29 +736,29 @@ export const downloadReceipt = (
                         bookingPeriod:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM" ||
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "GFCP" ||
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSUJM"
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "GFCP" ||
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "OSUJM"
                                 ? getDurationDate(
-                                      applicationData.bkFromDate,
-                                      applicationData.bkToDate
-                                  )
+                                    applicationData.bkFromDate,
+                                    applicationData.bkToDate
+                                )
                                 : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                         bookingItem: `Online Payment Against Booking of ${
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "GFCP"
                                 ? "Commercial Ground"
                                 : payloadReceiptDetails.Payments[0]
-                                      .paymentDetails[0].bill
-                                      .businessService === "OSBM"
-                                ? "Open Space for Building Material"
-                                : payloadReceiptDetails.Payments[0]
-                                      .paymentDetails[0].bill
-                                      .businessService === "OSUJM"
-                                ? "Open Space within MCC jurisdiction"
-                                : "Water Tanker"
-                        }`,
+                                    .paymentDetails[0].bill
+                                    .businessService === "OSBM"
+                                    ? "Open Space for Building Material"
+                                    : payloadReceiptDetails.Payments[0]
+                                        .paymentDetails[0].bill
+                                        .businessService === "OSUJM"
+                                        ? "Open Space within MCC jurisdiction"
+                                        : "Water Tanker"
+                            }`,
                         amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                             (el) => !el.taxHeadCode.includes("TAX")
                         )[0].amount,
@@ -773,10 +773,10 @@ export const downloadReceipt = (
                         paymentItemExtraColumnLabel:
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.businessService === "OSBM" ||
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "GFCP" ||
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSUJM"
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "GFCP" ||
+                                payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                    .bill.businessService === "OSUJM"
                                 ? "Booking Period"
                                 : "Date & Time",
                         paymentMode:
@@ -845,9 +845,11 @@ export const downloadCertificate = async (
                 value:
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-pl"
-                        : applicationData.businessService == "OSUJM"
-                        ? "bk-oswmcc-booking-pl"
-                        : "bk-cg-pl",
+                        : applicationData.businessService == "PACC"
+                            ? "bk-pacc-booking-pl"
+                            : applicationData.businessService == "OSUJM"
+                                ? "bk-oswmcc-booking-pl"
+                                : "bk-cg-pl",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -861,14 +863,14 @@ export const downloadCertificate = async (
         //         { key: "key", value: "bk-cg-pl" },
         //         { key: "tenantId", value: "ch" },
         //     ]
-
+        
         let certificateData = [
             {
                 applicantDetail: {
                     name: applicationData.bkApplicantName,
                     mobileNumber: applicationData.bkMobileNumber,
                     houseNo: applicationData.bkHouseNo,
-                    permanentAddress: applicationData.bkCompleteAddress,
+                    permanentAddress: applicationData.businessService == "PACC" ? applicationData.bkHouseNo : applicationData.bkCompleteAddress,
                     permanentCity: tenantData.tenants[0].city.name,
                     sector: applicationData.bkSector,
                     fatherName: applicationData.bkFatherName,
@@ -878,6 +880,7 @@ export const downloadCertificate = async (
                     applicationDate: convertDateInDMY(
                         applicationData.bkDateCreated
                     ),
+                    bookingType: "Park",
                     villageOrCity: applicationData.bkVillCity,
                     residentialOrCommercial: applicationData.bkType,
                     areaRequired: applicationData.bkAreaRequired,
@@ -975,14 +978,16 @@ export const downloadApplication = async (
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
                         : applicationData.businessService == "GFCP"
-                        ? "bk-cg-app-form"
-                        : applicationData.businessService == "NLUJM"
-                        ? "bk-oswmcc-newloc-app-form"
-                        : applicationData.businessService == "OSUJM"
-                        ? "oswmcc-booking-app-form"
-                        : applicationData.bkStatus.includes("Paid")
-                        ? "bk-wt-app-form"
-                        : "bk-wt-unpaid-app-form",
+                            ? "bk-cg-app-form"
+                            : applicationData.businessService == "PACC"
+                                ? "pacc-booking-app-form"
+                                : applicationData.businessService == "NLUJM"
+                                    ? "bk-oswmcc-newloc-app-form"
+                                    : applicationData.businessService == "OSUJM"
+                                        ? "oswmcc-booking-app-form"
+                                        : applicationData.bkStatus.includes("Paid")
+                                            ? "bk-wt-app-form"
+                                            : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1042,6 +1047,18 @@ export const downloadApplication = async (
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
         };
+        let bookingDataPacc = {
+            applicationNumber: applicationNumber,
+            applicationDate: applicationData.bkDateCreated,
+            venueName: applicationData.bkBookingVenue,
+            sector: applicationData.bkSector,
+            bookingPeriod: getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            ),
+            bookingPurpose: applicationData.bkBookingPurpose,
+            parkDim: applicationData.bkDimension,
+        };
         let appData = "";
         if (applicationData.businessService == "NLUJM") {
             appData = [
@@ -1058,6 +1075,45 @@ export const downloadApplication = async (
                         address: applicationData.localityAddress,
                         areaReq: applicationData.areaRequirement,
                         landmark: applicationData.landmark,
+                    },
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
+                    },
+                },
+            ];
+        } if (applicationData.businessService == "PACC") {
+            appData = [
+                {
+                    applicantDetail: {
+                        name: applicationData.bkApplicantName,
+                        mobileNumber: applicationData.bkMobileNumber,
+                        houseNo: applicationData.bkHouseNo,
+                        permanentAddress: applicationData.bkHouseNo,
+                        permanentCity: tenantData.tenants[0].city.name,
+                        sector: applicationData.bkSector,
+                        email: applicationData.bkEmail,
+                        fatherName: applicationData.bkFatherName,
+                        DOB: null,
+                    },
+                    bookingDetail:
+                        applicationData.businessService === "OSBM"
+                            ? bookingDataOsbm
+                            : applicationData.businessService === "PACC"
+                                ? bookingDataPacc
+                                : applicationData.businessService === "GFCP"
+                                    ? bookingDataGFCP
+                                    : applicationData.businessService === "OSUJM"
+                                        ? bookingDataOSUJM
+                                        : bookingDataWt,
+                    feeDetail: {
+                        baseCharge: applicationData.bkRent,
+                        cleaningCharge: applicationData.bkCleansingCharges,
+                        surcharges: applicationData.bkSurchargeRent,
+                        facilitationCharge: applicationData.bkFacilitationCharges,
+                        utgst: applicationData.bkUtgst,
+                        cgst: applicationData.bkCgst,
+                        gst: applicationData.bkUtgst + applicationData.bkCgst,
+                        totalAmount: parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent) + parseFloat(applicationData.bkFacilitationCharges)
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,
@@ -1082,23 +1138,23 @@ export const downloadApplication = async (
                         applicationData.businessService === "OSBM"
                             ? bookingDataOsbm
                             : applicationData.businessService === "GFCP"
-                            ? bookingDataGFCP
-                            : applicationData.businessService === "OSUJM"
-                            ? bookingDataOSUJM
-                            : bookingDataWt,
+                                ? bookingDataGFCP
+                                : applicationData.businessService === "OSUJM"
+                                    ? bookingDataOSUJM
+                                    : bookingDataWt,
                     feeDetail: {
                         baseCharge:
                             paymentData === undefined
                                 ? null
                                 : paymentData.billDetails[0].billAccountDetails.filter(
-                                      (el) => !el.taxHeadCode.includes("TAX")
-                                  )[0].amount,
+                                    (el) => !el.taxHeadCode.includes("TAX")
+                                )[0].amount,
                         taxes:
                             paymentData === undefined
                                 ? null
                                 : paymentData.billDetails[0].billAccountDetails.filter(
-                                      (el) => el.taxHeadCode.includes("TAX")
-                                  )[0].amount,
+                                    (el) => el.taxHeadCode.includes("TAX")
+                                )[0].amount,
                         totalAmount:
                             paymentData === undefined
                                 ? null
@@ -1338,7 +1394,7 @@ export const getMasterDataPCC = async (requestBody) => {
     }
 };
 export const getAvailabilityDataPCC = async (requestBody) => {
-  
+
     try {
         const response = await httpRequest(
             "post",
