@@ -49,8 +49,11 @@ const getMdmsData = async (action, state, dispatch) => {
                     moduleName: "Booking",
                     masterDetails: [
                         {
-                            name: "Sector",
+                            "name": "Status"
                         },
+                         {
+                            "name": "ApplicationType"
+                        }
                     ],
                 },
             ],
@@ -65,65 +68,8 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        // payload.MdmsRes.Booking.bookingType = [
-        //     {
-        //     "name": "Open space for building material",
-        //     "id": "1",
-        //     "code": "OSBM",
-        //     "tenantId":"ch.chandigarh",
-        //     "active":"true",
-        //     "status": [
-        //            {
-        //                "name": "Initiate",
-        //                "code": "INITIATE",
-        //                "active": true
-        //            },
-        //            {
-        //                "name": "Approved",
-        //                "code": "APPROVED",
-        //                "active": true
-        //            },
-        //            {
-        //                "name": "Rejected",
-        //                "code": "REJECT",
-        //                "active": true
-        //            },
-        //            {
-        //                "name": "Panding Payment",
-        //                "code": "PENDINGPAYMENT",
-        //                "active": true
-        //            },
-        //            {
-        //                "name": "Panding Approval",
-        //                "code": "PENDINGAPPROVAL",
-        //                "active": true
-        //            }
-        //        ]
-            
-        // },
-        // {
-        //     "name": "Water Tankers",
-        //     "id": "1",
-        //     "code": "WTB",
-        //     "tenantId":"ch.chandigarh",
-        //     "active":"true",
-        //     "status": [
-        //            {
-        //                "name": "Initiate",
-        //                "code": "INITIATE",
-        //                "active": true
-        //            },
-        //            {
-        //                "name": "Approved",
-        //                "code": "APPROVED",
-        //                "active": true
-        //            },
+        payload.MdmsRes.Booking.ApplicationType = payload.MdmsRes.Booking.ApplicationType.filter(el => el.code !== "NLUJM")
 
-                   
-        //        ]
-            
-        // },
-        // ]
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);

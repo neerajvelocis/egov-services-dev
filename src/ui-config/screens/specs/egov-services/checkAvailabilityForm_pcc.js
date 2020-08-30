@@ -34,6 +34,7 @@ import {
     getAvailabilityDataOSWMCC,
     getPerDayRateOSWMCC,
     getNewLocatonImages,
+    getMasterDataPCC,
     getBetweenDays,
 } from "../utils";
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
@@ -412,43 +413,10 @@ export const availabilityForm = getCommonCard({
                     labelKey: "BK_PCC_CHECK_AVAILABILITY_HEADER",
                 }),
             },
-            // addNewLocButton: {
-            //     componentPath: "Button",
-            //     props: {
-            //         // variant: "contained",
-            //         color: "primary",
-            //         style: {
-            //             // marginTop: "-10px",
-            //             marginRight: "-18px",
-            //         },
-            //     },
-            //     gridDefination: {
-            //         xs: 4,
-            //         align: "right",
-            //     },
-            //     children: {
-            //         addIcon: {
-            //             uiFramework: "custom-atoms",
-            //             componentPath: "Icon",
-            //             props: {
-            //                 iconName: "add_location_alt",
-            //             },
-            //         },
-            //         buttonLabel: getLabel({
-            //             labelName: "Add New Location",
-            //             labelKey: "BK_OSWMCC_NEW_LOCATION_LABEL",
-            //         }),
-            //     },
-            //     onClickDefination: {
-            //         action: "condition",
-            //         callBack: callBackForAddNewLocation,
-            //     },
-            //     visible: true,
-            // },
         },
     },
     availabilityFields: getCommonContainer({
-        bkCategory: {
+        bkBookingType: {
             uiFramework: "custom-containers",
             componentPath: "RadioGroupContainer",
             moduleName: "egov-services",
@@ -457,11 +425,11 @@ export const availabilityForm = getCommonCard({
                 sm: 12,
                 md: 6,
             },
-            jsonPath: "Booking.bkCategory",
+            jsonPath: "availabilityCheckData.bkBookingType",
             props: {
                 label: {
-                    name: "Category",
-                    key: "BK_OSB_CATEGORY_LABEL",
+                    name: "Booking Type",
+                    key: "BK_PCC_BOOKING_TYPE_LABEL",
                 },
                 buttons: [
                     {
@@ -475,7 +443,7 @@ export const availabilityForm = getCommonCard({
                         value: "Parks",
                     },
                 ],
-                jsonPath: "availabilityCheckData.bkCategory",
+                jsonPath: "availabilityCheckData.bkBookingType",
                 defaultValue: "Parks",
                 required: true,
             },
@@ -486,12 +454,12 @@ export const availabilityForm = getCommonCard({
             ...getSelectField({
                 label: {
                     labelName: "Locality",
-                    labelKey: "BK_OSWMCC_BOOKING_LOCALITY__LABEL",
+                    labelKey: "BK_PCC_BOOKING_LOCALITY_LABEL",
                 },
 
                 placeholder: {
-                    labelName: "Select Locality",
-                    labelKey: "BK_OSWMCC_BOOKING_LOCALITY_PLACEHOLDER",
+                    labelName: "Locality",
+                    labelKey: "BK_PCC_BOOKING_LOCALITY_PLACEHOLDER",
                 },
                 gridDefination: {
                     xs: 12,
@@ -509,8 +477,349 @@ export const availabilityForm = getCommonCard({
                     // disabled: true
                 },
             }),
-            beforeFieldChange: (action, state, dispatch) => {
+            beforeFieldChange: async (action, state, dispatch) => {
                 if (action.value) {
+                    let availabilityCheckData = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.availabilityCheckData"
+                    );
+                    let bkBookingType =
+                        "bkBookingType" in availabilityCheckData
+                            ? availabilityCheckData.bkBookingType
+                            : "Parks";
+                    let requestBody = {
+                        bookingType: bkBookingType,
+                        sector: availabilityCheckData.bkSector,
+                    };
+                    let response = await getMasterDataPCC(requestBody);
+                    let responseStatus = get(response, "status", "");
+                    // if (
+                    //     responseStatus == "SUCCESS" ||
+                    //     responseStatus == "success"
+                    // ) {
+
+                    let masterData = {
+                        status: "200",
+                        message:
+                            "Park And Community Master Data Fetched Successfully ",
+                        data: [
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c085",
+                                sccid: "2054",
+                                scid: "1005",
+                                sector: "SECTOR-1",
+                                x: "417.35",
+                                y: "209",
+                                amount: "1718",
+                                dimensionSqrYards: "1491",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name:
+                                    "PARK NO 5 NEAR H NO 21 SECTOR 2 CHANDIGARH",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c086",
+                                sccid: "2058",
+                                scid: "1005",
+                                sector: "SECTOR-2",
+                                x: "500.35",
+                                y: "253",
+                                amount: "1718",
+                                dimensionSqrYards: "19380",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name:
+                                    "PARK NO 6 NEAR V-3 Road Sector 11 Road SECTOR 2 CHANDIGARH",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c087",
+                                sccid: "3817",
+                                scid: "1005",
+                                sector: "SECTOR-1",
+                                x: "242.35",
+                                y: "394",
+                                amount: "1710",
+                                dimensionSqrYards: "4940",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name: "PARK NO 1 NEAR H NO 2 SEC 2 CHD",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: false,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c088",
+                                sccid: "3831",
+                                scid: "1005",
+                                sector: "SECTOR-1",
+                                x: "519.35",
+                                y: "318",
+                                amount: "1718",
+                                dimensionSqrYards: "1105",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name: "PARK NO 2 NEAR H NO 68 SEC 2 CHD",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c089",
+                                sccid: "3832",
+                                scid: "1005",
+                                sector: "SECTOR-1",
+                                x: "213.35",
+                                y: "431",
+                                amount: "1718",
+                                dimensionSqrYards: "7236",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name: "PARK NO 3 NEAR H NO 88-91 SEC 2 CHD",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: false,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c090",
+                                sccid: "3833",
+                                scid: "1005",
+                                sector: "SECTOR-1",
+                                x: "864.35",
+                                y: "416",
+                                amount: "1718",
+                                dimensionSqrYards: "1000",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name: "PARK NO 4 NEAR H NO 87 SEC 2 CHD",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: false,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c091",
+                                sccid: "1025",
+                                scid: "1006",
+                                sector: "SECTOR-1",
+                                x: "892.35",
+                                y: "519",
+                                amount: "1710",
+                                dimensionSqrYards: "90604",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name: "BOUGANVILLEA GARDEN SEC 3 CHD",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c092",
+                                sccid: "1026",
+                                scid: "1007",
+                                sector: "SECTOR-1",
+                                x: "755.35",
+                                y: "632",
+                                amount: "1718",
+                                dimensionSqrYards: "2188",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name:
+                                    "Park No 4 Opposite House No 53-54 Sector 4 Chandigarh",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c093",
+                                sccid: "1023",
+                                scid: "1007",
+                                sector: "SECTOR-2",
+                                x: "660.35",
+                                y: "663",
+                                amount: "1718",
+                                dimensionSqrYards: "23230",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name:
+                                    "Park No 2 In Front of House No 3 Sector 4 Chandigarh",
+                                radius: "50",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c094",
+                                sccid: "1024",
+                                scid: "1007",
+                                sector: "SECTOR-2",
+                                x: "261.35",
+                                y: "772",
+                                amount: "1718",
+                                dimensionSqrYards: "3320",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name:
+                                    "Park No 3 Adjoining House No 56 Sector 4 Chandigarh",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: true,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                            {
+                                id: "fabc3ff6-70d8-4ae6-8ac7-00c9c714c095",
+                                sccid: "3815",
+                                scid: "1007",
+                                sector: "SECTOR-1",
+                                x: "564.35",
+                                y: "770",
+                                amount: "1718",
+                                dimensionSqrYards: "6808",
+                                rent: "2420",
+                                cleaningCharges: "1000",
+                                surcharge: "18",
+                                luxuryTax: "0",
+                                name: "PARK NO 1 NEAR H.NO 35 SEC 4 CHD",
+                                radius: "20",
+                                locationChangeAmount: "150",
+                                isActive: false,
+                                utgstRate: "9",
+                                cgstRate: "9",
+                                refundabelSecurity: "0",
+                                normalType: "N",
+                                reviserate1: "200",
+                                oldrent1: "2000",
+                                rentNextSession: "2420",
+                                imagePath: "",
+                                venueType: "Parks",
+                                bookingAllowedFor: "",
+                            },
+                        ],
+                    };
+                    dispatch(prepareFinalObject("masterData", masterData.data));
+
                     set(
                         state.screenConfiguration.screenConfig[
                             "checkavailability_pcc"
@@ -525,12 +834,9 @@ export const availabilityForm = getCommonCard({
                         "components.div.children.availabilityCalendarWrapper.visible",
                         true
                     );
-                 
+                    // }
                 }
             },
-            // afterFieldChange : (action, state, dispatch) => {
-            //     alert("in after sector")
-            // }
         },
         // bkFromDate: {
         //     ...getDateField({
@@ -588,7 +894,6 @@ export const availabilityForm = getCommonCard({
         //         },
         //     }),
         // },
-        
     }),
     // availabilityActions: getCommonContainer({
     //     searchButton: {
@@ -675,7 +980,7 @@ export const availabilityForm = getCommonCard({
 });
 
 export const availabilityMediaCard = getCommonCard({
-    Calendar: getCommonContainer({
+    availabilityMedia: getCommonContainer({
         bookingCalendar: {
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",
@@ -684,9 +989,6 @@ export const availabilityMediaCard = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 12,
-            },
-            children: {
-                popup: {},
             },
         },
     }),

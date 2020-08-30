@@ -86,6 +86,27 @@ export const personalDetails = getCommonCard({
                 jsonPath: "Booking.bkMobileNumber",
             }),
         },
+        bkHouseNo: {
+            ...getTextField({
+                label: {
+                    labelName: "House/Site No.",
+                    labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
+                },
+                placeholder: {
+                    labelName: "Enter House No",
+                    labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
+                },
+                pattern: getPattern("DoorHouseNo"),
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                // helperText : "new helper outside",
+                required: true,
+                jsonPath: "Booking.bkHouseNo",
+                props: {
+                    required: true,
+                    helperText: "custom helper text",
+                },
+            }),
+        },
         dummyDiv: {
             uiFramework: "custom-atoms",
             componentPath: "Div",
@@ -115,27 +136,7 @@ export const bookingDetails = getCommonCard({
     // ),
 
     applicationDetailsConatiner: getCommonContainer({
-        bkHouseNo: {
-            ...getTextField({
-                label: {
-                    labelName: "House/Site No.",
-                    labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
-                },
-                placeholder: {
-                    labelName: "Enter House No",
-                    labelKey: "BK_PCC_HOUSE_NUMBER_PLACEHOLDER",
-                },
-                pattern: getPattern("DoorHouseNo"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                // helperText : "new helper outside",
-                required: true,
-                jsonPath: "Booking.bkHouseNo",
-                props: {
-                    required: true,
-                    helperText: "custom helper text",
-                },
-            }),
-        },
+       
         bkBookingPurpose: {
             ...getTextField({
                 label: {
@@ -150,35 +151,53 @@ export const bookingDetails = getCommonCard({
                 //pattern: getPattern("Name"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkBookingPurpose",
-                maxLength: 500,
             }),
         },
         bkSector: {
-            ...getSelectField({
+            ...getTextField({
                 label: {
                     labelName: "Locality",
                     labelKey: "BK_PCC_PROPERTY_SECTOR_LABEL",
                 },
-                // localePrefix: {
-                //   moduleName: "egpm",
-                //   masterName: "sector"
-                // },
                 placeholder: {
                     labelName: "Locality",
                     labelKey: "BK_PCC_PROPERTY_SECTOR_PLACEHOLDER",
                 },
-                //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
-                sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
-                jsonPath: "Booking.bkSector",
                 required: true,
-                requiredMessage: "required Message",
                 props: {
-                    className: "applicant-details-error",
-                    required: true,
-                    // disabled: true
+                    disabled: true,
                 },
+                //pattern: getPattern("Name"),
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                jsonPath: "Booking.bkSector",
             }),
         },
+        // bkSector: {
+        //     ...getSelectField({
+        //         label: {
+        //             labelName: "Locality",
+        //             labelKey: "BK_PCC_PROPERTY_SECTOR_LABEL",
+        //         },
+        //         // localePrefix: {
+        //         //   moduleName: "egpm",
+        //         //   masterName: "sector"
+        //         // },
+        //         placeholder: {
+        //             labelName: "Locality",
+        //             labelKey: "BK_PCC_PROPERTY_SECTOR_PLACEHOLDER",
+        //         },
+        //         //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+        //         sourceJsonPath: "applyScreenMdmsData.Booking.Sector",
+        //         jsonPath: "Booking.bkSector",
+        //         required: true,
+        //         requiredMessage: "required Message",
+        //         props: {
+        //             className: "applicant-details-error",
+        //             required: true,
+        //             // disabled: true
+        //         },
+        //     }),
+        // },
         bkDimension: {
             ...getTextField({
                 label: {
@@ -191,15 +210,15 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
+                props: {
+                    disabled: true,
+                },
                 //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkDimension",
             }),
         },
-        bkLoction: {
+        bkLocation: {
             ...getTextField({
                 label: {
                     labelName: "Location",
@@ -211,10 +230,9 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkLocation",
             }),
@@ -230,9 +248,9 @@ export const bookingDetails = getCommonCard({
                     labelKey: "BK_PCC_FROM_DATE_PLACEHOLDER",
                 },
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
 
                 jsonPath: "Booking.bkFromDate",
@@ -250,47 +268,46 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkToDate",
             }),
         },
-        bkType: {
-            uiFramework: "custom-containers",
-            componentPath: "RadioGroupContainer",
-            moduleName: "egov-services",
-            gridDefination: {
-                xs: 12,
-                sm: 12,
-                md: 6,
-            },
-            jsonPath: "Booking.bkType",
-            props: {
-                label: {
-                    name: "Type",
-                    key: "BK_PCC_TYPE_LABEL",
-                },
-                buttons: [
-                    {
-                        labelName: "Community Center",
-                        labelKey: "Community Center",
-                        value: "Community Center",
-                    },
-                    {
-                        label: "Parks",
-                        labelKey: "Parks",
-                        value: "Parks",
-                    }
-                ],
-                jsonPath: "Booking.bkType",
-                required: true,
-            },
-            required: true,
-            type: "array",
-        },
+        // bkType: {
+        //     uiFramework: "custom-containers",
+        //     componentPath: "RadioGroupContainer",
+        //     moduleName: "egov-services",
+        //     gridDefination: {
+        //         xs: 12,
+        //         sm: 12,
+        //         md: 6,
+        //     },
+        //     jsonPath: "Booking.bkType",
+        //     props: {
+        //         label: {
+        //             name: "Type",
+        //             key: "BK_PCC_TYPE_LABEL",
+        //         },
+        //         buttons: [
+        //             {
+        //                 labelName: "Community Center",
+        //                 labelKey: "Community Center",
+        //                 value: "Community Center",
+        //             },
+        //             {
+        //                 label: "Parks",
+        //                 labelKey: "Parks",
+        //                 value: "Parks",
+        //             }
+        //         ],
+        //         jsonPath: "Booking.bkType",
+        //         required: true,
+        //     },
+        //     required: true,
+        //     type: "array",
+        // },
         bkCleansingCharges: {
             ...getTextField({
                 label: {
@@ -303,10 +320,10 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
+                
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkCleansingCharges",
             }),
@@ -323,34 +340,33 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkRent",
             }),
         },
-        bkFacilitationCharges : {
-            ...getTextField({
-                label: {
-                    labelName: "Facilitation Charges",
-                    labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
-                },
-                placeholder: {
-                    labelName: "Facilitation Charges",
-                    labelKey: "BK_PCC_FACILITATION_CHARGES_PLACEHOLDER",
-                },
+        // bkFacilitationCharges : {
+        //     ...getTextField({
+        //         label: {
+        //             labelName: "Facilitation Charges",
+        //             labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
+        //         },
+        //         placeholder: {
+        //             labelName: "Facilitation Charges",
+        //             labelKey: "BK_PCC_FACILITATION_CHARGES_PLACEHOLDER",
+        //         },
 
-                required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
-                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
-                jsonPath: "Booking.bkFacilitationCharges",
-            }),
-        },
+        //         required: true,
+        //         // props: {
+        //         //     disabled: true,
+        //         // },
+        //         //pattern: getPattern("NoOfEmp"),
+        //         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+        //         jsonPath: "Booking.bkFacilitationCharges",
+        //     }),
+        // },
         bkSurchargeRent : {
             ...getTextField({
                 label: {
@@ -363,10 +379,9 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkSurchargeRent",
             }),
@@ -383,10 +398,9 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkUtgst",
             }),
@@ -403,10 +417,9 @@ export const bookingDetails = getCommonCard({
                 },
 
                 required: true,
-                // props: {
-                //     disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
+                props: {
+                    disabled: true,
+                },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkCgst",
             }),
@@ -421,12 +434,6 @@ export const bookingDetails = getCommonCard({
                     labelName: "Customer GST",
                     labelKey: "BK_PCC_CUSTOMER_GST_PLACEHOLDER",
                 },
-
-                // required: true,
-                // props: {
-                //   disabled: true,
-                // },
-                //pattern: getPattern("NoOfEmp"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkCustomerGstNo",
             }),

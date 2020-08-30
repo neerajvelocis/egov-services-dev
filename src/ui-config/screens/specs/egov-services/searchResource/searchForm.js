@@ -181,7 +181,7 @@ export const searchForm = getCommonCard({
                 if (action.value) {
                     let bookingType = get(
                         state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.ApplicationType"
+                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Status"
                     );
                     let bookingStatus = bookingType.filter(el => el.code === action.value)[0].status
                     dispatch(

@@ -81,33 +81,33 @@ const getMdmsData = async (action, state, dispatch) => {
     }
 };
 
-const getVenueData = async (action, state, dispatch) => {
-    try {
-        let payload = await httpRequest(
-            "post",
-            "/bookings/newLocation/citizen/osujm/_all"
-        );
-        return payload
-    } catch (e) {
-        console.log(e);
-    }
-};
+// const getVenueData = async (action, state, dispatch) => {
+//     try {
+//         let payload = await httpRequest(
+//             "post",
+//             "/bookings/newLocation/citizen/osujm/_all"
+//         );
+//         return payload
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
 
-const getData = async (action, state, dispatch) => {
-    try {
-        let response = await getVenueData(action, state, dispatch);
-        dispatch(
-            prepareFinalObject(
-                "sectorWiselocationsObject",
-                response.osujmNewlocationMap
-            )
-        );
-        return response    
-    } catch (error) {
-        console.log(error, "my error")
-    }
+// const getData = async (action, state, dispatch) => {
+//     try {
+//         let response = await getVenueData(action, state, dispatch);
+//         dispatch(
+//             prepareFinalObject(
+//                 "sectorWiselocationsObject",
+//                 response.osujmNewlocationMap
+//             )
+//         );
+//         return response    
+//     } catch (error) {
+//         console.log(error, "my error")
+//     }
     
-  };
+//   };
 
 const setDataAutofill = (action, state, dispatch) => {
     // console.log("in set data autofill")
@@ -291,7 +291,7 @@ const availabilityMediaCardWrapper = {
     uiFramework: "custom-atoms",
     componentPath: "Form",
     props: {
-        id: "apply_form1",
+        id: "availability-media-card",
     },
     children: {
         availabilityMediaCard,
@@ -302,7 +302,7 @@ const availabilityCalendarWrapper = {
     uiFramework: "custom-atoms",
     componentPath: "Form",
     props: {
-        id: "apply_form1",
+        id: "availability-calender",
     },
     children: {
         availabilityCalendar,
@@ -322,22 +322,8 @@ const screenConfig = {
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
         getMdmsData(action, state, dispatch);
-        getData(action, state, dispatch).then(response => {
-            // console.log(response, "my new response")
-            if(response){
-                // console.log("if response true")
-                // console.log("call prepare edit flow")
-                prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
-            }
-        })
-        // if (applicationNumber !== null) {
-
+        prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
         
-
-       
-        // } else {
-        //     setDataAutofill(action, state, dispatch);
-        // }
         return action;
     },
     components: {
