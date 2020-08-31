@@ -70,7 +70,7 @@ class TastStatusContainer extends React.Component {
                       <Typography component="h2" variant="subheading">
                         <LabelContainer
                           labelName="Task Status"
-                          labelKey="TL_TASK_STATUS"
+                          labelKey="BK_TASK_STATUS"
                         />
                       </Typography>
                     </Grid>
@@ -82,7 +82,7 @@ class TastStatusContainer extends React.Component {
                         <HistoryIcon className={classes.leftIcon} />
                         <LabelContainer
                           labelName="VIEW HISTORY"
-                          labelKey="TL_VIEW_HISTORY"
+                          labelKey="BK_VIEW_HISTORY"
                           color="#FE7A51"
                         />
                       </Button>

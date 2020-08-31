@@ -53,7 +53,7 @@ export const footer = getCommonApplyFooter({
             // },
             previousButtonLabel: getLabel({
                 labelName: "CANCEL",
-                labelKey: "MY_BK_BUTTON_CANCEL",
+                labelKey: "BK_MY_BK_BUTTON_CANCEL",
             }),
         },
         onClickDefination: {
@@ -78,7 +78,7 @@ export const footer = getCommonApplyFooter({
         children: {
             nextButtonLabel: getLabel({
                 labelName: "Make Payment",
-                labelKey: "MY_BK_BUTTON_PAYMENT",
+                labelKey: "BK_MY_BK_BUTTON_PAYMENT",
             }),
             // nextButtonIcon: {
             //     uiFramework: "custom-atoms",

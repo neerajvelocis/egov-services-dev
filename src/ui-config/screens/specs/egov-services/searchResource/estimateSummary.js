@@ -15,7 +15,7 @@ export const estimateSummary = getCommonGrayCard({
     componentPath: "EstimateCardContainer",
     props: {
       estimate: {
-        header: { labelName: "Fee Estimate", labelKey: "MY_BK_ESTIMATE_DETAILS_HEADER" },
+        header: { labelName: "Fee Estimate", labelKey: "BK_MY_BK_ESTIMATE_DETAILS_HEADER" },
         fees: [{ name: "ASD", value: 123 }],
         extra: [
           { textLeft: "Last Date for Rebate (20% of TL)" },

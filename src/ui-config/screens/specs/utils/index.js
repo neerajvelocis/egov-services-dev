@@ -368,6 +368,48 @@ export const generateBill = async (
     }
 };
 
+export const generageBillCollection = async (
+    state,
+    dispatch,
+    applicationNumber,
+    tenantId
+) => {
+    try {
+        if (applicationNumber && tenantId) {
+            let queryObject = [
+                { key: "tenantId", value: tenantId },
+                { key: "consumerCodes", value: applicationNumber },
+            ];
+            const payload = await httpRequest(
+                "post",
+                "/collection-services/payments/_search",
+                "",
+                queryObject
+            );
+            if (payload) {
+                dispatch(
+                    prepareFinalObject("ReceiptTemp[0].Bill", [
+                        payload.Payments[0].paymentDetails[0].bill,
+                    ])
+                );
+                const estimateData = createEstimateData(
+                    payload.Payments[0].paymentDetails[0].bill.billDetails
+                );
+                estimateData &&
+                    estimateData.length &&
+                    dispatch(
+                        prepareFinalObject(
+                            "applyScreenMdmsData.estimateCardData",
+                            estimateData
+                        )
+                    );
+            }
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const clearlocalstorageAppDetails = (state) => {
     set(state, "screenConfiguration.preparedFinalObject", {});
     lSRemoveItemlocal("applicationType");
@@ -1121,7 +1163,7 @@ export const getAvailabilityDataOSWMCC = async (
     bookingVenue
 ) => {
     let requestBody = {
-        bookingType: "JURISDICTION",
+        bookingType: "OSUJM",
         bkSector: bookingSector,
         bookingVenue: bookingVenue,
         // bkSector: "SECTOR-17",

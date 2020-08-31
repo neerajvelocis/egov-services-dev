@@ -20,7 +20,7 @@ export const driverSummary = getCommonGrayCard({
               },
               ...getCommonSubHeader({
                   labelName: "Driver Details",
-                  labelKey: "MY_BK_DRIVER_DETAILS_HEADER",
+                  labelKey: "BK_MY_BK_DRIVER_DETAILS_HEADER",
               }),
           },
       },
@@ -35,7 +35,7 @@ export const driverSummary = getCommonGrayCard({
                   driverName: getLabelWithValue(
                       {
                           labelName: "Driver Name",
-                          labelKey: "MY_BK_DRIVER_NAME_LABEL",
+                          labelKey: "BK_MY_BK_DRIVER_NAME_LABEL",
                       },
                       {
                           jsonPath: "Booking.bkDriverName",
@@ -44,7 +44,7 @@ export const driverSummary = getCommonGrayCard({
                   driverMobile: getLabelWithValue(
                       {
                           labelName: "Driver Contact",
-                          labelKey: "MY_BK_DRIVER_MOBILE_NO_LABEL",
+                          labelKey: "BK_MY_BK_DRIVER_MOBILE_NO_LABEL",
                       },
                       {
                           jsonPath: "Booking.bkContactNo",
@@ -53,7 +53,7 @@ export const driverSummary = getCommonGrayCard({
                   approverName: getLabelWithValue(
                       {
                           labelName: "Approver",
-                          labelKey: "MY_BK_APPROVER_NAME_LABEL",
+                          labelKey: "BK_MY_BK_APPROVER_NAME_LABEL",
                       },
                       {
                           jsonPath: "Booking.bkApproverName",

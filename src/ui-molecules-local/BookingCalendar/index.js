@@ -395,15 +395,17 @@ class BookingCalendar extends React.Component {
     .DayPicker{
         width : 100%
     }
-                    // .Range{width: 100%}
-        //   .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
-        //   background-color: #fe7a51 !important;
-        outline: none;
-        //   color: ##fe7a51;
-        //   }
+                     .Range{width: 100%}
+          .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+         background-color: #fe7a51 !important;
+         outline: none;
+         color: ##fe7a51;
+        border-radius: 8px;
+           }
         .DayPicker:not(.DayPicker--interactionDisabled) .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover{
             background-color: none;
             background-color : #fe7a51;
+            border-radius: 8px;
         }
 
         .DayPicker-Day {
@@ -411,6 +413,9 @@ class BookingCalendar extends React.Component {
             font-weight: 500;
             color: #000000d4;
             border-radius: 0 ;
+          }
+          .DayPicker-Day:hover{
+           opacity :0.5;
           }
           .DayPicker-Caption{
             margin-bottom: 0;
@@ -454,6 +459,7 @@ class BookingCalendar extends React.Component {
  
 .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
     position: relative;
+    border-radius: 8px;
  
     background-color: #fe7a51;
  

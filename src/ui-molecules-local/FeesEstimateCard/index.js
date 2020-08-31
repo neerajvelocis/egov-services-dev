@@ -155,7 +155,7 @@ function FeesEstimateCard(props) {
               <Typography variant="body2">
                 <LabelContainer
                   labelName="Total Amount"
-                  labelKey="MY_BK_TOTAL_AMT"
+                  labelKey="BK_MY_BK_TOTAL_AMT"
                 />
 
               </Typography>
@@ -180,7 +180,7 @@ function FeesEstimateCard(props) {
         >
           <LabelContainer
             labelName="Total Amount"
-            labelKey="MY_BK_TOTAL_AMT"
+            labelKey="BK_MY_BK_TOTAL_AMT"
           />
         </Typography>
         <Typography className={totalHeadClassName} align="right">

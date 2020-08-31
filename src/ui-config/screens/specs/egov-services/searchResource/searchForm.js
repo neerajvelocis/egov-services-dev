@@ -10,11 +10,10 @@ import {
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
-import {
-    getTodaysDateInYMD,
-} from "../../utils/index";
+import { getTodaysDateInYMD } from "../../utils/index";
 import { fetchData } from "../searchResource/citizenSearchFunctions";
 import {
+    prepareFinalObject,
     handleScreenConfigurationFieldChange as handleField,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
@@ -95,7 +94,7 @@ export const searchForm = getCommonCard({
     header: getCommonTitle(
         {
             labelName: "Seach Applications",
-            labelKey: "MY_BK_SEARCH_HEADER",
+            labelKey: "BK_MY_BK_SEARCH_HEADER",
         },
         {
             style: {
@@ -107,21 +106,22 @@ export const searchForm = getCommonCard({
     //     labelName: "Search Trade License Application",
     //     labelKey: "TL_HOME_SEARCH_RESULTS_HEADING"
     //   }),
-      subParagraph: getCommonParagraph({
-        labelName: "Provide at least one parameter to search for an application",
-        labelKey: "MY_BK_SEARCH_DESC"
-      }),
+    subParagraph: getCommonParagraph({
+        labelName:
+            "Provide at least one parameter to search for an application",
+        labelKey: "BK_MY_BK_SEARCH_DESC",
+    }),
 
     applicationDetailsConatiner: getCommonContainer({
         mobileNumber: {
             ...getTextField({
                 label: {
                     labelName: "Contact",
-                    labelKey: "MY_BK_MOBILE_NO_LABEL",
+                    labelKey: "BK_MY_BK_MOBILE_NO_LABEL",
                 },
                 placeholder: {
                     labelName: "Contact",
-                    labelKey: "MY_BK_MOBILE_NO_PLACEHOLDER",
+                    labelKey: "BK_MY_BK_MOBILE_NO_PLACEHOLDER",
                 },
                 // required: true,
                 pattern: getPattern("MobileNo"),
@@ -138,11 +138,11 @@ export const searchForm = getCommonCard({
             ...getTextField({
                 label: {
                     labelName: "Application No.",
-                    labelKey: "MY_BK_APPLICATION_NUMBER_LABEL",
+                    labelKey: "BK_MY_BK_APPLICATION_NUMBER_LABEL",
                 },
                 placeholder: {
                     labelName: "Enter House No",
-                    labelKey: "MY_BK_APPLICATION_NUMBER_PLACEHOLDER",
+                    labelKey: "BK_MY_BK_APPLICATION_NUMBER_PLACEHOLDER",
                 },
                 pattern: getPattern("DoorHouseNo"),
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
@@ -159,16 +159,16 @@ export const searchForm = getCommonCard({
             ...getSelectField({
                 label: {
                     labelName: "Application Type",
-                    labelKey: "MY_BK_APPLICATION_TYPE_LABEL",
+                    labelKey: "BK_MY_BK_APPLICATION_TYPE_LABEL",
                 },
                 placeholder: {
                     labelName: "Application Type",
-                    labelKey: "MY_BK_APPLICATION_TYPE_PLACEHOLDER",
+                    labelKey: "BK_MY_BK_APPLICATION_TYPE_PLACEHOLDER",
                 },
                 // pattern: getPattern("DoorHouseNo"),
                 // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // required: true,
-                sourceJsonPath: "applyScreenMdmsData.Booking.bookingType",
+                sourceJsonPath: "applyScreenMdmsData.Booking.ApplicationType",
                 jsonPath: "MyBooking.bookingType",
                 gridDefination: {
                     xs: 12,
@@ -176,26 +176,51 @@ export const searchForm = getCommonCard({
                     md: 4,
                 },
             }),
+            beforeFieldChange: (action, state, dispatch) => {
+                
+                if (action.value) {
+                    let bookingType = get(
+                        state,
+                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.ApplicationType"
+                    );
+                    let bookingStatus = bookingType.filter(el => el.code === action.value)[0].status
+                    dispatch(
+                        prepareFinalObject("bookingStatus", bookingStatus)
+                    );
+
+                    // dispatch(
+                    //     handleField(
+                    //         "checkavailability_oswmcc",
+                    //         "components.div.children.applicationSearch.children.searchForm.children.cardContent.children.applicationDetailsConatiner.children.applicationStatus",
+                    //         "props.disabled",
+                    //         bookingStatusShow
+                    //     )
+                    // );
+                }
+            },
         },
         applicationStatus: {
             ...getSelectField({
                 label: {
                     labelName: "Application Status",
-                    labelKey: "MY_BK_APPLICATION_STATUS_LABEL",
+                    labelKey: "BK_MY_BK_APPLICATION_STATUS_LABEL",
                 },
                 placeholder: {
                     labelName: "Application Status",
-                    labelKey: "MY_BK_APPLICATION_STATUS_PLACEHOLDER",
+                    labelKey: "BK_MY_BK_APPLICATION_STATUS_PLACEHOLDER",
                 },
                 // pattern: getPattern("DoorHouseNo"),
                 // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // required: true,
-                sourceJsonPath: "applyScreenMdmsData.Booking.applicationStatus",
+                sourceJsonPath: "bookingStatus",
                 jsonPath: "MyBooking.applicationStatus",
                 gridDefination: {
                     xs: 12,
                     sm: 6,
                     md: 4,
+                },
+                props: {
+                    // disabled: true,
                 },
             }),
         },
@@ -203,11 +228,11 @@ export const searchForm = getCommonCard({
             ...getDateField({
                 label: {
                     labelName: "From Date",
-                    labelKey: "MY_BK_FROM_DATE_LABEL",
+                    labelKey: "BK_MY_BK_FROM_DATE_LABEL",
                 },
                 placeholder: {
                     labelName: "From Date",
-                    labelName: "MY_BK_FROM_DATE_PLACEHOLDER",
+                    labelName: "BK_MY_BK_FROM_DATE_PLACEHOLDER",
                 },
                 // required: true,
                 pattern: getPattern("Date"),
@@ -248,11 +273,11 @@ export const searchForm = getCommonCard({
             ...getDateField({
                 label: {
                     labelName: "To Date",
-                    labelKey: "MY_BK_TO_DATE_LABEL",
+                    labelKey: "BK_MY_BK_TO_DATE_LABEL",
                 },
                 placeholder: {
                     labelName: "To Date",
-                    labelKey: "MY_BK_TO_DATE_PLACEHOLDER",
+                    labelKey: "BK_MY_BK_TO_DATE_PLACEHOLDER",
                 },
                 // required: true,
                 pattern: getPattern("Date"),
@@ -309,7 +334,7 @@ export const searchForm = getCommonCard({
                 // },
                 resetButtonLabel: getLabel({
                     labelName: "Cancel",
-                    labelKey: "MY_BK_BUTTON_RESET",
+                    labelKey: "BK_MY_BK_BUTTON_RESET",
                 }),
             },
             onClickDefination: {
@@ -332,7 +357,7 @@ export const searchForm = getCommonCard({
             children: {
                 submitButtonLabel: getLabel({
                     labelName: "Submit",
-                    labelKey: "MY_BK_BUTTON_SEARCH",
+                    labelKey: "BK_MY_BK_BUTTON_SEARCH",
                 }),
                 // submitButtonIcon: {
                 //   uiFramework: "custom-atoms",
