@@ -694,13 +694,24 @@ export const downloadReceipt = (
             FETCHRECEIPT.GET.ACTION,
             receiptQueryString
         ).then((payloadReceiptDetails) => {
-            const queryStr = [
-                { key: "key", value: "bk-payment-receipt" },
-                {
-                    key: "tenantId",
-                    value: "ch",
-                },
-            ];
+            let queryStr = '';
+            if (applicationData.businessService === 'PACC') {
+                queryStr = [
+                    { key: "key", value: "pacc-payment-receipt" },
+                    {
+                        key: "tenantId",
+                        value: "ch",
+                    },
+                ];
+            } else {
+                queryStr = [
+                    { key: "key", value: "bk-payment-receipt" },
+                    {
+                        key: "tenantId",
+                        value: "ch",
+                    },
+                ];
+            }
             if (
                 payloadReceiptDetails &&
                 payloadReceiptDetails.Payments &&
@@ -708,6 +719,101 @@ export const downloadReceipt = (
             ) {
                 console.log("Could not find any receipts");
                 return;
+            }
+
+            let paymentInfoData = '';
+            if (applicationData.businessService === 'PACC') {
+                paymentInfoData = {
+                    paymentDate: convertEpochToDate(
+                        payloadReceiptDetails.Payments[0].transactionDate,
+                        "dayend"
+                    ),
+                    transactionId: payloadReceiptDetails.Payments[0].transactionNumber,
+                    bookingPeriod: getDurationDate(
+                        applicationData.bkFromDate,
+                        applicationData.bkToDate
+                    ),
+                    bookingItem: `Online Payment Against Booking of ${applicationData.bkLocation}`,
+                    baseCharge: parseFloat(applicationData.bkRent).toFixed(2),
+                    cleaningCharges: parseFloat(applicationData.bkCleansingCharges).toFixed(2),
+                    surcharges: parseFloat(applicationData.bkSurchargeRent).toFixed(2),
+                    facilitationCharge: 0.00,
+                    gst: (parseFloat(applicationData.bkUtgst) + parseFloat(applicationData.bkCgst)).toFixed(2),
+                    totalAmount: (parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)).toFixed(2),
+
+
+                    amountInWords: NumInWords(
+                        parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)
+                    ),
+                    paymentItemExtraColumnLabel: "Booking Period",
+
+                    paymentMode:
+                        payloadReceiptDetails.Payments[0].paymentMode,
+                    receiptNo:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .receiptNumber,
+                };
+
+            } else {
+                paymentInfoData = {
+                    paymentDate: convertEpochToDate(
+                        payloadReceiptDetails.Payments[0].transactionDate,
+                        "dayend"
+                    ),
+                    transactionId:
+                        payloadReceiptDetails.Payments[0].transactionNumber,
+                    bookingPeriod:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.businessService === "OSBM" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSUJM"
+                            ? getDurationDate(
+                                applicationData.bkFromDate,
+                                applicationData.bkToDate
+                            )
+                            : `${applicationData.bkDate} , ${applicationData.bkTime} `,
+                    bookingItem: `Online Payment Against Booking of ${
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.businessService === "GFCP"
+                            ? "Commercial Ground"
+                            : payloadReceiptDetails.Payments[0]
+                                .paymentDetails[0].bill
+                                .businessService === "OSBM"
+                                ? "Open Space for Building Material"
+                                : payloadReceiptDetails.Payments[0]
+                                    .paymentDetails[0].bill
+                                    .businessService === "OSUJM"
+                                    ? "Open Space within MCC jurisdiction"
+                                    : "Water Tanker"
+                        }`,
+                    amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                        (el) => !el.taxHeadCode.includes("TAX")
+                    )[0].amount,
+                    tax: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                        (el) => el.taxHeadCode.includes("TAX")
+                    )[0].amount,
+                    grandTotal:
+                        payloadReceiptDetails.Payments[0].totalAmountPaid,
+                    amountInWords: NumInWords(
+                        payloadReceiptDetails.Payments[0].totalAmountPaid
+                    ),
+                    paymentItemExtraColumnLabel:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.businessService === "OSBM" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSUJM"
+                            ? "Booking Period"
+                            : "Date & Time",
+                    paymentMode:
+                        payloadReceiptDetails.Payments[0].paymentMode,
+                    receiptNo:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .receiptNumber,
+                };
             }
             let receiptData = [
                 {
@@ -726,65 +832,7 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.consumerCode,
                     },
-                    paymentInfo: {
-                        paymentDate: convertEpochToDate(
-                            payloadReceiptDetails.Payments[0].transactionDate,
-                            "dayend"
-                        ),
-                        transactionId:
-                            payloadReceiptDetails.Payments[0].transactionNumber,
-                        bookingPeriod:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "GFCP" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "OSUJM"
-                                ? getDurationDate(
-                                    applicationData.bkFromDate,
-                                    applicationData.bkToDate
-                                )
-                                : `${applicationData.bkDate} , ${applicationData.bkTime} `,
-                        bookingItem: `Online Payment Against Booking of ${
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "GFCP"
-                                ? "Commercial Ground"
-                                : payloadReceiptDetails.Payments[0]
-                                    .paymentDetails[0].bill
-                                    .businessService === "OSBM"
-                                    ? "Open Space for Building Material"
-                                    : payloadReceiptDetails.Payments[0]
-                                        .paymentDetails[0].bill
-                                        .businessService === "OSUJM"
-                                        ? "Open Space within MCC jurisdiction"
-                                        : "Water Tanker"
-                            }`,
-                        amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-                            (el) => !el.taxHeadCode.includes("TAX")
-                        )[0].amount,
-                        tax: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-                            (el) => el.taxHeadCode.includes("TAX")
-                        )[0].amount,
-                        grandTotal:
-                            payloadReceiptDetails.Payments[0].totalAmountPaid,
-                        amountInWords: NumInWords(
-                            payloadReceiptDetails.Payments[0].totalAmountPaid
-                        ),
-                        paymentItemExtraColumnLabel:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "GFCP" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "OSUJM"
-                                ? "Booking Period"
-                                : "Date & Time",
-                        paymentMode:
-                            payloadReceiptDetails.Payments[0].paymentMode,
-                        receiptNo:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .receiptNumber,
-                    },
+                    paymentInfo: paymentInfoData,
                     payerInfo: {
                         payerName: payloadReceiptDetails.Payments[0].payerName,
                         payerMobile:
@@ -863,7 +911,7 @@ export const downloadCertificate = async (
         //         { key: "key", value: "bk-cg-pl" },
         //         { key: "tenantId", value: "ch" },
         //     ]
-        
+
         let certificateData = [
             {
                 applicantDetail: {
