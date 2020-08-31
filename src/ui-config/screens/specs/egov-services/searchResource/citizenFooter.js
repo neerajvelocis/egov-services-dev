@@ -1,13 +1,15 @@
 import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getCommonApplyFooter,showHideAdhocPopup } from "../../utils";
+import { getCommonApplyFooter, showHideAdhocPopup } from "../../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import "./index.css";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
-import get from "lodash/get"
-
+import get from "lodash/get";
 
 export const callBackForPrevious = (state, dispatch) => {
+    dispatch(setRoute("/egov-services/my-applications"));
+};
+export const callBackForEdit = (state, dispatch) => {
     dispatch(setRoute("/egov-services/my-applications"));
 };
 
@@ -16,7 +18,7 @@ export const callBackForNext = (state, dispatch, pathKey) => {
         window.location.href,
         "applicationNumber"
     );
-    const businessService =  get(
+    const businessService = get(
         state,
         "screenConfiguration.preparedFinalObject.Booking.businessService",
         {}
@@ -60,7 +62,7 @@ export const footer = getCommonApplyFooter({
             action: "condition",
             callBack: callBackForPrevious,
         },
-        visible: false
+        visible: false,
     },
 
     submitButton: {
@@ -91,10 +93,46 @@ export const footer = getCommonApplyFooter({
         onClickDefination: {
             action: "condition",
             // callBack: callBackForNext,
-              callBack: (state, dispatch) =>
+            callBack: (state, dispatch) =>
                 callBackForNext(state, dispatch, "pay"),
         },
-        visible: false
+        visible: false,
+        // roleDefination: {
+        //     rolePath: "user-info.roles",
+        //     roles: ["CITIZEN"],
+        //     action: "PAY",
+        // },
+    },
+    editButton: {
+        componentPath: "Button",
+        props: {
+            variant: "outlined",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "45px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+            nextButtonLabel: getLabel({
+                labelName: "EDIT",
+                labelKey: "BK_MY_BK_BUTTON_EDIT",
+            }),
+            // nextButtonIcon: {
+            //     uiFramework: "custom-atoms",
+            //     componentPath: "Icon",
+            //     props: {
+            //         iconName: "keyboard_arrow_right",
+            //     },
+            // },
+        },
+        onClickDefination: {
+            action: "condition",
+            callBack: callBackForEdit,
+        },
+        visible: false,
         // roleDefination: {
         //     rolePath: "user-info.roles",
         //     roles: ["CITIZEN"],

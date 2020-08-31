@@ -483,18 +483,22 @@ export const availabilityForm = getCommonCard({
                         state,
                         "screenConfiguration.preparedFinalObject.availabilityCheckData"
                     );
-                    
 
-                    let bkBookingType = availabilityCheckData !== undefined ? availabilityCheckData.bkBookingType : "Parks"
+                    let bkBookingType =
+                        availabilityCheckData !== undefined
+                            ? availabilityCheckData.bkBookingType
+                            : "Parks";
 
                     dispatch(
                         prepareFinalObject(
-                            "availabilityCheckData.bkBookingType" , bkBookingType
+                            "availabilityCheckData.bkBookingType",
+                            bkBookingType
                         )
                     );
                     dispatch(
                         prepareFinalObject(
-                            "Booking.bkBookingType" , bkBookingType
+                            "Booking.bkBookingType",
+                            bkBookingType
                         )
                     );
 
@@ -504,6 +508,13 @@ export const availabilityForm = getCommonCard({
                         ],
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
+                    );
+                    set(
+                        state.screenConfiguration.screenConfig[
+                            "checkavailability_pcc"
+                        ],
+                        "components.div.children.availabilityTimeSlotWrapper.visible",
+                        bkBookingType === "Parks" ? false : true
                     );
                     set(
                         state.screenConfiguration.screenConfig[
@@ -684,6 +695,20 @@ export const availabilityMediaCard = getCommonCard({
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",
             componentPath: "BookingMediaContainer",
+            gridDefination: {
+                xs: 12,
+                sm: 12,
+                md: 12,
+            },
+        },
+    }),
+});
+export const availabilityTimeSlot = getCommonCard({
+    availabilityMedia: getCommonContainer({
+        bookingCalendar: {
+            uiFramework: "custom-molecules-local",
+            moduleName: "egov-services",
+            componentPath: "BookingTimeSlot",
             gridDefination: {
                 xs: 12,
                 sm: 12,

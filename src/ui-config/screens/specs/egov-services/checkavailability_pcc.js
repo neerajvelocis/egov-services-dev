@@ -11,6 +11,7 @@ import {
 import {
     availabilityForm,
     availabilityMediaCard,
+    availabilityTimeSlot,
     availabilityCalendar,
 } from "./checkAvailabilityForm_pcc";
 import { ImageLocationSummary } from "./summaryResource/imagesOfNewLocationOswmcc";
@@ -298,6 +299,17 @@ const availabilityMediaCardWrapper = {
     },
     visible: false
 };
+const availabilityTimeSlotWrapper = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+        id: "availability-timeslot",
+    },
+    children: {
+        availabilityTimeSlot,
+    },
+    visible: false
+};
 const availabilityCalendarWrapper = {
     uiFramework: "custom-atoms",
     componentPath: "Form",
@@ -350,6 +362,7 @@ const screenConfig = {
                 },
                 availabilitySearch,
                 availabilityMediaCardWrapper,
+                availabilityTimeSlotWrapper,
                 availabilityCalendarWrapper,
                 adhocDialog: {
                     uiFramework: "custom-containers-local",

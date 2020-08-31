@@ -7,10 +7,7 @@ import {
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import get from "lodash/get";
 import set from "lodash/set";
-import {
-    getCurrentFinancialYear,
-    generateBill,
-} from "../utils";
+import { getCurrentFinancialYear, generateBill } from "../utils";
 import estimateDetails from "./payResource/estimate-details";
 import { footer, callPGService } from "./payResource/footer";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -19,7 +16,11 @@ import {
     getSearchResultsView,
 } from "../../../../ui-utils/commons";
 
-import { getapplicationType, setapplicationType, setapplicationNumber } from "egov-ui-kit/utils/localStorageUtils";
+import {
+    getapplicationType,
+    setapplicationType,
+    setapplicationNumber,
+} from "egov-ui-kit/utils/localStorageUtils";
 
 const header = getCommonContainer({
     header: getCommonHeader({
@@ -28,9 +29,12 @@ const header = getCommonContainer({
                 ? "Open Space to Store Building Material"
                 : getapplicationType() === "GFCP"
                 ? "Commercial Ground"
-                : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" :  "Water Tankers"
+                : getapplicationType() === "OSUJM"
+                ? "Open Space within MCC jurisdiction"
+                : getapplicationType() === "PACC"
+                ? "Parks & Community Center/Banquet Halls"
+                : "Water Tankers"
         } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
-        // labelName: `Application for ${getapplicationType() === "OSBM" ? "Open Space to Store Building Material" : "Water Tanker"}` //later use getFinancialYearDates
     }),
     applicationNumber: {
         uiFramework: "custom-atoms-local",
