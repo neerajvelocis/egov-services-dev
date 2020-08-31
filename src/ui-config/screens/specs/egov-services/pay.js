@@ -5,6 +5,7 @@ import {
     getCommonTitle,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import get from "lodash/get";
 import set from "lodash/set";
 import { getCurrentFinancialYear, generateBill } from "../utils";
@@ -46,6 +47,8 @@ const header = getCommonContainer({
     },
 });
 
+
+
 const setSearchResponse = async (
     state,
     action,
@@ -64,6 +67,14 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
+   
+
+
+
+
+
+
+
 
     await generateBill(
         state,
@@ -92,6 +103,7 @@ const setPaymentMethods = async (action, state, dispatch) => {
     }
 };
 
+
 const screenConfig = {
     uiFramework: "material-ui",
     name: "pay",
@@ -109,6 +121,8 @@ const screenConfig = {
         setapplicationType(businessService);
         setPaymentMethods(action, state, dispatch);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+
+
 
         return action;
     },

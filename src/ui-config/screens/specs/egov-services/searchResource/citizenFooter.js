@@ -6,7 +6,7 @@ import "./index.css";
 import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 
-export const callBackForPrevious = (state, dispatch) => {
+export const callBackForCancel = (state, dispatch) => {
     dispatch(setRoute("/egov-services/my-applications"));
 };
 export const callBackForEdit = (state, dispatch) => {
@@ -60,7 +60,7 @@ export const footer = getCommonApplyFooter({
         },
         onClickDefination: {
             action: "condition",
-            callBack: callBackForPrevious,
+            callBack: callBackForCancel,
         },
         visible: false,
     },

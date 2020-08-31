@@ -269,11 +269,7 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        // const venue = getQueryArg(window.location.href, "venue");
-        // const fromDate = getQueryArg(window.location.href, "fromDate");
-        // const toDate = getQueryArg(window.location.href, "toDate");
-        // const from = convertDateInYMD(queryfrom);
-        // const to = convertDateInYMD(queryto);
+       
         const availabilityCheckData = get(
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
@@ -339,16 +335,7 @@ const screenConfig = {
                     JSON.parse(getUserInfo()).mobileNumber
                 )
             );
-        // dispatch(prepareFinalObject("Booking.bkEmail", "HELLO@GMAIL.COM"));
-        // dispatch(prepareFinalObject("Booking.bkHouseNo", "2"));
-        // dispatch(prepareFinalObject("Booking.bkCompleteAddress", "hello address"));
-        // dispatch(prepareFinalObject("Booking.bkSector", "SECTOR-2"));
-        // dispatch(prepareFinalObject("Booking.bkType", "Residential"));
-        // dispatch(prepareFinalObject("Booking.bkAreaRequired", "Less than 1000 sqft"));
-        // dispatch(prepareFinalObject("Booking.bkDuration", "2"));
-        // dispatch(prepareFinalObject("Booking.bkCategory", "Cat-A"));
-        // dispatch(prepareFinalObject("Booking.bkVillCity", "City"));
-        // dispatch(prepareFinalObject("Booking.bkConstructionType", "New"));
+       
         //Set Module Name
         set(state, "screenConfiguration.moduleName", "services");
 
@@ -367,12 +354,7 @@ const screenConfig = {
             prepareEditFlow(state, dispatch, applicationNumber, tenantId, fromDate, toDate, venue);
 
         } else {
-            // const locality = getQueryArg(window.location.href, "sector");
-            // const venue = getQueryArg(window.location.href, "venue");
-            // const fromDate = getQueryArg(window.location.href, "fromDate");
-            // const toDate = getQueryArg(window.location.href, "toDate");
-            // const from = convertDateInYMD(queryfrom);
-            // const to = convertDateInYMD(queryto);
+           
 
             const availabilityCheckData = get(
                 state,

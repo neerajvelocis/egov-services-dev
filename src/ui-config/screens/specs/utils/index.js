@@ -1287,7 +1287,64 @@ export const getPerDayRateCgb = async (bookingVenue) => {
     } catch (exception) {
         console.log(exception);
     }
-};
+}
+
+export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
+    let requestBody = {
+        Booking: {
+            bkBookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
+            bkBookingVenue: bookingVenue,
+            bkFromDate: from,
+            bkToDate: to
+        },
+
+
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/commercial/ground/booked/dates/_search",
+            "",
+            [],
+            requestBody
+        );
+        // return response;
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
+}
+export const checkAvaialbilityAtSubmitOsujm = async (sector, bookingVenue, from, to) => {
+    let requestBody = {
+        Booking: {
+            bkSector: sector,
+            bkBookingType: "JURISDICTION",
+
+            bkBookingVenue: bookingVenue,
+            bkFromDate: from,
+            bkToDate: to
+
+
+        },
+
+
+    };
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/osujm/booked/dates/_fetch",
+            "",
+            [],
+            requestBody
+        );
+        // return response;
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
+}
+
+
 export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
     let requestBody = {
         Booking: {

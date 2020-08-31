@@ -5,11 +5,132 @@ import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
 import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
+import {
+
+  checkAvaialbilityAtSubmitCgb,
+  checkAvaialbilityAtSubmitOsujm
+  
+  
+} from "../../utils";
+import { handleCheckAvailabilityFunction } from "../pay"
 import { httpRequest } from "../../../../../ui-utils/api";
 import { getSearchResults, getSearchResultsView } from "../../../../../ui-utils/commons";
 import { convertDateToEpoch, getBill, validateFields, showHideAdhocPopup } from "../../utils";
 import { getTenantId, localStorageSet, getapplicationType } from "egov-ui-kit/utils/localStorageUtils";
+import { pullAllWith } from "lodash";
 
+export const handleCheckAvailability = async (Booking, dispatch) => {
+  // dispatch(
+  //   prepareFinalObject("AllowRedirection", false)
+  // ); 
+
+
+   if (getapplicationType() === "GFCP") {
+
+
+
+    let venue=Booking.bkBookingVenue
+    let from =Booking.bkFromDate
+    let to=Booking.bkToDate
+    // let venue = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkBookingVenue",
+    //     []
+    // );
+    // let from = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkFromDate",
+    //     []
+    // );
+    // let to = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkToDate",
+    //     []
+    // );
+    let bookedDates = await checkAvaialbilityAtSubmitCgb(venue, from, to)
+
+    bookedDates.data.map(val => {
+        if (val === from || val === to) {
+
+          dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: "Dates are Already Booked. Try Again!", labelKey: "" },
+                "warning"
+            )
+          )
+          dispatch(setRoute(`/egov-services/checkavailability`));
+        }
+    })
+
+  }
+  else if (getapplicationType() === "OSUJM") {
+    
+    
+    
+    
+    let venue=Booking.bkBookingVenue
+    let from =Booking.bkFromDate
+    let to=Booking.bkToDate
+    let sector=Booking.bkSector
+    
+    
+    // let sector = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkSector",
+    //     []
+    // );
+    // let venue = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkBookingVenue",
+    //     []
+    // );
+    // let from = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkFromDate",
+    //     []
+    // );
+    // let to = get(
+    //     state.screenConfiguration.preparedFinalObject,
+    //     "Booking.bkToDate",
+    //     []
+    // );
+    let bookedDates = await checkAvaialbilityAtSubmitOsujm(sector, venue, from, to)
+    bookedDates.data.map(val => {
+        if (val === from || val === to) {
+
+          dispatch(
+            toggleSnackbar(
+                true,
+                { labelName: "Dates are Already Booked. Try Again!", labelKey: "" },
+                "warning"
+            )
+          )
+          dispatch(setRoute(`/egov-services/checkavailability_oswmcc`));
+
+
+        }
+    })
+
+  }
+
+  
+  
+  // if (allowRedirection === true) {
+  //   dispatch(
+  //     toggleSnackbar(
+  //         true,
+  //         { labelName: "Dates are Already Booked. Try Again!", labelKey: "" },
+  //         "warning"
+  //     )
+  // );
+  //   if (getapplicationType() === "GFCP") {
+  //     dispatch(setRoute(`/egov-services/checkavailability`));
+  //   } else if (getapplicationType() === "OSUJM") {
+  //     dispatch(setRoute(`/egov-services/checkavailability_oswmcc`));
+  //   }
+  // }
+}
 
 // export const selectPG = async (state, dispatch) => {
 //   showHideAdhocPopup(state, dispatch, "pay")
@@ -29,12 +150,12 @@ export const callPGService = async (state, dispatch, item) => {
       : window.origin
     }/egov-services/paymentRedirectPage`;
 
-    // console.log(callbackUrl, "callbackUrl");
+  // console.log(callbackUrl, "callbackUrl");
   try {
     const queryObj = [
       { key: "tenantId", value: tenantId },
       { key: "consumerCode", value: applicationNumber },
-      { key: "businessService", value: businessService}
+      { key: "businessService", value: businessService }
     ];
 
     const taxAmount = get(state, "screenConfiguration.preparedFinalObject.ReceiptTemp[0].Bill[0].totalAmount");
@@ -94,6 +215,7 @@ const convertDateFieldToEpoch = (finalObj, jsonPath) => {
 };
 
 
+
 export const getCommonApplyFooter = children => {
   return {
     uiFramework: "custom-atoms",
@@ -115,10 +237,14 @@ export const footer = getCommonApplyFooter({
       data: {
         label: {labelName : "MAKE PAYMENT" , labelKey :"BK_COMMON_MAKE_PAYMENT"},
         rightIcon: "arrow_drop_down",
-        props: { variant: "outlined", 
-        style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" } },
+        props: {
+          variant: "outlined",
+          style: { marginLeft: 5, marginRight: 15, backgroundColor: "#FE7A51", color: "#fff", border: "none", height: "60px", width: "250px" }
+        },
         menu: []
-      }
+      },
+      handleCheckAvailability: handleCheckAvailability
     },
+
   }
 });
