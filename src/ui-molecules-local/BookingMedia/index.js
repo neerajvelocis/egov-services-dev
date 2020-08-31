@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import PlotArea from "./plotArea";
-//import Image from "./Sector 39_CG1731_Photo.jpg"
-import Image from "./park11.jpeg";
+import CC from "./Sector 39_CG1731_Photo.jpg";
+import Park from "./park11.jpeg";
 
 class BookingMedia extends React.Component {
     constructor(props) {
@@ -15,17 +15,21 @@ class BookingMedia extends React.Component {
             <div>
                 <img
                     id="imageMap-pccMaps"
-                    src={`https://zfunds3.s3.ap-south-1.amazonaws.com/park11.jpeg`}
+                    src={`${
+                        availabilityCheckData.bkBookingType === "Parks"
+                            ? "https://zfunds3.s3.ap-south-1.amazonaws.com/park11.jpeg"
+                            : CC
+                    }`}
                     // src={`https://zfunds3.s3.ap-south-1.amazonaws.com/${masterDataPCC[0].imagePath}`}
                     // border="0"
                     usemap="#pccMaps"
                     alt=""
                 />
-                <map
-                    name="pccMaps"
-                    id="pccMaps"
-                >
-                    <PlotArea masterDataPCC={masterDataPCC} availabilityCheckData={availabilityCheckData} />
+                <map name="pccMaps" id="pccMaps">
+                    <PlotArea
+                        masterDataPCC={masterDataPCC}
+                        availabilityCheckData={availabilityCheckData}
+                    />
                 </map>
             </div>
         );

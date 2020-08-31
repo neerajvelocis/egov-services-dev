@@ -113,24 +113,24 @@ const prepareDocumentsView = async (state, dispatch) => {
     }
 };
 
-// const HideshowFooter = (action, bookingStatus) => {
-//     // Hide edit Footer
-//     // console.log("actionnew", action);
-//     let showFooter = false;
-//     if (bookingStatus === "PENDINGPAYMENT") {
-//         showFooter = true;
-//     }
-//     // set(
-//     //     action,
-//     //     "screenConfig.components.div.children.footer.children.cancelButton.visible",
-//     //     role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-//     // );
-//     set(
-//         action,
-//         "screenConfig.components.div.children.footer.children.submitButton.visible",
-//         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-//     );
-// };
+const HideshowFooter = (action, bookingStatus) => {
+    // Hide edit Footer
+    // console.log("actionnew", action);
+    let showFooter = false;
+    if (bookingStatus === "APPLIED") {
+        showFooter = true;
+    }
+    set(
+        action,
+        "screenConfig.components.div.children.footer.children.cancelButton.visible",
+        role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+    );
+    set(
+        action,
+        "screenConfig.components.div.children.footer.children.editButton.visible",
+        role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+    );
+};
 
 const setSearchResponse = async (
     state,
@@ -163,7 +163,7 @@ const setSearchResponse = async (
     }
 
     localStorageSet("bookingStatus", bookingStatus);
-    // HideshowFooter(action, bookingStatus);
+    HideshowFooter(action, bookingStatus);
 
     prepareDocumentsView(state, dispatch);
 
@@ -286,7 +286,7 @@ const screenConfig = {
                     remarksSummary: remarksSummary,
                 }),
                 // break: getBreak(),
-                // footer: footer,
+                footer: footer,
             }
         }
     }

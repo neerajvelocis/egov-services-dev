@@ -9,6 +9,9 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import {
+    convertDateInDMY
+} from "../../utils";
 
 export const pccSummary = getCommonGrayCard({
     header: {
@@ -92,6 +95,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkDimension",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return `${value} Sq Yard`;
+                                }
+                            }
                         }
                     ),
                     Location: getLabelWithValue(
@@ -110,6 +120,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkFromDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     ToDate: getLabelWithValue(
@@ -119,6 +136,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkToDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     CleansingCharges: getLabelWithValue(

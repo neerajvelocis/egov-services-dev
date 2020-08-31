@@ -9,6 +9,9 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import {
+    convertDateInDMY
+} from "../../utils";
 
 export const pccSummary = getCommonGrayCard({
     header: {
@@ -27,39 +30,6 @@ export const pccSummary = getCommonGrayCard({
                     labelKey: "BK_CGB_APPLICATION_DETAILS_HEADER",
                 }),
             },
-            // editSection: {
-            //   componentPath: "Button",
-            //   props: {
-            //     color: "primary",
-            //     style: {
-            //       marginTop: "-10px",
-            //       marginRight: "-18px",
-            //     },
-            //   },
-            //   gridDefination: {
-            //     xs: 4,
-            //     align: "right",
-            //   },
-            //   children: {
-            //     editIcon: {
-            //       uiFramework: "custom-atoms",
-            //       componentPath: "Icon",
-            //       props: {
-            //         iconName: "edit",
-            //       },
-            //     },
-            //     buttonLabel: getLabel({
-            //       labelName: "Edit",
-            //       labelKey: "BK_SUMMARY_EDIT",
-            //     }),
-            //   },
-            //   onClickDefination: {
-            //     action: "condition",
-            //     callBack: (state, dispatch) => {
-            //       gotoApplyWithStep(state, dispatch, 0);
-            //     },
-            //   },
-            // },
         },
     },
     cardOne: {
@@ -125,6 +95,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkDimension",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return `${value} Sq Yard`;
+                                }
+                            }
                         }
                     ),
                     Location: getLabelWithValue(
@@ -143,6 +120,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkFromDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     ToDate: getLabelWithValue(
@@ -152,6 +136,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkToDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     CleansingCharges: getLabelWithValue(
