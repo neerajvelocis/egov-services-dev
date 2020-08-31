@@ -414,6 +414,8 @@ export const checkAvailabilitySearch = getCommonCard({
 });
 export const checkAvailabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
+       
+
         bookingCalendar: {
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",
@@ -421,7 +423,7 @@ export const checkAvailabilityCalendar = getCommonCard({
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 12,
+                md: 8,
             },
             props: {
                 open: false,

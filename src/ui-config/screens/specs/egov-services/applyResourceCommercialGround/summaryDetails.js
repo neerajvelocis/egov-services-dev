@@ -148,17 +148,14 @@ export const summaryDetails = getCommonCard({
         uiFramework: "custom-atoms",
         componentPath: "Container",
         props: {
-            // style: { marginBottom: "10px" },
+            
         },
         children: {
             header: {
                 gridDefination: {
                     xs: 8,
                 },
-                // ...getCommonSubHeader({
-                //   labelName: "Summary",
-                //   labelKey: "BK_OSB_HEADER_STEP_4"
-                // })
+
             },
             editSection: {
                 componentPath: "Button",
@@ -189,9 +186,7 @@ export const summaryDetails = getCommonCard({
                 onClickDefination: {
                     action: "condition",
                     callBack: callBackForPrevious,
-                    // callBack: (state, dispatch) => {
-                    //   gotoApplyWithStep(state, dispatch, 0);
-                    // }
+                    
                 },
             },
         },
