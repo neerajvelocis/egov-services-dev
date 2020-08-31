@@ -894,7 +894,7 @@ export const downloadCertificate = async (
                         applicationData.bkFromDate,
                         applicationData.bkToDate
                     ),
-                    venueName: applicationData.bkBookingVenue,
+                    venueName: applicationData.bkLocation,
                     sector: applicationData.bkSector,
                     groundName: applicationData.bkSector,
                     bookingPupose: applicationData.bkBookingPurpose,
@@ -964,6 +964,7 @@ export const downloadApplication = async (
         "ReceiptTemp[0].Bill[0]"
     );
 
+    console.log(applicationData, "Nero App data");
     const DOWNLOADAPPLICATION = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -1050,7 +1051,7 @@ export const downloadApplication = async (
         let bookingDataPacc = {
             applicationNumber: applicationNumber,
             applicationDate: applicationData.bkDateCreated,
-            venueName: applicationData.bkBookingVenue,
+            venueName: applicationData.bkLocation,
             sector: applicationData.bkSector,
             bookingPeriod: getDurationDate(
                 applicationData.bkFromDate,
@@ -1109,11 +1110,11 @@ export const downloadApplication = async (
                         baseCharge: applicationData.bkRent,
                         cleaningCharge: applicationData.bkCleansingCharges,
                         surcharges: applicationData.bkSurchargeRent,
-                        facilitationCharge: applicationData.bkFacilitationCharges,
+                        facilitationCharge: 0,
                         utgst: applicationData.bkUtgst,
                         cgst: applicationData.bkCgst,
                         gst: applicationData.bkUtgst + applicationData.bkCgst,
-                        totalAmount: parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent) + parseFloat(applicationData.bkFacilitationCharges)
+                        totalAmount: parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,
