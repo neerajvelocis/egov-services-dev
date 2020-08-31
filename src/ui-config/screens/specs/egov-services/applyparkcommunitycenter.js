@@ -152,7 +152,6 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "PCC_Document",
                         },
-
                     ],
                 },
             ],
@@ -229,6 +228,15 @@ const getMdmsData = async (action, state, dispatch) => {
 //     }
 // };
 
+const calculateBetweenDaysCount = (startDate, endDate) => {
+    const oneDay = 24 * 60 * 60 * 1000;
+    const firstDate = new Date(startDate);
+    const secondDate = new Date(endDate);
+
+    const daysCount = Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
+    return daysCount;
+};
+
 export const prepareEditFlow = async (
     state,
     dispatch,
@@ -254,6 +262,13 @@ export const prepareEditFlow = async (
             (el) => el.id === availabilityCheckData.bkBookingVenue
         );
 
+        let daysCount = calculateBetweenDaysCount(
+            availabilityCheckData.bkFromDate,
+            availabilityCheckData.bkToDate
+        );
+
+        console.log(daysCount, "daysCount");
+
         dispatch(
             prepareFinalObject(
                 "Booking.bkDimension",
@@ -261,10 +276,7 @@ export const prepareEditFlow = async (
             )
         );
         dispatch(
-            prepareFinalObject(
-                "Booking.bkLocation",
-                masterDataItem[0].name
-            )
+            prepareFinalObject("Booking.bkLocation", masterDataItem[0].name)
         );
         dispatch(
             prepareFinalObject(
@@ -281,17 +293,20 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkCleansingCharges",
-                masterDataItem[0].cleaningCharges
+                masterDataItem[0].cleaningCharges * daysCount
             )
         );
         dispatch(
-            prepareFinalObject("Booking.bkRent", masterDataItem[0].rent)
+            prepareFinalObject(
+                "Booking.bkRent",
+                masterDataItem[0].rent * daysCount
+            )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkSurchargeRent",
-                (masterDataItem[0].rent * masterDataItem[0].surcharge) /
-                    100
+                ((masterDataItem[0].rent * masterDataItem[0].surcharge) / 100) *
+                    daysCount
             )
         );
 
@@ -301,15 +316,15 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkUtgst",
-                (masterDataItem[0].rent * masterDataItem[0].utgstRate) /
-                    100
+                ((masterDataItem[0].rent * masterDataItem[0].utgstRate) / 100) *
+                    daysCount
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkCgst",
-                (masterDataItem[0].rent * masterDataItem[0].cgstRate) /
-                    100
+                ((masterDataItem[0].rent * masterDataItem[0].cgstRate) / 100) *
+                    daysCount
             )
         );
 
@@ -429,6 +444,13 @@ const screenConfig = {
                     (el) => el.id === availabilityCheckData.bkBookingVenue
                 );
 
+                let daysCount = calculateBetweenDaysCount(
+                    availabilityCheckData.bkFromDate,
+                    availabilityCheckData.bkToDate
+                );
+
+                console.log(daysCount, "daysCount");
+
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkDimension",
@@ -456,35 +478,37 @@ const screenConfig = {
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCleansingCharges",
-                        masterDataItem[0].cleaningCharges
+                        masterDataItem[0].cleaningCharges * daysCount
                     )
                 );
                 dispatch(
-                    prepareFinalObject("Booking.bkRent", masterDataItem[0].rent)
+                    prepareFinalObject(
+                        "Booking.bkRent",
+                        masterDataItem[0].rent * daysCount
+                    )
                 );
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkSurchargeRent",
-                        (masterDataItem[0].rent * masterDataItem[0].surcharge) /
-                            100
+                        ((masterDataItem[0].rent *
+                            masterDataItem[0].surcharge) /
+                            100) *
+                            daysCount
                     )
                 );
 
-                // dispatch(
-                //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
-                // );
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkUtgst",
-                        (masterDataItem[0].rent * masterDataItem[0].utgstRate) /
-                            100
+                        ((masterDataItem[0].rent * masterDataItem[0].utgstRate) / 100) *
+                            daysCount
                     )
                 );
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCgst",
-                        (masterDataItem[0].rent * masterDataItem[0].cgstRate) /
-                            100
+                        ((masterDataItem[0].rent * masterDataItem[0].cgstRate) / 100) *
+                            daysCount
                     )
                 );
 
