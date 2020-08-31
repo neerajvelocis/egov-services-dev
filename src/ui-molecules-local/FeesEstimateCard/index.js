@@ -8,6 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Icon from "@material-ui/core/Icon";
 import { LabelContainer } from "egov-ui-framework/ui-containers";
 
+
 const styles = {
   card: {
     backgroundColor: "rgb(242, 242, 242)",
@@ -102,22 +103,29 @@ function FeesEstimateCard(props) {
                   ""
                 );
               let textLeft = fee.name ? (
-                <Grid container xs={8} direction='row'>
+                <Grid container xs={10} direction='row'>
                   <LabelContainer
                     labelName={fee.name.labelName}
                     labelKey={fee.name.labelKey}
                     style={styles.taxStylesLeft}
                   />
-                  {key == 0 && <Typography variant="h5">
+                  
+                  <Grid item xs={10}>
+                  {key == 0 &&
+                  <Typography noWrap style={{ fontWeight: "normal", marginLeft: "3px"  ,fontStyle:"italic"}} >
+                    
                     {baseCharge}
+
                   </Typography>}
+                  </Grid>
+                  
                   {tooltip}
                 </Grid>
               ) : (
-                  <Grid xs={8} />
+                  <Grid xs={10} />
                 );
               let textRight = fee.value ? (
-                <Grid xs={4} align="right">
+                <Grid xs={2} align="right">
                   <LabelContainer
                     labelName={fee.value}
                     labelKey={fee.value}

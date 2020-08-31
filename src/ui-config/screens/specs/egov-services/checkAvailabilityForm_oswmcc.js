@@ -105,7 +105,8 @@ const callBackForReset = (state, dispatch, action) => {
             dispatch(
                 handleField(
                     "checkavailability_oswmcc",
-                    "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkSector",
+                    
+                    "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector",
                     "props.value",
                     undefined
                 )
@@ -115,7 +116,7 @@ const callBackForReset = (state, dispatch, action) => {
             dispatch(
                 handleField(
                     "checkavailability_oswmcc",
-                    "components.div.children.availabilityForm.children.cardContent.children.availabilitySearchContainer.children.bkBookingVenue",
+                    "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
                     "props.value",
                     undefined
                 )

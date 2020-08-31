@@ -25,18 +25,7 @@ import {
 } from "../../../../../ui-utils/commons";
 
 export const personalDetails = getCommonCard({
-  // header: getCommonTitle(
-  //   {
-  //     labelName: "Applicant Details",
-  //     labelKey: "BK_CGB_HEADER_STEP_1",
-  //   },
-  //   {
-  //     style: {
-  //       marginBottom: 18,
-  //     },
-  //   }
-  // ),
-  // break: getBreak(),
+
   nocDetailsContainer: getCommonContainer({
     bkApplicantName: {
       ...getTextField({
@@ -112,7 +101,6 @@ export const personalDetails = getCommonCard({
           labelName: "Complete Address",
           labelKey: "BK_CGB_COMPLETE_ADDRESS_PLACEHOLDER",
         },
-        // pattern: getPattern("DoorHouseNo"),
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         required: true,
         jsonPath: "Booking.bkCompleteAddress",
@@ -136,17 +124,7 @@ export const personalDetails = getCommonCard({
 
 
 export const bookingDetails = getCommonCard({
-  // header: getCommonTitle(
-  //   {
-  //     labelName: "Applicant Details",
-  //     labelKey: "BK_CGB_HEADER_STEP_2",
-  //   },
-  //   {
-  //     style: {
-  //       marginBottom: 18,
-  //     },
-  //   }
-  // ),
+  
 
   applicationDetailsConatiner: getCommonContainer({
 
@@ -183,10 +161,7 @@ export const bookingDetails = getCommonCard({
 
         required: true,
         readOnlyValue: true,
-        // props: {
-        //   disabled: true,
-        // },
-        //pattern: getPattern("NoOfEmp"),
+     
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "Display.bkToDate",
 
@@ -206,10 +181,7 @@ export const bookingDetails = getCommonCard({
         },
         readOnlyValue: true,
         required: true,
-        // props: {
-        //   disabled: true,
-        // },
-        //pattern: getPattern("NoOfEmp"),
+    
         errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
         jsonPath: "Booking.bkBookingVenue",
       })
@@ -240,23 +212,19 @@ export const bookingDetails = getCommonCard({
           labelName: "Category",
           labelKey: "BK_CGB_CATEGORY_LABEL",
         },
-        // localePrefix: {
-        //   moduleName: "egpm",
-        //   masterName: "sector"
-        // },
+        
         optionLabel: "name",
         placeholder: {
           labelName: "Select Category",
           labelKey: "BK_CGB_CATEGORY_PLACEHOLDER",
         },
-        //sourceJsonPath: "applyScreenMdmsData.egpm.sector",
+      
         sourceJsonPath: "applyScreenMdmsData.Booking.Commerical_Ground_Cat",
         jsonPath: "Booking.bkCategory",
         required: true,
         props: {
           className: "applicant-details-error",
           required: true,
-          // disabled: true
         },
       }),
     },

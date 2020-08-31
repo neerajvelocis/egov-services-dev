@@ -326,6 +326,7 @@ class BookingCalendar extends React.Component {
         const modifiers = { start: from, end: enteredTo };
         const disabledDays = { before: this.state.from };
         const selectedDays = [from, { from, to: enteredTo }];
+        const WEEK_DAY_LONG=['Sun','Mon', 'Tue' ,'Wed' ,'Thu', 'Fri' ,'Sat' ]
         const DATAE = this.getPreviousTodayDates()
         const past = {
 
@@ -359,6 +360,7 @@ class BookingCalendar extends React.Component {
                         fromMonth={new Date()}
                         toMonth={newData}
                         modifiers={modifiers}
+                        weekdaysShort={WEEK_DAY_LONG}
 
                         modifiers={past}
                         // .DayPicker-Day--past
@@ -368,9 +370,9 @@ class BookingCalendar extends React.Component {
                         onDayMouseEnter={this.handleDayMouseEnter}
                     />
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span>
-                        {!from && !to && "Please select the first day."}
+                <div style={{ display: "flex", justifyContent: "space-between",marginTop : "10px" }}>
+                    <span style={{color: "#fe7a51" , fontWeight: "600"}}>
+                        {this.props.dselectedDays!==[] && !from && !to && "Please select the first day."}
                         {from && !to && "Please select the last day."}
                         {from &&
                             to &&
@@ -379,34 +381,91 @@ class BookingCalendar extends React.Component {
                         {from && to && (
                             <button
                                 className="link"
+                               
                                 onClick={this.handleResetClick}
                             >
                                 Reset
                             </button>
 
                         )}</span>
-                    {from && !to && <span>** Please click same day for booking single Date.</span>}
+                    {from && !to && <span style={{color: "#fe7a51" , fontWeight: "600"}}>** Please click same day for booking single Date.</span>}
                 </div>
                 <Helmet>
                     <style>{`
     .DayPicker{
         width : 100%
     }
-                    // .Range{width: 100%}
-        //   .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
-        //   background-color: #f0f8ff !important;
-          
-        //   color: #4a90e2;
-        //   }
+                     .Range{width: 100%}
+          .Range .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+         background-color: #fe7a51 !important;
+         outline: none;
+         color: ##fe7a51;
+        border-radius: 8px;
+           }
         .DayPicker:not(.DayPicker--interactionDisabled) .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover{
-            background-color : pink;
+            background-color: none;
+            background-color : #fe7a51;
+            border-radius: 8px;
         }
+
         .DayPicker-Day {
-              
+            outline: none;
+            font-weight: 500;
+            color: #000000d4;
             border-radius: 0 ;
           }
-  
-          .DayPicker-Month{width:100%; height:100%;margin:auto;}
+          .DayPicker-Day:hover{
+           opacity :0.5;
+          }
+          .DayPicker-Caption{
+            margin-bottom: 0;
+            padding: 0 ;
+            display: table-caption;
+            text-align: center;
+          }
+        
+        .DayPicker-Weekday {
+            background-color: #dcdcdc6e;
+            display: table-cell;
+            padding: 1.2em;
+            color: #fe7a51;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 500;
+        }
+        
+
+    .DayPicker-Caption > div {
+
+        font-weight: 500;
+        height: 80px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        font-size: 1.75em;
+        color: white;
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+
+
+
+
+
+
+
+      
+
+    background-color: #fe7a51;
+}
+ 
+.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+    position: relative;
+    border-radius: 8px;
+ 
+    background-color: #fe7a51;
+ 
+    color: #F0F8FF;
+}
+          .DayPicker-Month{width:100%; height:400px;margin:auto;outline: 1px solid #fe7a51;}
           .fl{float:left;}
           .filter-section{width:100%;display:block;margin-bottom:20px;margin-top:40px;}
           .calendar-section{width:100%;display:block;}
@@ -414,13 +473,20 @@ class BookingCalendar extends React.Component {
           .mb-10{margin-bottom: 10px;}
           .mt-10{margin-top: 10px;}
           .DayPicker-Day {
-            background-color: #8BD642;
-            color: white;
-            border: 2px solid white;
+           
+            
+            
+            border: 2px solid #f0f0f0;
           }
-          .DayPicker-Day.DayPicker-Day--disabled{background-color: red;}
-          .DayPicker-Day.DayPicker-Day--value{background-color: #E9E9E9;}
-          .DayPicker-Day.DayPicker-Day--outside{background-color: #E9E9E9;}
+          .DayPicker-wrapper {
+            outline: none;}
+          .DayPicker-Day.DayPicker-Day--disabled{color: gainsboro;}
+          .DayPicker-Day.DayPicker-Day--value{     color: #ccc;
+            background-image: none;}
+          .DayPicker-Day.DayPicker-Day--outside{ background-image:none;background-color: white;}
+          .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover {
+            background-color: #fe7a51;
+        }
   `}</style>
                 </Helmet>
             </div >
