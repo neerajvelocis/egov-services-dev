@@ -762,7 +762,7 @@ export const availabilityCalendar = getCommonCard({
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 12,
+                md: 8,
             },
             props: {
                 open: false,
