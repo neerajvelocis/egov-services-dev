@@ -338,7 +338,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
 
         jp.query(reduxDocuments, "$.*").forEach((doc) => {
             if (doc.documents && doc.documents.length > 0) {
-                if (doc.documentCode === "DOC.DOC_PICTURE") {
+                if (doc.documentCode === "BK_PCC_DOCUMENT") {
                     bookingDocuments = [
                         ...bookingDocuments,
                         {
@@ -357,7 +357,6 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         });
 
         set(payload, "wfDocuments", bookingDocuments);
-        // set(payload, "bkBookingType", "PACC");
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "PACC");

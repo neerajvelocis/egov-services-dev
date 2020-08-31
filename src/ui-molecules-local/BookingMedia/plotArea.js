@@ -73,7 +73,7 @@ class PlotArea extends React.Component {
     render() {
         const { masterDataPCC, availabilityCheckData } = this.props;
         return masterDataPCC.map((item) => {
-            let coords = `${item.X},${item.Y},${item.Radius}`;
+            let coords = `${item.x},${item.y},${item.radius}`;
             let venueId = item.id;
             return (
                 <area
@@ -90,8 +90,6 @@ class PlotArea extends React.Component {
                     coords={coords}
                     style={{
                         cursor: "pointer",
-                        background: "red",
-                        border: "5px solid #000",
                     }}
                     target="_self"
                 />

@@ -10,7 +10,7 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import get from "lodash/get";
 import { pccSummary } from "../summaryResource/pccSummary";
-import { applicantSummary } from "../summaryResource/applicantSummary";
+import { pccApplicantSummary } from "../summaryResource/pccApplicantSummary";
 import { documentsSummary } from "../summaryResource/documentsSummary";
 import { estimateSummary } from "../summaryResource/estimateSummary";
 
@@ -197,7 +197,7 @@ export const summaryDetails = getCommonCard({
         },
     },
     estimateSummary: estimateSummary,
-    applicantSummary: applicantSummary,
+    pccApplicantSummary: pccApplicantSummary,
     pccSummary: pccSummary,
     documentsSummary: documentsSummary
 });

@@ -21,8 +21,10 @@ import {
     localStorageGet,
     localStorageSet,
     getTenantId,
+    setapplicationNumber,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
+
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { set } from "lodash";
 
@@ -97,7 +99,7 @@ const callBackForNext = async (state, dispatch) => {
                 uploadedDocData &&
                 uploadedDocData.map((item) => {
                     return {
-                        title: "PCC_DOCUMENT",
+                        title: "BK_PCC_DOCUMENT",
                         link: item.fileUrl && item.fileUrl.split(",")[0],
                         linkText: "View",
                         name: item.fileName,
@@ -116,35 +118,33 @@ const callBackForNext = async (state, dispatch) => {
     }
     if (activeStep === 3) {
         // prepareDocumentsUploadData(state, dispatch);
-        let response = await createUpdatePCCApplication(
-            state,
-            dispatch,
-            "APPLY"
-        );
-        console.log(response, "step3Response");
-        let responseStatus = get(response, "status", "");
-        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+        // let response = await createUpdatePCCApplication(
+        //     state,
+        //     dispatch,
+        //     "APPLY"
+        // );
+        // console.log(response, "step3Response");
+        // let responseStatus = get(response, "status", "");
+        // if (responseStatus == "SUCCESS" || responseStatus == "success") {
             // let successMessage = {
             //     labelName: "APPLICATION SUBMITTED SUCCESSFULLY! ",
             //     labelKey: "", //UPLOAD_FILE_TOAST
             // };
             // dispatch(toggleSnackbar(true, successMessage, "success"));
-            let tenantId = getTenantId().split(".")[0];
-            let applicationNumber = get(
-                response,
-                "data.bkApplicationNumber",
-                ""
+            let applicationData = get(
+                state.screenConfiguration.preparedFinalObject,
+                "Booking"
             );
-            let businessService = get(response, "data.businessService", "");
-            const reviewUrl = `/egov-services/acknowledgement?purpose=${"apply"}&status=${"success"}&applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
+            const reviewUrl = `/egov-services/pay?applicationNumber=${applicationData.bkApplicationNumber}&tenantId=${applicationData.tenantId}&businessService=${applicationData.businessService}`;
             dispatch(setRoute(reviewUrl));
-        } else {
-            let errorMessage = {
-                labelName: "Submission Falied, Try Again later!",
-                labelKey: "", //UPLOAD_FILE_TOAST
-            };
-            dispatch(toggleSnackbar(true, errorMessage, "error"));
-        }
+        // }
+        //  else {
+        //     let errorMessage = {
+        //         labelName: "Submission Falied, Try Again later!",
+        //         labelKey: "", //UPLOAD_FILE_TOAST
+        //     };
+        //     dispatch(toggleSnackbar(true, errorMessage, "error"));
+        // }
     }
     if (activeStep !== 3) {
         if (isFormValid) {

@@ -14,16 +14,16 @@ class BookingMedia extends React.Component {
         return (
             <div>
                 <img
-                    id="Image-Maps-Com-image-maps-2017-04-25-084654"
+                    id="imageMap-pccMaps"
                     src={`https://zfunds3.s3.ap-south-1.amazonaws.com/park11.jpeg`}
                     // src={`https://zfunds3.s3.ap-south-1.amazonaws.com/${masterDataPCC[0].imagePath}`}
-                    border="0"
-                    usemap="#image-maps-2017-04-25-084654"
+                    // border="0"
+                    usemap="#pccMaps"
                     alt=""
                 />
                 <map
-                    name="image-maps-2017-04-25-084654"
-                    id="ImageMapsCom-image-maps-2017-04-25-084654"
+                    name="pccMaps"
+                    id="pccMaps"
                 >
                     <PlotArea masterDataPCC={masterDataPCC} availabilityCheckData={availabilityCheckData} />
                 </map>

@@ -29,7 +29,7 @@ import {
     generateBill,
 } from "../utils";
 import { pccSummary } from "./summaryResource/pccSummary";
-import { applicantSummary } from "./summaryResource/applicantSummary";
+import { pccApplicantSummary } from "./summaryResource/pccApplicantSummary";
 import { documentsSummary } from "./summaryResource/documentsSummary";
 import { estimateSummary } from "./summaryResource/estimateSummary";
 import { remarksSummary } from "./searchResource/remarksSummary";
@@ -81,7 +81,7 @@ const prepareDocumentsView = async (state, dispatch) => {
             fileName = values[0];
 
         documentsPreview.push({
-            title: "PCC_DOCUMENT",
+            title: "BK_PCC_DOCUMENT",
             fileStoreId: id,
             linkText: "View",
         });
@@ -113,24 +113,24 @@ const prepareDocumentsView = async (state, dispatch) => {
     }
 };
 
-const HideshowFooter = (action, bookingStatus) => {
-    // Hide edit Footer
-    // console.log("actionnew", action);
-    let showFooter = false;
-    if (bookingStatus === "PENDINGPAYMENT") {
-        showFooter = true;
-    }
-    // set(
-    //     action,
-    //     "screenConfig.components.div.children.footer.children.cancelButton.visible",
-    //     role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-    // );
-    set(
-        action,
-        "screenConfig.components.div.children.footer.children.submitButton.visible",
-        role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
-    );
-};
+// const HideshowFooter = (action, bookingStatus) => {
+//     // Hide edit Footer
+//     // console.log("actionnew", action);
+//     let showFooter = false;
+//     if (bookingStatus === "PENDINGPAYMENT") {
+//         showFooter = true;
+//     }
+//     // set(
+//     //     action,
+//     //     "screenConfig.components.div.children.footer.children.cancelButton.visible",
+//     //     role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+//     // );
+//     set(
+//         action,
+//         "screenConfig.components.div.children.footer.children.submitButton.visible",
+//         role_name === "CITIZEN" ? (showFooter === true ? true : false) : false
+//     );
+// };
 
 const setSearchResponse = async (
     state,
@@ -156,16 +156,14 @@ const setSearchResponse = async (
         "screenConfiguration.preparedFinalObject.Booking.bkApplicationStatus",
         {}
     );
-    if (bookingStatus === "APPROVED") {
+    if (bookingStatus === "APPLIED") {
         await generageBillCollection(state, dispatch, applicationNumber, tenantId)
     } else {
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     }
 
-
-
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
+    // HideshowFooter(action, bookingStatus);
 
     prepareDocumentsView(state, dispatch);
 
@@ -186,30 +184,30 @@ const setSearchResponse = async (
     )
 };
 
-const getPaymentGatwayList = async (action, state, dispatch) => {
-    try {
-        let payload = null;
-        payload = await httpRequest(
-            "post",
-            "/pg-service/gateway/v1/_search",
-            "_search",
-            [],
-            {}
-        );
-        let payloadprocess = [];
-        for (let index = 0; index < payload.length; index++) {
-            const element = payload[index];
-            let pay = {
-                element: element
-            }
-            payloadprocess.push(pay);
-        }
+// const getPaymentGatwayList = async (action, state, dispatch) => {
+//     try {
+//         let payload = null;
+//         payload = await httpRequest(
+//             "post",
+//             "/pg-service/gateway/v1/_search",
+//             "_search",
+//             [],
+//             {}
+//         );
+//         let payloadprocess = [];
+//         for (let index = 0; index < payload.length; index++) {
+//             const element = payload[index];
+//             let pay = {
+//                 element: element
+//             }
+//             payloadprocess.push(pay);
+//         }
 
-        dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
-    } catch (e) {
-        console.log(e);
-    }
-};
+//         dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
 
 
 const screenConfig = {
@@ -230,11 +228,11 @@ const screenConfig = {
         );
         setapplicationNumber(applicationNumber);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
-        getPaymentGatwayList(action, state, dispatch).then(response => {
-        });
+        // getPaymentGatwayList(action, state, dispatch).then(response => {
+        // });
         const queryObject = [
             { key: "tenantId", value: tenantId },
-            { key: "businessServices", value: "GFCP" },
+            { key: "businessServices", value: "PACC" },
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
 
@@ -282,13 +280,13 @@ const screenConfig = {
                 },
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    applicantSummary: applicantSummary,
+                    pccApplicantSummary: pccApplicantSummary,
                     pccSummary: pccSummary,
                     documentsSummary: documentsSummary,
                     remarksSummary: remarksSummary,
                 }),
                 // break: getBreak(),
-                footer: footer,
+                // footer: footer,
             }
         }
     }

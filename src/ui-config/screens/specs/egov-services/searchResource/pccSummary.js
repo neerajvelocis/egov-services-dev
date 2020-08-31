@@ -69,26 +69,26 @@ export const pccSummary = getCommonGrayCard({
             className: "sellmeatapplicant-summary",
             scheama: getCommonGrayCard({
                 applicationContainer: getCommonContainer({
-                    HouseNo: getLabelWithValue(
-                        {
-                            labelName: "House No.",
-                            labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkHouseNo",
-                            callBack: (value) => {
-                                if (
-                                    value === undefined ||
-                                    value === "" ||
-                                    value === null
-                                ) {
-                                    return "NA";
-                                } else {
-                                    return value;
-                                }
-                            },
-                        }
-                    ),
+                    // HouseNo: getLabelWithValue(
+                    //     {
+                    //         labelName: "House No.",
+                    //         labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkHouseNo",
+                    //         callBack: (value) => {
+                    //             if (
+                    //                 value === undefined ||
+                    //                 value === "" ||
+                    //                 value === null
+                    //             ) {
+                    //                 return "NA";
+                    //             } else {
+                    //                 return value;
+                    //             }
+                    //         },
+                    //     }
+                    // ),
                     Purpose: getLabelWithValue(
                         {
                             labelName: "Purpose",

@@ -150,26 +150,9 @@ const getMdmsData = async (action, state, dispatch) => {
                             name: "Sector",
                         },
                         {
-                            name: "CityType",
+                            name: "PCC_Document",
                         },
-                        {
-                            name: "PropertyType",
-                        },
-                        {
-                            name: "Area",
-                        },
-                        {
-                            name: "Duration",
-                        },
-                        {
-                            name: "Category",
-                        },
-                        {
-                            name: "VillageCity",
-                        },
-                        {
-                            name: "Type_of_Construction",
-                        },
+
                     ],
                 },
             ],
@@ -262,6 +245,27 @@ export const prepareEditFlow = async (
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
     if (availabilityCheckData !== undefined) {
+        const masterData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.masterData"
+        );
+
+        const masterDataItem = masterData.filter(
+            (el) => el.id === availabilityCheckData.bkBookingVenue
+        );
+
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkDimension",
+                masterDataItem[0].dimensionSqrYards
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkLocation",
+                masterDataItem[0].name
+            )
+        );
         dispatch(
             prepareFinalObject(
                 "Booking.bkFromDate",
@@ -272,6 +276,40 @@ export const prepareEditFlow = async (
             prepareFinalObject(
                 "Booking.bkToDate",
                 convertDateInYMD(availabilityCheckData.bkToDate)
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkCleansingCharges",
+                masterDataItem[0].cleaningCharges
+            )
+        );
+        dispatch(
+            prepareFinalObject("Booking.bkRent", masterDataItem[0].rent)
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkSurchargeRent",
+                (masterDataItem[0].rent * masterDataItem[0].surcharge) /
+                    100
+            )
+        );
+
+        // dispatch(
+        //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
+        // );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkUtgst",
+                (masterDataItem[0].rent * masterDataItem[0].utgstRate) /
+                    100
+            )
+        );
+        dispatch(
+            prepareFinalObject(
+                "Booking.bkCgst",
+                (masterDataItem[0].rent * masterDataItem[0].cgstRate) /
+                    100
             )
         );
 
@@ -293,8 +331,6 @@ export const prepareEditFlow = async (
                 `/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
             )
         );
-        // dispatch(setRoute(`/egov-services/checkavailability_oswmcc?application`));
-        console.log("availabilityCheckData in undefined");
     }
     // if (applicationNumber) {
     //     let response = await getSearchResultsView([
@@ -392,7 +428,6 @@ const screenConfig = {
                 const masterDataItem = masterData.filter(
                     (el) => el.id === availabilityCheckData.bkBookingVenue
                 );
-                console.log(masterDataItem, "masterDataItem");
 
                 dispatch(
                     prepareFinalObject(
@@ -418,7 +453,6 @@ const screenConfig = {
                         convertDateInYMD(availabilityCheckData.bkToDate)
                     )
                 );
-                // dispatch(prepareFinalObject("Booking.bkType", "Parks"));
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCleansingCharges",
