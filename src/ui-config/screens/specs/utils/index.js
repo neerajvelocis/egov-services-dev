@@ -737,7 +737,7 @@ export const downloadReceipt = (
                     baseCharge: parseFloat(applicationData.bkRent).toFixed(2),
                     cleaningCharges: parseFloat(applicationData.bkCleansingCharges).toFixed(2),
                     surcharges: parseFloat(applicationData.bkSurchargeRent).toFixed(2),
-                    facilitationCharge: 0.00,
+                    facilitationCharge: "0.00",
                     gst: (parseFloat(applicationData.bkUtgst) + parseFloat(applicationData.bkCgst)).toFixed(2),
                     totalAmount: (parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)).toFixed(2),
 
