@@ -213,7 +213,6 @@ class CustomTimeSlots extends Component {
                 <style>{
 
                     `
-                    .carousel.carousel-slider{margin-top: 40px;}
                     .header-date{font-weight: bold;font-size:18px;color:white;}
                     .date-timeslot{border-right: 1px solid white;color:white;font-weight:bold;text-align:center;}
                     p.carousel-status, .control-dots{display:none;}
