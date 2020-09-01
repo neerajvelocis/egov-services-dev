@@ -232,7 +232,6 @@ const callBackForResetCalender = (state, dispatch, action) => {
         dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
         dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
     }
-
 };
 
 
@@ -738,6 +737,15 @@ export const availabilityCalendar = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 12,
+            },
+            props: {
+                open: false,
+                maxWidth: false,
+                screenKey: "bookingCalendar",
+                reservedDays: [],
+            },
+            children: {
+                popup: {},
             },
         },
         actionButtons : {

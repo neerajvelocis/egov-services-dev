@@ -113,60 +113,9 @@ const callBackForResetCalender = (state, dispatch, action) => {
     );
 
     if (availabilityCheckData !== undefined) {
-
-        if (availabilityCheckData.reservedDays) {
-
-            const actionDefination = [
-                {
-                    path:
-                        "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-                    property: "reservedDays",
-                    value: [],
-                },
-            ];
-            dispatchMultipleFieldChangeAction(
-                "checkavailability",
-                actionDefination,
-                dispatch
-            );
-            // dispatch(
-            //     handleField(
-            //         "checkavailability",
-            //         "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
-
-            //         "props.reservedDays",
-            //         []
-            //     )
-            // );
-            dispatch(prepareFinalObject("availabilityCheckData", undefined));
-        }
-
+        dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
+        dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
     }
-    if (availabilityCheckData.reservedDays) {
-        dispatch(
-            handleField(
-                "checkavailability",
-                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
-                "props.reservedDays",
-                []
-            )
-        );
-    }
-
-    // const actionDefination = [
-    //     {
-    //         path:
-    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-    //         property: "reservedDays",
-    //         value: [],
-    //     },
-    // ];
-    // dispatchMultipleFieldChangeAction(
-    //     "checkavailability",
-    //     actionDefination,
-    //     dispatch
-    // );
-    // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 };
 
 const callBackForBook = async (state, dispatch) => {
@@ -485,6 +434,15 @@ export const checkAvailabilityCalendar = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 12,
+            },
+             props: {
+                open: false,
+                maxWidth: false,
+                screenKey: "bookingCalendar",
+                reservedDays: [],
+            },
+            children: {
+                popup: {},
             },
         },
         actionButtons : {
