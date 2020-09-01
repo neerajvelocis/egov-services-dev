@@ -22,7 +22,7 @@ class BookingMedia extends React.Component {
                     }`}
                     // src={`https://zfunds3.s3.ap-south-1.amazonaws.com/${masterDataPCC[0].imagePath}`}
                     // border="0"
-                    usemap="#pccMaps"
+                    useMap="#pccMaps"
                     alt=""
                 />
                 <map name="pccMaps" id="pccMaps">

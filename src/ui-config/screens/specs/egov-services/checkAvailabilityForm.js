@@ -106,6 +106,68 @@ const callBackForReset = (state, dispatch, action) => {
     // );
     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 };
+const callBackForResetCalender = (state, dispatch, action) => {
+    const availabilityCheckData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
+    );
+
+    if (availabilityCheckData !== undefined) {
+
+        if (availabilityCheckData.reservedDays) {
+
+            const actionDefination = [
+                {
+                    path:
+                        "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                    property: "reservedDays",
+                    value: [],
+                },
+            ];
+            dispatchMultipleFieldChangeAction(
+                "checkavailability",
+                actionDefination,
+                dispatch
+            );
+            // dispatch(
+            //     handleField(
+            //         "checkavailability",
+            //         "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
+
+            //         "props.reservedDays",
+            //         []
+            //     )
+            // );
+            dispatch(prepareFinalObject("availabilityCheckData", undefined));
+        }
+
+    }
+    if (availabilityCheckData.reservedDays) {
+        dispatch(
+            handleField(
+                "checkavailability",
+                "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar",
+                "props.reservedDays",
+                []
+            )
+        );
+    }
+
+    // const actionDefination = [
+    //     {
+    //         path:
+    //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+    //         property: "reservedDays",
+    //         value: [],
+    //     },
+    // ];
+    // dispatchMultipleFieldChangeAction(
+    //     "checkavailability",
+    //     actionDefination,
+    //     dispatch
+    // );
+    // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
+};
 
 const callBackForBook = async (state, dispatch) => {
     let availabilityCheckData =
@@ -414,8 +476,7 @@ export const checkAvailabilitySearch = getCommonCard({
 });
 export const checkAvailabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
-       
-
+    
         bookingCalendar: {
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",
@@ -423,55 +484,72 @@ export const checkAvailabilityCalendar = getCommonCard({
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 8,
-            },
-            props: {
-                open: false,
-                maxWidth: false,
-                screenKey: "bookingCalendar",
-                reservedDays: [],
-            },
-            children: {
-                popup: {},
+                md: 12,
             },
         },
-        dummyDiv: {
+        actionButtons : {
             uiFramework: "custom-atoms",
-            componentPath: "Div",
+            componentPath: "Container",
             gridDefination: {
                 xs: 12,
-                sm: 12,
-                md: 9,
             },
-            visible: true,
             props: {
-                disabled: true,
-            },
-        },
-
-        bookButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
                 style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginTop: "50px",
+                    justifyContent: "flex-end",
                 },
             },
-
-            children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Book",
-                    labelKey: "BK_CGB_BOOK_LABEL",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForBook,
-            },
-            visible: true,
+            children : {
+                resetButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "outlined",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                            marginRight: "16px"
+                        },
+                    },
+        
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "RESET",
+                            labelKey: "RESET",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForResetCalender,
+                    },
+                    visible: true,
+                },
+                bookButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "contained",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                        },
+                    },
+        
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "Book",
+                            labelKey: "BK_CGB_BOOK_LABEL",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForBook,
+                    },
+                    visible: true,
+                },
+            }
         },
+       
     }),
 });

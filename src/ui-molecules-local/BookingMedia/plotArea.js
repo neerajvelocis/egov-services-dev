@@ -77,6 +77,7 @@ class PlotArea extends React.Component {
             let venueId = item.id;
             return (
                 <area
+                    key={item.id}
                     alt={item.name}
                     title={item.name}
                     onClick={(e) => this.getAvailabilityData(e, item.id)}
