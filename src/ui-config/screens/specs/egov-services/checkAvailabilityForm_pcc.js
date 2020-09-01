@@ -521,7 +521,7 @@ export const availabilityForm = getCommonCard({
                         "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityCalendarWrapper.visible",
-                        true
+                        bkBookingType === "Parks" ? true : false
                     );
 
                     let requestBody = {
