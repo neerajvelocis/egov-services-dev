@@ -233,7 +233,8 @@ const calculateBetweenDaysCount = (startDate, endDate) => {
     const firstDate = new Date(startDate);
     const secondDate = new Date(endDate);
 
-    const daysCount = Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
+    const daysCount =
+        Math.round(Math.abs((firstDate - secondDate) / oneDay)) + 1;
     return daysCount;
 };
 
@@ -290,6 +291,8 @@ export const prepareEditFlow = async (
                 convertDateInYMD(availabilityCheckData.bkToDate)
             )
         );
+        let rent = Number(masterDataItem[0].rent);
+        let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
         dispatch(
             prepareFinalObject(
                 "Booking.bkCleansingCharges",
@@ -305,26 +308,24 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkSurchargeRent",
-                ((masterDataItem[0].rent * masterDataItem[0].surcharge) / 100) *
-                    daysCount
+                ((Number(masterDataItem[0].rent) + Number(masterDataItem[0].cleaningCharges)) * daysCount) * Number(masterDataItem[0].surcharge) / 100
             )
         );
 
         // dispatch(
         //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
         // );
+
         dispatch(
             prepareFinalObject(
                 "Booking.bkUtgst",
-                ((masterDataItem[0].rent * masterDataItem[0].utgstRate) / 100) *
-                    daysCount
+                ((Number(masterDataItem[0].rent) + Number(masterDataItem[0].cleaningCharges)) * daysCount) * Number(masterDataItem[0].utgstRate) / 100
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkCgst",
-                ((masterDataItem[0].rent * masterDataItem[0].cgstRate) / 100) *
-                    daysCount
+                ((Number(masterDataItem[0].rent) + Number(masterDataItem[0].cleaningCharges)) * daysCount) * Number(masterDataItem[0].cgstRate) / 100
             )
         );
 
@@ -500,14 +501,17 @@ const screenConfig = {
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkUtgst",
-                        ((masterDataItem[0].rent * masterDataItem[0].utgstRate) / 100) *
+                        ((masterDataItem[0].rent *
+                            masterDataItem[0].utgstRate) /
+                            100) *
                             daysCount
                     )
                 );
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCgst",
-                        ((masterDataItem[0].rent * masterDataItem[0].cgstRate) / 100) *
+                        ((masterDataItem[0].rent * masterDataItem[0].cgstRate) /
+                            100) *
                             daysCount
                     )
                 );
