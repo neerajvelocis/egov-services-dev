@@ -75,14 +75,14 @@ class CustomTimeSlots extends Component {
     selectTimeSlot = (e) => {
         //alert(e.target.getAttribute('data-date')+'---'+e.target.getAttribute('data-timeslot'));
         var cbarray = document.getElementsByName("time-slot");
-        console.log(cbarray);
+        
         for (var i = 0; i < cbarray.length; i++) {
 
             cbarray[i].checked = false;
         }
 
         document.getElementById(e.target.getAttribute('data-date') + ':' + e.target.getAttribute('data-timeslot')).checked = true;
-        alert(e.target.getAttribute('data-date') + '---' + e.target.getAttribute('data-timeslot'));
+        console.log(e.target.getAttribute('data-date') + '---' + e.target.getAttribute('data-timeslot'));
 
     }
     render() {
