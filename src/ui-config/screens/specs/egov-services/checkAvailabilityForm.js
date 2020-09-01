@@ -106,6 +106,17 @@ const callBackForReset = (state, dispatch, action) => {
     // );
     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 };
+const callBackForResetCalender = (state, dispatch, action) => {
+    const availabilityCheckData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
+    );
+
+    if (availabilityCheckData !== undefined) {
+        dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
+        dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
+    }
+};
 
 const callBackForBook = async (state, dispatch) => {
     let availabilityCheckData =
@@ -414,8 +425,7 @@ export const checkAvailabilitySearch = getCommonCard({
 });
 export const checkAvailabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
-       
-
+    
         bookingCalendar: {
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",
@@ -423,9 +433,9 @@ export const checkAvailabilityCalendar = getCommonCard({
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 8,
+                md: 12,
             },
-            props: {
+             props: {
                 open: false,
                 maxWidth: false,
                 screenKey: "bookingCalendar",
@@ -435,43 +445,69 @@ export const checkAvailabilityCalendar = getCommonCard({
                 popup: {},
             },
         },
-        dummyDiv: {
+        actionButtons : {
             uiFramework: "custom-atoms",
-            componentPath: "Div",
+            componentPath: "Container",
             gridDefination: {
                 xs: 12,
-                sm: 12,
-                md: 9,
             },
-            visible: true,
             props: {
-                disabled: true,
-            },
-        },
-
-        bookButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
                 style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginTop: "50px",
+                    justifyContent: "flex-end",
                 },
             },
-
-            children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Book",
-                    labelKey: "BK_CGB_BOOK_LABEL",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForBook,
-            },
-            visible: true,
+            children : {
+                resetButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "outlined",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                            marginRight: "16px"
+                        },
+                    },
+        
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "RESET",
+                            labelKey: "RESET",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForResetCalender,
+                    },
+                    visible: true,
+                },
+                bookButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "contained",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                        },
+                    },
+        
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "Book",
+                            labelKey: "BK_CGB_BOOK_LABEL",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForBook,
+                    },
+                    visible: true,
+                },
+            }
         },
+       
     }),
 });

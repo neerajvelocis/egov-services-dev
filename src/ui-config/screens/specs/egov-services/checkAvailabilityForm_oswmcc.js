@@ -154,6 +154,17 @@ const callBackForReset = (state, dispatch, action) => {
     // );
     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 };
+const callBackForResetCalender = (state, dispatch, action) => {
+    const availabilityCheckData = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData"
+    );
+
+    if (availabilityCheckData !== undefined) {
+        dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
+        dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
+    }
+};
 
 const callBackForBook = async (state, dispatch) => {
     let availabilityCheckData =
@@ -762,7 +773,7 @@ export const availabilityCalendar = getCommonCard({
             gridDefination: {
                 xs: 12,
                 sm: 12,
-                md: 8,
+                md: 12,
             },
             props: {
                 open: false,
@@ -773,36 +784,69 @@ export const availabilityCalendar = getCommonCard({
             children: {
                 popup: {},
             },
-            children: {
-                popup: {},
-            },
         },
-        bookButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginTop: "50px",
-                },
-            },
+        actionButtons : {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
             gridDefination: {
                 xs: 12,
-                align: "right",
             },
-            children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Book",
-                    labelKey: "BK_OSWMCC_BOOK_LABEL",
-                }),
+            props: {
+                style: {
+                    justifyContent: "flex-end",
+                },
             },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForBook,
-            },
-            visible: true,
+            children : {
+                resetButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "outlined",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                            marginRight: "16px"
+                        },
+                    },
+        
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "RESET",
+                            labelKey: "RESET",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForResetCalender,
+                    },
+                    visible: true,
+                },
+                bookButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "contained",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                        },
+                    },
+        
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "Book",
+                            labelKey: "BK_CGB_BOOK_LABEL",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForBook,
+                    },
+                    visible: true,
+                },
+            }
         },
     }),
 });
