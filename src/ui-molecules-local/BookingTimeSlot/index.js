@@ -73,8 +73,16 @@ class CustomTimeSlots extends Component {
     }
 
     selectTimeSlot = (e) => {
-        alert(e.target.getAttribute('data-date')+'---'+e.target.getAttribute('data-timeslot'));
-        
+        //alert(e.target.getAttribute('data-date')+'---'+e.target.getAttribute('data-timeslot'));
+        var cbarray = document.getElementsByName("time-slot");
+        console.log(cbarray);
+        for (var i = 0; i < cbarray.length; i++) {
+
+            cbarray[i].checked = false;
+        }
+
+        document.getElementById(e.target.getAttribute('data-date') + ':' + e.target.getAttribute('data-timeslot')).checked = true;
+        alert(e.target.getAttribute('data-date') + '---' + e.target.getAttribute('data-timeslot'));
 
     }
     render() {
@@ -82,11 +90,11 @@ class CustomTimeSlots extends Component {
         const classes = withStyles();
         let { rows } = this.state;
 
-        
+
         const arrowStyles = {
             position: 'absolute',
             zIndex: 2,
-            top: 'calc(50% - 15px)',
+            top: '16px',
             width: 30,
             height: 30,
             cursor: 'pointer',
@@ -116,7 +124,7 @@ class CustomTimeSlots extends Component {
                     return <div>
                         <Paper className={classes.root}>
                             <Table className={classes.table}>
-                                <TableHead className={classes.head}>
+                                <TableHead className= {`timeslot-table-head ${classes.head}`}>
 
                                     <TableRow >
 
@@ -168,29 +176,30 @@ class CustomTimeSlots extends Component {
                                                 }
                                             }
                                             //item1 = item1.split(":")[0];
-                                            
-                                                
-                                                    if (timeSlotExpired === "expired-time-slot") {
-                                                        return (
-                                                            <TableCell className={`date-timeslot ${timeSlotExpired}`} data-date={item.date} data-timeslot={item1} align={"center"}>
-                                                                {item1}
-                                                            </TableCell>
-                                                        )
-                                                    } else if (availabilityClass === "booked-time-slot") {
-                                                        return (
-                                                            <TableCell className={`date-timeslot ${timeSlotExpired} ${availabilityClass}`} data-date={item.date} data-timeslot={item1} align={"center"} >
-                                                                {item1}
-                                                            </TableCell>
-                                                        )
-                                                    } else {
-                                                        return (
-                                                            <TableCell className={`date-timeslot ${timeSlotExpired} ${availabilityClass}`} data-date={item.date} data-timeslot={item1} align={"center"} onClick={this.selectTimeSlot}>
-                                                                {item1}
-                                                            </TableCell>
-                                                        )
-                                                    }
-                                                
-                                            
+
+
+                                            if (timeSlotExpired === "expired-time-slot") {
+                                                return (
+                                                    <TableCell className={`date-timeslot ${timeSlotExpired}`} data-date={item.date} data-timeslot={item1} align={"center"}>
+                                                        {item1}
+                                                    </TableCell>
+                                                )
+                                            } else if (availabilityClass === "booked-time-slot") {
+                                                return (
+                                                    <TableCell className={`date-timeslot ${timeSlotExpired} ${availabilityClass}`} data-date={item.date} data-timeslot={item1} align={"center"} >
+                                                        {item1}
+                                                    </TableCell>
+                                                )
+                                            } else {
+                                                return (
+                                                    <TableCell className={`date-timeslot ${timeSlotExpired} ${availabilityClass}`} data-date={item.date} data-timeslot={item1} align={"center"} onClick={this.selectTimeSlot}>
+                                                        {item1}
+                                                        <input className = "book-timeslot" name="time-slot" type="checkbox" id={item.date + ':' + item1} data-date={item.date} data-timeslot={item1} onClick={this.selectTimeSlot} />
+                                                    </TableCell>
+                                                )
+                                            }
+
+
 
                                         })}
                                     </TableRow>
@@ -205,13 +214,17 @@ class CustomTimeSlots extends Component {
 
                     `
                     .carousel.carousel-slider{margin-top: 40px;}
-                    .header-date{font-weight: bold;font-size:18px;}
-                    .date-timeslot{border-right: 1px solid white;color:white;font-weight:bold;}
+                    .header-date{font-weight: bold;font-size:18px;color:white;}
+                    .date-timeslot{border-right: 1px solid white;color:white;font-weight:bold;text-align:center;}
                     p.carousel-status, .control-dots{display:none;}
-                    .available-time-slot{background-color:green;cursor:pointer;}
+                    .available-time-slot{background-color:green;}
                     .booked-time-slot{background-color:red}
                     .available-time-slot:hover {opacity: 0.5;}
                     .date-timeslot.expired-time-slot{background-color: gray;}
+                    .book-timeslot{position: absolute;top: 65px;width: 21px;height: 21px;margin-left:9px !important;}
+                    thead.timeslot-table-head{border: 1px solid gray;background-color:#FE7A51;}
+                    thead.timeslot-table-head tr th{text-align: center;}
+                    .carousel.carousel-slider ul li.slide{border: none !important;}
                     `
                 }
 
