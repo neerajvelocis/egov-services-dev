@@ -514,21 +514,21 @@ export const availabilityForm = getCommonCard({
 
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityTimeSlotWrapper.visible",
                         bkBookingType === "Parks" ? false : true
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityCalendarWrapper.visible",
                         true
@@ -724,6 +724,33 @@ export const availabilityTimeSlot = getCommonCard({
                 sm: 12,
                 md: 12,
             },
+        },
+        bookButton: {
+            componentPath: "Button",
+            props: {
+                variant: "contained",
+                color: "primary",
+                style: {
+                    minWidth: "200px",
+                    height: "48px",
+                    marginTop: "50px",
+                },
+            },
+            gridDefination: {
+                xs: 12,
+                align: "right",
+            },
+            children: {
+                submitButtonLabel: getLabel({
+                    labelName: "Book",
+                    labelKey: "BK_OSWMCC_BOOK_LABEL",
+                }),
+            },
+            onClickDefination: {
+                action: "condition",
+                callBack: callBackForBook,
+            },
+            visible: true,
         },
     }),
 });

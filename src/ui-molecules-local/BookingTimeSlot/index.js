@@ -18,7 +18,7 @@ class CustomTimeSlots extends Component {
         var date = new Date();
         var date1 = new Date();
         for (let i = 0; i < 10; i++) {
-            let month = ('0' + date1.getMonth()).slice(-2);
+            let month = ('0' + (date1.getMonth()+1)).slice(-2);
             let day = ('0' + date1.getDate()).slice(-2);
             let year = date1.getFullYear();
             bookedSlotArray.push(
@@ -32,7 +32,7 @@ class CustomTimeSlots extends Component {
 
 
         for (let i = 0; i < 180; i++) {
-            let month = ('0' + date.getMonth()).slice(-2);
+            let month = ('0' + (date.getMonth()+1)).slice(-2);
             let day = ('0' + date.getDate()).slice(-2);
             let year = date.getFullYear();
             timeSlotArray.push(
@@ -150,7 +150,7 @@ class CustomTimeSlots extends Component {
                                             let currentDate = this.state.currentDate;
                                             let currentTime = parseFloat(`${currentDate.getHours()}.${currentDate.getMinutes()}`);
 
-                                            let currentMonth = ('0' + currentDate.getMonth()).slice(-2);
+                                            let currentMonth = ('0' + (currentDate.getMonth()+1)).slice(-2);
                                             let currentDay = ('0' + currentDate.getDate()).slice(-2);
                                             let currentYear = currentDate.getFullYear();
                                             let compareDate = `${currentDay}-${currentMonth}-${currentYear}`
@@ -213,7 +213,6 @@ class CustomTimeSlots extends Component {
                 <style>{
 
                     `
-                    .carousel.carousel-slider{margin-top: 40px;}
                     .header-date{font-weight: bold;font-size:18px;color:white;}
                     .date-timeslot{border-right: 1px solid white;color:white;font-weight:bold;text-align:center;}
                     p.carousel-status, .control-dots{display:none;}
