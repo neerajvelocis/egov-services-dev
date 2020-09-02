@@ -456,10 +456,35 @@ export const availabilityForm = getCommonCard({
                 jsonPath: "availabilityCheckData.bkBookingType",
                 defaultValue: "Parks",
                 required: true,
+
             },
             required: true,
             type: "array",
+            beforeFieldChange: (action, state, dispatch) => {
+                set(
+                    state.screenConfiguration.screenConfig[
+                    "checkavailability_pcc"
+                    ],
+                    "components.div.children.availabilityMediaCardWrapper.visible",
+                    false
+                );
+                set(
+                    state.screenConfiguration.screenConfig[
+                    "checkavailability_pcc"
+                    ],
+                    "components.div.children.availabilityTimeSlotWrapper.visible",
+                    false
+                );
+                set(
+                    state.screenConfiguration.screenConfig[
+                    "checkavailability_pcc"
+                    ],
+                    "components.div.children.availabilityCalendarWrapper.visible",
+                    false
+                );
+            }
         },
+
         bkSector: {
             ...getSelectField({
                 label: {
@@ -775,7 +800,7 @@ export const availabilityCalendar = getCommonCard({
                 popup: {},
             },
         },
-        actionButtons : {
+        actionButtons: {
             uiFramework: "custom-atoms",
             componentPath: "Container",
             gridDefination: {
@@ -786,7 +811,7 @@ export const availabilityCalendar = getCommonCard({
                     justifyContent: "flex-end",
                 },
             },
-            children : {
+            children: {
                 resetButton: {
                     componentPath: "Button",
                     props: {
@@ -799,7 +824,7 @@ export const availabilityCalendar = getCommonCard({
                             marginRight: "16px"
                         },
                     },
-        
+
                     children: {
                         submitButtonLabel: getLabel({
                             labelName: "RESET",
@@ -823,7 +848,7 @@ export const availabilityCalendar = getCommonCard({
                             marginTop: "10px",
                         },
                     },
-        
+
                     children: {
                         submitButtonLabel: getLabel({
                             labelName: "Book",
