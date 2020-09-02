@@ -482,6 +482,14 @@ export const availabilityForm = getCommonCard({
                     "components.div.children.availabilityCalendarWrapper.visible",
                     false
                 );
+
+                set(
+                    state,
+                    "screenConfiguration.screenConfig.checkavailability_pcc.components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector.props.value",
+                    ""
+                );
+
+
             }
         },
 
@@ -551,13 +559,13 @@ export const availabilityForm = getCommonCard({
                         "components.div.children.availabilityTimeSlotWrapper.visible",
                         bkBookingType === "Parks" ? false : true
                     );
-                    set(
-                        state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
-                        ],
-                        "components.div.children.availabilityCalendarWrapper.visible",
-                        bkBookingType === "Parks" ? true : false
-                    );
+                    // set(
+                    //     state.screenConfiguration.screenConfig[
+                    //     "checkavailability_pcc"
+                    //     ],
+                    //     "components.div.children.availabilityCalendarWrapper.visible",
+                    //     bkBookingType === "Parks" ? true : false
+                    // );
 
                     let requestBody = {
                         venueType: bkBookingType,

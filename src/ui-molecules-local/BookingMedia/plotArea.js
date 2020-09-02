@@ -13,6 +13,7 @@ import {
     getBetweenDays,
 } from "../../ui-config/screens/specs/utils";
 import get from "lodash/get";
+import set from "lodash/set";
 
 class PlotArea extends React.Component {
     constructor(props) {
@@ -39,6 +40,11 @@ class PlotArea extends React.Component {
 
             const response = await getAvailabilityDataPCC(requestBody);
             let responseStatus = get(response, "status", "");
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                true
+            );
             if (responseStatus == "SUCCESS" || responseStatus == "success") {
                 let data = response.data;
                 let reservedDates = [];
@@ -56,6 +62,8 @@ class PlotArea extends React.Component {
                     reservedDates
                 );
 
+
+                
                 window.scrollTo({
                     top: document.body.scrollHeight,
                     behavior: "smooth",
@@ -71,6 +79,7 @@ class PlotArea extends React.Component {
     };
 
     render() {
+        console.log(this.props, "Nerosss");
         const { masterDataPCC, availabilityCheckData } = this.props;
         return masterDataPCC.map((item) => {
             let coords = `${item.x},${item.y},${item.radius}`;
@@ -98,12 +107,12 @@ class PlotArea extends React.Component {
         });
     }
 }
-// const mapStateToProps = (state) => {
-//     return {
-//         availabilityCheckData:
-//             state.screenConfiguration.preparedFinalObject.availabilityCheckData,
-//     };
-// };
+const mapStateToProps = (state) => {
+    return {
+        calendarVisiblity:
+            state.screenConfiguration.screenConfig
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -115,4 +124,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(null, mapDispatchToProps)(PlotArea);
+export default connect(mapStateToProps, mapDispatchToProps)(PlotArea);

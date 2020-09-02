@@ -275,7 +275,7 @@ class BookingCalendar extends React.Component {
         };
         let data = new Date();
         let newData = new Date(data.setMonth(data.getMonth() + 5));
-
+console.log(from, "Nero From");
         return (
             <div className="calendar-wrapper">
                 <div className="calendar-section">
@@ -348,7 +348,19 @@ class BookingCalendar extends React.Component {
                                 letterSpacing: "0.67px",
                             }}
                         >
-                            {!from ? "--/--/----" : from.toLocaleDateString()}
+                            {
+                             (() => {
+                                 
+                                 console.log(typeof from);
+                                if(!from || from === 'undefined' || from === 'Invalide Date'){
+                                    return "--/--/----";
+                                }else{
+                                    console.log('hello');
+                                    return from.toLocaleDateString()
+                                }
+                             })()   
+                            //!from ? "--/--/----" : from.toLocaleDateString()
+                            }
                         </span>
                     </div>
                     <div style={{ marginBottom: 12 }}>
