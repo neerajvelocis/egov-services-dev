@@ -3,6 +3,7 @@ import {
     getCommonContainer,
     getCommonHeader,
     getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -28,12 +29,11 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { pccSummary } from "./summaryResource/pccSummary";
-import { pccApplicantSummary } from "./summaryResource/pccApplicantSummary";
-import { documentsSummary } from "./summaryResource/documentsSummary";
-import { estimateSummary } from "./summaryResource/estimateSummary";
-import { remarksSummary } from "./searchResource/remarksSummary";
-import { footerForParkAndCC } from "./searchResource/citizenFooter";
+import { pccSummary } from "./refundResource/pccSummary";
+
+import { estimateSummary } from "./refundResource/estimateSummary";
+
+import { footerForParkAndCC } from "./refundResource/citizenFooter";
 import {
     footerReviewTop,
 } from "./searchResource/footer";
@@ -48,6 +48,16 @@ import { httpRequest } from "../../../../ui-utils";
 
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
+
+const confirmationStatement = getCommonGrayCard({
+
+    header: getCommonHeader({
+        labelName: "Please confirm booking cancelation by clicking confirm button",
+        labelKey: "Please confirm booking cancelation by clicking confirm button",
+    })
+
+
+})
 
 const titlebar = getCommonContainer({
     header: getCommonHeader({
@@ -144,6 +154,7 @@ const setSearchResponse = async (
         { key: "applicationNumber", value: applicationNumber },
     ]);
     let recData = get(response, "bookingsModelList", []);
+    console.log(recData, "nero data");
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
@@ -184,35 +195,10 @@ const setSearchResponse = async (
     )
 };
 
-// const getPaymentGatwayList = async (action, state, dispatch) => {
-//     try {
-//         let payload = null;
-//         payload = await httpRequest(
-//             "post",
-//             "/pg-service/gateway/v1/_search",
-//             "_search",
-//             [],
-//             {}
-//         );
-//         let payloadprocess = [];
-//         for (let index = 0; index < payload.length; index++) {
-//             const element = payload[index];
-//             let pay = {
-//                 element: element
-//             }
-//             payloadprocess.push(pay);
-//         }
-
-//         dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// };
-
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "pcc-search-preview",
+    name: "cancelparkccbooking",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -257,35 +243,16 @@ const screenConfig = {
                             },
                             ...titlebar,
                         },
-                        helpSection: {
-                            uiFramework: "custom-atoms",
-                            componentPath: "Container",
-                            props: {
-                                color: "primary",
-                                style: { justifyContent: "flex-end" },
-                            },
-                            gridDefination: {
-                                xs: 12,
-                                sm: 4,
-                                align: "right",
-                            },
-                        },
+
                     },
                 },
-                taskStatus: {
-                  uiFramework: "custom-containers-local",
-                  componentPath: "WorkFlowContainer",
-                  moduleName: "egov-services",
-                  visible:  true,
-                },
+
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    pccApplicantSummary: pccApplicantSummary,
                     pccSummary: pccSummary,
-                    documentsSummary: documentsSummary,
-                    remarksSummary: remarksSummary,
+                    confirmationStatement: confirmationStatement
+
                 }),
-                // break: getBreak(),
                 footer: footerForParkAndCC,
             }
         }
