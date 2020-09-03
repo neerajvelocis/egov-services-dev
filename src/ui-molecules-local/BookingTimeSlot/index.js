@@ -213,7 +213,7 @@ class CustomTimeSlots extends Component {
                 <style>{
 
                     `
-                    .header-date{font-weight: bold;font-size:18px;color:white;}
+                    .header-date{font-weight: bold;font-size:18px;}
                     .date-timeslot{border-right: 1px solid white;color:white;font-weight:bold;text-align:center;}
                     p.carousel-status, .control-dots{display:none;}
                     .available-time-slot{background-color:green;}
@@ -221,7 +221,7 @@ class CustomTimeSlots extends Component {
                     .available-time-slot:hover {opacity: 0.5;}
                     .date-timeslot.expired-time-slot{background-color: gray;}
                     .book-timeslot{position: absolute;top: 65px;width: 21px;height: 21px;margin-left:9px !important;}
-                    thead.timeslot-table-head{border: 1px solid gray;background-color:#FE7A51;}
+                    thead.timeslot-table-head{border: 1px solid gray;}
                     thead.timeslot-table-head tr th{text-align: center;}
                     .carousel.carousel-slider ul li.slide{border: none !important;}
                     `

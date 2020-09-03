@@ -33,7 +33,26 @@ export const callBackForNext = (state, dispatch, pathKey) => {
     dispatch(
         setRoute(
             `/egov-services/pay?applicationNumber=${applicationNumber}&tenantId=${
-                getTenantId().split(".")[0]
+            getTenantId().split(".")[0]
+            }&businessService=${businessService}`
+        )
+    );
+};
+
+export const callBackForCancelParkAndCC = (state, dispatch) => {
+    const applicationNumber = getQueryArg(
+        window.location.href,
+        "applicationNumber"
+    );
+    const businessService = get(
+        state,
+        "screenConfiguration.preparedFinalObject.Booking.businessService",
+        {}
+    );
+    dispatch(
+        setRoute(
+            `/egov-services/cancelparkccbooking?applicationNumber=${applicationNumber}&tenantId=${
+            getTenantId().split(".")[0]
             }&businessService=${businessService}`
         )
     );
@@ -68,6 +87,116 @@ export const footer = getCommonApplyFooter({
         onClickDefination: {
             action: "condition",
             callBack: callBackForCancel,
+        },
+        visible: false,
+    },
+
+    submitButton: {
+        componentPath: "Button",
+        props: {
+            variant: "contained",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "45px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+            nextButtonLabel: getLabel({
+                labelName: "Make Payment",
+                labelKey: "BK_MY_BK_BUTTON_PAYMENT",
+            }),
+            // nextButtonIcon: {
+            //     uiFramework: "custom-atoms",
+            //     componentPath: "Icon",
+            //     props: {
+            //         iconName: "keyboard_arrow_right",
+            //     },
+            // },
+        },
+        onClickDefination: {
+            action: "condition",
+            // callBack: callBackForNext,
+            callBack: (state, dispatch) =>
+                callBackForNext(state, dispatch, "pay"),
+        },
+        visible: false,
+        // roleDefination: {
+        //     rolePath: "user-info.roles",
+        //     roles: ["CITIZEN"],
+        //     action: "PAY",
+        // },
+    },
+    editButton: {
+        componentPath: "Button",
+        props: {
+            variant: "outlined",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "45px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+            nextButtonLabel: getLabel({
+                labelName: "EDIT",
+                labelKey: "BK_MY_BK_BUTTON_EDIT",
+            }),
+            // nextButtonIcon: {
+            //     uiFramework: "custom-atoms",
+            //     componentPath: "Icon",
+            //     props: {
+            //         iconName: "keyboard_arrow_right",
+            //     },
+            // },
+        },
+        onClickDefination: {
+            action: "condition",
+            callBack: callBackForEdit,
+        },
+        visible: false,
+        // roleDefination: {
+        //     rolePath: "user-info.roles",
+        //     roles: ["CITIZEN"],
+        //     action: "PAY",
+        // },
+    },
+});
+
+
+export const footerForParkAndCC = getCommonApplyFooter({
+    cancelButton: {
+        componentPath: "Button",
+        props: {
+            variant: "outlined",
+            color: "primary",
+            style: {
+                minWidth: "180px",
+                height: "48px",
+                marginRight: "16px",
+                borderRadius: "inherit",
+            },
+        },
+        children: {
+            // previousButtonIcon: {
+            //     uiFramework: "custom-atoms",
+            //     componentPath: "Icon",
+            //     props: {
+            //         iconName: "keyboard_arrow_left",
+            //     },
+            // },
+            previousButtonLabel: getLabel({
+                labelName: "CANCEL BOOKING",
+                labelKey: "BK_MY_BK_BUTTON_CANCEL_BOOKING",
+            }),
+        },
+        onClickDefination: {
+            action: "condition",
+            callBack: callBackForCancelParkAndCC,
         },
         visible: false,
     },

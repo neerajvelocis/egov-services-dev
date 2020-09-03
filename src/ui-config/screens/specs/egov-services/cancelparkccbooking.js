@@ -3,6 +3,7 @@ import {
     getCommonContainer,
     getCommonHeader,
     getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -28,12 +29,11 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { pccSummary } from "./summaryResource/pccSummary";
-import { pccApplicantSummary } from "./summaryResource/pccApplicantSummary";
-import { documentsSummary } from "./summaryResource/documentsSummary";
-import { estimateSummary } from "./summaryResource/estimateSummary";
-import { remarksSummary } from "./searchResource/remarksSummary";
-import { footerForParkAndCC } from "./searchResource/citizenFooter";
+import { pccSummary } from "./refundResource/pccSummary";
+
+import { estimateSummary } from "./refundResource/estimateSummary";
+
+import { footerForParkAndCC } from "./refundResource/citizenFooter";
 import {
     footerReviewTop,
 } from "./searchResource/footer";
@@ -49,9 +49,19 @@ import { httpRequest } from "../../../../ui-utils";
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
 
+const confirmationStatement = getCommonGrayCard({
+
+    header: getCommonHeader({
+        labelName: "Please confirm booking cancelation by clicking confirm button",
+        labelKey: "BK_PACC_CONFIRMATION_MSG",
+    })
+
+
+})
+
 const titlebar = getCommonContainer({
     header: getCommonHeader({
-        labelName: "Task Details",
+        labelName: "Application Details",
         labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
     }),
     applicationNumber: {
@@ -64,54 +74,7 @@ const titlebar = getCommonContainer({
     }
 });
 
-const prepareDocumentsView = async (state, dispatch) => {
-    let documentsPreview = [];
 
-    // Get all documents from response
-    let bookingDocs = get(
-        state,
-        "screenConfiguration.preparedFinalObject.BookingDocument",
-        {}
-    );
-
-    if (Object.keys(bookingDocs).length > 0) {
-        let keys = Object.keys(bookingDocs);
-        let values = Object.values(bookingDocs);
-        let id = keys[0],
-            fileName = values[0];
-
-        documentsPreview.push({
-            title: "BK_PCC_DOCUMENT",
-            fileStoreId: id,
-            linkText: "View",
-        });
-        let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
-        let fileUrls =
-            fileStoreIds.length > 0
-                ? await getFileUrlFromAPI(fileStoreIds)
-                : {};
-        documentsPreview = documentsPreview.map(function (doc, index) {
-            doc["link"] =
-                (fileUrls &&
-                    fileUrls[doc.fileStoreId] &&
-                    fileUrls[doc.fileStoreId].split(",")[0]) ||
-                "";
-            doc["name"] =
-                (fileUrls[doc.fileStoreId] &&
-                    decodeURIComponent(
-                        fileUrls[doc.fileStoreId]
-                            .split(",")[0]
-                            .split("?")[0]
-                            .split("/")
-                            .pop()
-                            .slice(13)
-                    )) ||
-                `Document - ${index + 1}`;
-            return doc;
-        });
-        dispatch(prepareFinalObject("documentsPreview", documentsPreview));
-    }
-};
 
 const HideshowFooter = (action, bookingStatus) => {
     // Hide edit Footer
@@ -144,12 +107,11 @@ const setSearchResponse = async (
         { key: "applicationNumber", value: applicationNumber },
     ]);
     let recData = get(response, "bookingsModelList", []);
+    
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
-    dispatch(
-        prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
-    );
+    
 
     bookingStatus = get(
         state,
@@ -165,54 +127,15 @@ const setSearchResponse = async (
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
 
-    prepareDocumentsView(state, dispatch);
+    
 
-    const CitizenprintCont = footerReviewTop(
-        action,
-        state,
-        dispatch,
-        bookingStatus,
-        applicationNumber,
-        tenantId,
-        ""
-    );
-
-    set(
-        action,
-        "screenConfig.components.div.children.headerDiv.children.helpSection.children",
-        CitizenprintCont
-    )
+    
 };
-
-// const getPaymentGatwayList = async (action, state, dispatch) => {
-//     try {
-//         let payload = null;
-//         payload = await httpRequest(
-//             "post",
-//             "/pg-service/gateway/v1/_search",
-//             "_search",
-//             [],
-//             {}
-//         );
-//         let payloadprocess = [];
-//         for (let index = 0; index < payload.length; index++) {
-//             const element = payload[index];
-//             let pay = {
-//                 element: element
-//             }
-//             payloadprocess.push(pay);
-//         }
-
-//         dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// };
 
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "pcc-search-preview",
+    name: "cancelparkccbooking",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -257,35 +180,16 @@ const screenConfig = {
                             },
                             ...titlebar,
                         },
-                        helpSection: {
-                            uiFramework: "custom-atoms",
-                            componentPath: "Container",
-                            props: {
-                                color: "primary",
-                                style: { justifyContent: "flex-end" },
-                            },
-                            gridDefination: {
-                                xs: 12,
-                                sm: 4,
-                                align: "right",
-                            },
-                        },
+
                     },
                 },
-                taskStatus: {
-                  uiFramework: "custom-containers-local",
-                  componentPath: "WorkFlowContainer",
-                  moduleName: "egov-services",
-                  visible:  true,
-                },
+
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    pccApplicantSummary: pccApplicantSummary,
                     pccSummary: pccSummary,
-                    documentsSummary: documentsSummary,
-                    remarksSummary: remarksSummary,
+                    confirmationStatement: confirmationStatement
+
                 }),
-                // break: getBreak(),
                 footer: footerForParkAndCC,
             }
         }
