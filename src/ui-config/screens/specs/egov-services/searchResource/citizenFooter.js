@@ -184,7 +184,7 @@ export const footerForParkAndCC = getCommonApplyFooter({
             // },
             previousButtonLabel: getLabel({
                 labelName: "CANCEL BOOKING",
-                labelKey: "BK_MY_BK_BUTTON_CANCEL_BOOKING",
+                labelKey: "BK_PACC_BUTTON_CANCEL_BOOKING",
             }),
         },
         onClickDefination: {
@@ -246,8 +246,8 @@ export const footerForParkAndCC = getCommonApplyFooter({
         },
         children: {
             nextButtonLabel: getLabel({
-                labelName: "EDIT",
-                labelKey: "BK_MY_BK_BUTTON_EDIT",
+                labelName: "CHANGE DATE/VENUE",
+                labelKey: "BK_PACC_CHANGE_DATE_VENUE_BUTTON_EDIT",
             }),
             // nextButtonIcon: {
             //     uiFramework: "custom-atoms",

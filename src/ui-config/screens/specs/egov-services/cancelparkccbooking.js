@@ -74,7 +74,54 @@ const titlebar = getCommonContainer({
     }
 });
 
+const prepareDocumentsView = async (state, dispatch) => {
+    let documentsPreview = [];
 
+    // Get all documents from response
+    let bookingDocs = get(
+        state,
+        "screenConfiguration.preparedFinalObject.BookingDocument",
+        {}
+    );
+
+    if (Object.keys(bookingDocs).length > 0) {
+        let keys = Object.keys(bookingDocs);
+        let values = Object.values(bookingDocs);
+        let id = keys[0],
+            fileName = values[0];
+
+        documentsPreview.push({
+            title: "BK_PCC_DOCUMENT",
+            fileStoreId: id,
+            linkText: "View",
+        });
+        let fileStoreIds = jp.query(documentsPreview, "$.*.fileStoreId");
+        let fileUrls =
+            fileStoreIds.length > 0
+                ? await getFileUrlFromAPI(fileStoreIds)
+                : {};
+        documentsPreview = documentsPreview.map(function (doc, index) {
+            doc["link"] =
+                (fileUrls &&
+                    fileUrls[doc.fileStoreId] &&
+                    fileUrls[doc.fileStoreId].split(",")[0]) ||
+                "";
+            doc["name"] =
+                (fileUrls[doc.fileStoreId] &&
+                    decodeURIComponent(
+                        fileUrls[doc.fileStoreId]
+                            .split(",")[0]
+                            .split("?")[0]
+                            .split("/")
+                            .pop()
+                            .slice(13)
+                    )) ||
+                `Document - ${index + 1}`;
+            return doc;
+        });
+        dispatch(prepareFinalObject("documentsPreview", documentsPreview));
+    }
+};
 
 const HideshowFooter = (action, bookingStatus) => {
     // Hide edit Footer
@@ -107,11 +154,13 @@ const setSearchResponse = async (
         { key: "applicationNumber", value: applicationNumber },
     ]);
     let recData = get(response, "bookingsModelList", []);
-    
+    console.log(recData, "nero data");
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
-    
+    dispatch(
+        prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
+    );
 
     bookingStatus = get(
         state,
@@ -127,9 +176,23 @@ const setSearchResponse = async (
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
 
-    
+    prepareDocumentsView(state, dispatch);
 
-    
+    const CitizenprintCont = footerReviewTop(
+        action,
+        state,
+        dispatch,
+        bookingStatus,
+        applicationNumber,
+        tenantId,
+        ""
+    );
+
+    set(
+        action,
+        "screenConfig.components.div.children.headerDiv.children.helpSection.children",
+        CitizenprintCont
+    )
 };
 
 

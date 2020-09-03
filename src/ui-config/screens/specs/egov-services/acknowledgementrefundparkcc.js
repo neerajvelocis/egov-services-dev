@@ -55,8 +55,8 @@ export const applicationSuccessFooter = (
             },
             children: {
                 downloadReceiptButtonLabel: getLabel({
-                    labelName: "DOWNLOAD Application",
-                    labelKey: "BK_BUTTON_DOWNLOAD_APPLICATION",
+                    labelName: "DOWNLOAD RECEIPT",
+                    labelKey: "BK_PACC_BUTTON_DOWNLOAD_CANCEL_RCPT",
                 }),
             },
             onClickDefination: {
@@ -128,12 +128,12 @@ const getAcknowledgementCard = (
                         backgroundColor: "#39CB74",
                         header: {
                             labelName: "Booking cancellation successfully",
-                            labelKey: "BK_APPLICATION_CANCELLATION_MESSAGE",
+                            labelKey: "BK_PACC_APPLICATION_CANCELLATION_MESSAGE",
                         },
                         body: {
                             labelName:
                                 "Your booking has been cancelled and refund process initiated successfully",
-                            labelKey: "BK_APPLICATION_CANCELLATION_MESSAGE_SUB",
+                            labelKey: "BK_PACC_APPLICATION_CANCELLATION_MESSAGE_SUB",
                         },
 
                         tailText: {

@@ -56,7 +56,7 @@ export const footerForParkAndCC = getCommonApplyFooter({
             // },
             previousButtonLabel: getLabel({
                 labelName: "CONFIRM",
-                labelKey: "BK_MY_BK_BUTTON_CANCEL_BOOKING_CONFIRM",
+                labelKey: "BK_PACC_BUTTON_CANCEL_BOOKING_CONFIRM",
             }),
         },
         onClickDefination: {
