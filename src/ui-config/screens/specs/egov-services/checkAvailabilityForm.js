@@ -210,8 +210,6 @@ const callBackForSearch = async (state, dispatch) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    console.log(availabilityCheckData, "availabilityCheckData in form");
-
     if (availabilityCheckData === undefined) {
         dispatch(
             toggleSnackbar(
@@ -435,11 +433,12 @@ export const checkAvailabilityCalendar = getCommonCard({
                 sm: 12,
                 md: 12,
             },
-             props: {
+            props: {
                 open: false,
                 maxWidth: false,
                 screenKey: "bookingCalendar",
                 reservedDays: [],
+                venueDataKey: "bkSector",
             },
             children: {
                 popup: {},

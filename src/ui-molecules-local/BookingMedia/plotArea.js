@@ -20,61 +20,59 @@ class PlotArea extends React.Component {
         super(props);
     }
 
-    getAvailabilityData = async (e, venueId) => {
-        const { masterDataPCC, availabilityCheckData } = this.props;
-        if (venueId !== undefined) {
+    getAvailabilityData = async (e, item) => {
+        const { availabilityCheckData } = this.props;
+        set(
+            this.props.calendarVisiblity.checkavailability_pcc,
+            "components.div.children.availabilityCalendarWrapper.visible",
+            true
+        );
+        this.props.prepareFinalObject(
+            "availabilityCheckData.bkBookingVenue",
+            item.id
+        );
+        this.props.prepareFinalObject(
+            "availabilityCheckData.bkLocation",
+            item.name
+        );
+        this.props.prepareFinalObject("Booking.bkBookingVenue", item.id);
+
+        let requestBody = {
+            bookingType: availabilityCheckData.bkBookingType,
+            bookingVenue: item.id,
+            sector: availabilityCheckData.bkSector,
+        };
+
+        const response = await getAvailabilityDataPCC(requestBody);
+        let responseStatus = get(response, "status", "");
+
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+            let data = response.data;
+            let reservedDates = [];
+            var daylist = [];
+            data.map((dataitem) => {
+                let start = dataitem.fromDate;
+                let end = dataitem.toDate;
+                daylist = getBetweenDays(start, end);
+                daylist.map((v) => {
+                    reservedDates.push(v.toISOString().slice(0, 10));
+                });
+            });
             this.props.prepareFinalObject(
-                "availabilityCheckData.bkBookingVenue",
-                venueId
-            );
-            this.props.prepareFinalObject(
-                "Booking.bkBookingVenue",
-                venueId
+                "availabilityCheckData.reservedDays",
+                reservedDates
             );
 
-            let requestBody = {
-                bookingType: availabilityCheckData.bkBookingType,
-                bookingVenue: venueId,
-                sector: availabilityCheckData.bkSector,
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth",
+            });
+        } else {
+            let errorMessage = {
+                labelName: "Something went wrong, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
             };
-
-            const response = await getAvailabilityDataPCC(requestBody);
-            let responseStatus = get(response, "status", "");
-            set(
-                this.props.calendarVisiblity.checkavailability_pcc,
-                "components.div.children.availabilityCalendarWrapper.visible",
-                true
-            );
-            if (responseStatus == "SUCCESS" || responseStatus == "success") {
-                let data = response.data;
-                let reservedDates = [];
-                var daylist = [];
-                data.map((dataitem) => {
-                    let start = dataitem.fromDate;
-                    let end = dataitem.toDate;
-                    daylist = getBetweenDays(start, end);
-                    daylist.map((v) => {
-                        reservedDates.push(v.toISOString().slice(0, 10));
-                    });
-                });
-                this.props.prepareFinalObject(
-                    "availabilityCheckData.reservedDays",
-                    reservedDates
-                );
-
-
-                
-                window.scrollTo({
-                    top: document.body.scrollHeight,
-                    behavior: "smooth",
-                });
-            } else {
-                let errorMessage = {
-                    labelName: "Something went wrong, Try Again later!",
-                    labelKey: "", //UPLOAD_FILE_TOAST
-                };
-                this.props.toggleSnackbar(true, errorMessage, "error");
-            }
+            this.props.toggleSnackbar(true, errorMessage, "error");
         }
     };
 
@@ -89,7 +87,7 @@ class PlotArea extends React.Component {
                     key={item.id}
                     alt={item.name}
                     title={item.name}
-                    onClick={(e) => this.getAvailabilityData(e, item.id)}
+                    onClick={(e) => this.getAvailabilityData(e, item)}
                     // onClick={(item.id) => {
                     //     window.scrollTo({
                     //         top: document.body.scrollHeight,
@@ -109,8 +107,7 @@ class PlotArea extends React.Component {
 }
 const mapStateToProps = (state) => {
     return {
-        calendarVisiblity:
-            state.screenConfiguration.screenConfig
+        calendarVisiblity: state.screenConfiguration.screenConfig,
     };
 };
 

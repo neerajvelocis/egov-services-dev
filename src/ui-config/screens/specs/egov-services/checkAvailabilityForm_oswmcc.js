@@ -780,6 +780,7 @@ export const availabilityCalendar = getCommonCard({
                 maxWidth: false,
                 screenKey: "bookingCalendar",
                 reservedDays: [],
+                venueDataKey: "bkBookingVenue"
             },
             children: {
                 popup: {},

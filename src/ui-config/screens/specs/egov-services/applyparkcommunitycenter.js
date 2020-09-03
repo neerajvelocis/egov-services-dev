@@ -293,6 +293,9 @@ export const prepareEditFlow = async (
         );
         let rent = Number(masterDataItem[0].rent);
         let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
+        let amount = rent + cleaningCharges
+        let totalAmount = amount * daysCount
+
         dispatch(
             prepareFinalObject(
                 "Booking.bkCleansingCharges",
@@ -308,7 +311,7 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkSurchargeRent",
-                ((Number(masterDataItem[0].rent) + Number(masterDataItem[0].cleaningCharges)) * daysCount) * Number(masterDataItem[0].surcharge) / 100
+                (totalAmount * Number(masterDataItem[0].surcharge) / 100)
             )
         );
 
@@ -319,13 +322,13 @@ export const prepareEditFlow = async (
         dispatch(
             prepareFinalObject(
                 "Booking.bkUtgst",
-                ((Number(masterDataItem[0].rent) + Number(masterDataItem[0].cleaningCharges)) * daysCount) * Number(masterDataItem[0].utgstRate) / 100
+                (totalAmount * Number(masterDataItem[0].utgstRate) / 100)
             )
         );
         dispatch(
             prepareFinalObject(
                 "Booking.bkCgst",
-                ((Number(masterDataItem[0].rent) + Number(masterDataItem[0].cleaningCharges)) * daysCount) * Number(masterDataItem[0].cgstRate) / 100
+                (totalAmount * Number(masterDataItem[0].cgstRate) / 100)
             )
         );
 
@@ -459,10 +462,7 @@ const screenConfig = {
                     )
                 );
                 dispatch(
-                    prepareFinalObject(
-                        "Booking.bkLocation",
-                        masterDataItem[0].name
-                    )
+                    prepareFinalObject("Booking.bkLocation", masterDataItem[0].name)
                 );
                 dispatch(
                     prepareFinalObject(
@@ -476,6 +476,11 @@ const screenConfig = {
                         convertDateInYMD(availabilityCheckData.bkToDate)
                     )
                 );
+                let rent = Number(masterDataItem[0].rent);
+                let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
+                let amount = rent + cleaningCharges
+                let totalAmount = amount * daysCount
+        
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCleansingCharges",
@@ -491,31 +496,27 @@ const screenConfig = {
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkSurchargeRent",
-                        ((masterDataItem[0].rent *
-                            masterDataItem[0].surcharge) /
-                            100) *
-                            daysCount
+                        (totalAmount * Number(masterDataItem[0].surcharge) / 100)
                     )
                 );
-
+        
+                // dispatch(
+                //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
+                // );
+        
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkUtgst",
-                        ((masterDataItem[0].rent *
-                            masterDataItem[0].utgstRate) /
-                            100) *
-                            daysCount
+                        (totalAmount * Number(masterDataItem[0].utgstRate) / 100)
                     )
                 );
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCgst",
-                        ((masterDataItem[0].rent * masterDataItem[0].cgstRate) /
-                            100) *
-                            daysCount
+                        (totalAmount * Number(masterDataItem[0].cgstRate) / 100)
                     )
                 );
-
+        
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkBookingVenue",

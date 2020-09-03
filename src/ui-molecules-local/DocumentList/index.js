@@ -132,10 +132,6 @@ class DocumentList extends Component {
             prepareFinalObject,
         } = this.props;
         let index = 0;
-
-        console.log(documentsList, "documentsList");
-        console.log(documentsUploadRedux, "documentsUploadRedux");
-        console.log(documentsUploadReduxOld, "documentsUploadReduxOld");
         documentsList.forEach((docType) => {
             docType.cards &&
                 docType.cards.forEach((card) => {

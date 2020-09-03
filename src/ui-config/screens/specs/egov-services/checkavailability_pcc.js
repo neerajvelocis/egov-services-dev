@@ -116,54 +116,6 @@ const setDataAutofill = (action, state, dispatch) => {
         state,
         "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
     );
-    // let bkSector = get(
-    //     state,
-    //     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.bkSector"
-    // );
-    // console.log(sectorWiselocationsObject, "sectorWiselocationsObject out");
-    if (sectorWiselocationsObject !== undefined) {
-        let bkSector = get(
-            state,
-            "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
-        );
-        let bkBookingVenue = get(
-            state,
-            "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-        );
-        let venueList = get(sectorWiselocationsObject, bkSector);
-
-        // console.log(sectorWiselocationsObject, "sectorWiselocationsObject");
-        // console.log(bkSector, "bkSector");
-        // console.log(venueList, "venueList");
-        venueList !== undefined &&
-            dispatch(
-                prepareFinalObject(
-                    "venueList",
-                    venueList
-                )
-            );
-        
-
-        dispatch(
-            handleField(
-                "checkavailability_pcc",
-                "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
-                "props.disabled",
-                bkSector  !== undefined || bkSector !== "" ? true : false
-            )
-        );
-
-        if (bkBookingVenue !== undefined) {
-            dispatch(
-                handleField(
-                    "checkavailability_pcc",
-                    "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
-                    "props.value",
-                    bkBookingVenue
-                )
-            );
-        }
-    }
 };
 
 const prepareEditFlow = async (
@@ -201,7 +153,7 @@ const prepareEditFlow = async (
                 true
             );
 
-            setDataAutofill(action, state, dispatch);
+            // setDataAutofill(action, state, dispatch);
 
             let availabilityData = await getAvailabilityDataOSWMCC(
                 response.bookingsModelList[0].bkSector,
