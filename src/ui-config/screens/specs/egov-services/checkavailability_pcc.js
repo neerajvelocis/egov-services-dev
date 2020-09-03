@@ -36,7 +36,7 @@ import {
     getSearchResultsView,
     setApplicationNumberBox,
 } from "../../../../ui-utils/commons";
-import { getAvailabilityDataOSWMCC, getBetweenDays } from "../utils";
+import { getAvailabilityDataPCC, getBetweenDays } from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -74,9 +74,7 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        dispatch(
-            prepareFinalObject("applyScreenMdmsData", payload.MdmsRes)
-        );
+        dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
     }
@@ -103,11 +101,11 @@ const getMdmsData = async (action, state, dispatch) => {
 //                 response.osujmNewlocationMap
 //             )
 //         );
-//         return response    
+//         return response
 //     } catch (error) {
 //         console.log(error, "my error")
 //     }
-    
+
 //   };
 
 const setDataAutofill = (action, state, dispatch) => {
@@ -125,12 +123,8 @@ const prepareEditFlow = async (
     applicationNumber,
     tenantId
 ) => {
-    // console.log("in edit flow")
     if (applicationNumber) {
-        // console.log("application number present")
         setapplicationNumber(applicationNumber);
-        setApplicationNumberBox(state, dispatch, applicationNumber);
-
         let response = await getSearchResultsView([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
@@ -152,13 +146,24 @@ const prepareEditFlow = async (
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-
-            // setDataAutofill(action, state, dispatch);
-
-            let availabilityData = await getAvailabilityDataOSWMCC(
-                response.bookingsModelList[0].bkSector,
-                response.bookingsModelList[0].bkBookingVenue
-            );
+            // set(
+            //     state.screenConfiguration.screenConfig["checkavailability_pcc"],
+            //     "components.div.children.availabilityCalendarWrapper.visible",
+            //     true
+            // );
+            // set(
+            //     state.screenConfiguration.screenConfig["checkavailability_pcc"],
+            //     "components.div.children.availabilityMediaCardWrapper",
+            //     true
+            // );
+           
+            let requestBody = {
+                bookingType: response.bookingsModelList[0].bkBookingType,
+                bookingVenue: response.bookingsModelList[0].bkBookingVenue,
+                sector: response.bookingsModelList[0].bkSector,
+            };
+    
+            const availabilityData = await getAvailabilityDataPCC(requestBody);
 
             if (availabilityData !== undefined) {
                 let data = availabilityData.data;
@@ -211,7 +216,7 @@ const prepareEditFlow = async (
         }
     } else {
         // console.log("in edit flow not application number")
-        setDataAutofill(action, state, dispatch);
+        // setDataAutofill(action, state, dispatch);
     }
 };
 const header = getCommonContainer({
@@ -249,7 +254,7 @@ const availabilityMediaCardWrapper = {
     children: {
         availabilityMediaCard,
     },
-    visible: false
+    visible: false,
 };
 const availabilityTimeSlotWrapper = {
     uiFramework: "custom-atoms",
@@ -260,7 +265,7 @@ const availabilityTimeSlotWrapper = {
     children: {
         availabilityTimeSlot,
     },
-    visible: false
+    visible: false,
 };
 const availabilityCalendarWrapper = {
     uiFramework: "custom-atoms",
@@ -271,10 +276,8 @@ const availabilityCalendarWrapper = {
     children: {
         availabilityCalendar,
     },
-    visible: false
+    visible: false,
 };
-
-
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -287,7 +290,7 @@ const screenConfig = {
         const tenantId = getQueryArg(window.location.href, "tenantId");
         getMdmsData(action, state, dispatch);
         prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
-        
+
         return action;
     },
     components: {
