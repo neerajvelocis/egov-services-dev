@@ -483,12 +483,22 @@ export const availabilityForm = getCommonCard({
                     false
                 );
 
+                
+
                 set(
                     state,
                     "screenConfiguration.screenConfig.checkavailability_pcc.components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector.props.value",
                     ""
                 );
 
+                // dispatch(
+                //     handleField(
+                //         "checkavailability_pcc",
+                //         "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkSector",
+                //         "props.value",
+                //        ""
+                //     )
+                // );
 
             }
         },
@@ -803,6 +813,7 @@ export const availabilityCalendar = getCommonCard({
                 maxWidth: false,
                 screenKey: "bookingCalendar",
                 reservedDays: [],
+                venueDataKey: "bkLocation"
             },
             children: {
                 popup: {},

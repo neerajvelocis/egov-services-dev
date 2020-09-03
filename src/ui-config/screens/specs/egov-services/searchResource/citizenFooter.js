@@ -2,15 +2,22 @@ import { getLabel } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { getCommonApplyFooter, showHideAdhocPopup } from "../../utils";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import { getQueryArg } from "egov-ui-framework/ui-utils/commons";
+import {
+    getapplicationType,
+    getapplicationNumber,
+    getTenantId
+} from "egov-ui-kit/utils/localStorageUtils";
 import "./index.css";
-import { getTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import get from "lodash/get";
 
 export const callBackForCancel = (state, dispatch) => {
     dispatch(setRoute("/egov-services/my-applications"));
 };
 export const callBackForEdit = (state, dispatch) => {
-    dispatch(setRoute("/egov-services/my-applications"));
+    let applicationNumber = getapplicationNumber()
+    let businessService = getapplicationType();
+    let tenantId = getTenantId()
+    dispatch(setRoute(`/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`));
 };
 
 export const callBackForNext = (state, dispatch, pathKey) => {

@@ -7,6 +7,7 @@ import {
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+
 import "react-day-picker/lib/style.css";
 import "./index.css";
 
@@ -75,7 +76,10 @@ class BookingCalendar extends React.Component {
                 enteredTo: null,
             });
         } else {
-            if(nextProps.availabilityCheckData.bkFromDate === null && nextProps.availabilityCheckData.bkToDate === null){
+            if (
+                nextProps.availabilityCheckData.bkFromDate === null &&
+                nextProps.availabilityCheckData.bkToDate === null
+            ) {
                 this.setState({
                     from: null,
                     to: null,
@@ -127,35 +131,6 @@ class BookingCalendar extends React.Component {
                 }
             }
         }
-
-        // const applicationNumber = getQueryArg(
-        //     window.location.href,
-        //     "applicationNumber"
-        // );
-        // console.log(applicationNumber, "applicationNumberNew");
-        // let reservedDays = nextProps.reservedDays;
-        // let pushReservedDay = [];
-        // for (let i = 0; i < reservedDays.length; i++) {
-        //     pushReservedDay.push(new Date(reservedDays[i]));
-        // }
-        // this.setState({ dselectedDays: pushReservedDay });
-
-        // if(this.props.reservedDays.length > 0) {
-
-        //     this.setState({
-        //         from: new Date(this.props.availabilityCheckData.bkFromDate),
-        //         // to: new Date(this.props.availabilityCheckData.bkToDate),
-        //         enteredTo: new Date(this.props.availabilityCheckData.bkToDate),
-        //     });
-        // }
-        // if(applicationNumber !== null || applicationNumber !== undefined){
-        //     alert("in it")
-        //     this.setState({
-        //         from: new Date(localStorageGet("fromDateCG")),
-        //         // to: new Date(this.props.availabilityCheckData.bkToDate),
-        //         enteredTo: new Date(localStorageGet("toDateCG")),
-        //     });
-        // }
     }
 
     getInitialState() {
@@ -275,7 +250,6 @@ class BookingCalendar extends React.Component {
         };
         let data = new Date();
         let newData = new Date(data.setMonth(data.getMonth() + 5));
-console.log(from, "Nero From");
         return (
             <div className="calendar-wrapper">
                 <div className="calendar-section">
@@ -299,7 +273,7 @@ console.log(from, "Nero From");
                         Select From &amp; To Date in Calendar{" "}
                     </h2>
 
-                    {/* <div style={{ marginBottom: 12 }}>
+                    <div style={{ marginBottom: 12 }}>
                         <span
                             style={{
                                 display: "block",
@@ -320,12 +294,11 @@ console.log(from, "Nero From");
                                 letterSpacing: "0.67px",
                             }}
                         >
-                            {this.props.availabilityCheckData.bkSector ===
-                            undefined
-                                ? ""
-                                : this.props.availabilityCheckData.bkSector}
+                            {this.props.bookingVenue === undefined
+                                ? "---------------------------"
+                                : this.props.bookingVenue}
                         </span>
-                    </div> */}
+                    </div>
 
                     <div style={{ marginBottom: 12 }}>
                         <span
@@ -348,19 +321,7 @@ console.log(from, "Nero From");
                                 letterSpacing: "0.67px",
                             }}
                         >
-                            {
-                             (() => {
-                                 
-                                 console.log(typeof from);
-                                if(!from || from === 'undefined' || from === 'Invalide Date'){
-                                    return "--/--/----";
-                                }else{
-                                    console.log('hello');
-                                    return from.toLocaleDateString()
-                                }
-                             })()   
-                            //!from ? "--/--/----" : from.toLocaleDateString()
-                            }
+                            {!from ? "--/--/----" : from.toLocaleDateString()}
                         </span>
                     </div>
                     <div style={{ marginBottom: 12 }}>
