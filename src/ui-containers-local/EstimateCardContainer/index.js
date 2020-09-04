@@ -30,7 +30,7 @@ const formatTaxHeaders = (billDetail = {}) => {
                 labelKey: `BK_FEE_HEAD_${taxHead.taxHeadCode}`,
                 labelName: `BK_FEE_HEAD_${taxHead.taxHeadCode}`,
             },
-            value: taxHead.amount,
+            value: taxHead.amount.toFixed(2),
             order: taxHead.order,
         };
     });
