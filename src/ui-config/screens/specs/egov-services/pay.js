@@ -42,8 +42,9 @@ const header = getCommonContainer({
         moduleName: "egov-services",
         componentPath: "ApplicationNoContainer",
         props: {
-            number: getQueryArg(window.location.href, "applicationNumber"),
+            number: "NA",
         },
+        visible: true,
     },
 });
 
@@ -68,11 +69,6 @@ const setSearchResponse = async (
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
    
-
-
-
-
-
 
 
 

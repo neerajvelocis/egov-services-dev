@@ -295,7 +295,7 @@ class BookingCalendar extends React.Component {
                             }}
                         >
                             {this.props.bookingVenue === undefined
-                                ? "---------------------------"
+                                ? "------------"
                                 : this.props.bookingVenue}
                         </span>
                     </div>
