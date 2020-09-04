@@ -234,9 +234,6 @@ const callBackForResetCalender = (state, dispatch, action) => {
     }
 };
 
-
-
-
 // const callBackForSearch = async (state, dispatch) => {
 //     let isFormValid = false;
 //     let hasFieldToaster = true;
@@ -456,34 +453,31 @@ export const availabilityForm = getCommonCard({
                 jsonPath: "availabilityCheckData.bkBookingType",
                 defaultValue: "Parks",
                 required: true,
-
             },
             required: true,
             type: "array",
             beforeFieldChange: (action, state, dispatch) => {
                 set(
                     state.screenConfiguration.screenConfig[
-                    "checkavailability_pcc"
+                        "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityMediaCardWrapper.visible",
                     false
                 );
                 set(
                     state.screenConfiguration.screenConfig[
-                    "checkavailability_pcc"
+                        "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityTimeSlotWrapper.visible",
                     false
                 );
                 set(
                     state.screenConfiguration.screenConfig[
-                    "checkavailability_pcc"
+                        "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityCalendarWrapper.visible",
                     false
                 );
-
-                
 
                 set(
                     state,
@@ -499,8 +493,7 @@ export const availabilityForm = getCommonCard({
                 //        ""
                 //     )
                 // );
-
-            }
+            },
         },
 
         bkSector: {
@@ -557,14 +550,21 @@ export const availabilityForm = getCommonCard({
 
                     set(
                         state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                            "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                            "checkavailability_pcc"
+                        ],
+                        "components.div.children.availabilityCalendarWrapper.visible",
+                        availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
+                    );
+                    set(
+                        state.screenConfiguration.screenConfig[
+                            "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityTimeSlotWrapper.visible",
                         bkBookingType === "Parks" ? false : true
@@ -813,7 +813,7 @@ export const availabilityCalendar = getCommonCard({
                 maxWidth: false,
                 screenKey: "bookingCalendar",
                 reservedDays: [],
-                venueDataKey: "bkLocation"
+                venueDataKey: "bkLocation",
             },
             children: {
                 popup: {},
@@ -840,7 +840,7 @@ export const availabilityCalendar = getCommonCard({
                             minWidth: "200px",
                             height: "48px",
                             marginTop: "10px",
-                            marginRight: "16px"
+                            marginRight: "16px",
                         },
                     },
 
@@ -880,7 +880,7 @@ export const availabilityCalendar = getCommonCard({
                     },
                     visible: true,
                 },
-            }
+            },
         },
     }),
 });
