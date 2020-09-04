@@ -11,12 +11,13 @@ import {
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
-    localStorageGet,
+    getTenantId,
     localStorageSet,
     setapplicationNumber,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
+    
     getFileUrlFromAPI,
     getQueryArg,
     setBusinessServiceDataToLocalStorage,
@@ -195,6 +196,51 @@ const setSearchResponse = async (
     )
 };
 
+const getMdmsData = async (action, state, dispatch) => {
+    let tenantId = getTenantId().split(".")[0];
+    let mdmsBody = {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+                {
+                    moduleName: "pacc",
+                    masterDetails: [
+                        {
+                            name: "tenants",
+                        },
+                    ],
+                },
+
+            ],
+        },
+    };
+    try {
+        let payload = null;
+        payload = await httpRequest(
+            "post",
+            "/egov-mdms-service/v1/_search",
+            "_search",
+            [],
+            mdmsBody
+        );
+
+        let bookingCancellationRefundCalc = {
+            "MORETHAN30DAYS": {
+                "refundpercentage": 50
+            },
+            "LETTHAN30MORETHAN15DAYS": {
+                "refundpercentage": 25
+            },
+            "LESSTHAN15DAYS": {
+                "refundpercentage": 0
+            },
+        }
+        payload.MdmsRes.bookingCancellationRefundCalc = bookingCancellationRefundCalc;
+        dispatch(prepareFinalObject("cancelParkCcScreenMdmsData", payload.MdmsRes));
+    } catch (e) {
+        console.log(e);
+    }
+};
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -216,6 +262,10 @@ const screenConfig = {
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
         // getPaymentGatwayList(action, state, dispatch).then(response => {
         // });
+        // Set MDMS Data
+        getMdmsData(action, state, dispatch).then((response) => {
+            console.log("Hello Nero");
+        });
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "PACC" },
