@@ -14,9 +14,7 @@ import {
     getCommonCard,
     getCommonCaption,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {
-    getFileUrlFromAPI,
-} from "egov-ui-framework/ui-utils/commons";
+import { getFileUrlFromAPI } from "egov-ui-framework/ui-utils/commons";
 import axios from "axios";
 
 export const getCommonApplyFooter = (children) => {
@@ -124,7 +122,6 @@ export const sortByEpoch = (data, order) => {
     }
 };
 
-
 export const convertEpochToDate = (dateEpoch) => {
     const dateFromApi = new Date(dateEpoch);
     let month = dateFromApi.getMonth() + 1;
@@ -197,7 +194,6 @@ export const getFinancialYearDates = (format, et) => {
     }
     return financialDates;
 };
-
 
 export const showHideAdhocPopup = (state, dispatch, screenKey) => {
     let toggle = get(
@@ -291,7 +287,6 @@ export const getReceiptData = async (queryObject) => {
         return {};
     }
 };
-
 
 export const getBill = async (queryObject) => {
     try {
@@ -646,7 +641,7 @@ const getMdmsTenantsData = async () => {
                             name: "tenants",
                         },
                     ],
-                }
+                },
             ],
         },
     };
@@ -658,7 +653,7 @@ const getMdmsTenantsData = async () => {
             [],
             mdmsBody
         );
-        return payload.MdmsRes.tenant 
+        return payload.MdmsRes.tenant;
     } catch (e) {
         console.log(e);
     }
@@ -699,13 +694,24 @@ export const downloadReceipt = (
             FETCHRECEIPT.GET.ACTION,
             receiptQueryString
         ).then((payloadReceiptDetails) => {
-            const queryStr = [
-                { key: "key", value: "bk-payment-receipt" },
-                {
-                    key: "tenantId",
-                    value: "ch",
-                },
-            ];
+            let queryStr = '';
+            if (applicationData.businessService === 'PACC') {
+                queryStr = [
+                    { key: "key", value: "pacc-payment-receipt" },
+                    {
+                        key: "tenantId",
+                        value: "ch",
+                    },
+                ];
+            } else {
+                queryStr = [
+                    { key: "key", value: "bk-payment-receipt" },
+                    {
+                        key: "tenantId",
+                        value: "ch",
+                    },
+                ];
+            }
             if (
                 payloadReceiptDetails &&
                 payloadReceiptDetails.Payments &&
@@ -713,6 +719,101 @@ export const downloadReceipt = (
             ) {
                 console.log("Could not find any receipts");
                 return;
+            }
+
+            let paymentInfoData = '';
+            if (applicationData.businessService === 'PACC') {
+                paymentInfoData = {
+                    paymentDate: convertEpochToDate(
+                        payloadReceiptDetails.Payments[0].transactionDate,
+                        "dayend"
+                    ),
+                    transactionId: payloadReceiptDetails.Payments[0].transactionNumber,
+                    bookingPeriod: getDurationDate(
+                        applicationData.bkFromDate,
+                        applicationData.bkToDate
+                    ),
+                    bookingItem: `Online Payment Against Booking of ${applicationData.bkLocation}`,
+                    baseCharge: parseFloat(applicationData.bkRent).toFixed(2),
+                    cleaningCharges: parseFloat(applicationData.bkCleansingCharges).toFixed(2),
+                    surcharges: parseFloat(applicationData.bkSurchargeRent).toFixed(2),
+                    facilitationCharge: "0.00",
+                    gst: (parseFloat(applicationData.bkUtgst) + parseFloat(applicationData.bkCgst)).toFixed(2),
+                    totalAmount: (parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)).toFixed(2),
+
+
+                    amountInWords: NumInWords(
+                        parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)
+                    ),
+                    paymentItemExtraColumnLabel: "Booking Period",
+
+                    paymentMode:
+                        payloadReceiptDetails.Payments[0].paymentMode,
+                    receiptNo:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .receiptNumber,
+                };
+
+            } else {
+                paymentInfoData = {
+                    paymentDate: convertEpochToDate(
+                        payloadReceiptDetails.Payments[0].transactionDate,
+                        "dayend"
+                    ),
+                    transactionId:
+                        payloadReceiptDetails.Payments[0].transactionNumber,
+                    bookingPeriod:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.businessService === "OSBM" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSUJM"
+                            ? getDurationDate(
+                                applicationData.bkFromDate,
+                                applicationData.bkToDate
+                            )
+                            : `${applicationData.bkDate} , ${applicationData.bkTime} `,
+                    bookingItem: `Online Payment Against Booking of ${
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.businessService === "GFCP"
+                            ? "Commercial Ground"
+                            : payloadReceiptDetails.Payments[0]
+                                .paymentDetails[0].bill
+                                .businessService === "OSBM"
+                                ? "Open Space for Building Material"
+                                : payloadReceiptDetails.Payments[0]
+                                    .paymentDetails[0].bill
+                                    .businessService === "OSUJM"
+                                    ? "Open Space within MCC jurisdiction"
+                                    : "Water Tanker"
+                        }`,
+                    amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                        (el) => !el.taxHeadCode.includes("TAX")
+                    )[0].amount,
+                    tax: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
+                        (el) => el.taxHeadCode.includes("TAX")
+                    )[0].amount,
+                    grandTotal:
+                        payloadReceiptDetails.Payments[0].totalAmountPaid,
+                    amountInWords: NumInWords(
+                        payloadReceiptDetails.Payments[0].totalAmountPaid
+                    ),
+                    paymentItemExtraColumnLabel:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .bill.businessService === "OSBM" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0]
+                                .bill.businessService === "OSUJM"
+                            ? "Booking Period"
+                            : "Date & Time",
+                    paymentMode:
+                        payloadReceiptDetails.Payments[0].paymentMode,
+                    receiptNo:
+                        payloadReceiptDetails.Payments[0].paymentDetails[0]
+                            .receiptNumber,
+                };
             }
             let receiptData = [
                 {
@@ -731,65 +832,7 @@ export const downloadReceipt = (
                             payloadReceiptDetails.Payments[0].paymentDetails[0]
                                 .bill.consumerCode,
                     },
-                    paymentInfo: {
-                        paymentDate: convertEpochToDate(
-                            payloadReceiptDetails.Payments[0].transactionDate,
-                            "dayend"
-                        ),
-                        transactionId:
-                            payloadReceiptDetails.Payments[0].transactionNumber,
-                        bookingPeriod:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "GFCP" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "OSUJM"
-                                ? getDurationDate(
-                                    applicationData.bkFromDate,
-                                    applicationData.bkToDate
-                                )
-                                : `${applicationData.bkDate} , ${applicationData.bkTime} `,
-                        bookingItem: `Online Payment Against Booking of ${
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "GFCP"
-                                ? "Commercial Ground"
-                                : payloadReceiptDetails.Payments[0]
-                                    .paymentDetails[0].bill
-                                    .businessService === "OSBM"
-                                    ? "Open Space for Building Material"
-                                    : payloadReceiptDetails.Payments[0]
-                                        .paymentDetails[0].bill
-                                        .businessService === "OSUJM"
-                                        ? "Open Space within MCC jurisdiction"
-                                        : "Water Tanker"
-                            }`,
-                        amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-                            (el) => !el.taxHeadCode.includes("TAX")
-                        )[0].amount,
-                        tax: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
-                            (el) => el.taxHeadCode.includes("TAX")
-                        )[0].amount,
-                        grandTotal:
-                            payloadReceiptDetails.Payments[0].totalAmountPaid,
-                        amountInWords: NumInWords(
-                            payloadReceiptDetails.Payments[0].totalAmountPaid
-                        ),
-                        paymentItemExtraColumnLabel:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .bill.businessService === "OSBM" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "GFCP" ||
-                                payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                    .bill.businessService === "OSUJM"
-                                ? "Booking Period"
-                                : "Date & Time",
-                        paymentMode:
-                            payloadReceiptDetails.Payments[0].paymentMode,
-                        receiptNo:
-                            payloadReceiptDetails.Payments[0].paymentDetails[0]
-                                .receiptNumber,
-                    },
+                    paymentInfo: paymentInfoData,
                     payerInfo: {
                         payerName: payloadReceiptDetails.Payments[0].payerName,
                         payerMobile:
@@ -825,14 +868,13 @@ export const downloadReceipt = (
     }
 };
 
-export const downloadCertificate = async(
+export const downloadCertificate = async (
     state,
     applicationNumber,
     tenantId,
     mode = "download"
 ) => {
-
-    let tenantData = await getMdmsTenantsData()
+    let tenantData = await getMdmsTenantsData();
     let applicationData = get(
         state.screenConfiguration.preparedFinalObject,
         "Booking"
@@ -851,7 +893,11 @@ export const downloadCertificate = async(
                 value:
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-pl"
-                        : applicationData.businessService == "OSUJM" ? "bk-oswmcc-booking-pl" : "bk-cg-pl",
+                        : applicationData.businessService == "PACC"
+                            ? "bk-pacc-booking-pl"
+                            : applicationData.businessService == "OSUJM"
+                                ? "bk-oswmcc-booking-pl"
+                                : "bk-cg-pl",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -872,16 +918,17 @@ export const downloadCertificate = async(
                     name: applicationData.bkApplicantName,
                     mobileNumber: applicationData.bkMobileNumber,
                     houseNo: applicationData.bkHouseNo,
-                    permanentAddress: applicationData.bkCompleteAddress,
+                    permanentAddress: applicationData.businessService == "PACC" ? applicationData.bkHouseNo : applicationData.bkCompleteAddress,
                     permanentCity: tenantData.tenants[0].city.name,
                     sector: applicationData.bkSector,
-                    fatherName: applicationData.bkFatherName
+                    fatherName: applicationData.bkFatherName,
                 },
                 bookingDetail: {
                     applicationNumber: applicationNumber,
                     applicationDate: convertDateInDMY(
                         applicationData.bkDateCreated
                     ),
+                    bookingType: "Park",
                     villageOrCity: applicationData.bkVillCity,
                     residentialOrCommercial: applicationData.bkType,
                     areaRequired: applicationData.bkAreaRequired,
@@ -895,7 +942,7 @@ export const downloadCertificate = async(
                         applicationData.bkFromDate,
                         applicationData.bkToDate
                     ),
-                    venueName: applicationData.bkBookingVenue,
+                    venueName: applicationData.bkLocation,
                     sector: applicationData.bkSector,
                     groundName: applicationData.bkSector,
                     bookingPupose: applicationData.bkBookingPurpose,
@@ -912,7 +959,8 @@ export const downloadCertificate = async(
                     role: "Additional Commissioner",
                 },
                 tenantInfo: {
-                    municipalityName: tenantData.tenants[0].city.municipalityName,
+                    municipalityName:
+                        tenantData.tenants[0].city.municipalityName,
                     address: tenantData.tenants[0].address,
                     contactNumber: tenantData.tenants[0].contactNumber,
                     webSite: tenantData.tenants[0].domainUrl,
@@ -953,8 +1001,7 @@ export const downloadApplication = async (
     tenantId,
     mode = "download"
 ) => {
-
-    let tenantData = await getMdmsTenantsData()
+    let tenantData = await getMdmsTenantsData();
     console.log(tenantData, "response tenantData");
     let applicationData = get(
         state.screenConfiguration.preparedFinalObject,
@@ -965,6 +1012,7 @@ export const downloadApplication = async (
         "ReceiptTemp[0].Bill[0]"
     );
 
+    console.log(applicationData, "Nero App data");
     const DOWNLOADAPPLICATION = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -980,13 +1028,15 @@ export const downloadApplication = async (
                         ? "bk-osbm-app-form"
                         : applicationData.businessService == "GFCP"
                             ? "bk-cg-app-form"
-                            : applicationData.businessService == "NLUJM"
-                                ? "bk-oswmcc-newloc-app-form"
-                                : applicationData.businessService == "OSUJM"
-                                    ? "oswmcc-booking-app-form"
-                                    : applicationData.bkStatus.includes("Paid")
-                                        ? "bk-wt-app-form"
-                                        : "bk-wt-unpaid-app-form",
+                            : applicationData.businessService == "PACC"
+                                ? "pacc-booking-app-form"
+                                : applicationData.businessService == "NLUJM"
+                                    ? "bk-oswmcc-newloc-app-form"
+                                    : applicationData.businessService == "OSUJM"
+                                        ? "oswmcc-booking-app-form"
+                                        : applicationData.bkStatus.includes("Paid")
+                                            ? "bk-wt-app-form"
+                                            : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1045,7 +1095,19 @@ export const downloadApplication = async (
                 applicationData.bkToDate
             ),
             bookingPurpose: applicationData.bkBookingPurpose,
-        }
+        };
+        let bookingDataPacc = {
+            applicationNumber: applicationNumber,
+            applicationDate: applicationData.bkDateCreated,
+            venueName: applicationData.bkLocation,
+            sector: applicationData.bkSector,
+            bookingPeriod: getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            ),
+            bookingPurpose: applicationData.bkBookingPurpose,
+            parkDim: applicationData.bkDimension,
+        };
         let appData = "";
         if (applicationData.businessService == "NLUJM") {
             appData = [
@@ -1062,6 +1124,45 @@ export const downloadApplication = async (
                         address: applicationData.localityAddress,
                         areaReq: applicationData.areaRequirement,
                         landmark: applicationData.landmark,
+                    },
+                    generatedBy: {
+                        generatedBy: JSON.parse(getUserInfo()).name,
+                    },
+                },
+            ];
+        } if (applicationData.businessService == "PACC") {
+            appData = [
+                {
+                    applicantDetail: {
+                        name: applicationData.bkApplicantName,
+                        mobileNumber: applicationData.bkMobileNumber,
+                        houseNo: applicationData.bkHouseNo,
+                        permanentAddress: applicationData.bkHouseNo,
+                        permanentCity: tenantData.tenants[0].city.name,
+                        sector: applicationData.bkSector,
+                        email: applicationData.bkEmail,
+                        fatherName: applicationData.bkFatherName,
+                        DOB: null,
+                    },
+                    bookingDetail:
+                        applicationData.businessService === "OSBM"
+                            ? bookingDataOsbm
+                            : applicationData.businessService === "PACC"
+                                ? bookingDataPacc
+                                : applicationData.businessService === "GFCP"
+                                    ? bookingDataGFCP
+                                    : applicationData.businessService === "OSUJM"
+                                        ? bookingDataOSUJM
+                                        : bookingDataWt,
+                    feeDetail: {
+                        baseCharge: applicationData.bkRent,
+                        cleaningCharge: applicationData.bkCleansingCharges,
+                        surcharges: applicationData.bkSurchargeRent,
+                        facilitationCharge: 0,
+                        utgst: applicationData.bkUtgst,
+                        cgst: applicationData.bkCgst,
+                        gst: applicationData.bkUtgst + applicationData.bkCgst,
+                        totalAmount: parseFloat(applicationData.bkRent) + parseFloat(applicationData.bkCleansingCharges) + parseFloat(applicationData.bkSurchargeRent)
                     },
                     generatedBy: {
                         generatedBy: JSON.parse(getUserInfo()).name,
@@ -1312,8 +1413,8 @@ export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
     } catch (exception) {
         console.log(exception);
     }
-}
-export const getTextFieldReadOnly = textScheama => {
+};
+export const getTextFieldReadOnly = (textScheama) => {
     const {
         label = {},
         readOnlyValue,
@@ -1330,7 +1431,7 @@ export const getTextFieldReadOnly = textScheama => {
         iconObj = {},
         gridDefination = {
             xs: 12,
-            sm: 6
+            sm: 6,
         },
         props = {},
         minLength,
@@ -1351,7 +1452,7 @@ export const getTextFieldReadOnly = textScheama => {
             label,
             readOnlyValue,
             InputLabelProps: {
-                shrink: true
+                shrink: true,
             },
             placeholder,
             localePrefix,
@@ -1367,7 +1468,7 @@ export const getTextFieldReadOnly = textScheama => {
             title,
             infoIcon,
             errorMessage,
-            ...props
+            ...props,
         },
         gridDefination,
         required,
@@ -1379,6 +1480,38 @@ export const getTextFieldReadOnly = textScheama => {
         maxValue,
         errorMessage,
         requiredMessage,
-        ...rest
+        ...rest,
     };
+};
+
+export const getMasterDataPCC = async (requestBody) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "/bookings/park/community/master/_fetch",
+            "",
+            [],
+            requestBody
+        );
+        console.log(response, "master data response");
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
+};
+export const getAvailabilityDataPCC = async (requestBody) => {
+
+    try {
+        const response = await httpRequest(
+            "post",
+            "/bookings/park/community/availability/_search",
+            "",
+            [],
+            requestBody
+        );
+        console.log(response, "availability data response");
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
 };

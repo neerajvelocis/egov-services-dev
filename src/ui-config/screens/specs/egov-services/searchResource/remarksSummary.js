@@ -26,13 +26,12 @@ export const remarksSummary = getCommonGrayCard({
     },
     body: getCommonContainer({
         Date: getLabelWithValue({
-            jsonPath: "Booking.bookingsRemarks[0]",
+            jsonPath: "Booking.bkRemarks",
             callBack: (value) => {
                 if (value === undefined) {
                     return "No Remarks Available.";
                 } else {
-                    let remark = value["bkRemarks"]
-                    return remark;
+                    return value;
                 }
             },
         }),

@@ -55,9 +55,9 @@ class PaymentRedirect extends Component {
                 set(
                     payload,
                     "bkAction",
-                    bookingType === "OSBM" || bookingType === "OSUJM"
+                    bookingType === "OSBM" || bookingType === "OSUJM" 
                         ? "PAY"
-                        : bookingType === "GFCP"
+                        : bookingType === "GFCP" || bookingType === "PACC"
                         ? "APPLY"
                         : "PAIDAPPLY"
                 );

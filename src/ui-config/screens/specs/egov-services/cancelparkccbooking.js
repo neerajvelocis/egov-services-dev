@@ -3,6 +3,7 @@ import {
     getCommonContainer,
     getCommonHeader,
     getBreak,
+    getCommonGrayCard
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     handleScreenConfigurationFieldChange as handleField,
@@ -10,12 +11,13 @@ import {
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import {
-    localStorageGet,
+    getTenantId,
     localStorageSet,
     setapplicationNumber,
     getapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import {
+    
     getFileUrlFromAPI,
     getQueryArg,
     setBusinessServiceDataToLocalStorage,
@@ -28,12 +30,11 @@ import {
     generageBillCollection,
     generateBill,
 } from "../utils";
-import { pccSummary } from "./summaryResource/pccSummary";
-import { pccApplicantSummary } from "./summaryResource/pccApplicantSummary";
-import { documentsSummary } from "./summaryResource/documentsSummary";
-import { estimateSummary } from "./summaryResource/estimateSummary";
-import { remarksSummary } from "./searchResource/remarksSummary";
-import { footerForParkAndCC } from "./searchResource/citizenFooter";
+import { pccSummary } from "./refundResource/pccSummary";
+
+import { estimateSummary } from "./refundResource/estimateSummary";
+
+import { footerForParkAndCC } from "./refundResource/citizenFooter";
 import {
     footerReviewTop,
 } from "./searchResource/footer";
@@ -49,9 +50,19 @@ import { httpRequest } from "../../../../ui-utils";
 let role_name = JSON.parse(getUserInfo()).roles[0].code;
 let bookingStatus = "";
 
+const confirmationStatement = getCommonGrayCard({
+
+    header: getCommonHeader({
+        labelName: "Please confirm booking cancelation by clicking confirm button",
+        labelKey: "BK_PACC_CONFIRMATION_MSG",
+    })
+
+
+})
+
 const titlebar = getCommonContainer({
     header: getCommonHeader({
-        labelName: "Task Details",
+        labelName: "Application Details",
         labelKey: "BK_MY_BK_APPLICATION_DETAILS_HEADER",
     }),
     applicationNumber: {
@@ -144,6 +155,7 @@ const setSearchResponse = async (
         { key: "applicationNumber", value: applicationNumber },
     ]);
     let recData = get(response, "bookingsModelList", []);
+    console.log(recData, "nero data");
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
@@ -184,35 +196,55 @@ const setSearchResponse = async (
     )
 };
 
-// const getPaymentGatwayList = async (action, state, dispatch) => {
-//     try {
-//         let payload = null;
-//         payload = await httpRequest(
-//             "post",
-//             "/pg-service/gateway/v1/_search",
-//             "_search",
-//             [],
-//             {}
-//         );
-//         let payloadprocess = [];
-//         for (let index = 0; index < payload.length; index++) {
-//             const element = payload[index];
-//             let pay = {
-//                 element: element
-//             }
-//             payloadprocess.push(pay);
-//         }
+const getMdmsData = async (action, state, dispatch) => {
+    let tenantId = getTenantId().split(".")[0];
+    let mdmsBody = {
+        MdmsCriteria: {
+            tenantId: tenantId,
+            moduleDetails: [
+                {
+                    moduleName: "pacc",
+                    masterDetails: [
+                        {
+                            name: "tenants",
+                        },
+                    ],
+                },
 
-//         dispatch(prepareFinalObject("applyScreenMdmsData.payment", payloadprocess));
-//     } catch (e) {
-//         console.log(e);
-//     }
-// };
+            ],
+        },
+    };
+    try {
+        let payload = null;
+        payload = await httpRequest(
+            "post",
+            "/egov-mdms-service/v1/_search",
+            "_search",
+            [],
+            mdmsBody
+        );
 
+        let bookingCancellationRefundCalc = {
+            "MORETHAN30DAYS": {
+                "refundpercentage": 50
+            },
+            "LETTHAN30MORETHAN15DAYS": {
+                "refundpercentage": 25
+            },
+            "LESSTHAN15DAYS": {
+                "refundpercentage": 0
+            },
+        }
+        payload.MdmsRes.bookingCancellationRefundCalc = bookingCancellationRefundCalc;
+        dispatch(prepareFinalObject("cancelParkCcScreenMdmsData", payload.MdmsRes));
+    } catch (e) {
+        console.log(e);
+    }
+};
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "pcc-search-preview",
+    name: "cancelparkccbooking",
     beforeInitScreen: (action, state, dispatch) => {
         const applicationNumber = getQueryArg(
             window.location.href,
@@ -230,6 +262,10 @@ const screenConfig = {
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
         // getPaymentGatwayList(action, state, dispatch).then(response => {
         // });
+        // Set MDMS Data
+        getMdmsData(action, state, dispatch).then((response) => {
+            console.log("Hello Nero");
+        });
         const queryObject = [
             { key: "tenantId", value: tenantId },
             { key: "businessServices", value: "PACC" },
@@ -257,35 +293,16 @@ const screenConfig = {
                             },
                             ...titlebar,
                         },
-                        helpSection: {
-                            uiFramework: "custom-atoms",
-                            componentPath: "Container",
-                            props: {
-                                color: "primary",
-                                style: { justifyContent: "flex-end" },
-                            },
-                            gridDefination: {
-                                xs: 12,
-                                sm: 4,
-                                align: "right",
-                            },
-                        },
+
                     },
                 },
-                taskStatus: {
-                  uiFramework: "custom-containers-local",
-                  componentPath: "WorkFlowContainer",
-                  moduleName: "egov-services",
-                  visible:  true,
-                },
+
                 body: getCommonCard({
                     estimateSummary: estimateSummary,
-                    pccApplicantSummary: pccApplicantSummary,
                     pccSummary: pccSummary,
-                    documentsSummary: documentsSummary,
-                    remarksSummary: remarksSummary,
+                    confirmationStatement: confirmationStatement
+
                 }),
-                // break: getBreak(),
                 footer: footerForParkAndCC,
             }
         }

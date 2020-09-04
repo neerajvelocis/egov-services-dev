@@ -9,6 +9,9 @@ import {
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import { gotoApplyWithStep } from "../../utils/index";
 import { getTransformedLocale } from "egov-ui-framework/ui-utils/commons";
+import {
+    convertDateInDMY
+} from "../../utils";
 
 export const pccSummary = getCommonGrayCard({
     header: {
@@ -36,15 +39,26 @@ export const pccSummary = getCommonGrayCard({
             className: "sellmeatapplicant-summary",
             scheama: getCommonGrayCard({
                 applicationContainer: getCommonContainer({
-                    HouseNo: getLabelWithValue(
-                        {
-                            labelName: "House No.",
-                            labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkHouseNo",
-                        }
-                    ),
+                    // HouseNo: getLabelWithValue(
+                    //     {
+                    //         labelName: "House No.",
+                    //         labelKey: "BK_PCC_HOUSE_NUMBER_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkHouseNo",
+                    //         callBack: (value) => {
+                    //             if (
+                    //                 value === undefined ||
+                    //                 value === "" ||
+                    //                 value === null
+                    //             ) {
+                    //                 return "NA";
+                    //             } else {
+                    //                 return value;
+                    //             }
+                    //         },
+                    //     }
+                    // ),
                     Purpose: getLabelWithValue(
                         {
                             labelName: "Purpose",
@@ -52,6 +66,17 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkBookingPurpose",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
                         }
                     ),
                     Sector: getLabelWithValue(
@@ -70,6 +95,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkDimension",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return `${value} Sq Yard`;
+                                }
+                            }
                         }
                     ),
                     Location: getLabelWithValue(
@@ -88,6 +120,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkFromDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     ToDate: getLabelWithValue(
@@ -97,6 +136,13 @@ export const pccSummary = getCommonGrayCard({
                         },
                         {
                             jsonPath: "Booking.bkToDate",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                   return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
                         }
                     ),
                     CleansingCharges: getLabelWithValue(
@@ -117,15 +163,15 @@ export const pccSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkRent",
                         }
                     ),
-                    FacilitationCharges: getLabelWithValue(
-                        {
-                            labelName: "Facilitation Charges",
-                            labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
-                        },
-                        {
-                            jsonPath: "Booking.bkFacilitationCharges",
-                        }
-                    ),
+                    // FacilitationCharges: getLabelWithValue(
+                    //     {
+                    //         labelName: "Facilitation Charges",
+                    //         labelKey: "BK_PCC_FACILITATION_CHARGES_LABEL",
+                    //     },
+                    //     {
+                    //         jsonPath: "Booking.bkFacilitationCharges",
+                    //     }
+                    // ),
                     SurchargeRent: getLabelWithValue(
                         {
                             labelName: "Surcharge on Rent",
@@ -156,13 +202,23 @@ export const pccSummary = getCommonGrayCard({
                     CustomerGstNo: getLabelWithValue(
                         {
                             labelName: "Customer Gst No",
-                            labelKey: "BK_PCC_UTGST_LABEL",
+                            labelKey: "BK_PCC_CUSTOMER_GST_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkCustomerGstNo",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
                         }
                     ),
-                    
                 }),
             }),
             items: [],

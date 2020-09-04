@@ -22,24 +22,20 @@ class BookingMediaContainer extends Component {
 }
 
 const mapStateToProps = (state) => {
+    let masterDataPCC = get(
+        state,
+        "screenConfiguration.preparedFinalObject.masterData",
+        []
+    );
+
     let availabilityCheckData = get(
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData",
         []
     );
-    return { availabilityCheckData };
+    return { masterDataPCC, availabilityCheckData };
 };
 
-// const connectedBookingMediaContainer = withStyles(styles)(
-//     connect(mapStateToProps, null)(BookingMediaContainer)
-// );
-
-// export default forwardRef((props, ref) => {
-//     <connectedBookingMediaContainer {...props} innerRef={ref} />;
-// });
 export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    null
-  )(BookingMediaContainer)
+    connect(mapStateToProps, null)(BookingMediaContainer)
 );

@@ -165,6 +165,7 @@ export const searchForm = getCommonCard({
                     labelName: "Application Type",
                     labelKey: "BK_MY_BK_APPLICATION_TYPE_PLACEHOLDER",
                 },
+                optionLabel: "name",
                 // pattern: getPattern("DoorHouseNo"),
                 // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // required: true,
@@ -181,7 +182,7 @@ export const searchForm = getCommonCard({
                 if (action.value) {
                     let bookingType = get(
                         state,
-                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.ApplicationType"
+                        "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.Status"
                     );
                     let bookingStatus = bookingType.filter(el => el.code === action.value)[0].status
                     dispatch(
@@ -209,6 +210,7 @@ export const searchForm = getCommonCard({
                     labelName: "Application Status",
                     labelKey: "BK_MY_BK_APPLICATION_STATUS_PLACEHOLDER",
                 },
+                optionLabel: "name",
                 // pattern: getPattern("DoorHouseNo"),
                 // errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 // required: true,

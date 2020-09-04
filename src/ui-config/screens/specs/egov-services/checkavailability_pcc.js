@@ -11,6 +11,7 @@ import {
 import {
     availabilityForm,
     availabilityMediaCard,
+    availabilityTimeSlot,
     availabilityCalendar,
 } from "./checkAvailabilityForm_pcc";
 import { ImageLocationSummary } from "./summaryResource/imagesOfNewLocationOswmcc";
@@ -35,7 +36,7 @@ import {
     getSearchResultsView,
     setApplicationNumberBox,
 } from "../../../../ui-utils/commons";
-import { getAvailabilityDataOSWMCC, getBetweenDays } from "../utils";
+import { getAvailabilityDataPCC, getMasterDataPCC, getBetweenDays } from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -73,41 +74,39 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        dispatch(
-            prepareFinalObject("applyScreenMdmsData", payload.MdmsRes)
-        );
+        dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
     }
 };
 
-const getVenueData = async (action, state, dispatch) => {
-    try {
-        let payload = await httpRequest(
-            "post",
-            "/bookings/newLocation/citizen/osujm/_all"
-        );
-        return payload
-    } catch (e) {
-        console.log(e);
-    }
-};
+// const getVenueData = async (action, state, dispatch) => {
+//     try {
+//         let payload = await httpRequest(
+//             "post",
+//             "/bookings/newLocation/citizen/osujm/_all"
+//         );
+//         return payload
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
 
-const getData = async (action, state, dispatch) => {
-    try {
-        let response = await getVenueData(action, state, dispatch);
-        dispatch(
-            prepareFinalObject(
-                "sectorWiselocationsObject",
-                response.osujmNewlocationMap
-            )
-        );
-        return response    
-    } catch (error) {
-        console.log(error, "my error")
-    }
-    
-  };
+// const getData = async (action, state, dispatch) => {
+//     try {
+//         let response = await getVenueData(action, state, dispatch);
+//         dispatch(
+//             prepareFinalObject(
+//                 "sectorWiselocationsObject",
+//                 response.osujmNewlocationMap
+//             )
+//         );
+//         return response
+//     } catch (error) {
+//         console.log(error, "my error")
+//     }
+
+//   };
 
 const setDataAutofill = (action, state, dispatch) => {
     // console.log("in set data autofill")
@@ -115,54 +114,6 @@ const setDataAutofill = (action, state, dispatch) => {
         state,
         "screenConfiguration.preparedFinalObject.sectorWiselocationsObject"
     );
-    // let bkSector = get(
-    //     state,
-    //     "screenConfiguration.preparedFinalObject.applyScreenMdmsData.Booking.bkSector"
-    // );
-    // console.log(sectorWiselocationsObject, "sectorWiselocationsObject out");
-    if (sectorWiselocationsObject !== undefined) {
-        let bkSector = get(
-            state,
-            "screenConfiguration.preparedFinalObject.availabilityCheckData.bkSector"
-        );
-        let bkBookingVenue = get(
-            state,
-            "screenConfiguration.preparedFinalObject.availabilityCheckData.bkBookingVenue"
-        );
-        let venueList = get(sectorWiselocationsObject, bkSector);
-
-        // console.log(sectorWiselocationsObject, "sectorWiselocationsObject");
-        // console.log(bkSector, "bkSector");
-        // console.log(venueList, "venueList");
-        venueList !== undefined &&
-            dispatch(
-                prepareFinalObject(
-                    "venueList",
-                    venueList
-                )
-            );
-        
-
-        dispatch(
-            handleField(
-                "checkavailability_pcc",
-                "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
-                "props.disabled",
-                bkSector  !== undefined || bkSector !== "" ? true : false
-            )
-        );
-
-        if (bkBookingVenue !== undefined) {
-            dispatch(
-                handleField(
-                    "checkavailability_pcc",
-                    "components.div.children.availabilitySearch.children.availabilityForm.children.cardContent.children.availabilityFields.children.bkBookingVenue",
-                    "props.value",
-                    bkBookingVenue
-                )
-            );
-        }
-    }
 };
 
 const prepareEditFlow = async (
@@ -172,25 +123,41 @@ const prepareEditFlow = async (
     applicationNumber,
     tenantId
 ) => {
-    // console.log("in edit flow")
     if (applicationNumber) {
-        // console.log("application number present")
         setapplicationNumber(applicationNumber);
-        setApplicationNumberBox(state, dispatch, applicationNumber);
 
+        dispatch(
+            handleField(
+              "checkavailability_pcc",
+              "components.div.children.availabilityMediaCardWrapper",
+              "visible",
+              true
+            )
+          );
+          dispatch(
+            handleField(
+              "checkavailability_pcc",
+              "components.div.children.availabilityCalendarWrapper",
+              "visible",
+              true
+            )
+          );
         let response = await getSearchResultsView([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
 
-        if (response.bookingsModelList.length > 0) {
+        let bookingsModelList = get(response, "bookingsModelList", []);
+        let documentMap = get(response, "documentMap", {})
+        if (bookingsModelList.length > 0) {
+            console.log(bookingsModelList, "bookingsModelList");
             dispatch(
-                prepareFinalObject("Booking", response.bookingsModelList[0])
+                prepareFinalObject("Booking", bookingsModelList[0])
             );
             dispatch(
                 prepareFinalObject(
                     "availabilityCheckData",
-                    response.bookingsModelList[0]
+                    bookingsModelList[0]
                 )
             );
 
@@ -199,47 +166,83 @@ const prepareEditFlow = async (
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-
-            setDataAutofill(action, state, dispatch);
-
-            let availabilityData = await getAvailabilityDataOSWMCC(
-                response.bookingsModelList[0].bkSector,
-                response.bookingsModelList[0].bkBookingVenue
+            set(
+                action.screenConfig,
+                "components.div.children.availabilityMediaCardWrapper.visible",
+                true
+            );
+            set(
+                action.screenConfig,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                true
             );
 
-            if (availabilityData !== undefined) {
-                let data = availabilityData.data;
-                let reservedDates = [];
-                var daylist = [];
-                data.map((dataitem) => {
-                    let start = dataitem.fromDate;
-                    let end = dataitem.toDate;
-                    daylist = getBetweenDays(start, end);
-                    daylist.map((v) => {
-                        reservedDates.push(v.toISOString().slice(0, 10));
+            let requestBody = {
+                venueType: bookingsModelList[0].bkBookingType,
+                sector: bookingsModelList[0].bkSector,
+            };
+            console.log(requestBody, "requestBody");
+            let response = await getMasterDataPCC(requestBody);
+            let responseStatus = get(response, "status", "");
+            if (
+                responseStatus == "SUCCESS" ||
+                responseStatus == "success"
+            ) {
+                dispatch(
+                    prepareFinalObject("masterData", response.data)
+                );
+                requestBody = {
+                    bookingType: bookingsModelList[0].bkBookingType,
+                    bookingVenue: bookingsModelList[0].bkBookingVenue,
+                    sector: bookingsModelList[0].bkSector,
+                };
+    
+                const availabilityData = await getAvailabilityDataPCC(requestBody);
+    
+                console.log(availabilityData, "availabilityData main page");
+    
+                if (availabilityData !== undefined) {
+                    let data = availabilityData.data;
+                    let reservedDates = [];
+                    var daylist = [];
+                    data.map((dataitem) => {
+                        let start = dataitem.fromDate;
+                        let end = dataitem.toDate;
+                        daylist = getBetweenDays(start, end);
+                        daylist.map((v) => {
+                            reservedDates.push(v.toISOString().slice(0, 10));
+                        });
                     });
-                });
-                dispatch(
-                    prepareFinalObject(
-                        "availabilityCheckData.reservedDays",
-                        reservedDates
-                    )
-                );
+                    dispatch(
+                        prepareFinalObject(
+                            "availabilityCheckData.reservedDays",
+                            reservedDates
+                        )
+                    );
+                    
+                } else {
+                    dispatch(
+                        toggleSnackbar(
+                            true,
+                            {
+                                labelName: "Please Try After Sometime!",
+                                labelKey: "",
+                            },
+                            "warning"
+                        )
+                    );
+                }
             } else {
-                dispatch(
-                    toggleSnackbar(
-                        true,
-                        {
-                            labelName: "Please Try After Sometime!",
-                            labelKey: "",
-                        },
-                        "warning"
-                    )
-                );
+                let errorMessage = {
+                    labelName: "Something went wrong, Try Again later!",
+                    labelKey: "", //UPLOAD_FILE_TOAST
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "error"));
             }
 
-            let fileStoreIds = Object.keys(response.documentMap);
-            let fileStoreIdsValue = Object.values(response.documentMap);
+
+            let fileStoreIds = Object.keys(documentMap);
+            let fileStoreIdsValue = Object.values(documentMap);
             if (fileStoreIds.length > 0) {
                 let fileUrls =
                     fileStoreIds.length > 0
@@ -258,7 +261,7 @@ const prepareEditFlow = async (
         }
     } else {
         // console.log("in edit flow not application number")
-        setDataAutofill(action, state, dispatch);
+        // setDataAutofill(action, state, dispatch);
     }
 };
 const header = getCommonContainer({
@@ -291,26 +294,35 @@ const availabilityMediaCardWrapper = {
     uiFramework: "custom-atoms",
     componentPath: "Form",
     props: {
-        id: "apply_form1",
+        id: "availability-media-card",
     },
     children: {
         availabilityMediaCard,
     },
-    visible: false
+    visible: false,
+};
+const availabilityTimeSlotWrapper = {
+    uiFramework: "custom-atoms",
+    componentPath: "Form",
+    props: {
+        id: "availability-timeslot",
+    },
+    children: {
+        availabilityTimeSlot,
+    },
+    visible: false,
 };
 const availabilityCalendarWrapper = {
     uiFramework: "custom-atoms",
     componentPath: "Form",
     props: {
-        id: "apply_form1",
+        id: "availability-calender",
     },
     children: {
         availabilityCalendar,
     },
-    visible: false
+    visible: false,
 };
-
-
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -322,22 +334,8 @@ const screenConfig = {
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
         getMdmsData(action, state, dispatch);
-        getData(action, state, dispatch).then(response => {
-            // console.log(response, "my new response")
-            if(response){
-                // console.log("if response true")
-                // console.log("call prepare edit flow")
-                prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
-            }
-        })
-        // if (applicationNumber !== null) {
+        prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
 
-        
-
-       
-        // } else {
-        //     setDataAutofill(action, state, dispatch);
-        // }
         return action;
     },
     components: {
@@ -364,6 +362,7 @@ const screenConfig = {
                 },
                 availabilitySearch,
                 availabilityMediaCardWrapper,
+                availabilityTimeSlotWrapper,
                 availabilityCalendarWrapper,
                 adhocDialog: {
                     uiFramework: "custom-containers-local",

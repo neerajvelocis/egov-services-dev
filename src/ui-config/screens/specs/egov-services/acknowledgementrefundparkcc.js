@@ -20,12 +20,7 @@ import { getapplicationType, setapplicationType, setapplicationNumber } from "eg
 
 export const header = getCommonContainer({
     header: getCommonHeader({
-        labelName: `Application for ${
-            getapplicationType() === "OSBM"
-                ? "Open Space to Store Building Material"
-                : getapplicationType() === "NLUJM" ? "New Location" :
-                    getapplicationType() === "GFCP" ? "Commercial Ground" : getapplicationType() === "OSUJM" ? "Open Space within MCC jurisdiction" : getapplicationType() === "PACC" ? "Parks & Community Center/Banquet Halls" : "Water Tanker"
-            } (${getCurrentFinancialYear()})`, //later use getFinancialYearDates
+        labelName: `Booking Cancellation`, //later use getFinancialYearDates
         labelKey: "",
     }),
     applicationNumber: {
@@ -39,97 +34,6 @@ export const header = getCommonContainer({
     },
 });
 
-export const paymentSuccessFooter = (
-    state,
-    applicationNumber,
-    tenantId,
-    businessService
-) => {
-    return getCommonApplyFooter({
-        //call gotoHome
-        downloadReceiptButton: {
-            componentPath: "Button",
-            props: {
-                variant: "outlined",
-                color: "primary",
-                style: {
-                    //   minWidth: "200px",
-                    height: "48px",
-                    marginRight: "16px",
-                },
-            },
-            children: {
-                downloadReceiptButtonLabel: getLabel({
-                    labelName: "DOWNLOAD RECEIPT",
-                    labelKey: "BK_BUTTON_DOWNLOAD_RECEIPT",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: (state, dispatch) => {
-                    //// generatePdf(state, dispatch, "receipt_download");
-                    downloadReceipt(state, applicationNumber, tenantId);
-                },
-            },
-        },
-        downloadPermissionLetterButton: {
-            componentPath: "Button",
-            props: {
-                variant: "outlined",
-                color: "primary",
-                style: {
-                    //   minWidth: "200px",
-                    height: "48px",
-                    marginRight: "16px",
-                },
-            },
-            children: {
-                downloadReceiptButtonLabel: getLabel({
-                    labelName: "DOWNLOAD PERMISSION LETTER",
-                    labelKey: "BK_BUTTON_DOWNLOAD_PERMISSION_LETTER",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: (state, dispatch) => {
-                    //// generatePdf(state, dispatch, "receipt_download");
-                    downloadCertificate(
-                        state,
-                        applicationNumber,
-                        tenantId
-                    );
-                },
-            },
-            visible: (businessService === "OSBM" || businessService === "GFCP" || businessService === "OSUJM" || businessService === "PACC") ? true : false
-        },
-        gotoHome: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    //    minWidth: "200px",
-                    height: "48px",
-                    marginRight: "16px",
-                },
-            },
-            children: {
-                goToHomeButtonLabel: getLabel({
-                    labelName: "GO TO HOME",
-                    labelKey: "BK_BUTTON_HOME",
-                }),
-            },
-            onClickDefination: {
-                action: "page_change",
-                path:
-                    process.env.REACT_APP_SELF_RUNNING === "true"
-                        ? `/egov-ui-framework/egov-services/search`
-                        : `/`,
-            },
-            visible: true,
-        },
-    });
-};
 export const applicationSuccessFooter = (
     state,
     applicationNumber,
@@ -151,8 +55,8 @@ export const applicationSuccessFooter = (
             },
             children: {
                 downloadReceiptButtonLabel: getLabel({
-                    labelName: "DOWNLOAD Application",
-                    labelKey: "BK_BUTTON_DOWNLOAD_APPLICATION",
+                    labelName: "DOWNLOAD RECEIPT",
+                    labelKey: "BK_PACC_BUTTON_DOWNLOAD_CANCEL_RCPT",
                 }),
             },
             onClickDefination: {
@@ -212,7 +116,7 @@ const getAcknowledgementCard = (
     tenantId,
     businessService
 ) => {
-    if (purpose === "apply" && status === "success") {
+    if (purpose === "confirmed") {
         return {
             header,
             applicationSuccessCard: {
@@ -223,13 +127,13 @@ const getAcknowledgementCard = (
                         icon: "done",
                         backgroundColor: "#39CB74",
                         header: {
-                            labelName: "Application Submitted Successfully",
-                            labelKey: "BK_APPLICATION_SUCCESS_MESSAGE_MAIN",
+                            labelName: "Booking cancellation successfully",
+                            labelKey: "BK_PACC_APPLICATION_CANCELLATION_MESSAGE",
                         },
                         body: {
                             labelName:
-                                "A notification regarding Application Submission has been sent to the applicant registered Mobile No.",
-                            labelKey: "BK_APPLICATION_SUCCESS_MESSAGE_SUB",
+                                "Your booking has been cancelled and refund process initiated successfully",
+                            labelKey: "BK_PACC_APPLICATION_CANCELLATION_MESSAGE_SUB",
                         },
 
                         tailText: {
@@ -242,71 +146,6 @@ const getAcknowledgementCard = (
             },
 
             applicationSuccessFooter: applicationSuccessFooter(
-                state,
-                applicationNumber,
-                tenantId,
-                businessService
-            ),
-        };
-    } else if (purpose === "pay" && status === "success") {
-        return {
-            header,
-            applicationSuccessCard: {
-                uiFramework: "custom-atoms",
-                componentPath: "Div",
-                children: {
-                    card: acknowledgementCard({
-                        icon: "done",
-                        backgroundColor: "#39CB74",
-                        header: {
-                            labelName:
-                                "Payment has been collected successfully!",
-                            labelKey:
-                                "BK_PAYMENT_COLLECTION_SUCCESS_MESSAGE_MAIN",
-                        },
-                        body: {
-                            labelName:
-                                "A notification regarding Payment Collection has been sent to the applicant at registered Mobile No.",
-                            labelKey: "BK_PAYMENT_SUCCESS_MESSAGE_SUB",
-                        },
-                        tailText: {
-                            labelName: "Transaction No.",
-                            labelKey: "BK_PMT_TXN_ID",
-                        },
-                        number: secondNumber,
-                    }),
-                },
-            },
-            paymentSuccessFooter: paymentSuccessFooter(
-                state,
-                applicationNumber,
-                tenantId,
-                businessService
-            ),
-        };
-    } else if (purpose === "pay" && status === "failure") {
-        return {
-            header,
-            applicationSuccessCard: {
-                uiFramework: "custom-atoms",
-                componentPath: "Div",
-                children: {
-                    card: acknowledgementCard({
-                        icon: "close",
-                        backgroundColor: "#E54D42",
-                        header: {
-                            labelName: "Payment has failed!",
-                            labelKey: "BK_PAYMENT_FAILURE_MESSAGE_MAIN",
-                        },
-                        body: {
-                            labelName:
-                                "A notification regarding payment failure has been sent to the applicant.",
-                            labelKey: "BK_PAYMENT_FAILURE_MESSAGE_SUB",
-                        },
-                    }),
-                },
-            },
-            paymentFailureFooter: paymentFailureFooter(
                 state,
                 applicationNumber,
                 tenantId,
@@ -358,7 +197,7 @@ const setApplicationDataForNewLocOSWMCC = async (dispatch, applicationNumber, te
 
 const screenConfig = {
     uiFramework: "material-ui",
-    name: "acknowledgement",
+    name: "acknowledgementrefundparkcc",
     components: {
         div: {
             uiFramework: "custom-atoms",

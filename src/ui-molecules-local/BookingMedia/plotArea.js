@@ -9,192 +9,116 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import {
-    getFileUrlFromAPI,
-    getQueryArg,
-    addQueryArg,
-} from "egov-ui-framework/ui-utils/commons";
-import "react-day-picker/lib/style.css";
-import { localStorageGet } from "egov-ui-kit/utils/localStorageUtils";
-class ConnectedPlotArea extends React.Component {
-        constructor(props) {
-            super(props);
-        }
+    getAvailabilityDataPCC,
+    getBetweenDays,
+} from "../../ui-config/screens/specs/utils";
+import get from "lodash/get";
+import set from "lodash/set";
 
-        render() {
-            console.log(this.props)
-                // let venuesArray = [
-                //     {
-                //         X: 563.5,
-                //         Y: 227,
-                //         Radius: 40,
-                //     },
-                //     {
-                //         X: 280.5,
-                //         Y: 643,
-                //         Radius: 40,
-                //     },
-                //     {
-                //         X: 311.616668701172,
-                //         Y: 404,
-                //         Radius: 40,
-                //     },
-                //     {
-                //         X: 146.616668701172,
-                //         Y: 501,
-                //         Radius: 40,
-                //     },
-                // ];
-            let venuesArray = [{
-                    X: 417.35,
-                    Y: 209,
-                    Radius: 20
-                },
-                {
-                    X: 500.35,
-                    Y: 253,
-                    Radius: 20
-                },
-                {
-                    X: 242.35,
-                    Y: 394,
-                    Radius: 20
-                },
-                {
-                    X: 519.35,
-                    Y: 318,
-                    Radius: 20
-                },
-                {
-                    X: 213.35,
-                    Y: 431,
-                    Radius: 20
-                },
-                {
-                    X: 864.35,
-                    Y: 416,
-                    Radius: 20
-                },
-                {
-                    X: 892.35,
-                    Y: 519,
-                    Radius: 20
-                },
-                {
-                    X: 755.35,
-                    Y: 632,
-                    Radius: 20
-                },
-                {
-                    X: 660.35,
-                    Y: 663,
-                    Radius: 20
-                },
-                {
-                    X: 261.35,
-                    Y: 772,
-                    Radius: 20
-                },
-                {
-                    X: 564.35,
-                    Y: 770,
-                    Radius: 20
-                },
-                {
-                    X: 737.35,
-                    Y: 719,
-                    Radius: 20
-                },
-                {
-                    X: 851.35,
-                    Y: 777,
-                    Radius: 20
-                },
-                {
-                    X: 736.35,
-                    Y: 916,
-                    Radius: 20
-                },
-                {
-                    X: 736.35,
-                    Y: 916,
-                    Radius: 20
-                },
-                {
-                    X: 547.35,
-                    Y: 1050,
-                    Radius: 20
-                },
-                {
-                    X: 206.5,
-                    Y: 434,
-                    Radius: 20
-                },
-                {
-                    X: 768.5,
-                    Y: 656,
-                    Radius: 20
-                },
-                {
-                    X: 544.5,
-                    Y: 1039,
-                    Radius: 20
-                },
-                {
-                    X: 544.5,
-                    Y: 1096,
-                    Radius: 20
-                },
-            ];
-            return venuesArray.map((item) => {
-                let coords = `${item.X},${item.Y},${item.Radius}`;
-
-                return ( <area alt = ""
-                    title = "custom-text"
-                    onClick = {
-                        (event) => {
-
-                            window.scrollTo({
-                                top: document.body.scrollHeight,
-                                behavior: 'smooth'
-                            })
-                        }
-                    }
-                    shape = "circle"
-                    coords = { coords }
-                    style = {
-                        { cursor: "pointer" }
-                    }
-                    target = "_self" />
-                );
-            });
-        }
+class PlotArea extends React.Component {
+    constructor(props) {
+        super(props);
     }
-    // const mapStateToProps = (state) => {
-    //     return {
-    //         availabilityCheckData:
-    //             state.screenConfiguration.preparedFinalObject.availabilityCheckData,
-    //     };
-    // };
+
+    getAvailabilityData = async (e, item) => {
+        const { availabilityCheckData } = this.props;
+        set(
+            this.props.calendarVisiblity.checkavailability_pcc,
+            "components.div.children.availabilityCalendarWrapper.visible",
+            true
+        );
+        this.props.prepareFinalObject(
+            "availabilityCheckData.bkBookingVenue",
+            item.id
+        );
+        this.props.prepareFinalObject(
+            "availabilityCheckData.bkLocation",
+            item.name
+        );
+        this.props.prepareFinalObject("Booking.bkBookingVenue", item.id);
+
+        let requestBody = {
+            bookingType: availabilityCheckData.bkBookingType,
+            bookingVenue: item.id,
+            sector: availabilityCheckData.bkSector,
+        };
+
+        const response = await getAvailabilityDataPCC(requestBody);
+        let responseStatus = get(response, "status", "");
+
+        if (responseStatus == "SUCCESS" || responseStatus == "success") {
+            let data = response.data;
+            let reservedDates = [];
+            var daylist = [];
+            data.map((dataitem) => {
+                let start = dataitem.fromDate;
+                let end = dataitem.toDate;
+                daylist = getBetweenDays(start, end);
+                daylist.map((v) => {
+                    reservedDates.push(v.toISOString().slice(0, 10));
+                });
+            });
+            this.props.prepareFinalObject(
+                "availabilityCheckData.reservedDays",
+                reservedDates
+            );
+
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: "smooth",
+            });
+        } else {
+            let errorMessage = {
+                labelName: "Something went wrong, Try Again later!",
+                labelKey: "", //UPLOAD_FILE_TOAST
+            };
+            this.props.toggleSnackbar(true, errorMessage, "error");
+        }
+    };
+
+    render() {
+        console.log(this.props, "Nerosss");
+        const { masterDataPCC, availabilityCheckData } = this.props;
+        return masterDataPCC.map((item) => {
+            let coords = `${item.x},${item.y},${item.radius}`;
+            let venueId = item.id;
+            return (
+                <area
+                    key={item.id}
+                    alt={item.name}
+                    title={item.name}
+                    onClick={(e) => this.getAvailabilityData(e, item)}
+                    // onClick={(item.id) => {
+                    //     window.scrollTo({
+                    //         top: document.body.scrollHeight,
+                    //         behavior: "smooth",
+                    //     });
+                    // }}
+                    shape="circle"
+                    coords={coords}
+                    style={{
+                        cursor: "pointer",
+                    }}
+                    target="_self"
+                />
+            );
+        });
+    }
+}
+const mapStateToProps = (state) => {
+    return {
+        calendarVisiblity: state.screenConfiguration.screenConfig,
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
         prepareFinalObject: (jsonPath, value) =>
             dispatch(prepareFinalObject(jsonPath, value)),
+        toggleSnackbar: (jsonPath, value) =>
+            dispatch(toggleSnackbar(jsonPath, value)),
         changeRoute: (path) => dispatch(setRoute(path)),
     };
 };
 
-// const connectedPlotArea = withStyles(styles)(
-//     connect(mapStateToProps, null)(PlotArea)
-// );
-
-// export default forwardRef((props, ref) => {
-//     <connectedPlotArea {...props} innerRef={ref} />;
-// });
-
-
-const PlotArea = connect(null, null, null, { forwardRef: true })(ConnectedPlotArea);
-
-export default PlotArea;
-
-// export default connect(null, mapDispatchToProps)(PlotArea);
+export default connect(mapStateToProps, mapDispatchToProps)(PlotArea);
