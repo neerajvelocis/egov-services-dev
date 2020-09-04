@@ -36,7 +36,7 @@ import {
     getSearchResultsView,
     setApplicationNumberBox,
 } from "../../../../ui-utils/commons";
-import { getAvailabilityDataPCC, getBetweenDays } from "../utils";
+import { getAvailabilityDataPCC, getMasterDataPCC, getBetweenDays } from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -125,19 +125,39 @@ const prepareEditFlow = async (
 ) => {
     if (applicationNumber) {
         setapplicationNumber(applicationNumber);
+
+        dispatch(
+            handleField(
+              "checkavailability_pcc",
+              "components.div.children.availabilityMediaCardWrapper",
+              "visible",
+              true
+            )
+          );
+          dispatch(
+            handleField(
+              "checkavailability_pcc",
+              "components.div.children.availabilityCalendarWrapper",
+              "visible",
+              true
+            )
+          );
         let response = await getSearchResultsView([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
 
-        if (response.bookingsModelList.length > 0) {
+        let bookingsModelList = get(response, "bookingsModelList", []);
+        let documentMap = get(response, "documentMap", {})
+        if (bookingsModelList.length > 0) {
+            console.log(bookingsModelList, "bookingsModelList");
             dispatch(
-                prepareFinalObject("Booking", response.bookingsModelList[0])
+                prepareFinalObject("Booking", bookingsModelList[0])
             );
             dispatch(
                 prepareFinalObject(
                     "availabilityCheckData",
-                    response.bookingsModelList[0]
+                    bookingsModelList[0]
                 )
             );
 
@@ -146,58 +166,83 @@ const prepareEditFlow = async (
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-            // set(
-            //     state.screenConfiguration.screenConfig["checkavailability_pcc"],
-            //     "components.div.children.availabilityCalendarWrapper.visible",
-            //     true
-            // );
-            // set(
-            //     state.screenConfiguration.screenConfig["checkavailability_pcc"],
-            //     "components.div.children.availabilityMediaCardWrapper",
-            //     true
-            // );
-           
-            let requestBody = {
-                bookingType: response.bookingsModelList[0].bkBookingType,
-                bookingVenue: response.bookingsModelList[0].bkBookingVenue,
-                sector: response.bookingsModelList[0].bkSector,
-            };
-    
-            const availabilityData = await getAvailabilityDataPCC(requestBody);
+            set(
+                action.screenConfig,
+                "components.div.children.availabilityMediaCardWrapper.visible",
+                true
+            );
+            set(
+                action.screenConfig,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                true
+            );
 
-            if (availabilityData !== undefined) {
-                let data = availabilityData.data;
-                let reservedDates = [];
-                var daylist = [];
-                data.map((dataitem) => {
-                    let start = dataitem.fromDate;
-                    let end = dataitem.toDate;
-                    daylist = getBetweenDays(start, end);
-                    daylist.map((v) => {
-                        reservedDates.push(v.toISOString().slice(0, 10));
+            let requestBody = {
+                venueType: bookingsModelList[0].bkBookingType,
+                sector: bookingsModelList[0].bkSector,
+            };
+            console.log(requestBody, "requestBody");
+            let response = await getMasterDataPCC(requestBody);
+            let responseStatus = get(response, "status", "");
+            if (
+                responseStatus == "SUCCESS" ||
+                responseStatus == "success"
+            ) {
+                dispatch(
+                    prepareFinalObject("masterData", response.data)
+                );
+                requestBody = {
+                    bookingType: bookingsModelList[0].bkBookingType,
+                    bookingVenue: bookingsModelList[0].bkBookingVenue,
+                    sector: bookingsModelList[0].bkSector,
+                };
+    
+                const availabilityData = await getAvailabilityDataPCC(requestBody);
+    
+                console.log(availabilityData, "availabilityData main page");
+    
+                if (availabilityData !== undefined) {
+                    let data = availabilityData.data;
+                    let reservedDates = [];
+                    var daylist = [];
+                    data.map((dataitem) => {
+                        let start = dataitem.fromDate;
+                        let end = dataitem.toDate;
+                        daylist = getBetweenDays(start, end);
+                        daylist.map((v) => {
+                            reservedDates.push(v.toISOString().slice(0, 10));
+                        });
                     });
-                });
-                dispatch(
-                    prepareFinalObject(
-                        "availabilityCheckData.reservedDays",
-                        reservedDates
-                    )
-                );
+                    dispatch(
+                        prepareFinalObject(
+                            "availabilityCheckData.reservedDays",
+                            reservedDates
+                        )
+                    );
+                    
+                } else {
+                    dispatch(
+                        toggleSnackbar(
+                            true,
+                            {
+                                labelName: "Please Try After Sometime!",
+                                labelKey: "",
+                            },
+                            "warning"
+                        )
+                    );
+                }
             } else {
-                dispatch(
-                    toggleSnackbar(
-                        true,
-                        {
-                            labelName: "Please Try After Sometime!",
-                            labelKey: "",
-                        },
-                        "warning"
-                    )
-                );
+                let errorMessage = {
+                    labelName: "Something went wrong, Try Again later!",
+                    labelKey: "", //UPLOAD_FILE_TOAST
+                };
+                dispatch(toggleSnackbar(true, errorMessage, "error"));
             }
 
-            let fileStoreIds = Object.keys(response.documentMap);
-            let fileStoreIdsValue = Object.values(response.documentMap);
+
+            let fileStoreIds = Object.keys(documentMap);
+            let fileStoreIdsValue = Object.values(documentMap);
             if (fileStoreIds.length > 0) {
                 let fileUrls =
                     fileStoreIds.length > 0

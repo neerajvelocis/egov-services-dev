@@ -16,7 +16,7 @@ export const callBackForCancel = (state, dispatch) => {
 export const callBackForEdit = (state, dispatch) => {
     let applicationNumber = getapplicationNumber()
     let businessService = getapplicationType();
-    let tenantId = getTenantId()
+    let tenantId = getTenantId().split(".")[0]
     dispatch(setRoute(`/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`));
 };
 
@@ -129,42 +129,6 @@ export const footer = getCommonApplyFooter({
         //     action: "PAY",
         // },
     },
-    editButton: {
-        componentPath: "Button",
-        props: {
-            variant: "outlined",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "45px",
-                borderRadius: "inherit",
-            },
-        },
-        children: {
-            nextButtonLabel: getLabel({
-                labelName: "EDIT",
-                labelKey: "BK_MY_BK_BUTTON_EDIT",
-            }),
-            // nextButtonIcon: {
-            //     uiFramework: "custom-atoms",
-            //     componentPath: "Icon",
-            //     props: {
-            //         iconName: "keyboard_arrow_right",
-            //     },
-            // },
-        },
-        onClickDefination: {
-            action: "condition",
-            callBack: callBackForEdit,
-        },
-        visible: false,
-        // roleDefination: {
-        //     rolePath: "user-info.roles",
-        //     roles: ["CITIZEN"],
-        //     action: "PAY",
-        // },
-    },
 });
 
 
@@ -201,44 +165,44 @@ export const footerForParkAndCC = getCommonApplyFooter({
         visible: false,
     },
 
-    submitButton: {
-        componentPath: "Button",
-        props: {
-            variant: "contained",
-            color: "primary",
-            style: {
-                minWidth: "180px",
-                height: "48px",
-                marginRight: "45px",
-                borderRadius: "inherit",
-            },
-        },
-        children: {
-            nextButtonLabel: getLabel({
-                labelName: "Make Payment",
-                labelKey: "BK_MY_BK_BUTTON_PAYMENT",
-            }),
-            // nextButtonIcon: {
-            //     uiFramework: "custom-atoms",
-            //     componentPath: "Icon",
-            //     props: {
-            //         iconName: "keyboard_arrow_right",
-            //     },
-            // },
-        },
-        onClickDefination: {
-            action: "condition",
-            // callBack: callBackForNext,
-            callBack: (state, dispatch) =>
-                callBackForNext(state, dispatch, "pay"),
-        },
-        visible: false,
-        // roleDefination: {
-        //     rolePath: "user-info.roles",
-        //     roles: ["CITIZEN"],
-        //     action: "PAY",
-        // },
-    },
+    // submitButton: {
+    //     componentPath: "Button",
+    //     props: {
+    //         variant: "contained",
+    //         color: "primary",
+    //         style: {
+    //             minWidth: "180px",
+    //             height: "48px",
+    //             marginRight: "45px",
+    //             borderRadius: "inherit",
+    //         },
+    //     },
+    //     children: {
+    //         nextButtonLabel: getLabel({
+    //             labelName: "Make Payment",
+    //             labelKey: "BK_MY_BK_BUTTON_PAYMENT",
+    //         }),
+    //         // nextButtonIcon: {
+    //         //     uiFramework: "custom-atoms",
+    //         //     componentPath: "Icon",
+    //         //     props: {
+    //         //         iconName: "keyboard_arrow_right",
+    //         //     },
+    //         // },
+    //     },
+    //     onClickDefination: {
+    //         action: "condition",
+    //         // callBack: callBackForNext,
+    //         callBack: (state, dispatch) =>
+    //             callBackForNext(state, dispatch, "pay"),
+    //     },
+    //     visible: false,
+    //     // roleDefination: {
+    //     //     rolePath: "user-info.roles",
+    //     //     roles: ["CITIZEN"],
+    //     //     action: "PAY",
+    //     // },
+    // },
     editButton: {
         componentPath: "Button",
         props: {
