@@ -4,12 +4,12 @@ import { connect } from "react-redux";
 import get from "lodash/get";
 
 class RefundAmountContainer extends Component {
-
+    
     render() {
-        const { bookingData, cancelParkCcScreenMdmsData } = this.props;
+        const { refundAmount } = this.props;
         return (
-            <div>
-                Refund Amount - 3456 Rs.
+            <div style={{marginLeft: "23px"}}>
+                Refund Amount - <span style={{fontWeight:"bold"}}>Rs. {refundAmount}</span>
             </div>
         )
     }
@@ -20,19 +20,46 @@ class RefundAmountContainer extends Component {
 const mapStateToProps = (state, ownProps) => {
     const { screenConfiguration } = state;
 
-    const cancelParkCcScreenMdmsData = get(
+    
+
+    const bookingDate = get(
         screenConfiguration,
-        "preparedFinalObject.cancelParkCcScreenMdmsData.bookingCancellationRefundCalc",
+        "preparedFinalObject.Booking.bkFromDate",
         []
     )
-
-    const bookingData = get(
+    const bookingAmount = get(
         screenConfiguration,
-        "preparedFinalObject.Booking",
+        "preparedFinalObject.ReceiptTemp[0].Bill[0].totalAmount",
         []
     )
+    var date1 = new Date(bookingDate);
+    var date2 = new Date();
 
-    return { bookingData, cancelParkCcScreenMdmsData };
+    var Difference_In_Time = date1.getTime() - date2.getTime();
+
+    // To calculate the no. of days between two dates 
+    var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+    console.log(Difference_In_Days, "Neor days");
+    let refundAmount = 0
+    if (Difference_In_Days > 29) {
+        const refundPercent = get(
+            screenConfiguration,
+            "preparedFinalObject.cancelParkCcScreenMdmsData.bookingCancellationRefundCalc.MORETHAN30DAYS.refundpercentage",
+            []
+        )
+
+        refundAmount = (parseFloat(bookingAmount)*refundPercent)/100
+    } else if (Difference_In_Days > 15 && Difference_In_Days < 30) {
+        const refundPercent = get(
+            screenConfiguration,
+            "preparedFinalObject.cancelParkCcScreenMdmsData.bookingCancellationRefundCalc.LETTHAN30MORETHAN15DAYS.refundpercentage",
+            []
+        )
+        refundAmount = (parseFloat(bookingAmount)*refundPercent)/100
+    }
+
+
+    return { refundAmount };
 };
 
 export default connect(mapStateToProps, null)(RefundAmountContainer);
