@@ -166,17 +166,17 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        payload.MdmsRes.Booking.PCC_Document = [
-            {
-                active: true,
-                code: "PCC_DOCUMENT",
-                description: "PCC_DOCUMENT_DESCRIPTION",
-                documentType: "DOC",
-                dropdownData: [],
-                hasDropdown: false,
-                required: true,
-            },
-        ];
+        // payload.MdmsRes.Booking.PCC_Document = [
+        //     {
+        //         active: true,
+        //         code: "PCC_DOCUMENT",
+        //         description: "PCC_DOCUMENT_DESCRIPTION",
+        //         documentType: "DOC",
+        //         dropdownData: [],
+        //         hasDropdown: false,
+        //         required: true,
+        //     },
+        // ];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);

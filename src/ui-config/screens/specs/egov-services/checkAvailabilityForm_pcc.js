@@ -799,6 +799,10 @@ export const availabilityTimeSlot = getCommonCard({
 });
 export const availabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
+        header: getCommonHeader({
+            labelName: `Select From & To Date in below Calendar`,
+            labelKey: "BK_PCC_SELECT_CALENDAR_DATE_HEAD",
+        }),
         bookingCalendar: {
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",

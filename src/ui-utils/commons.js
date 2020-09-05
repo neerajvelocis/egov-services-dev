@@ -360,6 +360,8 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "PACC");
+        set(payload, "totime", "9:00 AM");
+        set(payload, "fromtime", "8:59 PM");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {

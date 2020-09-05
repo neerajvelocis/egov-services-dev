@@ -61,6 +61,12 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
+                        {
+                            name : "bookingCancellationRefundCalc"
+                        },
+                        {
+                            name : "PCC_Document"
+                        }
                     ],
                 },
             ],

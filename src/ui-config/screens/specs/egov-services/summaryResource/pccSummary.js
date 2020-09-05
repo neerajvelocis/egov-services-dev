@@ -99,7 +99,7 @@ export const pccSummary = getCommonGrayCard({
                                 if (value === undefined || value === "" || value === null) {
                                    return "NA"
                                 } else {
-                                    return `${value} Sq Yard`;
+                                    return `${value} Sq. Yards`;
                                 }
                             }
                         }
@@ -193,7 +193,7 @@ export const pccSummary = getCommonGrayCard({
                     Cgst: getLabelWithValue(
                         {
                             labelName: "Cgst",
-                            labelKey: "BK_PCC_UTGST_LABEL",
+                            labelKey: "BK_PCC_CGST_LABEL",
                         },
                         {
                             jsonPath: "Booking.bkCgst",

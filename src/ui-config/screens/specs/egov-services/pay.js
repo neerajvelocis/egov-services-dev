@@ -48,8 +48,6 @@ const header = getCommonContainer({
     },
 });
 
-
-
 const setSearchResponse = async (
     state,
     action,
@@ -68,9 +66,6 @@ const setSearchResponse = async (
     dispatch(
         prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
     );
-   
-
-
 
     await generateBill(
         state,
@@ -79,6 +74,12 @@ const setSearchResponse = async (
         tenantId,
         recData[0].businessService
     );
+
+    // await handleCheckAvailability(
+    //     recData.length > 0 ? recData[0] : {},
+    //     action,
+    //     dispatch
+    // );
 };
 
 const setPaymentMethods = async (action, state, dispatch) => {
@@ -99,6 +100,56 @@ const setPaymentMethods = async (action, state, dispatch) => {
     }
 };
 
+// const handleCheckAvailability = async (Booking, action, dispatch) => {
+//     if (getapplicationType() === "GFCP") {
+//         let venue = Booking.bkBookingVenue;
+//         let from = Booking.bkFromDate;
+//         let to = Booking.bkToDate;
+//         let bookedDates = await checkAvaialbilityAtSubmitCgb(venue, from, to);
+
+//         bookedDates.data.map((val) => {
+//             if (val === from || val === to) {
+//                 dispatch(
+//                     toggleSnackbar(
+//                         true,
+//                         {
+//                             labelName: "Dates are Already Booked. Try Again!",
+//                             labelKey: "",
+//                         },
+//                         "warning"
+//                     )
+//                 );
+//                 dispatch(setRoute(`/egov-services/checkavailability`));
+//             }
+//         });
+//     } else if (getapplicationType() === "OSUJM") {
+//         let venue = Booking.bkBookingVenue;
+//         let from = Booking.bkFromDate;
+//         let to = Booking.bkToDate;
+//         let sector = Booking.bkSector;
+//         let bookedDates = await checkAvaialbilityAtSubmitOsujm(
+//             sector,
+//             venue,
+//             from,
+//             to
+//         );
+//         bookedDates.data.map((val) => {
+//             if (val === from || val === to) {
+//                 dispatch(
+//                     toggleSnackbar(
+//                         true,
+//                         {
+//                             labelName: "Dates are Already Booked. Try Again!",
+//                             labelKey: "",
+//                         },
+//                         "warning"
+//                     )
+//                 );
+//                 dispatch(setRoute(`/egov-services/checkavailability_oswmcc`));
+//             }
+//         });
+//     }
+// };
 
 const screenConfig = {
     uiFramework: "material-ui",
@@ -117,8 +168,6 @@ const screenConfig = {
         setapplicationType(businessService);
         setPaymentMethods(action, state, dispatch);
         setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
-
-
 
         return action;
     },

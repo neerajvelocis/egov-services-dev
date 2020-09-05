@@ -269,10 +269,9 @@ class BookingCalendar extends React.Component {
                     />
                 </div>
                 <div className="calendar-info">
-                    <h2 className="calendar-info-title">
+                    {/* <h2 className="calendar-info-title">
                         Select From &amp; To Date in Calendar{" "}
-                    </h2>
-
+                    </h2> */}
                     <div style={{ marginBottom: 12 }}>
                         <span
                             style={{
