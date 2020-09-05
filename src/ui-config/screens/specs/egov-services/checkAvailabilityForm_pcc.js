@@ -459,21 +459,21 @@ export const availabilityForm = getCommonCard({
             beforeFieldChange: (action, state, dispatch) => {
                 set(
                     state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                    "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityMediaCardWrapper.visible",
                     false
                 );
                 set(
                     state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                    "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityTimeSlotWrapper.visible",
                     false
                 );
                 set(
                     state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                    "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityCalendarWrapper.visible",
                     false
@@ -550,21 +550,21 @@ export const availabilityForm = getCommonCard({
 
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityCalendarWrapper.visible",
                         availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityTimeSlotWrapper.visible",
                         bkBookingType === "Parks" ? false : true
@@ -757,6 +757,29 @@ export const availabilityMediaCard = getCommonCard({
     }),
 });
 export const availabilityTimeSlot = getCommonCard({
+    header: {
+        uiFramework: "custom-atoms",
+        componentPath: "Container",
+        props: {
+            style: { marginBottom: "10px", color: "#FE7A51", textAlign: "center" },
+        },
+        children: {
+            header: {
+                gridDefination: {
+                    xs: 12,
+                    sm: 12,
+                    md: 12,
+                },
+                ...getCommonHeader({
+                    labelName: "Select your booking time in below Timeslot Calendar",
+                    labelKey: "Select your booking time in below Timeslot Calendar",
+
+                    style: { color: "#FE7A51" },
+
+                }),
+            },
+        },
+    },
     availabilityMedia: getCommonContainer({
         bookingCalendar: {
             uiFramework: "custom-molecules-local",
