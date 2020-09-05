@@ -1025,7 +1025,7 @@ export const downloadApplication = async (
         "ReceiptTemp[0].Bill[0]"
     );
 
-    console.log(applicationData, "Nero App data");
+    
     const DOWNLOADAPPLICATION = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -1143,8 +1143,7 @@ export const downloadApplication = async (
                     },
                 },
             ];
-        }
-        if (applicationData.businessService == "PACC") {
+        } else if (applicationData.businessService == "PACC") {
             appData = [
                 {
                     applicantDetail: {
