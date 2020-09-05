@@ -2,6 +2,7 @@ import {
     getBreak,
     getCommonCard,
     getCommonContainer,
+    getCommonHeader,
     getCommonTitle,
     getSelectField,
     getLabel,
@@ -423,7 +424,10 @@ export const checkAvailabilitySearch = getCommonCard({
 });
 export const checkAvailabilityCalendar = getCommonCard({
     Calendar: getCommonContainer({
-    
+        header: getCommonHeader({
+            labelName: `Select From & To Date in below Calendar`,
+            labelKey: "BK_PCC_SELECT_CALENDAR_DATE_HEAD",
+        }),
         bookingCalendar: {
             uiFramework: "custom-containers-local",
             moduleName: "egov-services",
