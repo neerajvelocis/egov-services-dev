@@ -459,21 +459,21 @@ export const availabilityForm = getCommonCard({
             beforeFieldChange: (action, state, dispatch) => {
                 set(
                     state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                    "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityMediaCardWrapper.visible",
                     false
                 );
                 set(
                     state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                    "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityTimeSlotWrapper.visible",
                     false
                 );
                 set(
                     state.screenConfiguration.screenConfig[
-                        "checkavailability_pcc"
+                    "checkavailability_pcc"
                     ],
                     "components.div.children.availabilityCalendarWrapper.visible",
                     false
@@ -550,21 +550,21 @@ export const availabilityForm = getCommonCard({
 
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityCalendarWrapper.visible",
                         availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
                     );
                     set(
                         state.screenConfiguration.screenConfig[
-                            "checkavailability_pcc"
+                        "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityTimeSlotWrapper.visible",
                         bkBookingType === "Parks" ? false : true
@@ -757,6 +757,29 @@ export const availabilityMediaCard = getCommonCard({
     }),
 });
 export const availabilityTimeSlot = getCommonCard({
+    header: {
+        uiFramework: "custom-atoms",
+        componentPath: "Container",
+        props: {
+            style: { marginBottom: "10px", color: "#FE7A51", textAlign: "center" },
+        },
+        children: {
+            header: {
+                gridDefination: {
+                    xs: 12,
+                    sm: 12,
+                    md: 12,
+                },
+                ...getCommonHeader({
+                    labelName: "Select your booking time in below Timeslot Calendar",
+                    labelKey: "PACC_TIMESLOT_CALENDAR_HEADER_MSG",
+
+                    style: { color: "#FE7A51" },
+
+                }),
+            },
+        },
+    },
     availabilityMedia: getCommonContainer({
         bookingCalendar: {
             uiFramework: "custom-molecules-local",
@@ -766,35 +789,82 @@ export const availabilityTimeSlot = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 12,
-            },
+            }
         },
-        bookButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginTop: "50px",
-                },
-            },
+        selectedTimeSlotInfo: {
+            uiFramework: "custom-molecules-local",
+            moduleName: "egov-services",
+            componentPath: "SelectedTimeSlotInfo",
             gridDefination: {
                 xs: 12,
-                align: "right",
+                sm: 12,
+                md: 12,
+            }
+        },
+        actionButtons: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            gridDefination: {
+                xs: 12,
+            },
+            props: {
+                style: {
+                    justifyContent: "flex-end",
+                },
             },
             children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Book",
-                    labelKey: "BK_OSWMCC_BOOK_LABEL",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForBook,
-            },
-            visible: true,
-        },
+                resetButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "outlined",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                            marginRight: "16px",
+                        },
+                    },
+
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "RESET",
+                            labelKey: "RESET",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForResetCalender,
+                    },
+                    visible: true,
+                },
+                bookButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "contained",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                        },
+                    },
+
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "Book",
+                            labelKey: "BK_CGB_BOOK_LABEL",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForBook,
+                    },
+                    visible: true,
+                }
+            }
+        }
+
     }),
 });
 export const availabilityCalendar = getCommonCard({

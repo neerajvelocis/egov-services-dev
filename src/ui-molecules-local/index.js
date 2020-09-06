@@ -89,6 +89,12 @@ const BookingTimeSlot = Loadable({
   loader: () => import("./BookingTimeSlot"),
   loading: () => <Loading />
 });
+
+const SelectedTimeSlotInfo = Loadable({
+  loader: () => import("./SelectedTimeSlotInfo"),
+  loading: () => <Loading />
+});
+
 export {
   TestMolecules,
   RadioButtonsGroup,
@@ -108,5 +114,6 @@ export {
   BookingCalendar,
   BookingMedia,
   ImageList,
-  BookingTimeSlot
+  BookingTimeSlot,
+  SelectedTimeSlotInfo
 };

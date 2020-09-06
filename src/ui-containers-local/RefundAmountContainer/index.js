@@ -44,7 +44,7 @@ const mapStateToProps = (state, ownProps) => {
     if (Difference_In_Days > 29) {
         const refundPercent = get(
             screenConfiguration,
-            "preparedFinalObject.cancelParkCcScreenMdmsData.bookingCancellationRefundCalc.MORETHAN30DAYS.refundpercentage",
+            "preparedFinalObject.cancelParkCcScreenMdmsData.Booking.bookingCancellationRefundCalc[0].MORETHAN30DAYS.refundpercentage",
             []
         )
 
@@ -52,7 +52,7 @@ const mapStateToProps = (state, ownProps) => {
     } else if (Difference_In_Days > 15 && Difference_In_Days < 30) {
         const refundPercent = get(
             screenConfiguration,
-            "preparedFinalObject.cancelParkCcScreenMdmsData.bookingCancellationRefundCalc.LETTHAN30MORETHAN15DAYS.refundpercentage",
+            "preparedFinalObject.cancelParkCcScreenMdmsData.Booking.bookingCancellationRefundCalc[0].LETTHAN30MORETHAN15DAYS.refundpercentage",
             []
         )
         refundAmount = (parseFloat(bookingAmount)*refundPercent)/100

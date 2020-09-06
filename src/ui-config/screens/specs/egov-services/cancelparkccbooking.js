@@ -203,11 +203,19 @@ const getMdmsData = async (action, state, dispatch) => {
             tenantId: tenantId,
             moduleDetails: [
                 {
-                    moduleName: "pacc",
+                    moduleName: "tenant",
                     masterDetails: [
                         {
                             name: "tenants",
                         },
+                    ],
+                },
+                {
+                    moduleName: "Booking",
+                    masterDetails: [
+                        {
+                            name: "bookingCancellationRefundCalc",
+                        }
                     ],
                 },
 
@@ -223,19 +231,19 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-
-        let bookingCancellationRefundCalc = {
-            "MORETHAN30DAYS": {
-                "refundpercentage": 50
-            },
-            "LETTHAN30MORETHAN15DAYS": {
-                "refundpercentage": 25
-            },
-            "LESSTHAN15DAYS": {
-                "refundpercentage": 0
-            },
-        }
-        payload.MdmsRes.bookingCancellationRefundCalc = bookingCancellationRefundCalc;
+console.log(payload, 'hello payload');
+        // let bookingCancellationRefundCalc = {
+        //     "MORETHAN30DAYS": {
+        //         "refundpercentage": 50
+        //     },
+        //     "LETTHAN30MORETHAN15DAYS": {
+        //         "refundpercentage": 25
+        //     },
+        //     "LESSTHAN15DAYS": {
+        //         "refundpercentage": 0
+        //     },
+        // }
+        // payload.MdmsRes.bookingCancellationRefundCalc = bookingCancellationRefundCalc;
         dispatch(prepareFinalObject("cancelParkCcScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
