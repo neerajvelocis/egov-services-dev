@@ -8,6 +8,11 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import { withStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
+import {
+    prepareFinalObject,
+    toggleSnackbar,
+} from "egov-ui-framework/ui-redux/screen-configuration/actions";
 
 class CustomTimeSlots extends Component {
     constructor() {
@@ -18,7 +23,7 @@ class CustomTimeSlots extends Component {
         var date = new Date();
         var date1 = new Date();
         for (let i = 0; i < 10; i++) {
-            let month = ('0' + (date1.getMonth()+1)).slice(-2);
+            let month = ('0' + (date1.getMonth() + 1)).slice(-2);
             let day = ('0' + date1.getDate()).slice(-2);
             let year = date1.getFullYear();
             bookedSlotArray.push(
@@ -30,9 +35,9 @@ class CustomTimeSlots extends Component {
             date1.setDate(date1.getDate() + 1);
         }
 
-
+        console.log(bookedSlotArray, "booked TimeSlots");
         for (let i = 0; i < 180; i++) {
-            let month = ('0' + (date.getMonth()+1)).slice(-2);
+            let month = ('0' + (date.getMonth() + 1)).slice(-2);
             let day = ('0' + date.getDate()).slice(-2);
             let year = date.getFullYear();
             timeSlotArray.push(
@@ -75,7 +80,7 @@ class CustomTimeSlots extends Component {
     selectTimeSlot = (e) => {
         //alert(e.target.getAttribute('data-date')+'---'+e.target.getAttribute('data-timeslot'));
         var cbarray = document.getElementsByName("time-slot");
-        
+
         for (var i = 0; i < cbarray.length; i++) {
 
             cbarray[i].checked = false;
@@ -83,7 +88,11 @@ class CustomTimeSlots extends Component {
 
         document.getElementById(e.target.getAttribute('data-date') + ':' + e.target.getAttribute('data-timeslot')).checked = true;
         console.log(e.target.getAttribute('data-date') + '---' + e.target.getAttribute('data-timeslot'));
-
+        var [from, to] = e.target.getAttribute('data-timeslot').split('-')
+        this.props.prepareFinalObject("Booking.bkToDate", e.target.getAttribute('data-date') + ':' + from);
+        this.props.prepareFinalObject("Booking.bkFromDate", e.target.getAttribute('data-date') + ':' + to);
+        this.props.prepareFinalObject("Booking.bkFromTime",  from);
+        this.props.prepareFinalObject("Booking.bkToTime",  to);
     }
     render() {
 
@@ -124,7 +133,7 @@ class CustomTimeSlots extends Component {
                     return <div>
                         <Paper className={classes.root}>
                             <Table className={classes.table}>
-                                <TableHead className= {`timeslot-table-head ${classes.head}`}>
+                                <TableHead className={`timeslot-table-head ${classes.head}`}>
 
                                     <TableRow >
 
@@ -150,7 +159,7 @@ class CustomTimeSlots extends Component {
                                             let currentDate = this.state.currentDate;
                                             let currentTime = parseFloat(`${currentDate.getHours()}.${currentDate.getMinutes()}`);
 
-                                            let currentMonth = ('0' + (currentDate.getMonth()+1)).slice(-2);
+                                            let currentMonth = ('0' + (currentDate.getMonth() + 1)).slice(-2);
                                             let currentDay = ('0' + currentDate.getDate()).slice(-2);
                                             let currentYear = currentDate.getFullYear();
                                             let compareDate = `${currentDay}-${currentMonth}-${currentYear}`
@@ -194,7 +203,7 @@ class CustomTimeSlots extends Component {
                                                 return (
                                                     <TableCell className={`date-timeslot ${timeSlotExpired} ${availabilityClass}`} data-date={item.date} data-timeslot={item1} align={"center"} onClick={this.selectTimeSlot}>
                                                         {item1}
-                                                        <input className = "book-timeslot" name="time-slot" type="checkbox" id={item.date + ':' + item1} data-date={item.date} data-timeslot={item1} onClick={this.selectTimeSlot} />
+                                                        <input className="book-timeslot" name="time-slot" type="checkbox" id={item.date + ':' + item1} data-date={item.date} data-timeslot={item1} onClick={this.selectTimeSlot} />
                                                     </TableCell>
                                                 )
                                             }
@@ -233,6 +242,13 @@ class CustomTimeSlots extends Component {
         );
     }
 }
+const mapDispatchToProps = (dispatch) => {
 
-export default CustomTimeSlots;
+    return {
+        prepareFinalObject: (jsonPath, value) =>
+            dispatch(prepareFinalObject(jsonPath, value)),
+    };
+
+}
+export default connect(null, mapDispatchToProps)(CustomTimeSlots);
 

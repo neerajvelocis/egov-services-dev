@@ -772,7 +772,7 @@ export const availabilityTimeSlot = getCommonCard({
                 },
                 ...getCommonHeader({
                     labelName: "Select your booking time in below Timeslot Calendar",
-                    labelKey: "Select your booking time in below Timeslot Calendar",
+                    labelKey: "PACC_TIMESLOT_CALENDAR_HEADER_MSG",
 
                     style: { color: "#FE7A51" },
 
@@ -789,35 +789,82 @@ export const availabilityTimeSlot = getCommonCard({
                 xs: 12,
                 sm: 12,
                 md: 12,
-            },
+            }
         },
-        bookButton: {
-            componentPath: "Button",
-            props: {
-                variant: "contained",
-                color: "primary",
-                style: {
-                    minWidth: "200px",
-                    height: "48px",
-                    marginTop: "50px",
-                },
-            },
+        selectedTimeSlotInfo: {
+            uiFramework: "custom-molecules-local",
+            moduleName: "egov-services",
+            componentPath: "SelectedTimeSlotInfo",
             gridDefination: {
                 xs: 12,
-                align: "right",
+                sm: 12,
+                md: 12,
+            }
+        },
+        actionButtons: {
+            uiFramework: "custom-atoms",
+            componentPath: "Container",
+            gridDefination: {
+                xs: 12,
+            },
+            props: {
+                style: {
+                    justifyContent: "flex-end",
+                },
             },
             children: {
-                submitButtonLabel: getLabel({
-                    labelName: "Book",
-                    labelKey: "BK_OSWMCC_BOOK_LABEL",
-                }),
-            },
-            onClickDefination: {
-                action: "condition",
-                callBack: callBackForBook,
-            },
-            visible: true,
-        },
+                resetButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "outlined",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                            marginRight: "16px",
+                        },
+                    },
+
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "RESET",
+                            labelKey: "RESET",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForResetCalender,
+                    },
+                    visible: true,
+                },
+                bookButton: {
+                    componentPath: "Button",
+                    props: {
+                        variant: "contained",
+                        color: "primary",
+                        style: {
+                            minWidth: "200px",
+                            height: "48px",
+                            marginTop: "10px",
+                        },
+                    },
+
+                    children: {
+                        submitButtonLabel: getLabel({
+                            labelName: "Book",
+                            labelKey: "BK_CGB_BOOK_LABEL",
+                        }),
+                    },
+                    onClickDefination: {
+                        action: "condition",
+                        callBack: callBackForBook,
+                    },
+                    visible: true,
+                }
+            }
+        }
+
     }),
 });
 export const availabilityCalendar = getCommonCard({
