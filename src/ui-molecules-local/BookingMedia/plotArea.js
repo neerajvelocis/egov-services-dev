@@ -21,12 +21,37 @@ class PlotArea extends React.Component {
     }
 
     getAvailabilityData = async (e, item) => {
+        //console.log(this.props, "GEOPROP");
         const { availabilityCheckData } = this.props;
-        set(
-            this.props.calendarVisiblity.checkavailability_pcc,
-            "components.div.children.availabilityCalendarWrapper.visible",
-            true
-        );
+        if (availabilityCheckData.bkBookingType == "Community Center" && item.bookingItemType == "HOURLY") {
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                false
+            );
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityTimeSlotWrapper.visible",
+                true
+
+            );
+
+            
+        } else {
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityTimeSlotWrapper.visible",
+                false
+
+            );
+
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                true
+            );
+        }
+
         this.props.prepareFinalObject(
             "availabilityCheckData.bkBookingVenue",
             item.id

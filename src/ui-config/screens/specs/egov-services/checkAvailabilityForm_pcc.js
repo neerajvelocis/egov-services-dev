@@ -555,19 +555,33 @@ export const availabilityForm = getCommonCard({
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
                     );
+                    // set(
+                    //     state.screenConfiguration.screenConfig[
+                    //     "checkavailability_pcc"
+                    //     ],
+                    //     "components.div.children.availabilityCalendarWrapper.visible",
+                    //     availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
+                    // );
+                    // set(
+                    //     state.screenConfiguration.screenConfig[
+                    //     "checkavailability_pcc"
+                    //     ],
+                    //     "components.div.children.availabilityTimeSlotWrapper.visible",
+                    //     bkBookingType === "Parks" ? false : true
+                    // );
                     set(
                         state.screenConfiguration.screenConfig[
                         "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityCalendarWrapper.visible",
-                        availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
+                        false
                     );
                     set(
                         state.screenConfiguration.screenConfig[
                         "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityTimeSlotWrapper.visible",
-                        bkBookingType === "Parks" ? false : true
+                        false
                     );
                     // set(
                     //     state.screenConfiguration.screenConfig[
@@ -582,12 +596,19 @@ export const availabilityForm = getCommonCard({
                         sector: action.value,
                     };
                     let response = await getMasterDataPCC(requestBody);
+
                     let responseStatus = get(response, "status", "");
                     console.log(responseStatus, "responseStatus");
                     if (
                         responseStatus == "SUCCESS" ||
                         responseStatus == "success"
                     ) {
+                        //TEMP DATA//
+                        response.data[0].bookingItemType = "HOURLY";
+                        response.data[1].bookingItemType = "FULLDAY";
+                        response.data[2].bookingItemType = "FULLDAY";
+                        response.data[3].bookingItemType = "HOURLY";
+                        //TEMP DATA//
                         dispatch(
                             prepareFinalObject("masterData", response.data)
                         );

@@ -89,8 +89,8 @@ class CustomTimeSlots extends Component {
         document.getElementById(e.target.getAttribute('data-date') + ':' + e.target.getAttribute('data-timeslot')).checked = true;
         console.log(e.target.getAttribute('data-date') + '---' + e.target.getAttribute('data-timeslot'));
         var [from, to] = e.target.getAttribute('data-timeslot').split('-')
-        this.props.prepareFinalObject("Booking.bkToDate", e.target.getAttribute('data-date') + ':' + from);
-        this.props.prepareFinalObject("Booking.bkFromDate", e.target.getAttribute('data-date') + ':' + to);
+        this.props.prepareFinalObject("Booking.bkToDate", e.target.getAttribute('data-date'));
+        this.props.prepareFinalObject("Booking.bkFromDate", e.target.getAttribute('data-date'));
         this.props.prepareFinalObject("Booking.bkFromTime",  from);
         this.props.prepareFinalObject("Booking.bkToTime",  to);
     }
