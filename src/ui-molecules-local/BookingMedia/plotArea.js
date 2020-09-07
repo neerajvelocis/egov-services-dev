@@ -61,6 +61,7 @@ class PlotArea extends React.Component {
             item.name
         );
         this.props.prepareFinalObject("Booking.bkBookingVenue", item.id);
+        this.props.prepareFinalObject("Booking.bookingItemType", item.bookingItemType);
 
         let requestBody = {
             bookingType: availabilityCheckData.bkBookingType,
@@ -86,6 +87,10 @@ class PlotArea extends React.Component {
             this.props.prepareFinalObject(
                 "availabilityCheckData.reservedDays",
                 reservedDates
+            );
+            this.props.prepareFinalObject(
+                "availabilityCheckData.reservedTimeSlotsData",
+                data
             );
 
             window.scrollTo({

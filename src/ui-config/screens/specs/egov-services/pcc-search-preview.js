@@ -163,6 +163,7 @@ const setSearchResponse = async (
     }
 
     localStorageSet("bookingStatus", bookingStatus);
+    recData[0].bkFromDate = "2020-06-06";
     let bookingTimeStamp = new Date(recData[0].bkFromDate).getTime();
     let currentTimeStamp = new Date().getTime();
     if(currentTimeStamp < bookingTimeStamp){

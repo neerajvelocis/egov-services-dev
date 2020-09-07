@@ -256,6 +256,7 @@ export const bookingDetails = getCommonCard({
                 jsonPath: "Booking.bkFromDate",
             }),
         },
+        
         bkToDate: {
             ...getTextField({
                 label: {
@@ -273,6 +274,44 @@ export const bookingDetails = getCommonCard({
                 },
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkToDate",
+            }),
+        },
+        bkDisplayFromDateTime: {
+            ...getTextField({
+                label: {
+                    labelName: "From Date/Time",
+                    labelKey: "BK_PCC_FROM_DATE_TIME_LABEL",
+                },
+                placeholder: {
+                    labelName: "From Date/Time",
+                    labelKey: "BK_PCC_FROM_DATE_TIME_PLACEHOLDER",
+                },
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+
+                jsonPath: "DisplayPacc.bkDisplayFromDateTime",
+            }),
+        },
+        bkDisplayToDateTime: {
+            ...getTextField({
+                label: {
+                    labelName: "To Date/Time",
+                    labelKey: "BK_PCC_TO_DATE_TIME_LABEL",
+                },
+                placeholder: {
+                    labelName: "To Date/Time",
+                    labelKey: "BK_PCC_TO_DATE_TIME_PLACEHOLDER",
+                },
+
+                required: true,
+                props: {
+                    disabled: true,
+                },
+                errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
+                jsonPath: "DisplayPacc.bkDisplayToDateTime",
             }),
         },
         // bkType: {

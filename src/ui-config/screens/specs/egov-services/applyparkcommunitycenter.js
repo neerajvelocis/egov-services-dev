@@ -149,9 +149,9 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
-                        {
-                            name: "PCC_Document",
-                        },
+                        // {
+                        //     name: "PCC_Document",
+                        // },
                     ],
                 },
             ],
@@ -166,17 +166,17 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        // payload.MdmsRes.Booking.PCC_Document = [
-        //     {
-        //         active: true,
-        //         code: "PCC_DOCUMENT",
-        //         description: "PCC_DOCUMENT_DESCRIPTION",
-        //         documentType: "DOC",
-        //         dropdownData: [],
-        //         hasDropdown: false,
-        //         required: true,
-        //     },
-        // ];
+        payload.MdmsRes.Booking.PCC_Document = [
+            {
+                active: true,
+                code: "PCC_DOCUMENT",
+                description: "PCC_DOCUMENT_DESCRIPTION",
+                documentType: "DOC",
+                dropdownData: [],
+                hasDropdown: false,
+                required: true,
+            },
+        ];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -433,6 +433,26 @@ const screenConfig = {
             );
             prepareEditFlow(state, dispatch, applicationNumber, tenantId);
         } else {
+
+            set(
+                state,
+                "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
+                true
+            );
+            // console.log(state, "HelloState");
+            // set(
+            //     state.screenConfiguration.screenConfig.applyparkcommunitycenter.components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkFromDate,
+            //     "props.visible",
+            //     true
+            // );
+            // dispatch(
+            //     handleField(
+            //         state.screenConfiguration.screenConfig.applyparkcommunitycenter.components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkFromDate,
+            //         "visible",
+            //         false
+            //     )
+            // );
+
             const availabilityCheckData = get(
                 state,
                 "screenConfiguration.preparedFinalObject.availabilityCheckData"
@@ -480,7 +500,7 @@ const screenConfig = {
                 let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
                 let amount = rent + cleaningCharges
                 let totalAmount = amount * daysCount
-        
+
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkCleansingCharges",
@@ -499,11 +519,11 @@ const screenConfig = {
                         (totalAmount * Number(masterDataItem[0].surcharge) / 100)
                     )
                 );
-        
+
                 // dispatch(
                 //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
                 // );
-        
+
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkUtgst",
@@ -516,7 +536,7 @@ const screenConfig = {
                         (totalAmount * Number(masterDataItem[0].cgstRate) / 100)
                     )
                 );
-        
+
                 dispatch(
                     prepareFinalObject(
                         "Booking.bkBookingVenue",
