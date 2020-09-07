@@ -35,15 +35,6 @@ export const openSpaceSummary = getCommonGrayCard({
         moduleName: "egov-services",
         props: {
             contents: [
-                // {
-                //     label: "BK_MY_BK_APPLICATION_NUMBER_LABEL",
-                //     jsonPath: "bkApplicationNumber",
-                // },
-                // {
-                //     label: "BK_MY_BK_APPLICATION_STATUS_LABEL",
-                //     jsonPath: "bkApplicationStatus",
-                //     prefix:"BK_"
-                // },
                 {
                     label: "BK_MY_BK_HOUSE_NO_LABEL",
                     jsonPath: "bkHouseNo",
@@ -82,6 +73,12 @@ export const openSpaceSummary = getCommonGrayCard({
                     jsonPath: "bkCategory",
                 },
             ],
+            style: {
+                backgroundColor: "rgb(242, 242, 242)",
+                boxShadow: "none",
+                borderRadius: "0",
+                overflow: "visible"
+            },
             moduleName: "egov-services",
         },
         type: "array",

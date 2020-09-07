@@ -153,8 +153,6 @@ const setSearchResponse = async (
         await generateBill(state, dispatch, applicationNumber, tenantId, recData[0].businessService);
     }
     
-
-    
     localStorageSet("bookingStatus", bookingStatus);
     HideshowFooter(action, bookingStatus);
 
@@ -167,7 +165,6 @@ const setSearchResponse = async (
         bookingStatus,
         applicationNumber,
         tenantId,
-        ""
     );
 
     set(
