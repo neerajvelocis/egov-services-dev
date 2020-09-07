@@ -19,67 +19,67 @@ import {
 class CustomTimeSlots extends Component {
     constructor() {
         super();
-    //     this.state = {
-    //         reservedTimeSlotsDate: '',
-    //     }
-    //     //console.log(this.props, "Hello Construct");
-    //     let timeSlotArray = [];
-    //     let bookedSlotArray = [];
-    //     var date = new Date();
-    //     var date1 = new Date();
-    //     for (let i = 0; i < 10; i++) {
-    //         let month = ('0' + (date1.getMonth() + 1)).slice(-2);
-    //         let day = ('0' + date1.getDate()).slice(-2);
-    //         let year = date1.getFullYear();
-    //         bookedSlotArray.push(
-    //             {
-    //                 date: `${day}-${month}-${year}`,
-    //                 timeSlots: ["2PM-6PM", "6PM-10PM"]
-    //             }
-    //         );
-    //         date1.setDate(date1.getDate() + 1);
-    //     }
+        //     this.state = {
+        //         reservedTimeSlotsDate: '',
+        //     }
+        //     //console.log(this.props, "Hello Construct");
+        //     let timeSlotArray = [];
+        //     let bookedSlotArray = [];
+        //     var date = new Date();
+        //     var date1 = new Date();
+        //     for (let i = 0; i < 10; i++) {
+        //         let month = ('0' + (date1.getMonth() + 1)).slice(-2);
+        //         let day = ('0' + date1.getDate()).slice(-2);
+        //         let year = date1.getFullYear();
+        //         bookedSlotArray.push(
+        //             {
+        //                 date: `${day}-${month}-${year}`,
+        //                 timeSlots: ["2PM-6PM", "6PM-10PM"]
+        //             }
+        //         );
+        //         date1.setDate(date1.getDate() + 1);
+        //     }
 
-    //    // console.log(bookedSlotArray, "booked TimeSlots");
-    //     for (let i = 0; i < 180; i++) {
-    //         let month = ('0' + (date.getMonth() + 1)).slice(-2);
-    //         let day = ('0' + date.getDate()).slice(-2);
-    //         let year = date.getFullYear();
-    //         timeSlotArray.push(
-    //             {
-    //                 date: `${day}-${month}-${year}`,
-    //                 timeSlots: ["10AM-2PM", "2PM-6PM", "6PM-10PM"]
-    //             }
-    //         );
-    //         date.setDate(date.getDate() + 1);
-    //     }
+        //    // console.log(bookedSlotArray, "booked TimeSlots");
+        //     for (let i = 0; i < 180; i++) {
+        //         let month = ('0' + (date.getMonth() + 1)).slice(-2);
+        //         let day = ('0' + date.getDate()).slice(-2);
+        //         let year = date.getFullYear();
+        //         timeSlotArray.push(
+        //             {
+        //                 date: `${day}-${month}-${year}`,
+        //                 timeSlots: ["10AM-2PM", "2PM-6PM", "6PM-10PM"]
+        //             }
+        //         );
+        //         date.setDate(date.getDate() + 1);
+        //     }
 
-    //     let finalBookedTimeSlots = [];
-    //     for (let j = 0; j < timeSlotArray.length; j++) {
-    //         let tempObj = {}
-    //         tempObj.date = timeSlotArray[j].date;
-    //         tempObj.timeSlots = timeSlotArray[j].timeSlots;
-    //         for (let k = 0; k < bookedSlotArray.length; k++) {
-    //             if (timeSlotArray[j].date === bookedSlotArray[k].date) {
+        //     let finalBookedTimeSlots = [];
+        //     for (let j = 0; j < timeSlotArray.length; j++) {
+        //         let tempObj = {}
+        //         tempObj.date = timeSlotArray[j].date;
+        //         tempObj.timeSlots = timeSlotArray[j].timeSlots;
+        //         for (let k = 0; k < bookedSlotArray.length; k++) {
+        //             if (timeSlotArray[j].date === bookedSlotArray[k].date) {
 
-    //                 for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
-    //                     if ((bookedSlotArray[k].timeSlots).includes(timeSlotArray[j].timeSlots[l])) {
-    //                         timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`);
-    //                     }
-    //                 }
+        //                 for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
+        //                     if ((bookedSlotArray[k].timeSlots).includes(timeSlotArray[j].timeSlots[l])) {
+        //                         timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`);
+        //                     }
+        //                 }
 
-    //             }
-    //         }
+        //             }
+        //         }
 
-    //         finalBookedTimeSlots.push(tempObj);
-    //     }
+        //         finalBookedTimeSlots.push(tempObj);
+        //     }
 
-    //     //console.log(finalBookedTimeSlots, "slot jkArray");
+        //     //console.log(finalBookedTimeSlots, "slot jkArray");
 
-    //     this.state = {
-    //         rows: finalBookedTimeSlots,
-    //         currentDate: new Date()
-    //     }
+        //     this.state = {
+        //         rows: finalBookedTimeSlots,
+        //         currentDate: new Date()
+        //     }
     }
 
 
@@ -95,15 +95,16 @@ class CustomTimeSlots extends Component {
         document.getElementById(e.target.getAttribute('data-date') + ':' + e.target.getAttribute('data-timeslot')).checked = true;
         console.log(e.target.getAttribute('data-date') + '---' + e.target.getAttribute('data-timeslot'));
         var [from, to] = e.target.getAttribute('data-timeslot').split('-')
-
-        this.props.prepareFinalObject("Booking.bkToDate", e.target.getAttribute('data-date'));
-        this.props.prepareFinalObject("Booking.bkFromDate", e.target.getAttribute('data-date'));
+        var [apiDay, apiMonth, apiYear] = e.target.getAttribute('data-date').split("-");
+        let apiDate = `${apiYear}-${apiMonth}-${apiDay}`;
+        this.props.prepareFinalObject("Booking.bkToDate", apiDate);
+        this.props.prepareFinalObject("Booking.bkFromDate", apiDate);
         this.props.prepareFinalObject("Booking.bkFromTime", from);
         this.props.prepareFinalObject("Booking.bkToTime", to);
 
 
-        this.props.prepareFinalObject("availabilityCheckData.bkToDate", e.target.getAttribute('data-date'));
-        this.props.prepareFinalObject("availabilityCheckData.bkFromDate", e.target.getAttribute('data-date'));
+        this.props.prepareFinalObject("availabilityCheckData.bkToDate", apiDate);
+        this.props.prepareFinalObject("availabilityCheckData.bkFromDate", apiDate);
         this.props.prepareFinalObject("availabilityCheckData.bkFromTime", from);
         this.props.prepareFinalObject("availabilityCheckData.bkToTime", to);
         var selectedTimeSlots = [];
@@ -111,8 +112,8 @@ class CustomTimeSlots extends Component {
         selectedTimeSlots.push({ slot: `${from}-${to}` })
         this.props.prepareFinalObject("Booking.timeslots", selectedTimeSlots);
         this.props.prepareFinalObject("availabilityCheckData.timeslots", selectedTimeSlots)
-        this.props.prepareFinalObject("DisplayPacc.bkDisplayFromDateTime", e.target.getAttribute('data-date')+", "+from);
-        this.props.prepareFinalObject("DisplayPacc.bkDisplayToDateTime", e.target.getAttribute('data-date')+", "+to);
+        this.props.prepareFinalObject("DisplayPacc.bkDisplayFromDateTime", e.target.getAttribute('data-date') + ", " + from);
+        this.props.prepareFinalObject("DisplayPacc.bkDisplayToDateTime", e.target.getAttribute('data-date') + ", " + to);
         //)
 
     }
@@ -282,26 +283,27 @@ const mapStateToProps = (state) => {
     let timeSlotArray = [];
     let bookedSlotArray = [];
     var date = new Date();
-    //var date1 = new Date();
-    for (let i = 0; i < reservedTimeSlotsData.length; i++) {
-        
-        const [year, day, month] = reservedTimeSlotsData[i].fromDate.split("-");
-        let date = `${day}-${month}-${year}`
-        if(reservedTimeSlotsData[i].timeslots && reservedTimeSlotsData[i].timeslots.length > 0){
-            for(let j=0;j<reservedTimeSlotsData[i].timeslots.length;j++){
-                bookedSlotArray.push(
-                    {
-                        date: date,
-                        timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot]
-                    }
-                );
+    if (reservedTimeSlotsData && reservedTimeSlotsData.length > 0) {
+        for (let i = 0; i < reservedTimeSlotsData.length; i++) {
+
+            const [year, month, day] = reservedTimeSlotsData[i].fromDate.split("-");
+            let date = `${day}-${month}-${year}`
+            if (reservedTimeSlotsData[i].timeslots && reservedTimeSlotsData[i].timeslots.length > 0) {
+                for (let j = 0; j < reservedTimeSlotsData[i].timeslots.length; j++) {
+                    bookedSlotArray.push(
+                        {
+                            date: date,
+                            timeSlots: [reservedTimeSlotsData[i].timeslots[j].slot]
+                        }
+                    );
+                }
             }
+
+
         }
-        
-        
     }
 
-    console.log(bookedSlotArray, "booked TimeSlots");
+
     for (let i = 0; i < 180; i++) {
         let month = ('0' + (date.getMonth() + 1)).slice(-2);
         let day = ('0' + date.getDate()).slice(-2);
@@ -320,25 +322,23 @@ const mapStateToProps = (state) => {
         let tempObj = {}
         tempObj.date = timeSlotArray[j].date;
         tempObj.timeSlots = timeSlotArray[j].timeSlots;
-        for (let k = 0; k < bookedSlotArray.length; k++) {
-            if (timeSlotArray[j].date === bookedSlotArray[k].date) {
+        if (bookedSlotArray && bookedSlotArray.length > 0) {
+            for (let k = 0; k < bookedSlotArray.length; k++) {
+                if (timeSlotArray[j].date === bookedSlotArray[k].date) {
 
-                for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
-                    if ((bookedSlotArray[k].timeSlots).includes(timeSlotArray[j].timeSlots[l])) {
-                        timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`);
+                    for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
+                        if ((bookedSlotArray[k].timeSlots).includes(timeSlotArray[j].timeSlots[l])) {
+                            timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`);
+                        }
                     }
-                }
 
+                }
             }
         }
-
         finalBookedTimeSlots.push(tempObj);
     }
 
-    console.log(finalBookedTimeSlots, "slot new Array");
-
-    //return {finalBookedTimeSlots:finalBookedTimeSlots}
-    return{
+    return {
         rows: finalBookedTimeSlots,
         currentDate: new Date()
     }

@@ -16,7 +16,7 @@ const styles = (theme) => ({
 
 class SelectedTimeSlotInfo extends Component {
     render() {
-        const { bookingLocation, fromDate, toDate, fromTime, toTime } = this.props;
+        const { bookingLocation, fromDate, toDate, fromTime, toTime, bkDisplayFromDateTime,  bkDisplayToDateTime} = this.props;
         console.log(this.props,"nero rops");
         return (
             <Grid container={true}>
@@ -75,7 +75,7 @@ class SelectedTimeSlotInfo extends Component {
                             letterSpacing: "0.67px",
                         }}
                     >
-                        {fromTime && fromTime.length == 0?'--/--/--':fromDate+', '+fromTime}
+                        {fromTime && fromTime.length == 0?'--/--/--':bkDisplayFromDateTime}
                     </span>
                 </Grid>
                 <Grid item={true} xs={1}>
@@ -104,7 +104,7 @@ class SelectedTimeSlotInfo extends Component {
                             letterSpacing: "0.67px",
                         }}
                     >
-                        {toTime && toTime.length == 0?'--/--/--':toDate+', '+toTime}
+                        {toTime && toTime.length == 0?'--/--/--':bkDisplayToDateTime}
                     </span>
                 </Grid>
             </Grid>
@@ -141,12 +141,26 @@ const mapStateToProps = (state, ownProps) => {
         "screenConfiguration.preparedFinalObject.Booking.bkToTime",
         []
     );
+
+    let bkDisplayFromDateTime = get(
+        state,
+        "screenConfiguration.preparedFinalObject.DisplayPacc.bkDisplayFromDateTime",
+        []
+    );
+
+    let bkDisplayToDateTime = get(
+        state,
+        "screenConfiguration.preparedFinalObject.DisplayPacc.bkDisplayToDateTime",
+        []
+    );
     return { 
         bookingLocation: bookingLocation,
         fromDate: bkFromDate,
         toDate: bkToDate,
         fromTime: bkFromTime,
-        toTime: bkToTime
+        toTime: bkToTime,
+        bkDisplayFromDateTime: bkDisplayFromDateTime,
+        bkDisplayToDateTime: bkDisplayToDateTime
 
      };
 };
