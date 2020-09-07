@@ -23,7 +23,10 @@ class PlotArea extends React.Component {
     getAvailabilityData = async (e, item) => {
         //console.log(this.props, "GEOPROP");
         const { availabilityCheckData } = this.props;
-        if (availabilityCheckData.bkBookingType == "Community Center" && item.bookingItemType == "HOURLY") {
+        if (
+            availabilityCheckData.bkBookingType == "Community Center" &&
+            item.bookingItemType == "HOURLY"
+        ) {
             set(
                 this.props.calendarVisiblity.checkavailability_pcc,
                 "components.div.children.availabilityCalendarWrapper.visible",
@@ -33,16 +36,12 @@ class PlotArea extends React.Component {
                 this.props.calendarVisiblity.checkavailability_pcc,
                 "components.div.children.availabilityTimeSlotWrapper.visible",
                 true
-
             );
-
-            
         } else {
             set(
                 this.props.calendarVisiblity.checkavailability_pcc,
                 "components.div.children.availabilityTimeSlotWrapper.visible",
                 false
-
             );
 
             set(
@@ -60,8 +59,15 @@ class PlotArea extends React.Component {
             "availabilityCheckData.bkLocation",
             item.name
         );
+        this.props.prepareFinalObject(
+            "availabilityCheckData.bookingItemType",
+            item.bookingItemType
+        );
         this.props.prepareFinalObject("Booking.bkBookingVenue", item.id);
-        this.props.prepareFinalObject("Booking.bookingItemType", item.bookingItemType);
+        this.props.prepareFinalObject(
+            "Booking.bookingItemType",
+            item.bookingItemType
+        );
 
         let requestBody = {
             bookingType: availabilityCheckData.bkBookingType,

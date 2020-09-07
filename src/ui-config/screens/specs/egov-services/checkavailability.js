@@ -11,7 +11,11 @@ import {
     checkAvailabilitySearch,
     checkAvailabilityCalendar,
 } from "./checkAvailabilityForm";
-import { setapplicationNumber, lSRemoveItemlocal, getTenantId } from "egov-ui-kit/utils/localStorageUtils";
+import {
+    setapplicationNumber,
+    lSRemoveItemlocal,
+    getTenantId,
+} from "egov-ui-kit/utils/localStorageUtils";
 import { dispatchMultipleFieldChangeAction } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
     prepareFinalObject,
@@ -96,7 +100,6 @@ const getMdmsData = async (action, state, dispatch) => {
         },
     };
     try {
-
         let payload = null;
         payload = await httpRequest(
             "post",
@@ -107,12 +110,10 @@ const getMdmsData = async (action, state, dispatch) => {
         );
 
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
-
     } catch (e) {
         console.log(e);
     }
-}
-
+};
 
 const prepareEditFlow = async (
     state,
@@ -126,89 +127,133 @@ const prepareEditFlow = async (
             { key: "applicationNumber", value: applicationNumber },
         ]);
         setapplicationNumber(applicationNumber);
-        setApplicationNumberBox(state, dispatch, applicationNumber);
+        let bookingsModelList = get(response, "bookingsModelList", []);
+        if (bookingsModelList !== null && bookingsModelList.length > 0) {
+            dispatch(
+                prepareFinalObject("Booking", response.bookingsModelList[0])
+            );
+            dispatch(
+                prepareFinalObject(
+                    "availabilityCheckData",
+                    response.bookingsModelList[0]
+                )
+            );
 
-        dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
-        dispatch(prepareFinalObject("availabilityCheckData", response.bookingsModelList[0]));
+            let availabilityData = await getAvailabilityData(
+                response.bookingsModelList[0].bkSector
+            );
 
-
-        let availabilityData = await getAvailabilityData(response.bookingsModelList[0].bkSector)
-
-        if (availabilityData !== undefined) {
-            let data = availabilityData.data;
-            let reservedDates = [];
-            var daylist = [];
-            data.map((dataitem) => {
-                let start = dataitem.fromDate;
-                let end = dataitem.toDate;
-                daylist = getBetweenDays(start, end);
-                daylist.map((v) => {
-                    reservedDates.push(v.toISOString().slice(0, 10));
+            if (availabilityData !== undefined) {
+                let data = availabilityData.data;
+                let reservedDates = [];
+                var daylist = [];
+                data.map((dataitem) => {
+                    let start = dataitem.fromDate;
+                    let end = dataitem.toDate;
+                    daylist = getBetweenDays(start, end);
+                    daylist.map((v) => {
+                        reservedDates.push(v.toISOString().slice(0, 10));
+                    });
                 });
-            });
-            dispatch(prepareFinalObject("availabilityCheckData.reservedDays", reservedDates));
+                dispatch(
+                    prepareFinalObject(
+                        "availabilityCheckData.reservedDays",
+                        reservedDates
+                    )
+                );
 
-            let availabilityCheckData =
-                state.screenConfiguration.preparedFinalObject.availabilityCheckData;
-            reservedDates.map((date) => {
+                let availabilityCheckData =
+                    state.screenConfiguration.preparedFinalObject
+                        .availabilityCheckData;
+                reservedDates.map((date) => {
+                    if (
+                        date === availabilityCheckData.bkFromDate ||
+                        date === availabilityCheckData.bkToDate
+                    ) {
+                        // availabilityCheckData.bkFromDate == null
+                        // availabilityCheckData.bkToDate == null
 
-                if (date === availabilityCheckData.bkFromDate || date === availabilityCheckData.bkToDate) {
+                        dispatch(
+                            toggleSnackbar(
+                                true,
+                                {
+                                    labelName: `${availabilityCheckData.bkFromDate} and ${availabilityCheckData.bkToDate} Dates are already Booked`,
+                                    labelKey: "",
+                                },
+                                "warning"
+                            )
+                        );
+                        dispatch(
+                            prepareFinalObject(
+                                "availabilityCheckData.bkToDate",
+                                null
+                            )
+                        );
+                        dispatch(
+                            prepareFinalObject(
+                                "availabilityCheckData.bkFromDate",
+                                null
+                            )
+                        );
+                        dispatch(
+                            prepareFinalObject("Booking.bkFromDate", null)
+                        );
+                        dispatch(prepareFinalObject("Booking.bkToDate", null));
+                    }
+                });
+                // const actionDefination = [
+                //     {
+                //         path:
+                //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
+                //         property: "reservedDays",
+                //         value: reservedDates,
+                //     },
+                // ];
+                // dispatchMultipleFieldChangeAction(
+                //     "checkavailability",
+                //     actionDefination,
+                //     dispatch
+                // );
+            } else {
+                dispatch(
+                    toggleSnackbar(
+                        true,
+                        {
+                            labelName: "Please Try After Sometime!",
+                            labelKey: "",
+                        },
+                        "warning"
+                    )
+                );
+            }
 
-                    // availabilityCheckData.bkFromDate == null
-                    // availabilityCheckData.bkToDate == null
-
-                    dispatch(
-                        toggleSnackbar(
-                            true,
-                            { labelName: `${availabilityCheckData.bkFromDate} and ${availabilityCheckData.bkToDate} Dates are already Booked`, labelKey: "" },
-                            "warning"
-                        )
-                    );
-                    dispatch(prepareFinalObject("availabilityCheckData.bkToDate", null));
-                    dispatch(prepareFinalObject("availabilityCheckData.bkFromDate", null));
-                    dispatch(prepareFinalObject("Booking.bkFromDate", null));
-                    dispatch(prepareFinalObject("Booking.bkToDate", null));
-                }
-            })
-            // const actionDefination = [
-            //     {
-            //         path:
-            //             "components.div.children.checkAvailabilityCalendar.children.cardContent.children.Calendar.children.bookingCalendar.props",
-            //         property: "reservedDays",
-            //         value: reservedDates,
-            //     },
-            // ];
-            // dispatchMultipleFieldChangeAction(
-            //     "checkavailability",
-            //     actionDefination,
-            //     dispatch
-            // );
+            let fileStoreIds = Object.keys(response.documentMap);
+            let fileStoreIdsValue = Object.values(response.documentMap);
+            if (fileStoreIds.length > 0) {
+                let fileUrls =
+                    fileStoreIds.length > 0
+                        ? await getFileUrlFromAPI(fileStoreIds)
+                        : {};
+                dispatch(
+                    prepareFinalObject("documentsUploadReduxOld.documents", [
+                        {
+                            fileName: fileStoreIdsValue[0],
+                            fileStoreId: fileStoreIds[0],
+                            fileUrl: fileUrls[fileStoreIds[0]],
+                        },
+                    ])
+                );
+            }
         } else {
             dispatch(
                 toggleSnackbar(
                     true,
-                    { labelName: "Please Try After Sometime!", labelKey: "" },
-                    "warning"
-                )
-            );
-        }
-
-
-        let fileStoreIds = Object.keys(response.documentMap);
-        let fileStoreIdsValue = Object.values(response.documentMap);
-        if (fileStoreIds.length > 0) {
-            let fileUrls =
-                fileStoreIds.length > 0
-                    ? await getFileUrlFromAPI(fileStoreIds)
-                    : {};
-            dispatch(
-                prepareFinalObject("documentsUploadReduxOld.documents", [
                     {
-                        fileName: fileStoreIdsValue[0],
-                        fileStoreId: fileStoreIds[0],
-                        fileUrl: fileUrls[fileStoreIds[0]],
+                        labelName: "Something went Wrong!",
+                        labelKey: "",
                     },
-                ])
+                    "error"
+                )
             );
         }
     }
@@ -239,23 +284,17 @@ const screenConfig = {
             "applicationNumber"
         );
         const tenantId = getQueryArg(window.location.href, "tenantId");
-        getMdmsData(action, state, dispatch).then(response => {
+        getMdmsData(action, state, dispatch).then((response) => {
             if (applicationNumber !== null) {
                 set(
                     action.screenConfig,
                     "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                     true
                 );
-                prepareEditFlow(
-                    state,
-                    dispatch,
-                    applicationNumber,
-                    tenantId
-                );
+                prepareEditFlow(state, dispatch, applicationNumber, tenantId);
             }
         });
         return action;
-
     },
     components: {
         div: {

@@ -181,15 +181,16 @@ const prepareEditFlow = async (
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
+        let bookingsModelList = get(response, "bookingsModelList", []);
 
-        if (response.bookingsModelList.length > 0) {
+        if (bookingsModelList  !== null && bookingsModelList.length > 0) {
             dispatch(
-                prepareFinalObject("Booking", response.bookingsModelList[0])
+                prepareFinalObject("Booking", bookingsModelList[0])
             );
             dispatch(
                 prepareFinalObject(
                     "availabilityCheckData",
-                    response.bookingsModelList[0]
+                    bookingsModelList[0]
                 )
             );
 
@@ -202,8 +203,8 @@ const prepareEditFlow = async (
             setDataAutofill(action, state, dispatch);
 
             let availabilityData = await getAvailabilityDataOSWMCC(
-                response.bookingsModelList[0].bkSector,
-                response.bookingsModelList[0].bkBookingVenue
+                bookingsModelList[0].bkSector,
+                bookingsModelList[0].bkBookingVenue
             );
 
             if (availabilityData !== undefined) {
@@ -254,6 +255,17 @@ const prepareEditFlow = async (
                     ])
                 );
             }
+        } else {
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    {
+                        labelName: "Something went Wrong!",
+                        labelKey: "",
+                    },
+                    "error"
+                )
+            );
         }
     } else {
         // console.log("in edit flow not application number")
