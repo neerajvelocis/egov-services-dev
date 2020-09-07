@@ -163,7 +163,12 @@ const setSearchResponse = async (
     }
 
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
+    let bookingTimeStamp = new Date(recData[0].bkFromDate).getTime();
+    let currentTimeStamp = new Date().getTime();
+    if(currentTimeStamp < bookingTimeStamp){
+        HideshowFooter(action, bookingStatus);
+    }
+    
 
     prepareDocumentsView(state, dispatch);
 
@@ -235,7 +240,13 @@ const screenConfig = {
             { key: "businessServices", value: "PACC" },
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
-
+//        state.screenConfiguration.screenConfig["pcc-search-preview"].components.div.children.footer.children.cancelButton
+console.log(state, 'Nero hsll');
+        // set(
+        //     state.screenConfiguration.screenConfig,
+        //     `pcc-search-preview.components.div.children.footer.children.cancelButton.visible`,
+        //     false
+        // );
         return action;
     },
     components: {
