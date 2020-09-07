@@ -136,7 +136,6 @@ export const bookingDetails = getCommonCard({
     // ),
 
     applicationDetailsConatiner: getCommonContainer({
-       
         bkBookingPurpose: {
             ...getTextField({
                 label: {
@@ -255,8 +254,9 @@ export const bookingDetails = getCommonCard({
 
                 jsonPath: "Booking.bkFromDate",
             }),
+            visible: false,
         },
-        
+
         bkToDate: {
             ...getTextField({
                 label: {
@@ -275,6 +275,7 @@ export const bookingDetails = getCommonCard({
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkToDate",
             }),
+            visible: false,
         },
         bkDisplayFromDateTime: {
             ...getTextField({
@@ -294,6 +295,7 @@ export const bookingDetails = getCommonCard({
 
                 jsonPath: "DisplayPacc.bkDisplayFromDateTime",
             }),
+            visible: false,
         },
         bkDisplayToDateTime: {
             ...getTextField({
@@ -313,6 +315,7 @@ export const bookingDetails = getCommonCard({
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "DisplayPacc.bkDisplayToDateTime",
             }),
+            visible: false,
         },
         // bkType: {
         //     uiFramework: "custom-containers",
@@ -362,7 +365,7 @@ export const bookingDetails = getCommonCard({
                 props: {
                     disabled: true,
                 },
-                
+
                 errorMessage: "ERR_DEFAULT_INPUT_FIELD_MSG",
                 jsonPath: "Booking.bkCleansingCharges",
             }),
@@ -406,7 +409,7 @@ export const bookingDetails = getCommonCard({
         //         jsonPath: "Booking.bkFacilitationCharges",
         //     }),
         // },
-        bkSurchargeRent : {
+        bkSurchargeRent: {
             ...getTextField({
                 label: {
                     labelName: "Facilitation Charges",
