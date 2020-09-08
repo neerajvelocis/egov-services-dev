@@ -434,12 +434,8 @@ const screenConfig = {
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
-    
 
         if (availabilityCheckData !== undefined) {
-
-
-
             set(
                 action.screenConfig,
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
@@ -448,12 +444,20 @@ const screenConfig = {
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkFromDate.visible",
-                availabilityCheckData.bkBookingType !== "Parks" ? false : true
+                availabilityCheckData.bkBookingType === "Parks"
+                    ? true
+                    : availabilityCheckData.bookingItemType === "FULLDAY"
+                    ? true
+                    : false
             );
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkToDate.visible",
-                availabilityCheckData.bkBookingType !== "Parks" ? false : true
+                availabilityCheckData.bkBookingType === "Parks"
+                    ? true
+                    : availabilityCheckData.bookingItemType === "FULLDAY"
+                    ? true
+                    : false
             );
             set(
                 action.screenConfig,
@@ -471,9 +475,6 @@ const screenConfig = {
                     ? true
                     : false
             );
-
-
-
 
             const masterData = get(
                 state,
