@@ -443,21 +443,66 @@ export const clearlocalstorageAppDetails = (state) => {
 };
 
 export const convertDateInDMY = (inputDate) => {
+
     if (inputDate) {
-        let today = new Date(inputDate);
-        var dd = today.getDate();
-        var mm = today.getMonth() + 1;
-        var yyyy = today.getFullYear();
-        if (dd < 10) {
-            dd = "0" + dd;
+        
+        if (typeof (inputDate) != "object") {
+            
+            if (inputDate.includes("#")) {
+                let [date, time] = inputDate.split("#");
+
+                let today = new Date(date);
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1;
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = "0" + dd;
+                }
+
+                if (mm < 10) {
+                    mm = "0" + mm;
+                }
+
+                return dd + "/" + mm + "/" + yyyy + ", " + time;
+            } else {
+
+
+                let today = new Date(inputDate);
+                var dd = today.getDate();
+                var mm = today.getMonth() + 1;
+                var yyyy = today.getFullYear();
+                if (dd < 10) {
+                    dd = "0" + dd;
+                }
+
+                if (mm < 10) {
+                    mm = "0" + mm;
+                }
+
+                return dd + "/" + mm + "/" + yyyy;
+            }
+
+
+
+            //return today;
+
+        } else {
+            let today = new Date(inputDate);
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1;
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = "0" + dd;
+            }
+
+            if (mm < 10) {
+                mm = "0" + mm;
+            }
+
+            today = dd + "/" + mm + "/" + yyyy;
+            return today;
         }
 
-        if (mm < 10) {
-            mm = "0" + mm;
-        }
-
-        today = dd + "/" + mm + "/" + yyyy;
-        return today;
     } else {
         return "";
     }
@@ -755,8 +800,8 @@ export const downloadReceipt = (
 
                     amountInWords: NumInWords(
                         parseFloat(applicationData.bkRent) +
-                            parseFloat(applicationData.bkCleansingCharges) +
-                            parseFloat(applicationData.bkSurchargeRent)
+                        parseFloat(applicationData.bkCleansingCharges) +
+                        parseFloat(applicationData.bkSurchargeRent)
                     ),
                     paymentItemExtraColumnLabel: "Booking Period",
 
@@ -776,29 +821,29 @@ export const downloadReceipt = (
                     bookingPeriod:
                         payloadReceiptDetails.Payments[0].paymentDetails[0].bill
                             .businessService === "OSBM" ||
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill
-                            .businessService === "GFCP" ||
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill
-                            .businessService === "OSUJM"
+                            payloadReceiptDetails.Payments[0].paymentDetails[0].bill
+                                .businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0].bill
+                                .businessService === "OSUJM"
                             ? getDurationDate(
-                                  applicationData.bkFromDate,
-                                  applicationData.bkToDate
-                              )
+                                applicationData.bkFromDate,
+                                applicationData.bkToDate
+                            )
                             : `${applicationData.bkDate} , ${applicationData.bkTime} `,
                     bookingItem: `Online Payment Against Booking of ${
                         payloadReceiptDetails.Payments[0].paymentDetails[0].bill
                             .businessService === "GFCP"
                             ? "Commercial Ground"
                             : payloadReceiptDetails.Payments[0]
-                                  .paymentDetails[0].bill.businessService ===
-                              "OSBM"
-                            ? "Open Space for Building Material"
-                            : payloadReceiptDetails.Payments[0]
-                                  .paymentDetails[0].bill.businessService ===
-                              "OSUJM"
-                            ? "Open Space within MCC jurisdiction"
-                            : "Water Tanker"
-                    }`,
+                                .paymentDetails[0].bill.businessService ===
+                                "OSBM"
+                                ? "Open Space for Building Material"
+                                : payloadReceiptDetails.Payments[0]
+                                    .paymentDetails[0].bill.businessService ===
+                                    "OSUJM"
+                                    ? "Open Space within MCC jurisdiction"
+                                    : "Water Tanker"
+                        }`,
                     amount: payloadReceiptDetails.Payments[0].paymentDetails[0].bill.billDetails[0].billAccountDetails.filter(
                         (el) => !el.taxHeadCode.includes("TAX")
                     )[0].amount,
@@ -813,10 +858,10 @@ export const downloadReceipt = (
                     paymentItemExtraColumnLabel:
                         payloadReceiptDetails.Payments[0].paymentDetails[0].bill
                             .businessService === "OSBM" ||
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill
-                            .businessService === "GFCP" ||
-                        payloadReceiptDetails.Payments[0].paymentDetails[0].bill
-                            .businessService === "OSUJM"
+                            payloadReceiptDetails.Payments[0].paymentDetails[0].bill
+                                .businessService === "GFCP" ||
+                            payloadReceiptDetails.Payments[0].paymentDetails[0].bill
+                                .businessService === "OSUJM"
                             ? "Booking Period"
                             : "Date & Time",
                     paymentMode: payloadReceiptDetails.Payments[0].paymentMode,
@@ -904,10 +949,10 @@ export const downloadCertificate = async (
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-pl"
                         : applicationData.businessService == "PACC"
-                        ? "bk-pacc-booking-pl"
-                        : applicationData.businessService == "OSUJM"
-                        ? "bk-oswmcc-booking-pl"
-                        : "bk-cg-pl",
+                            ? "bk-pacc-booking-pl"
+                            : applicationData.businessService == "OSUJM"
+                                ? "bk-oswmcc-booking-pl"
+                                : "bk-cg-pl",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1025,7 +1070,7 @@ export const downloadApplication = async (
         "ReceiptTemp[0].Bill[0]"
     );
 
-    
+
     const DOWNLOADAPPLICATION = {
         GET: {
             URL: "/pdf-service/v1/_create",
@@ -1040,16 +1085,16 @@ export const downloadApplication = async (
                     applicationData.businessService == "OSBM"
                         ? "bk-osbm-app-form"
                         : applicationData.businessService == "GFCP"
-                        ? "bk-cg-app-form"
-                        : applicationData.businessService == "PACC"
-                        ? "pacc-booking-app-form"
-                        : applicationData.businessService == "NLUJM"
-                        ? "bk-oswmcc-newloc-app-form"
-                        : applicationData.businessService == "OSUJM"
-                        ? "oswmcc-booking-app-form"
-                        : applicationData.bkStatus.includes("Paid")
-                        ? "bk-wt-app-form"
-                        : "bk-wt-unpaid-app-form",
+                            ? "bk-cg-app-form"
+                            : applicationData.businessService == "PACC"
+                                ? "pacc-booking-app-form"
+                                : applicationData.businessService == "NLUJM"
+                                    ? "bk-oswmcc-newloc-app-form"
+                                    : applicationData.businessService == "OSUJM"
+                                        ? "oswmcc-booking-app-form"
+                                        : applicationData.bkStatus.includes("Paid")
+                                            ? "bk-wt-app-form"
+                                            : "bk-wt-unpaid-app-form",
             },
             { key: "tenantId", value: "ch" },
         ];
@@ -1161,12 +1206,12 @@ export const downloadApplication = async (
                         applicationData.businessService === "OSBM"
                             ? bookingDataOsbm
                             : applicationData.businessService === "PACC"
-                            ? bookingDataPacc
-                            : applicationData.businessService === "GFCP"
-                            ? bookingDataGFCP
-                            : applicationData.businessService === "OSUJM"
-                            ? bookingDataOSUJM
-                            : bookingDataWt,
+                                ? bookingDataPacc
+                                : applicationData.businessService === "GFCP"
+                                    ? bookingDataGFCP
+                                    : applicationData.businessService === "OSUJM"
+                                        ? bookingDataOSUJM
+                                        : bookingDataWt,
                     feeDetail: {
                         baseCharge: applicationData.bkRent,
                         cleaningCharge: applicationData.bkCleansingCharges,
@@ -1203,23 +1248,23 @@ export const downloadApplication = async (
                         applicationData.businessService === "OSBM"
                             ? bookingDataOsbm
                             : applicationData.businessService === "GFCP"
-                            ? bookingDataGFCP
-                            : applicationData.businessService === "OSUJM"
-                            ? bookingDataOSUJM
-                            : bookingDataWt,
+                                ? bookingDataGFCP
+                                : applicationData.businessService === "OSUJM"
+                                    ? bookingDataOSUJM
+                                    : bookingDataWt,
                     feeDetail: {
                         baseCharge:
                             paymentData === undefined
                                 ? null
                                 : paymentData.billDetails[0].billAccountDetails.filter(
-                                      (el) => !el.taxHeadCode.includes("TAX")
-                                  )[0].amount,
+                                    (el) => !el.taxHeadCode.includes("TAX")
+                                )[0].amount,
                         taxes:
                             paymentData === undefined
                                 ? null
                                 : paymentData.billDetails[0].billAccountDetails.filter(
-                                      (el) => el.taxHeadCode.includes("TAX")
-                                  )[0].amount,
+                                    (el) => el.taxHeadCode.includes("TAX")
+                                )[0].amount,
                         totalAmount:
                             paymentData === undefined
                                 ? null
@@ -1428,12 +1473,12 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                      if (val === from || val === to) {
-                          isAvailable = false;
-                      } else {
+                    if (val === from || val === to) {
+                        isAvailable = false;
+                    } else {
                         isAvailable = true
-                      }
-                  })
+                    }
+                })
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);
@@ -1459,12 +1504,12 @@ export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
             );
             bookedDates.data.length > 0
                 ? bookedDates.data.map((val) => {
-                      if (val === from || val === to) {
-                          isAvailable = false;
-                      } else {
+                    if (val === from || val === to) {
+                        isAvailable = false;
+                    } else {
                         isAvailable = true
-                      }
-                  })
+                    }
+                })
                 : (isAvailable = true);
         } catch (exception) {
             console.log(exception);

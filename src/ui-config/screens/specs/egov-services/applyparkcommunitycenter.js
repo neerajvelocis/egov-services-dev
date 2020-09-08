@@ -434,7 +434,7 @@ const screenConfig = {
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
-    
+
 
         if (availabilityCheckData !== undefined) {
 
@@ -471,6 +471,44 @@ const screenConfig = {
                     ? true
                     : false
             );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayFromTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayToTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? false
+                    : true
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.ToDate.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? false
+                    : true
+            );
+
+
 
 
 
