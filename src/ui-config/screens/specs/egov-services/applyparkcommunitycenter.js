@@ -436,6 +436,9 @@ const screenConfig = {
         );
 
         if (availabilityCheckData !== undefined) {
+
+
+
             set(
                 action.screenConfig,
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
@@ -475,6 +478,47 @@ const screenConfig = {
                     ? true
                     : false
             );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayFromTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayToTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? false
+                    : true
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.ToDate.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? false
+                    : true
+            );
+
+
+
+
+
 
             const masterData = get(
                 state,

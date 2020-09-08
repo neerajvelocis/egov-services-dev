@@ -59,6 +59,26 @@ export const pccSummary = getCommonGrayCard({
                     //         },
                     //     }
                     // ),
+                    BookingType: getLabelWithValue(
+                        {
+                            labelName: "Booking Type",
+                            labelKey: "BK_PCC_BOOKING_TYPE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkBookingType",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
+                        }
+                    ),
                     Purpose: getLabelWithValue(
                         {
                             labelName: "Purpose",
