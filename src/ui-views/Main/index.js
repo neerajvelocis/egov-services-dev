@@ -31,7 +31,7 @@ class NocBtn extends Component {
                                             <div class="lan-menu active">
                                                 <span class="icon"><i class="fa fa-plus-square-o" aria-hidden="true"></i>
                                                 </span>
-                                                <h4>Apply for  NOC</h4>
+                                                <h4>Apply for Services</h4>
 
                                             </div>
                                         </div>

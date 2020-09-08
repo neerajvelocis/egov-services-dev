@@ -49,7 +49,7 @@ if (role_name === "CITIZEN") {
             //         event
             //     </i>
             // ),
-            route: "checkavailability_pcc",
+            route: "",
         },
         {
             label: {
