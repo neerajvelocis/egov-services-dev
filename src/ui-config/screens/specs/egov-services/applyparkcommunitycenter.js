@@ -435,7 +435,6 @@ const screenConfig = {
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
 
-
         if (availabilityCheckData !== undefined) {
 
 
@@ -448,12 +447,20 @@ const screenConfig = {
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkFromDate.visible",
-                availabilityCheckData.bkBookingType !== "Parks" ? false : true
+                availabilityCheckData.bkBookingType === "Parks"
+                    ? true
+                    : availabilityCheckData.bookingItemType === "FULLDAY"
+                    ? true
+                    : false
             );
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkToDate.visible",
-                availabilityCheckData.bkBookingType !== "Parks" ? false : true
+                availabilityCheckData.bkBookingType === "Parks"
+                    ? true
+                    : availabilityCheckData.bookingItemType === "FULLDAY"
+                    ? true
+                    : false
             );
             set(
                 action.screenConfig,

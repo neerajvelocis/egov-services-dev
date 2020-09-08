@@ -92,9 +92,11 @@
     color: rgba(0, 0, 0, 0.87);
 }
 
-.DayPicker-Day--disabled:not(.DayPicker-Day--outside) {
+.DayPicker-Day--disabled:not(.DayPicker-Day--outside),
+.DayPicker-Day--disabled.DayPicker-Day--today {
     background-color: #f4403412 !important;
     color: #f44336ad;
+    border-radius: 0 !important;
 }
 
 /* .DayPicker {

@@ -21,7 +21,7 @@ class PlotArea extends React.Component {
     }
 
     getAvailabilityData = async (e, item) => {
-        //console.log(this.props, "GEOPROP");
+        console.log(item, "GEOPROP");
         const { availabilityCheckData } = this.props;
         if (
             availabilityCheckData.bkBookingType == "Community Center" &&
