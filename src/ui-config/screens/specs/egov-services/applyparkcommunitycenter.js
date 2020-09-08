@@ -436,9 +436,6 @@ const screenConfig = {
         );
 
         if (availabilityCheckData !== undefined) {
-
-
-
             set(
                 action.screenConfig,
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
@@ -515,11 +512,6 @@ const screenConfig = {
                     : true
             );
 
-
-
-
-
-
             const masterData = get(
                 state,
                 "screenConfiguration.preparedFinalObject.masterData"
@@ -557,6 +549,19 @@ const screenConfig = {
                     convertDateInYMD(availabilityCheckData.bkToDate)
                 )
             );
+            if (
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                availabilityCheckData.bookingItemType === "FULLDAY"
+            ) {
+                dispatch(
+                    prepareFinalObject("Booking.timeslots", [
+                        {
+                            slot: "9:00 AM - 8:59 AM",
+                        },
+                    ])
+                );
+            }
+
             let rent = Number(masterDataItem[0].rent);
             let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
             let amount = rent + cleaningCharges;
