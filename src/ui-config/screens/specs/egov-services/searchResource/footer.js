@@ -1,5 +1,8 @@
-
-import { downloadReceipt, downloadCertificate, downloadApplication } from "../../utils";
+import {
+    downloadReceipt,
+    downloadCertificate,
+    downloadApplication,
+} from "../../utils";
 import "./index.css";
 
 export const footerReviewTop = (
@@ -9,8 +12,9 @@ export const footerReviewTop = (
     status,
     applicationNumber,
     tenantId,
-    bookingCase
+    bookingCase = ""
 ) => {
+    console.log(bookingCase, "bookingCase");
     let downloadMenu = [];
     let printMenu = [];
     let certificateDownloadObject = {
@@ -69,7 +73,9 @@ export const footerReviewTop = (
         leftIcon: "assignment",
     };
 
-    if (status === "APPLIED" && bookingCase === "") {
+    if (
+        (status === "APPLIED" || status === "APPROVED")
+    ) {
         downloadMenu = [
             applicationDownloadObject,
             receiptDownloadObject,
@@ -80,13 +86,28 @@ export const footerReviewTop = (
             receiptPrintObject,
             certificatePrintObject,
         ];
-    } else if ((status === "PENDINGAPPROVAL" || status === "PENDINGPAYMENT" || status === "REJECTED") && bookingCase === "") {
+    } else if (
+        (status === "PENDINGAPPROVAL" ||
+            status === "PENDINGPAYMENT" ||
+            status === "REJECTED")
+    ) {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
-    }else if ((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE" || status === "DELIVERED") && bookingCase.includes("Paid")) {
+    } else if (
+        (status === "PENDINGASSIGNMENTDRIVER" ||
+            status === "PENDINGUPDATE" ||
+            status === "DELIVERED") &&
+        bookingCase.includes("Paid")
+    ) {
         downloadMenu = [applicationDownloadObject, receiptDownloadObject];
         printMenu = [applicationPrintObject, receiptPrintObject];
-    } else if((status === "PENDINGASSIGNMENTDRIVER" || status === "PENDINGUPDATE" || status === "DELIVERED" || status === "REJECTED") && !bookingCase.includes("Paid")){
+    } else if (
+        (status === "PENDINGASSIGNMENTDRIVER" ||
+            status === "PENDINGUPDATE" ||
+            status === "DELIVERED" ||
+            status === "REJECTED") &&
+        !bookingCase.includes("Paid")
+    ) {
         downloadMenu = [applicationDownloadObject];
         printMenu = [applicationPrintObject];
     }
@@ -113,7 +134,11 @@ export const footerReviewTop = (
                             rightIcon: "arrow_drop_down",
                             props: {
                                 variant: "outlined",
-                                style: { height: "60px", color: "#FE7A51", marginRight :"10px" },
+                                style: {
+                                    height: "60px",
+                                    color: "#FE7A51",
+                                    marginRight: "10px",
+                                },
                                 className: "",
                             },
                             menu: downloadMenu,
@@ -149,4 +174,3 @@ export const footerReviewTop = (
         },
     };
 };
-

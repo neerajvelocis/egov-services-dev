@@ -61,6 +61,12 @@ export const openSpaceSummary = getCommonGrayCard({
                     jsonPath: "areaRequirement",
                 }
             ],
+            style: {
+                backgroundColor: "rgb(242, 242, 242)",
+                boxShadow: "none",
+                borderRadius: "0",
+                overflow: "visible"
+            },
             moduleName: "egov-services",
         },
         type: "array",

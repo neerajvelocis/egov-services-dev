@@ -231,7 +231,7 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-console.log(payload, 'hello payload');
+
         // let bookingCancellationRefundCalc = {
         //     "MORETHAN30DAYS": {
         //         "refundpercentage": 50

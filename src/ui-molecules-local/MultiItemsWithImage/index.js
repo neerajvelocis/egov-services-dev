@@ -1,4 +1,6 @@
 import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import Label from "egov-ui-framework/ui-containers/LabelContainer";
 import { withStyles } from "@material-ui/core/styles";
 import { prepareFinalObject } from "egov-ui-framework/ui-redux/screen-configuration/actions";
@@ -135,101 +137,117 @@ class MultiItemsWithImage extends Component {
     };
 
     render() {
-        const { classes, BookingDetails, contents } = this.props;
+        const { classes, BookingDetails, contents, style } = this.props;
         let bookingData = [BookingDetails];
         return (
-            <div className="MuiCardContent-root-45">
-                {bookingData &&
-                    bookingData.length > 0 &&
-                    bookingData.map((item) => {
-                        return (
-                            <Grid container>
-                                {contents &&
-                                    contents.length > 0 &&
-                                    contents.map((content) => {
-                                        return (content.jsonPath ===
-                                            "bkCategory" ? (
-                                            <Grid
-                                                item
-                                                sm={3}
-                                                xs={12}
-                                                style={{ marginBottom: 12 }}
-                                            >
-                                                
-                                            <Label
-                                                labelKey={this.getMessageFromLocalization(
-                                                    content.label
-                                                )}
-                                                style={{
-                                                    // fontSize: 14,
-                                                    display: "block",
-                                                    // marginBottom: 5,
-                                                    color: "rgba(0, 0, 0, 0.54)",
-                                                    fontSize: 12,
-                                                    fontWeight: 400,
-                                                    lineHeight: '1.375em'
-                                                    }}
-                                            />
-
-                                            <Label
-                                                    labelKey={this.generateLabelKey(
-                                                        content,
-                                                        item
-                                                    ) === "Cat-A" ? <CatAIcon /> : this.generateLabelKey(
-                                                        content,
-                                                        item
-                                                    ) === "Cat-B" ? <CatBIcon /> : <CatCIcon />}
-                                                    style={{
-                                                        color: "rgba(0, 0, 0, 0.87)",
-                                                        fontSize: 16,
-                                                        fontWeight: 400,
-                                                        lineHeight: "19px",
-                                                        letterSpacing: "0.67px",
-                                                    }}
-                                                />
-                                                     
-                                            </Grid>
-                                        ) :
-                                            <Grid
-                                                item
-                                                sm={3}
-                                                xs={12}
-                                                style={{ marginBottom: 12 }}
-                                            >
-                                                <Label
-                                                    labelKey={this.getMessageFromLocalization(
-                                                        content.label
-                                                    )}
-                                                    style={{
-                                                        // fontSize: 14,
-                                                        display: "block",
-                                                        // marginBottom: 5,
-                                                        color: "rgba(0, 0, 0, 0.54)",
-                                                        fontSize: 12,
-                                                        fontWeight: 400,
-                                                        lineHeight: '1.375em'
+            <Card style={style}>
+                <CardContent>
+                    {bookingData &&
+                        bookingData.length > 0 &&
+                        bookingData.map((item) => {
+                            return (
+                                <Grid container>
+                                    {contents &&
+                                        contents.length > 0 &&
+                                        contents.map((content) => {
+                                            return content.jsonPath ===
+                                                "bkCategory" ? (
+                                                <Grid
+                                                    item
+                                                    sm={3}
+                                                    xs={12}
+                                                    style={{ marginBottom: 12 }}
+                                                >
+                                                    <Label
+                                                        labelKey={this.getMessageFromLocalization(
+                                                            content.label
+                                                        )}
+                                                        style={{
+                                                            // fontSize: 14,
+                                                            display: "block",
+                                                            // marginBottom: 5,
+                                                            color:
+                                                                "rgba(0, 0, 0, 0.54)",
+                                                            fontSize: 12,
+                                                            fontWeight: 400,
+                                                            lineHeight:
+                                                                "1.375em",
                                                         }}
-                                                />
-                                                <Label
-                                                    labelKey={this.generateLabelKey(
-                                                        content,
-                                                        item
-                                                    )}
-                                                    style={{
-                                                        color: "rgba(0, 0, 0, 0.87)",
-                                                        fontSize: 16,
-                                                        fontWeight: 400,
-                                                        lineHeight: "19px",
-                                                        letterSpacing: "0.67px",
-                                                    }}
-                                                />
-                                            </Grid>
-                                        );
-                                    })}
-                            </Grid>
-                        );
-                    })}
-            </div>
+                                                    />
+
+                                                    <Label
+                                                        labelKey={
+                                                            this.generateLabelKey(
+                                                                content,
+                                                                item
+                                                            ) === "Cat-A" ? (
+                                                                <CatAIcon />
+                                                            ) : this.generateLabelKey(
+                                                                  content,
+                                                                  item
+                                                              ) === "Cat-B" ? (
+                                                                <CatBIcon />
+                                                            ) : (
+                                                                <CatCIcon />
+                                                            )
+                                                        }
+                                                        style={{
+                                                            color:
+                                                                "rgba(0, 0, 0, 0.87)",
+                                                            fontSize: 16,
+                                                            fontWeight: 400,
+                                                            lineHeight: "19px",
+                                                            letterSpacing:
+                                                                "0.67px",
+                                                        }}
+                                                    />
+                                                </Grid>
+                                            ) : (
+                                                <Grid
+                                                    item
+                                                    sm={3}
+                                                    xs={12}
+                                                    style={{ marginBottom: 12 }}
+                                                >
+                                                    <Label
+                                                        labelKey={this.getMessageFromLocalization(
+                                                            content.label
+                                                        )}
+                                                        style={{
+                                                            // fontSize: 14,
+                                                            display: "block",
+                                                            // marginBottom: 5,
+                                                            color:
+                                                                "rgba(0, 0, 0, 0.54)",
+                                                            fontSize: 12,
+                                                            fontWeight: 400,
+                                                            lineHeight:
+                                                                "1.375em",
+                                                        }}
+                                                    />
+                                                    <Label
+                                                        labelKey={this.generateLabelKey(
+                                                            content,
+                                                            item
+                                                        )}
+                                                        style={{
+                                                            color:
+                                                                "rgba(0, 0, 0, 0.87)",
+                                                            fontSize: 16,
+                                                            fontWeight: 400,
+                                                            lineHeight: "19px",
+                                                            letterSpacing:
+                                                                "0.67px",
+                                                        }}
+                                                    />
+                                                </Grid>
+                                            );
+                                        })}
+                                </Grid>
+                            );
+                        })}
+                </CardContent>
+            </Card>
         );
     }
 }

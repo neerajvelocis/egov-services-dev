@@ -144,6 +144,46 @@ const setSearchResponse = async (
         { key: "applicationNumber", value: applicationNumber },
     ]);
     let recData = get(response, "bookingsModelList", []);
+    if (recData.length > 0) {
+        if (recData[0].timeslots && recData[0].timeslots.length > 0) {
+            if (recData[0].bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1475") {
+                recData[0].bookingItemType = "HOURLY"
+            } else if (recData[0].bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1476") {
+                recData[0].bookingItemType = "HOURLY";
+            } else if (recData[0].bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1474") {
+                recData[0].bookingItemType = "FULLDAY";
+            } else {
+                recData[0].bookingItemType = "FULLDAY";
+            }
+
+            var [fromTime, toTime] = recData[0].timeslots[0].slot.split('-')
+
+            let DisplayPaccObject = {
+                bkDisplayFromDateTime: recData[0].bkFromDate + "#" + fromTime,
+                bkDisplayToDateTime: recData[0].bkToDate + "#" + toTime
+            }
+
+            dispatch(prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject))
+        }
+
+    }
+    set(
+        action.screenConfig,
+        "components.div.children.body.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
+        recData[0].bkBookingType !== "Parks" &&
+            recData[0].bookingItemType === "HOURLY"
+            ? false
+            : true
+    );
+
+    set(
+        action.screenConfig,
+        "components.div.children.body.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.ToDate.visible",
+        recData[0].bkBookingType !== "Parks" &&
+            recData[0].bookingItemType === "HOURLY"
+            ? false
+            : true
+    );
     dispatch(
         prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
     );
@@ -163,7 +203,13 @@ const setSearchResponse = async (
     }
 
     localStorageSet("bookingStatus", bookingStatus);
-    HideshowFooter(action, bookingStatus);
+    // recData[0].bkFromDate = "2020-06-06";
+    let bookingTimeStamp = new Date(recData[0].bkFromDate).getTime();
+    let currentTimeStamp = new Date().getTime();
+    if (currentTimeStamp < bookingTimeStamp) {
+        HideshowFooter(action, bookingStatus);
+    }
+
 
     prepareDocumentsView(state, dispatch);
 
@@ -235,6 +281,13 @@ const screenConfig = {
             { key: "businessServices", value: "PACC" },
         ];
         setBusinessServiceDataToLocalStorage(queryObject, dispatch);
+        //        state.screenConfiguration.screenConfig["pcc-search-preview"].components.div.children.footer.children.cancelButton
+
+        // set(
+        //     state.screenConfiguration.screenConfig,
+        //     `pcc-search-preview.components.div.children.footer.children.cancelButton.visible`,
+        //     false
+        // );
 
         return action;
     },
@@ -273,10 +326,10 @@ const screenConfig = {
                     },
                 },
                 taskStatus: {
-                  uiFramework: "custom-containers-local",
-                  componentPath: "WorkFlowContainer",
-                  moduleName: "egov-services",
-                  visible:  true,
+                    uiFramework: "custom-containers-local",
+                    componentPath: "WorkFlowContainer",
+                    moduleName: "egov-services",
+                    visible: true,
                 },
                 body: getCommonCard({
                     estimateSummary: estimateSummary,

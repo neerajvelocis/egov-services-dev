@@ -360,8 +360,12 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
         set(payload, "tenantId", tenantId);
         set(payload, "bkAction", action);
         set(payload, "businessService", "PACC");
-        set(payload, "totime", "9:00 AM");
-        set(payload, "fromtime", "8:59 PM");
+        // set(payload, "timeslots", [{
+        //     "slot" : "9:00 AM - 8:59 AM"
+           
+        // }]);
+        // set(payload, "totime", "9:00 AM");
+        // set(payload, "fromtime", "8:59 AM");
         set(payload, "financialYear", `${getCurrentFinancialYear()}`);
 
         if (method === "CREATE") {
@@ -381,6 +385,23 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
                 dispatch(prepareFinalObject("Booking", response.data));
                 setapplicationNumber(response.data.bkApplicationNumber);
                 setApplicationNumberBox(state, dispatch);
+
+
+                if (response.data.timeslots && response.data.timeslots.length > 0) {
+                    console.log(response.data.timeslots, "Hello Nero");
+                    var [fromTime, toTime] = response.data.timeslots[0].slot.split('-')
+                    let DisplayPaccObject = {
+                        bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime,
+                        bkDisplayToDateTime: response.data.bkToDate + "#" + toTime
+                    }
+
+                    dispatch(prepareFinalObject("DisplayTimeSlotData", DisplayPaccObject))
+                    // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayFromDateTime: response.data.bkFromDate + "#" + fromTime }));
+                    // dispatch(prepareFinalObject("DisplayPacc", { bkDisplayToDateTime: response.data.bkToDate + "#" + toTime }));
+
+                }
+
+
                 return { status: "success", data: response.data };
             } else {
                 return { status: "fail", data: response.data };

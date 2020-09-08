@@ -149,9 +149,9 @@ const getMdmsData = async (action, state, dispatch) => {
                         {
                             name: "Sector",
                         },
-                        {
-                            name: "PCC_Document",
-                        },
+                        // {
+                        //     name: "PCC_Document",
+                        // },
                     ],
                 },
             ],
@@ -166,17 +166,17 @@ const getMdmsData = async (action, state, dispatch) => {
             [],
             mdmsBody
         );
-        // payload.MdmsRes.Booking.PCC_Document = [
-        //     {
-        //         active: true,
-        //         code: "PCC_DOCUMENT",
-        //         description: "PCC_DOCUMENT_DESCRIPTION",
-        //         documentType: "DOC",
-        //         dropdownData: [],
-        //         hasDropdown: false,
-        //         required: true,
-        //     },
-        // ];
+        payload.MdmsRes.Booking.PCC_Document = [
+            {
+                active: true,
+                code: "PCC_DOCUMENT",
+                description: "PCC_DOCUMENT_DESCRIPTION",
+                documentType: "DOC",
+                dropdownData: [],
+                hasDropdown: false,
+                required: true,
+            },
+        ];
         dispatch(prepareFinalObject("applyScreenMdmsData", payload.MdmsRes));
     } catch (e) {
         console.log(e);
@@ -249,107 +249,109 @@ export const prepareEditFlow = async (
     // venue,
     // locality
 ) => {
-    const availabilityCheckData = get(
-        state,
-        "screenConfiguration.preparedFinalObject.availabilityCheckData"
-    );
-    if (availabilityCheckData !== undefined) {
-        const masterData = get(
+    if (applicationNumber) {
+        const availabilityCheckData = get(
             state,
-            "screenConfiguration.preparedFinalObject.masterData"
+            "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
+        if (availabilityCheckData !== undefined) {
+            const masterData = get(
+                state,
+                "screenConfiguration.preparedFinalObject.masterData"
+            );
 
-        const masterDataItem = masterData.filter(
-            (el) => el.id === availabilityCheckData.bkBookingVenue
-        );
+            const masterDataItem = masterData.filter(
+                (el) => el.id === availabilityCheckData.bkBookingVenue
+            );
 
-        let daysCount = calculateBetweenDaysCount(
-            availabilityCheckData.bkFromDate,
-            availabilityCheckData.bkToDate
-        );
+            let daysCount = calculateBetweenDaysCount(
+                availabilityCheckData.bkFromDate,
+                availabilityCheckData.bkToDate
+            );
 
-        console.log(daysCount, "daysCount");
+            console.log(daysCount, "daysCount");
 
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkDimension",
-                masterDataItem[0].dimensionSqrYards
-            )
-        );
-        dispatch(
-            prepareFinalObject("Booking.bkLocation", masterDataItem[0].name)
-        );
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkFromDate",
-                convertDateInYMD(availabilityCheckData.bkFromDate)
-            )
-        );
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkToDate",
-                convertDateInYMD(availabilityCheckData.bkToDate)
-            )
-        );
-        let rent = Number(masterDataItem[0].rent);
-        let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
-        let amount = rent + cleaningCharges
-        let totalAmount = amount * daysCount
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkDimension",
+                    masterDataItem[0].dimensionSqrYards
+                )
+            );
+            dispatch(
+                prepareFinalObject("Booking.bkLocation", masterDataItem[0].name)
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkFromDate",
+                    convertDateInYMD(availabilityCheckData.bkFromDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkToDate",
+                    convertDateInYMD(availabilityCheckData.bkToDate)
+                )
+            );
+            let rent = Number(masterDataItem[0].rent);
+            let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
+            let amount = rent + cleaningCharges;
+            let totalAmount = amount * daysCount;
 
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkCleansingCharges",
-                masterDataItem[0].cleaningCharges * daysCount
-            )
-        );
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkRent",
-                masterDataItem[0].rent * daysCount
-            )
-        );
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkSurchargeRent",
-                (totalAmount * Number(masterDataItem[0].surcharge) / 100)
-            )
-        );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkCleansingCharges",
+                    masterDataItem[0].cleaningCharges * daysCount
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkRent",
+                    masterDataItem[0].rent * daysCount
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkSurchargeRent",
+                    (totalAmount * Number(masterDataItem[0].surcharge)) / 100
+                )
+            );
 
-        // dispatch(
-        //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
-        // );
+            // dispatch(
+            //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
+            // );
 
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkUtgst",
-                (totalAmount * Number(masterDataItem[0].utgstRate) / 100)
-            )
-        );
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkCgst",
-                (totalAmount * Number(masterDataItem[0].cgstRate) / 100)
-            )
-        );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkUtgst",
+                    (totalAmount * Number(masterDataItem[0].utgstRate)) / 100
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkCgst",
+                    (totalAmount * Number(masterDataItem[0].cgstRate)) / 100
+                )
+            );
 
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkBookingVenue",
-                availabilityCheckData.bkBookingVenue
-            )
-        );
-        dispatch(
-            prepareFinalObject(
-                "Booking.bkSector",
-                availabilityCheckData.bkSector
-            )
-        );
-    } else {
-        dispatch(
-            setRoute(
-                `/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
-            )
-        );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkBookingVenue",
+                    availabilityCheckData.bkBookingVenue
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkSector",
+                    availabilityCheckData.bkSector
+                )
+            );
+        } else {
+            dispatch(
+                setRoute(
+                    `/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
+                )
+            );
+        }
     }
     // if (applicationNumber) {
     //     let response = await getSearchResultsView([
@@ -425,113 +427,196 @@ const screenConfig = {
         });
 
         // Search in case of EDIT flow
-        if (applicationNumber !== null) {
+        prepareEditFlow(state, dispatch, applicationNumber, tenantId);
+        
+
+        const availabilityCheckData = get(
+            state,
+            "screenConfiguration.preparedFinalObject.availabilityCheckData"
+        );
+
+        if (availabilityCheckData !== undefined) {
             set(
                 action.screenConfig,
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
-                true
+                applicationNumber !== null ? true : false
             );
-            prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        } else {
-            const availabilityCheckData = get(
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkFromDate.visible",
+                availabilityCheckData.bkBookingType === "Parks"
+                    ? true
+                    : availabilityCheckData.bookingItemType === "FULLDAY"
+                    ? true
+                    : false
+            );
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkToDate.visible",
+                availabilityCheckData.bkBookingType === "Parks"
+                    ? true
+                    : availabilityCheckData.bookingItemType === "FULLDAY"
+                    ? true
+                    : false
+            );
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkDisplayFromDateTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkDisplayToDateTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayFromTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayToTime.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? true
+                    : false
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? false
+                    : true
+            );
+
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.ToDate.visible",
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                    availabilityCheckData.bookingItemType === "HOURLY"
+                    ? false
+                    : true
+            );
+
+            const masterData = get(
                 state,
-                "screenConfiguration.preparedFinalObject.availabilityCheckData"
+                "screenConfiguration.preparedFinalObject.masterData"
             );
 
-            if (availabilityCheckData !== undefined) {
-                const masterData = get(
-                    state,
-                    "screenConfiguration.preparedFinalObject.masterData"
-                );
+            const masterDataItem = masterData.filter(
+                (el) => el.id === availabilityCheckData.bkBookingVenue
+            );
 
-                const masterDataItem = masterData.filter(
-                    (el) => el.id === availabilityCheckData.bkBookingVenue
-                );
+            let daysCount = calculateBetweenDaysCount(
+                availabilityCheckData.bkFromDate,
+                availabilityCheckData.bkToDate
+            );
 
-                let daysCount = calculateBetweenDaysCount(
-                    availabilityCheckData.bkFromDate,
-                    availabilityCheckData.bkToDate
-                );
+            console.log(daysCount, "daysCount");
 
-                console.log(daysCount, "daysCount");
-
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkDimension",
+                    masterDataItem[0].dimensionSqrYards
+                )
+            );
+            dispatch(
+                prepareFinalObject("Booking.bkLocation", masterDataItem[0].name)
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkFromDate",
+                    convertDateInYMD(availabilityCheckData.bkFromDate)
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkToDate",
+                    convertDateInYMD(availabilityCheckData.bkToDate)
+                )
+            );
+            if (
+                availabilityCheckData.bkBookingType !== "Parks" &&
+                availabilityCheckData.bookingItemType === "FULLDAY"
+            ) {
                 dispatch(
-                    prepareFinalObject(
-                        "Booking.bkDimension",
-                        masterDataItem[0].dimensionSqrYards
-                    )
+                    prepareFinalObject("Booking.timeslots", [
+                        {
+                            slot: "9:00 AM - 8:59 AM",
+                        },
+                    ])
                 );
-                dispatch(
-                    prepareFinalObject("Booking.bkLocation", masterDataItem[0].name)
-                );
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkFromDate",
-                        convertDateInYMD(availabilityCheckData.bkFromDate)
-                    )
-                );
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkToDate",
-                        convertDateInYMD(availabilityCheckData.bkToDate)
-                    )
-                );
-                let rent = Number(masterDataItem[0].rent);
-                let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
-                let amount = rent + cleaningCharges
-                let totalAmount = amount * daysCount
-        
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkCleansingCharges",
-                        masterDataItem[0].cleaningCharges * daysCount
-                    )
-                );
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkRent",
-                        masterDataItem[0].rent * daysCount
-                    )
-                );
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkSurchargeRent",
-                        (totalAmount * Number(masterDataItem[0].surcharge) / 100)
-                    )
-                );
-        
-                // dispatch(
-                //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
-                // );
-        
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkUtgst",
-                        (totalAmount * Number(masterDataItem[0].utgstRate) / 100)
-                    )
-                );
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkCgst",
-                        (totalAmount * Number(masterDataItem[0].cgstRate) / 100)
-                    )
-                );
-        
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkBookingVenue",
-                        availabilityCheckData.bkBookingVenue
-                    )
-                );
-                dispatch(
-                    prepareFinalObject(
-                        "Booking.bkSector",
-                        availabilityCheckData.bkSector
-                    )
-                );
-            } else {
-                dispatch(setRoute(`/egov-services/checkavailability_pcc`));
             }
+
+            let rent = Number(masterDataItem[0].rent);
+            let cleaningCharges = Number(masterDataItem[0].cleaningCharges);
+            let amount = rent + cleaningCharges;
+            let totalAmount = amount * daysCount;
+
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkCleansingCharges",
+                    masterDataItem[0].cleaningCharges * daysCount
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkRent",
+                    masterDataItem[0].rent * daysCount
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkSurchargeRent",
+                    (totalAmount * Number(masterDataItem[0].surcharge)) / 100
+                )
+            );
+
+            // dispatch(
+            //     prepareFinalObject("Booking.bkFacilitationCharges", masterDataItem[0])
+            // );
+
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkUtgst",
+                    (totalAmount * Number(masterDataItem[0].utgstRate)) / 100
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkCgst",
+                    (totalAmount * Number(masterDataItem[0].cgstRate)) / 100
+                )
+            );
+
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkBookingVenue",
+                    availabilityCheckData.bkBookingVenue
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkSector",
+                    availabilityCheckData.bkSector
+                )
+            );
+        } else {
+            dispatch(setRoute(`/egov-services/checkavailability_pcc`));
         }
 
         // Code to goto a specific step through URL

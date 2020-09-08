@@ -155,8 +155,7 @@ const prepareEditFlow = async (
 
         let bookingsModelList = get(response, "bookingsModelList", []);
         let documentMap = get(response, "documentMap", {})
-        if (bookingsModelList.length > 0) {
-            console.log(bookingsModelList, "bookingsModelList");
+        if ( bookingsModelList  !== null && bookingsModelList.length > 0) {
             dispatch(
                 prepareFinalObject("Booking", bookingsModelList[0])
             );
@@ -264,6 +263,17 @@ const prepareEditFlow = async (
                     ])
                 );
             }
+        }  else {
+            dispatch(
+                toggleSnackbar(
+                    true,
+                    {
+                        labelName: "Something went Wrong!",
+                        labelKey: "",
+                    },
+                    "error"
+                )
+            );
         }
     } else {
         // console.log("in edit flow not application number")

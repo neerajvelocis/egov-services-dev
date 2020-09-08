@@ -158,6 +158,45 @@ export const validatestepform = (activeStep, isFormValid, hasFieldToaster) => {
 //     // dispatch(prepareFinalObject("bookingCalendar.allowClick", "false"));
 // };
 
+
+
+const callBackForBookTimeSlot = async (state, dispatch) => {
+    // dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
+    let availabilityCheckData =
+        state.screenConfiguration.preparedFinalObject.availabilityCheckData;
+    if (availabilityCheckData === undefined) {
+        let warrningMsg = {
+            labelName: "Please Select Time Slot you want to Book",
+            labelKey: "",
+        };
+        dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+    } else {
+        if (
+            availabilityCheckData.bkToTime === undefined ||
+            availabilityCheckData.bkToTime === "" ||
+            availabilityCheckData.bkToTime === null
+        ) {
+            let warrningMsg = {
+                labelName: "Please Select Time Slot you want to Book",
+                labelKey: "",
+            };
+            dispatch(toggleSnackbar(true, warrningMsg, "warning"));
+        } else {
+            if ("bkApplicationNumber" in availabilityCheckData) {
+                dispatch(
+                    setRoute(
+                        `/egov-services/applyparkcommunitycenter?applicationNumber=${availabilityCheckData.bkApplicationNumber}&tenantId=${availabilityCheckData.tenantId}&businessService=${availabilityCheckData.businessService}`
+                    )
+                );
+            } else {
+                dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
+            }
+        }
+
+        
+    }
+};
+
 const callBackForBook = async (state, dispatch) => {
     // dispatch(setRoute(`/egov-services/applyparkcommunitycenter`));
     let availabilityCheckData =
@@ -555,19 +594,33 @@ export const availabilityForm = getCommonCard({
                         "components.div.children.availabilityMediaCardWrapper.visible",
                         true
                     );
+                    // set(
+                    //     state.screenConfiguration.screenConfig[
+                    //     "checkavailability_pcc"
+                    //     ],
+                    //     "components.div.children.availabilityCalendarWrapper.visible",
+                    //     availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
+                    // );
+                    // set(
+                    //     state.screenConfiguration.screenConfig[
+                    //     "checkavailability_pcc"
+                    //     ],
+                    //     "components.div.children.availabilityTimeSlotWrapper.visible",
+                    //     bkBookingType === "Parks" ? false : true
+                    // );
                     set(
                         state.screenConfiguration.screenConfig[
                         "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityCalendarWrapper.visible",
-                        availabilityCheckData !== undefined && "bkBookingVenue" in availabilityCheckData ? true : false
+                        false
                     );
                     set(
                         state.screenConfiguration.screenConfig[
                         "checkavailability_pcc"
                         ],
                         "components.div.children.availabilityTimeSlotWrapper.visible",
-                        bkBookingType === "Parks" ? false : true
+                        false
                     );
                     // set(
                     //     state.screenConfiguration.screenConfig[
@@ -582,12 +635,19 @@ export const availabilityForm = getCommonCard({
                         sector: action.value,
                     };
                     let response = await getMasterDataPCC(requestBody);
+
                     let responseStatus = get(response, "status", "");
                     console.log(responseStatus, "responseStatus");
                     if (
                         responseStatus == "SUCCESS" ||
                         responseStatus == "success"
                     ) {
+                        //TEMP DATA//
+                        response.data[0].bookingItemType = "HOURLY";
+                        response.data[1].bookingItemType = "FULLDAY";
+                        response.data[2].bookingItemType = "FULLDAY";
+                        response.data[3].bookingItemType = "HOURLY";
+                        //TEMP DATA//
                         dispatch(
                             prepareFinalObject("masterData", response.data)
                         );
@@ -858,7 +918,7 @@ export const availabilityTimeSlot = getCommonCard({
                     },
                     onClickDefination: {
                         action: "condition",
-                        callBack: callBackForBook,
+                        callBack: callBackForBookTimeSlot,
                     },
                     visible: true,
                 }

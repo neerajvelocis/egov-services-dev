@@ -21,12 +21,36 @@ class PlotArea extends React.Component {
     }
 
     getAvailabilityData = async (e, item) => {
+        console.log(item, "GEOPROP");
         const { availabilityCheckData } = this.props;
-        set(
-            this.props.calendarVisiblity.checkavailability_pcc,
-            "components.div.children.availabilityCalendarWrapper.visible",
-            true
-        );
+        if (
+            availabilityCheckData.bkBookingType == "Community Center" &&
+            item.bookingItemType == "HOURLY"
+        ) {
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                false
+            );
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityTimeSlotWrapper.visible",
+                true
+            );
+        } else {
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityTimeSlotWrapper.visible",
+                false
+            );
+
+            set(
+                this.props.calendarVisiblity.checkavailability_pcc,
+                "components.div.children.availabilityCalendarWrapper.visible",
+                true
+            );
+        }
+
         this.props.prepareFinalObject(
             "availabilityCheckData.bkBookingVenue",
             item.id
@@ -35,7 +59,15 @@ class PlotArea extends React.Component {
             "availabilityCheckData.bkLocation",
             item.name
         );
+        this.props.prepareFinalObject(
+            "availabilityCheckData.bookingItemType",
+            item.bookingItemType
+        );
         this.props.prepareFinalObject("Booking.bkBookingVenue", item.id);
+        this.props.prepareFinalObject(
+            "Booking.bookingItemType",
+            item.bookingItemType
+        );
 
         let requestBody = {
             bookingType: availabilityCheckData.bkBookingType,
@@ -61,6 +93,10 @@ class PlotArea extends React.Component {
             this.props.prepareFinalObject(
                 "availabilityCheckData.reservedDays",
                 reservedDates
+            );
+            this.props.prepareFinalObject(
+                "availabilityCheckData.reservedTimeSlotsData",
+                data
             );
 
             window.scrollTo({

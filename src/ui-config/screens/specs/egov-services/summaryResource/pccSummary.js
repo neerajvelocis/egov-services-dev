@@ -59,6 +59,26 @@ export const pccSummary = getCommonGrayCard({
                     //         },
                     //     }
                     // ),
+                    BookingType: getLabelWithValue(
+                        {
+                            labelName: "Booking Type",
+                            labelKey: "BK_PCC_BOOKING_TYPE_LABEL",
+                        },
+                        {
+                            jsonPath: "Booking.bkBookingType",
+                            callBack: (value) => {
+                                if (
+                                    value === undefined ||
+                                    value === "" ||
+                                    value === null
+                                ) {
+                                    return "NA";
+                                } else {
+                                    return value;
+                                }
+                            },
+                        }
+                    ),
                     Purpose: getLabelWithValue(
                         {
                             labelName: "Purpose",
@@ -97,7 +117,7 @@ export const pccSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkDimension",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
-                                   return "NA"
+                                    return "NA"
                                 } else {
                                     return `${value} Sq. Yards`;
                                 }
@@ -122,13 +142,33 @@ export const pccSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkFromDate",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
-                                   return "NA"
+                                    return "NA"
                                 } else {
                                     return convertDateInDMY(value);
                                 }
                             }
                         }
                     ),
+
+                    bkDisplayFromTime: getLabelWithValue(
+                        {
+                            labelName: "From Date/Time",
+                            labelKey: "BK_PCC_FROM_DATE_TIME_LABEL",
+                        },
+                        {
+                            jsonPath: "DisplayTimeSlotData.bkDisplayFromDateTime",
+                            callBack: (value) => {
+                                
+                                if (value === undefined || value === "" || value === null) {
+                                    return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
+
+                        }
+                    ),
+
                     ToDate: getLabelWithValue(
                         {
                             labelName: "To Date",
@@ -138,11 +178,28 @@ export const pccSummary = getCommonGrayCard({
                             jsonPath: "Booking.bkToDate",
                             callBack: (value) => {
                                 if (value === undefined || value === "" || value === null) {
-                                   return "NA"
+                                    return "NA"
                                 } else {
                                     return convertDateInDMY(value);
                                 }
                             }
+                        }
+                    ),
+                    bkDisplayToTime: getLabelWithValue(
+                        {
+                            labelName: "To Date/Time",
+                            labelKey: "BK_PCC_TO_DATE_TIME_LABEL",
+                        },
+                        {
+                            jsonPath: "DisplayTimeSlotData.bkDisplayToDateTime",
+                            callBack: (value) => {
+                                if (value === undefined || value === "" || value === null) {
+                                    return "NA"
+                                } else {
+                                    return convertDateInDMY(value);
+                                }
+                            }
+
                         }
                     ),
                     CleansingCharges: getLabelWithValue(
