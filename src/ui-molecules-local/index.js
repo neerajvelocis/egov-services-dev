@@ -3,19 +3,12 @@ import Loadable from "react-loadable";
 import LinearProgress from "egov-ui-framework/ui-atoms/LinearSpinner";
 
 const Loading = () => <LinearProgress />;
-const TestMolecules = Loadable({
-  loader: () => import("./TestMolecules"),
-  loading: () => <Loading />
-});
+
 const RadioButtonsGroup = Loadable({
   loader: () => import("./RadioGroup"),
   loading: () => <Loading />
 });
 
-const Tooltip = Loadable({
-  loader: () => import("./Tooltip"),
-  loading: () => <Loading />
-});
 
 const CustomTab = Loadable({
   loader: () => import("./CustomTab"),
@@ -42,10 +35,6 @@ const DividerWithLabel = Loadable({
   loading: () => <Loading />
 });
 
-const MapLocator = Loadable({
-  loader: () => import("./MapLocator"),
-  loading: () => <Loading />
-});
 
 const FeesEstimateCard = Loadable({
   loader: () => import("./FeesEstimateCard"),
@@ -96,14 +85,11 @@ const SelectedTimeSlotInfo = Loadable({
 });
 
 export {
-  TestMolecules,
   RadioButtonsGroup,
-  Tooltip,
   CustomTab,
   UploadSingleFile,
   DocumentList,
   SummaryDetails,
-  MapLocator,
   FeesEstimateCard,
   DividerWithLabel,
   HowItWorks,

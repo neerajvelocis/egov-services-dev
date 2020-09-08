@@ -36,7 +36,7 @@ import { remarksSummary } from "./searchResource/remarksSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
     footerReviewTop,
-} from "./searchResource/cgfooter";
+} from "./searchResource/footer";
 import {
     getLocale,
     getUserInfo,

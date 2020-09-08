@@ -1,9 +1,5 @@
 import React from "react";
 import { getCommonHeader } from "egov-ui-framework/ui-config/screens/specs/utils";
-import { getRequiredDocData } from "../utils";
-import get from "lodash/get";
-import set from "lodash/set";
-import { getRequiredDocuments } from "./requiredDocuments/reqDocs";
 import { getUserInfo, setTenantId } from "egov-ui-kit/utils/localStorageUtils";
 import ParkIcon from "../../../../ui-atoms-local/Icons/ParkIcon";
 import OpenSpaceIcon from "../../../../ui-atoms-local/Icons/OpenSpaceIcon";
