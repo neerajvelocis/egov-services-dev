@@ -445,9 +445,9 @@ export const clearlocalstorageAppDetails = (state) => {
 export const convertDateInDMY = (inputDate) => {
 
     if (inputDate) {
-        
+
         if (typeof (inputDate) != "object") {
-            
+
             if (inputDate.includes("#")) {
                 let [date, time] = inputDate.split("#");
 
@@ -639,6 +639,41 @@ const NumInWords = (number) => {
     return word + "Rupees Only";
 };
 
+export const getDurationDateWithTime = (fromDate, toDate, fromTime, toTime) => {
+    console.log(`${fromDate} - ${toDate} - ${fromTime} - ${toTime}`);
+    let monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+    let startDate = new Date(fromDate);
+    let finalStartDate =
+        startDate.getDate() +
+        " " +
+        monthNames[startDate.getMonth()] +
+        " " +
+        startDate.getFullYear()+", "+ fromTime;
+
+    let endDate = new Date(toDate);
+    endDate.setMonth(endDate.getMonth());
+    let finalEndDate =
+        endDate.getDate() +
+        " " +
+        monthNames[endDate.getMonth()] +
+        " " +
+        endDate.getFullYear()+", "+ toTime;
+    let finalDate = finalStartDate+ " to " + finalEndDate;
+    return finalDate;
+};
 export const getDurationDate = (fromDate, toDate) => {
     let monthNames = [
         "Jan",
@@ -966,6 +1001,39 @@ export const downloadCertificate = async (
         //         { key: "key", value: "bk-cg-pl" },
         //         { key: "tenantId", value: "ch" },
         //     ]
+        let bookingDuration = '';
+        if (applicationData.businessService == "PACC" && applicationData.bkBookingType == "Community Center") {
+            if (applicationData.timeslots && applicationData.timeslots.length > 0) {
+                // if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1475") {
+                //     applicationData.bookingItemType = "HOURLY"
+                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1476") {
+                //     applicationData.bookingItemType = "HOURLY";
+                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1474") {
+                //     applicationData.bookingItemType = "FULLDAY";
+                // } else {
+                //     applicationData.bookingItemType = "FULLDAY";
+                // }
+
+                var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
+                console.log(applicationData.bkFromDate,
+                applicationData.bkToDate,
+                fromTime,
+                toTime, "Hello nero")
+                bookingDuration = getDurationDateWithTime(
+                    applicationData.bkFromDate,
+                    applicationData.bkToDate,
+                    fromTime,
+                    toTime
+                )
+
+
+            }
+        } else {
+            bookingDuration = getDurationDate(
+                applicationData.bkFromDate,
+                applicationData.bkToDate
+            )
+        }
 
         let certificateData = [
             {
@@ -986,7 +1054,7 @@ export const downloadCertificate = async (
                     applicationDate: convertDateInDMY(
                         applicationData.bkDateCreated
                     ),
-                    bookingType: "Park",
+                    bookingType: applicationData.bkBookingType,
                     villageOrCity: applicationData.bkVillCity,
                     residentialOrCommercial: applicationData.bkType,
                     areaRequired: applicationData.bkAreaRequired,
@@ -996,10 +1064,7 @@ export const downloadCertificate = async (
                         applicationData.bkFromDate,
                         applicationData.bkToDate
                     ),
-                    bookingPeriod: getDurationDate(
-                        applicationData.bkFromDate,
-                        applicationData.bkToDate
-                    ),
+                    bookingPeriod: bookingDuration,
                     venueName: applicationData.bkLocation,
                     sector: applicationData.bkSector,
                     groundName: applicationData.bkSector,
