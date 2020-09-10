@@ -4,7 +4,11 @@ import MyApplicationIcon from "../../../../ui-atoms-local/Icons/MyApplicationIco
 import FormIcon from "../../../../ui-atoms-local/Icons/FormIcon";
 import TradeLicenseIcon from "../../../../ui-atoms-local/Icons/TradeLicenseIcon";
 import AddBookingIcon from "../../../../ui-atoms-local/Icons/AddBookingIcon";
-import { getRequiredDocData, clearlocalstorageAppDetails } from "../utils";
+import {
+  clearlocalstorageAppDetails,
+  getApplicationCount,
+} from "../utils";
+
 import get from "lodash/get";
 import set from "lodash/set";
 import {
@@ -12,30 +16,30 @@ import {
   getTenantId,
   getLocale,
   getUserInfo,
-  setapplicationType
+  setapplicationType,
 } from "egov-ui-kit/utils/localStorageUtils";
-let role_name=JSON.parse(getUserInfo()).roles[0].code
+let role_name = JSON.parse(getUserInfo()).roles[0].code;
 const header = getCommonHeader(
   {
     labelName: "Services",
-    labelKey: "ACTION_TEST_SERVICES"
+    labelKey: "ACTION_TEST_SERVICES",
   },
   {
     classes: {
-      root: "common-header-cont"
-    }
+      root: "common-header-cont",
+    },
   }
 );
 let cardItems = [];
-if(role_name === 'CITIZEN'){
+if (role_name === "CITIZEN") {
   const cardlist = [
     {
       label: {
         labelKey: "BK_APPLY",
-        labelName: "Apply for Booking"
+        labelName: "Apply for Booking",
       },
-      icon : <AddBookingIcon />,
-      // icon: <i 
+      icon: <AddBookingIcon />,
+      // icon: <i
       // viewBox="0 -8 35 42"
       // color="primary"
       // style={{fontSize : "50px"}}
@@ -43,15 +47,14 @@ if(role_name === 'CITIZEN'){
       // class="material-icons module-page-icon">
       // post_add
       // </i>,
-      route: "applyservices"
-      
+      route: "applyservices",
     },
     {
       label: {
         labelKey: "My Applications",
-        labelName: "BK_MY_BOOKINGS"
+        labelName: "BK_MY_BOOKINGS",
       },
-      // icon : <i 
+      // icon : <i
       // viewBox="0 -8 35 42"
       // color="primary"
       // style={{fontSize : "50px"}}
@@ -60,20 +63,21 @@ if(role_name === 'CITIZEN'){
       // list_alt
       // </i>,
       icon: <FormIcon />,
-      route: "my-applications"
+      route: "my-applications",
     },
-   
-  
   ];
   cardItems = cardlist;
 }
-
-
+const getAllApplicationsCount = async (action, state, dispatch) =>{
+  const response = await getApplicationCount();
+  console.log(response, "Application Count");
+}
 const screenConfig = {
   uiFramework: "material-ui",
   name: "home",
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
+    getAllApplicationsCount(action, state, dispatch)
     return action;
   },
   components: {
@@ -88,12 +92,12 @@ const screenConfig = {
           props: {
             items: cardItems,
             history: {},
-            module:"SERVICES"
-          }
-        }
-      }
-    }
-  }
+            module: "SERVICES",
+          },
+        },
+      },
+    },
+  },
 };
 
 export default screenConfig;
