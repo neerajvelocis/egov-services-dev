@@ -74,6 +74,7 @@ const screenConfig = {
   name: "home",
   beforeInitScreen: (action, state, dispatch) => {
     clearlocalstorageAppDetails(state);
+    
     return action;
   },
   components: {
