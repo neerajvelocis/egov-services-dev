@@ -10,12 +10,8 @@ import {
     bookingDetails,
 } from "./applyResourceWaterTanker/nocDetails";
 import { summaryDetails } from "./applyResourceWaterTanker/summaryDetails";
-import { paymentGatewaySelectionPopup } from "./payResource/adhocPopup";
 import {
-    getFileUrlFromAPI,
     getQueryArg,
-    getTransformedLocale,
-    setBusinessServiceDataToLocalStorage,
 } from "egov-ui-framework/ui-utils/commons";
 
 import {
@@ -26,8 +22,6 @@ import {
     getTenantId,
     getUserInfo,
     setapplicationType,
-    IsRemoveItem,
-    lSRemoveItemlocal,
     setapplicationNumber,
 } from "egov-ui-kit/utils/localStorageUtils";
 import { httpRequest } from "../../../../ui-utils";

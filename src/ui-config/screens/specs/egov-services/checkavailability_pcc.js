@@ -4,11 +4,6 @@ import {
     getLabel,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
 import {
-    getCurrentFinancialYear,
-    clearlocalstorageAppDetails,
-    convertDateInYMD,
-} from "../utils";
-import {
     availabilityForm,
     availabilityMediaCard,
     availabilityTimeSlot,
@@ -308,7 +303,7 @@ const availabilitySearch = {
 };
 const availabilityMediaCardWrapper = {
     uiFramework: "custom-atoms",
-    componentPath: "Form",
+    componentPath: "Div",
     props: {
         id: "availability-media-card",
     },
@@ -319,7 +314,7 @@ const availabilityMediaCardWrapper = {
 };
 const availabilityTimeSlotWrapper = {
     uiFramework: "custom-atoms",
-    componentPath: "Form",
+    componentPath: "Div",
     props: {
         id: "availability-timeslot",
     },
@@ -330,7 +325,7 @@ const availabilityTimeSlotWrapper = {
 };
 const availabilityCalendarWrapper = {
     uiFramework: "custom-atoms",
-    componentPath: "Form",
+    componentPath: "Div",
     props: {
         id: "availability-calender",
     },

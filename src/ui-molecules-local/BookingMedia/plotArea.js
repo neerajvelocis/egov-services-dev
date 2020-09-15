@@ -1,13 +1,9 @@
 import React from "react";
-import Helmet from "react-helmet";
-import DayPicker, { DateUtils } from "react-day-picker";
 import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
 import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import {
     getAvailabilityDataPCC,
     getBetweenDays,
