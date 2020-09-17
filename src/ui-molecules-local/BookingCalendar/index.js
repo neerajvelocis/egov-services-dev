@@ -1,5 +1,7 @@
 import React from "react";
-import DayPicker, { DateUtils } from "react-day-picker";
+import DayPicker, {
+    DateUtils,
+} from "../../contributed-modules/react-day-picker";
 import {
     prepareFinalObject,
     toggleSnackbar,
@@ -8,7 +10,7 @@ import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import "react-day-picker/lib/style.css";
+import "../../contributed-modules/react-day-picker/lib/style.css";
 import "./index.css";
 
 class BookingCalendar extends React.Component {
@@ -162,6 +164,11 @@ class BookingCalendar extends React.Component {
                         day
                     );
 
+                    this.props.prepareFinalObject(
+                        "availabilityCheckData.bkToDate",
+                        null
+                    );
+
                     this.setState({
                         from: day,
                         to: null,
@@ -250,13 +257,27 @@ class BookingCalendar extends React.Component {
         };
         let data = new Date();
         let newData = new Date(data.setMonth(data.getMonth() + 5));
+
+        let initialMonthDate =
+            from === null || from === undefined ? new Date() : new Date(from);
+        let initialMonthDateYear = initialMonthDate.getFullYear();
+        let initialMonthDateMonth = initialMonthDate.getMonth() + 1;
+
+        let initialMonthDateStr = `${initialMonthDateYear}, ${initialMonthDateMonth}`;
+
+        console.log(initialMonthDateStr, "initialMonthDateStr");
+        console.log(from, "initialMonthDateStr");
         return (
             <div className="calendar-wrapper">
                 <div className="calendar-section">
                     <DayPicker
                         className="Selectable"
                         numberOfMonths={2}
-                        initialMonth={new Date()}
+                        initialMonth={
+                            from === undefined || from || null
+                                ? new Date()
+                                : new Date(initialMonthDateStr)
+                        }
                         disabledDays={this.state.dselectedDays}
                         fromMonth={new Date()}
                         toMonth={newData}

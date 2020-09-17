@@ -36,7 +36,7 @@ import { remarksSummary } from "./searchResource/remarksSummary";
 import { footer } from "./searchResource/citizenFooter";
 import {
     footerReviewTop,
-} from "./searchResource/cgfooter";
+} from "./searchResource/footer";
 import {
     getLocale,
     getUserInfo,
@@ -295,10 +295,6 @@ const screenConfig = {
                     componentPath: "WorkFlowContainer",
                     moduleName: "egov-services",
                     visible: true,
-                    props: {
-                        // dataPath: "Licenses",
-                        // moduleName: "SELLMEATNOC",
-                    },
                 },
                 body: getCommonCard({
                     estimateSummary: estimateSummary,

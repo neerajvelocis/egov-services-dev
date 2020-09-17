@@ -7,9 +7,6 @@ import {
   getSelectField,
   getPattern,
 } from "egov-ui-framework/ui-config/screens/specs/utils";
-import {
-  getTextFieldReadOnly
-} from "../../utils/index"
 import { convertDateInDMY } from "../../utils/index";
 import {
   handleScreenConfigurationFieldChange as handleField,
@@ -129,7 +126,7 @@ export const bookingDetails = getCommonCard({
   applicationDetailsConatiner: getCommonContainer({
 
     fromdate: {
-      ...getTextFieldReadOnly({
+      ...getTextField({
         label: {
           labelName: "From Date",
           labelKey: "BK_CGB_FROM_DATE_LABEL"
@@ -149,7 +146,7 @@ export const bookingDetails = getCommonCard({
       })
     },
     todate: {
-      ...getTextFieldReadOnly({
+      ...getTextField({
         label: {
           labelName: "To Date",
           labelKey: "BK_CGB_TO_DATE_LABEL"
@@ -168,7 +165,7 @@ export const bookingDetails = getCommonCard({
       })
     },
     Venue: {
-      ...getTextFieldReadOnly({
+      ...getTextField({
         label: {
 
           labelName: "Booking Venue",

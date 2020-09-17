@@ -1,13 +1,10 @@
 import React from "react";
-import Helmet from "react-helmet";
-import DayPicker, { DateUtils } from "react-day-picker";
 import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
-import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
-import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { setRoute } from "egov-ui-framework/ui-redux/app/actions";
 import {
     getAvailabilityDataPCC,
     getBetweenDays,
@@ -25,7 +22,7 @@ class PlotArea extends React.Component {
         const { availabilityCheckData } = this.props;
         if (
             availabilityCheckData.bkBookingType == "Community Center" &&
-            item.bookingItemType == "HOURLY"
+            item.bkDuration == "HOURLY"
         ) {
             set(
                 this.props.calendarVisiblity.checkavailability_pcc,
@@ -60,13 +57,13 @@ class PlotArea extends React.Component {
             item.name
         );
         this.props.prepareFinalObject(
-            "availabilityCheckData.bookingItemType",
-            item.bookingItemType
+            "availabilityCheckData.bkDuration",
+            item.bkDuration
         );
         this.props.prepareFinalObject("Booking.bkBookingVenue", item.id);
         this.props.prepareFinalObject(
-            "Booking.bookingItemType",
-            item.bookingItemType
+            "Booking.bkDuration",
+            item.bkDuration
         );
 
         let requestBody = {

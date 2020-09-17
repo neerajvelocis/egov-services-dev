@@ -29,6 +29,9 @@ import set from "lodash/set";
 import get from "lodash/get";
 
 import {
+    getPreviousBill
+} from "../utils";
+import {
     prepareDocumentsUploadData,
     getSearchResults,
     getSearchResultsView,
@@ -183,51 +186,6 @@ const getMdmsData = async (action, state, dispatch) => {
     }
 };
 
-// export const prepareEditFlow = async (
-//     state,
-//     dispatch,
-//     applicationNumber,
-//     tenantId
-// ) => {
-//     if (applicationNumber) {
-//         let response = await getSearchResultsView([
-//             { key: "tenantId", value: tenantId },
-//             { key: "applicationNumber", value: applicationNumber },
-//         ]);
-//         setapplicationNumber(applicationNumber);
-//         setApplicationNumberBox(state, dispatch, applicationNumber);
-
-//         // let Refurbishresponse = furnishOsbmResponse(response);
-//         dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
-
-//         let fileStoreIds = Object.keys(response.documentMap);
-//         let fileStoreIdsValue = Object.values(response.documentMap);
-//         let fileUrls =
-//             fileStoreIds.length > 0
-//                 ? await getFileUrlFromAPI(fileStoreIds)
-//                 : {};
-//         dispatch(prepareFinalObject("documentsUploadReduxOld.documents", [
-// 			{
-// 				fileName: fileStoreIdsValue[0],
-// 				fileStoreId: fileStoreIds[0],
-// 				fileUrl: fileUrls[fileStoreIds[0]],
-// 			},
-// 		]));
-// 		console.log("hereitis")
-// 		// prepareFinalObject("documentsUploadRedux", {
-// 		// 	0: {
-// 		// 	  documents: [
-// 		// 		{
-// 		// 			fileName: fileStoreIdsValue[0],
-// 		// 			fileStoreId: fileStoreIds[0],
-// 		// 			fileUrl: fileUrls[fileStoreIds[0]],
-// 		// 		},
-// 		// 	  ]
-// 		// 	}
-// 		//   });
-//     }
-// };
-
 const calculateBetweenDaysCount = (startDate, endDate) => {
     const oneDay = 24 * 60 * 60 * 1000;
     const firstDate = new Date(startDate);
@@ -239,15 +197,12 @@ const calculateBetweenDaysCount = (startDate, endDate) => {
 };
 
 export const prepareEditFlow = async (
+    action,
     state,
     dispatch,
     applicationNumber,
     tenantId,
     businessService
-    // fromDate,
-    // toDate,
-    // venue,
-    // locality
 ) => {
     if (applicationNumber) {
         const availabilityCheckData = get(
@@ -255,6 +210,27 @@ export const prepareEditFlow = async (
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
         if (availabilityCheckData !== undefined) {
+            set(
+                action.screenConfig,
+                "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkLocationChangeAmount.visible",
+                availabilityCheckData.bkPaymentStatus === "SUCCESS" ||
+                    availabilityCheckData.bkPaymentStatus === "success"
+                    ? true
+                    : false
+            );
+
+
+            if(availabilityCheckData.bkPaymentStatus === "SUCCESS" ||
+            availabilityCheckData.bkPaymentStatus === "success"){
+                let queryObject = [
+                    { key: "tenantId", value: tenantId },
+                    { key: "consumerCode", value: applicationNumber },
+                ];
+                const response = await getPreviousBill(queryObject)
+                console.log(response, "myresponse");
+            }
+            
+
             const masterData = get(
                 state,
                 "screenConfiguration.preparedFinalObject.masterData"
@@ -275,6 +251,12 @@ export const prepareEditFlow = async (
                 prepareFinalObject(
                     "Booking.bkDimension",
                     masterDataItem[0].dimensionSqrYards
+                )
+            );
+            dispatch(
+                prepareFinalObject(
+                    "Booking.bkLocationChangeAmount",
+                    masterDataItem[0].locationChangeAmount
                 )
             );
             dispatch(
@@ -346,11 +328,11 @@ export const prepareEditFlow = async (
                 )
             );
         } else {
-            dispatch(
-                setRoute(
-                    `/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
-                )
-            );
+            // dispatch(
+            //     setRoute(
+            //         `/egov-services/checkavailability_pcc?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`
+            //     )
+            // );
         }
     }
     // if (applicationNumber) {
@@ -427,8 +409,7 @@ const screenConfig = {
         });
 
         // Search in case of EDIT flow
-        prepareEditFlow(state, dispatch, applicationNumber, tenantId);
-        
+        prepareEditFlow(action, state, dispatch, applicationNumber, tenantId);
 
         const availabilityCheckData = get(
             state,
@@ -444,72 +425,47 @@ const screenConfig = {
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkFromDate.visible",
-                availabilityCheckData.bkBookingType === "Parks"
-                    ? true
-                    : availabilityCheckData.bookingItemType === "FULLDAY"
-                    ? true
-                    : false
+                availabilityCheckData.bkDuration === "FULLDAY" ? true : false
             );
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkToDate.visible",
-                availabilityCheckData.bkBookingType === "Parks"
-                    ? true
-                    : availabilityCheckData.bookingItemType === "FULLDAY"
-                    ? true
-                    : false
+
+                availabilityCheckData.bkDuration === "FULLDAY" ? true : false
             );
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkDisplayFromDateTime.visible",
-                availabilityCheckData.bkBookingType !== "Parks" &&
-                    availabilityCheckData.bookingItemType === "HOURLY"
-                    ? true
-                    : false
+                availabilityCheckData.bkDuration === "HOURLY" ? true : false
             );
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkDisplayToDateTime.visible",
-                availabilityCheckData.bkBookingType !== "Parks" &&
-                    availabilityCheckData.bookingItemType === "HOURLY"
-                    ? true
-                    : false
+                availabilityCheckData.bkDuration === "HOURLY" ? true : false
             );
 
             set(
                 action.screenConfig,
                 "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayFromTime.visible",
-                availabilityCheckData.bkBookingType !== "Parks" &&
-                    availabilityCheckData.bookingItemType === "HOURLY"
-                    ? true
-                    : false
+                availabilityCheckData.bkDuration === "HOURLY" ? true : false
             );
 
             set(
                 action.screenConfig,
                 "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.bkDisplayToTime.visible",
-                availabilityCheckData.bkBookingType !== "Parks" &&
-                    availabilityCheckData.bookingItemType === "HOURLY"
-                    ? true
-                    : false
+                availabilityCheckData.bkDuration === "HOURLY" ? true : false
             );
 
             set(
                 action.screenConfig,
                 "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.FromDate.visible",
-                availabilityCheckData.bkBookingType !== "Parks" &&
-                    availabilityCheckData.bookingItemType === "HOURLY"
-                    ? false
-                    : true
+                availabilityCheckData.bkDuration === "FULLDAY" ? true : false
             );
 
             set(
                 action.screenConfig,
                 "components.div.children.formwizardFourthStep.children.summaryDetails.children.cardContent.children.pccSummary.children.cardContent.children.cardOne.props.scheama.children.cardContent.children.applicationContainer.children.ToDate.visible",
-                availabilityCheckData.bkBookingType !== "Parks" &&
-                    availabilityCheckData.bookingItemType === "HOURLY"
-                    ? false
-                    : true
+                availabilityCheckData.bkDuration === "FULLDAY" ? true : false
             );
 
             const masterData = get(
@@ -551,7 +507,7 @@ const screenConfig = {
             );
             if (
                 availabilityCheckData.bkBookingType !== "Parks" &&
-                availabilityCheckData.bookingItemType === "FULLDAY"
+                availabilityCheckData.bkDuration === "FULLDAY"
             ) {
                 dispatch(
                     prepareFinalObject("Booking.timeslots", [
@@ -616,7 +572,7 @@ const screenConfig = {
                 )
             );
         } else {
-            dispatch(setRoute(`/egov-services/checkavailability_pcc`));
+            // dispatch(setRoute(`/egov-services/checkavailability_pcc`));
         }
 
         // Code to goto a specific step through URL

@@ -1004,15 +1004,6 @@ export const downloadCertificate = async (
         let bookingDuration = '';
         if (applicationData.businessService == "PACC" && applicationData.bkBookingType == "Community Center") {
             if (applicationData.timeslots && applicationData.timeslots.length > 0) {
-                // if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1475") {
-                //     applicationData.bookingItemType = "HOURLY"
-                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1476") {
-                //     applicationData.bookingItemType = "HOURLY";
-                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1474") {
-                //     applicationData.bookingItemType = "FULLDAY";
-                // } else {
-                //     applicationData.bookingItemType = "FULLDAY";
-                // }
 
                 var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
                 console.log(applicationData.bkFromDate,
@@ -1463,58 +1454,6 @@ export const getPerDayRateCgb = async (bookingVenue) => {
     }
 };
 
-export const checkAvaialbilityAtSubmitCgb = async (bookingVenue, from, to) => {
-    let requestBody = {
-        Booking: {
-            bkBookingType: "GROUND_FOR_COMMERCIAL_PURPOSE",
-            bkBookingVenue: bookingVenue,
-            bkFromDate: from,
-            bkToDate: to,
-        },
-    };
-    try {
-        const response = await httpRequest(
-            "post",
-            "bookings/commercial/ground/booked/dates/_search",
-            "",
-            [],
-            requestBody
-        );
-        // return response;
-        return { status: "success", data: response.data };
-    } catch (exception) {
-        console.log(exception);
-    }
-};
-export const checkAvaialbilityAtSubmitOsujm = async (
-    sector,
-    bookingVenue,
-    from,
-    to
-) => {
-    let requestBody = {
-        Booking: {
-            bkSector: sector,
-            bkBookingType: "OSUJM",
-            bkBookingVenue: bookingVenue,
-            bkFromDate: from,
-            bkToDate: to,
-        },
-    };
-    try {
-        const response = await httpRequest(
-            "post",
-            "bookings/osujm/booked/dates/_fetch",
-            "",
-            [],
-            requestBody
-        );
-        // return response;
-        return { status: "success", data: response.data };
-    } catch (exception) {
-        console.log(exception);
-    }
-};
 export const checkAvaialbilityAtSubmit = async (bookingData, dispatch) => {
     let businessService = bookingData.businessService;
     let requestBody = {};
@@ -1606,76 +1545,6 @@ export const getPerDayRateOSWMCC = async (bookingSector, bookingArea) => {
         console.log(exception);
     }
 };
-export const getTextFieldReadOnly = (textScheama) => {
-    const {
-        label = {},
-        readOnlyValue,
-        placeholder = {},
-        localePrefix = {},
-        required = false,
-        pattern,
-        jsonPath = "",
-        sourceJsonPath = "",
-        cityDropdown = "",
-        data = [],
-        optionValue = "code",
-        optionLabel = "code",
-        iconObj = {},
-        gridDefination = {
-            xs: 12,
-            sm: 6,
-        },
-        props = {},
-        minLength,
-        maxLength,
-        minValue,
-        maxValue,
-        infoIcon,
-        title = {},
-        errorMessage = "",
-        requiredMessage = "",
-        ...rest
-    } = textScheama;
-    return {
-        uiFramework: "custom-containers-local",
-        moduleName: "egov-services",
-        componentPath: "TextFieldContainerReadOnly",
-        props: {
-            label,
-            readOnlyValue,
-            InputLabelProps: {
-                shrink: true,
-            },
-            placeholder,
-            localePrefix,
-            fullWidth: true,
-            required,
-            data,
-            optionValue,
-            optionLabel,
-            sourceJsonPath,
-            cityDropdown,
-            jsonPath,
-            iconObj,
-            title,
-            infoIcon,
-            errorMessage,
-            ...props,
-        },
-        gridDefination,
-        required,
-        pattern,
-        jsonPath,
-        minLength,
-        maxLength,
-        minValue,
-        maxValue,
-        errorMessage,
-        requiredMessage,
-        ...rest,
-    };
-};
-
 export const getMasterDataPCC = async (requestBody) => {
     try {
         const response = await httpRequest(
@@ -1700,9 +1569,39 @@ export const getAvailabilityDataPCC = async (requestBody) => {
             [],
             requestBody
         );
-        console.log(response, "availability data response");
         return { status: "success", data: response.data };
     } catch (exception) {
         console.log(exception);
+    }
+};
+export const getApplicationCount = async () => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "bookings/api/citizen/records/_count",
+            "",
+            [],
+            {}
+        );
+        // return response;
+        return { status: "success", data: response.data };
+    } catch (exception) {
+        console.log(exception);
+    }
+};
+
+
+
+export const getPreviousBill = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "/billing-service/bill/v2/_search",
+            "",
+            queryObject
+        );
+        return response;
+    } catch (error) {
+        console.log(error, "errornew");
     }
 };

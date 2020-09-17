@@ -3,10 +3,7 @@ import Loadable from "react-loadable";
 import LinearProgress from "egov-ui-framework/ui-atoms/LinearSpinner";
 
 const Loading = () => <LinearProgress />;
-const TestAtoms = Loadable({
-  loader: () => import("./TestAtoms"),
-  loading: () => <Loading />
-});
+
 
 const ApplicationNoContainer = Loadable({
   loader: () => import("./applicationNumber"),
@@ -15,11 +12,6 @@ const ApplicationNoContainer = Loadable({
 
 const Checkbox = Loadable({
   loader: () => import("./Checkbox"),
-  loading: () => <Loading />
-});
-
-const MapLocation = Loadable({
-  loader: () => import("./MapLocation"),
   loading: () => <Loading />
 });
 
@@ -37,15 +29,6 @@ const MenuButton = Loadable({
   loader: () => import("./MenuButton"),
   loading: () => <Loading />
 });
-const BookingCalendar = Loadable({
-  loader: () => import("./BookingCalendar"),
-  loading: () => <Loading />
-});
-
-const FireNocIcon = Loadable({
-  loader: () => import("./Icons/FireNocIcon"),
-  loading: () => <Loading />
-});
 
 const MyApplicationIcon = Loadable({
   loader: () => import("./Icons/MyApplicationIcon"),
@@ -53,14 +36,10 @@ const MyApplicationIcon = Loadable({
 });
 
 export {
-  TestAtoms,
   ApplicationNoContainer,
   Checkbox,
-  MapLocation,
-  BookingCalendar,
   AutoSuggest,
   Asteric,
   MenuButton,
-  FireNocIcon,
   MyApplicationIcon
 };

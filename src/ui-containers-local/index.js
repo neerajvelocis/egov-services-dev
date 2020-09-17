@@ -29,10 +29,6 @@ const EstimateCardContainer = Loadable({
   loader: () => import("./EstimateCardContainer"),
   loading: () => <Loading />
 });
-const AutosuggestContainer = Loadable({
-  loader: () => import("./AutosuggestContainer"),
-  loading: () => <Loading />
-});
 const DocumentListContainer = Loadable({
   loader: () => import("./DocumentListContainer"),
   loading: () => <Loading />
@@ -50,30 +46,7 @@ const DialogContainer = Loadable({
   loader: () => import("./DialogContainer"),
   loading: () => <Loading />
 });
-const ApproveContainer = Loadable({
-  loader: () => import("./ApproveContainer"),
-  loading: () => <Loading />
-});
-const RejectContainer = Loadable({
-  loader: () => import("./RejectContainer"),
-  loading: () => <Loading />
-});
-const ReassignContainer = Loadable({
-  loader: () => import("./ReassignContainer"),
-  loading: () => <Loading />
-});
-const ForwardContainer = Loadable({
-  loader: () => import("./ForwardContainer"),
-  loading: () => <Loading />
-});
-const ViewBreakupContainer = Loadable({
-  loader: () => import("./ViewbreakupDialogContainer"),
-  loading: () => <Loading />
-});
-const UnderTakingContainer = Loadable({
-  loader: () => import("./UnderTakingContainer"),
-  loading: () => <Loading />
-});
+
 const MultiItemsWithImageContainer = Loadable({
   loader: () => import("./MultiItemsWithImageContainer"),
   loading: () => <Loading />
@@ -109,17 +82,10 @@ export {
   CheckboxContainer,
   DownloadFileContainer,
   EstimateCardContainer,
-  AutosuggestContainer,
   DocumentListContainer,
   SummaryDetailsContainer,
   PaymentRedirectPage,
-  ViewBreakupContainer,
   DialogContainer,
-  ApproveContainer,
-  RejectContainer,
-  ReassignContainer,
-  ForwardContainer,
-  UnderTakingContainer,
   MultiItemsWithImageContainer,
   WorkFlowContainer,
   BookingCalenderContainer,

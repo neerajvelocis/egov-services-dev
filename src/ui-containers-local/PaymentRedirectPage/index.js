@@ -61,7 +61,7 @@ class PaymentRedirect extends Component {
                         ? "APPLY"
                         : "PAIDAPPLY"
                 );
-                set(payload, "bk_payment_status", transactionStatus);
+                set(payload, "bkPaymentStatus", transactionStatus);
                 response = await httpRequest(
                     "post",
                     "/bookings/api/_update",

@@ -21,6 +21,7 @@ import {
     prepareFinalObject,
     toggleSnackbar,
 } from "egov-ui-framework/ui-redux/screen-configuration/actions";
+import get from "lodash/get";
 import set from "lodash/set";
 import {
     getFileUrlFromAPI,
