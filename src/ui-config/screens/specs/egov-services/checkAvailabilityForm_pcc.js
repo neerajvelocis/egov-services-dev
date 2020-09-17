@@ -809,7 +809,7 @@ export const availabilityTimeSlot = getCommonCard({
           labelName: "Select your booking time in below Timeslot Calendar",
           labelKey: "PACC_TIMESLOT_CALENDAR_HEADER_MSG",
 
-          style: { color: "#FE7A51" },
+          // style: { color: "#FE7A51" },
         }),
       },
     },

@@ -198,7 +198,7 @@ class CustomTimeSlots extends Component {
                     <Grid item={true} xs={2}>
                         <TextField
                             id="date"
-                            label="Jump Date"
+                            label="Select Date"
                             type="date"
                             defaultValue={this.state.currentDate}
                             onChange={(event) => {
