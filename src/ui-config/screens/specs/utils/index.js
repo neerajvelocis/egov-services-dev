@@ -1004,15 +1004,6 @@ export const downloadCertificate = async (
         let bookingDuration = '';
         if (applicationData.businessService == "PACC" && applicationData.bkBookingType == "Community Center") {
             if (applicationData.timeslots && applicationData.timeslots.length > 0) {
-                // if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1475") {
-                //     applicationData.bookingItemType = "HOURLY"
-                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1476") {
-                //     applicationData.bookingItemType = "HOURLY";
-                // } else if (applicationData.bkBookingVenue === "fabc3ff6-70d8-4ae6-8ac7-00c9c714c1474") {
-                //     applicationData.bookingItemType = "FULLDAY";
-                // } else {
-                //     applicationData.bookingItemType = "FULLDAY";
-                // }
 
                 var [fromTime, toTime] = applicationData.timeslots[0].slot.split('-')
                 console.log(applicationData.bkFromDate,
@@ -1578,13 +1569,11 @@ export const getAvailabilityDataPCC = async (requestBody) => {
             [],
             requestBody
         );
-        console.log(response, "availability data response");
         return { status: "success", data: response.data };
     } catch (exception) {
         console.log(exception);
     }
 };
-
 export const getApplicationCount = async () => {
     try {
         const response = await httpRequest(
@@ -1598,5 +1587,21 @@ export const getApplicationCount = async () => {
         return { status: "success", data: response.data };
     } catch (exception) {
         console.log(exception);
+    }
+};
+
+
+
+export const getPreviousBill = async (queryObject) => {
+    try {
+        const response = await httpRequest(
+            "post",
+            "/billing-service/bill/v2/_search",
+            "",
+            queryObject
+        );
+        return response;
+    } catch (error) {
+        console.log(error, "errornew");
     }
 };

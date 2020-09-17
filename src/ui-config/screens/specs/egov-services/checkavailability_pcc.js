@@ -31,7 +31,11 @@ import {
     getSearchResultsView,
     setApplicationNumberBox,
 } from "../../../../ui-utils/commons";
-import { getAvailabilityDataPCC, getMasterDataPCC, getBetweenDays } from "../utils";
+import {
+    getAvailabilityDataPCC,
+    getMasterDataPCC,
+    getBetweenDays,
+} from "../utils";
 import { httpRequest } from "../../../../ui-utils";
 import get from "lodash/get";
 import set from "lodash/set";
@@ -57,11 +61,11 @@ const getMdmsData = async (action, state, dispatch) => {
                             name: "Sector",
                         },
                         {
-                            name : "bookingCancellationRefundCalc"
+                            name: "bookingCancellationRefundCalc",
                         },
                         {
-                            name : "PCC_Document"
-                        }
+                            name: "PCC_Document",
+                        },
                     ],
                 },
             ],
@@ -126,34 +130,15 @@ const prepareEditFlow = async (
 ) => {
     if (applicationNumber) {
         setapplicationNumber(applicationNumber);
-
-        dispatch(
-            handleField(
-              "checkavailability_pcc",
-              "components.div.children.availabilityMediaCardWrapper",
-              "visible",
-              true
-            )
-          );
-          dispatch(
-            handleField(
-              "checkavailability_pcc",
-              "components.div.children.availabilityCalendarWrapper",
-              "visible",
-              true
-            )
-          );
         let response = await getSearchResultsView([
             { key: "tenantId", value: tenantId },
             { key: "applicationNumber", value: applicationNumber },
         ]);
 
         let bookingsModelList = get(response, "bookingsModelList", []);
-        let documentMap = get(response, "documentMap", {})
-        if ( bookingsModelList  !== null && bookingsModelList.length > 0) {
-            dispatch(
-                prepareFinalObject("Booking", bookingsModelList[0])
-            );
+        let documentMap = get(response, "documentMap", {});
+        if (bookingsModelList !== null && bookingsModelList.length > 0) {
+            dispatch(prepareFinalObject("Booking", bookingsModelList[0]));
             dispatch(
                 prepareFinalObject(
                     "availabilityCheckData",
@@ -166,42 +151,56 @@ const prepareEditFlow = async (
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",
                 true
             );
-            set(
-                action.screenConfig,
-                "components.div.children.availabilityMediaCardWrapper.visible",
-                true
-            );
-            set(
-                action.screenConfig,
-                "components.div.children.availabilityCalendarWrapper.visible",
-                true
-            );
 
             let requestBody = {
                 venueType: bookingsModelList[0].bkBookingType,
                 sector: bookingsModelList[0].bkSector,
             };
-            console.log(requestBody, "requestBody");
             let response = await getMasterDataPCC(requestBody);
             let responseStatus = get(response, "status", "");
-            if (
-                responseStatus == "SUCCESS" ||
-                responseStatus == "success"
-            ) {
-                dispatch(
-                    prepareFinalObject("masterData", response.data)
-                );
+            if (responseStatus == "SUCCESS" || responseStatus == "success") {
+                dispatch(prepareFinalObject("masterData", response.data));
                 requestBody = {
                     bookingType: bookingsModelList[0].bkBookingType,
                     bookingVenue: bookingsModelList[0].bkBookingVenue,
                     sector: bookingsModelList[0].bkSector,
                 };
-    
-                const availabilityData = await getAvailabilityDataPCC(requestBody);
-    
+
+                const availabilityData = await getAvailabilityDataPCC(
+                    requestBody
+                );
+                let responseStatusAvailabilityData = get(
+                    availabilityData,
+                    "status",
+                    ""
+                );
+
                 console.log(availabilityData, "availabilityData main page");
-    
-                if (availabilityData !== undefined) {
+
+                if (
+                    responseStatusAvailabilityData == "SUCCESS" ||
+                    responseStatusAvailabilityData == "success"
+                ) {
+
+
+                    set(
+                        action.screenConfig,
+                        "components.div.children.availabilityMediaCardWrapper.visible",
+                        true
+                    );
+                    set(
+                        action.screenConfig,
+                        "components.div.children.availabilityTimeSlotWrapper.visible",
+                        bookingsModelList[0].bkDuration === "HOURLY" ? true : false
+                    );
+
+                    set(
+                        action.screenConfig,
+                        "components.div.children.availabilityCalendarWrapper.visible",
+                        bookingsModelList[0].bkDuration === "FULLDAY" ? true : false
+                    );
+
+
                     let data = availabilityData.data;
                     let reservedDates = [];
                     var daylist = [];
@@ -219,7 +218,7 @@ const prepareEditFlow = async (
                             reservedDates
                         )
                     );
-                    
+                  
                 } else {
                     dispatch(
                         toggleSnackbar(
@@ -240,7 +239,6 @@ const prepareEditFlow = async (
                 dispatch(toggleSnackbar(true, errorMessage, "error"));
             }
 
-
             let fileStoreIds = Object.keys(documentMap);
             let fileStoreIdsValue = Object.values(documentMap);
             if (fileStoreIds.length > 0) {
@@ -258,7 +256,7 @@ const prepareEditFlow = async (
                     ])
                 );
             }
-        }  else {
+        } else {
             dispatch(
                 toggleSnackbar(
                     true,

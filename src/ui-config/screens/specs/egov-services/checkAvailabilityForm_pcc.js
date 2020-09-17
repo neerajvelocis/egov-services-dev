@@ -619,9 +619,9 @@ export const availabilityForm = getCommonCard({
           console.log(responseStatus, "responseStatus");
           if (responseStatus == "SUCCESS" || responseStatus == "success") {
             let newResponse = response.data.map((el) => {
-              let bookingItemType =
+              let bkDuration =
                 el.bookingAllowedFor === "" ? "FULLDAY" : "HOURLY";
-              let newObj = { ...el, bookingItemType };
+              let newObj = { ...el, bkDuration };
               return newObj;
             });
             console.log(newResponse, "newResponse");
