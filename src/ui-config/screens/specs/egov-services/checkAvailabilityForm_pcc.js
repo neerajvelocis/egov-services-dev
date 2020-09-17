@@ -821,7 +821,7 @@ export const availabilityTimeSlot = getCommonCard({
         uiFramework: "custom-atoms",
         componentPath: "Container",
         props: {
-            style: { marginBottom: "10px", color: "#FE7A51", textAlign: "center" },
+            style: { marginBottom: "10px", color: "#FE7A51" },
         },
         children: {
             header: {
