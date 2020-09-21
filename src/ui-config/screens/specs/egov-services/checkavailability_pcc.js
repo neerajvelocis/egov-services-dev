@@ -181,8 +181,6 @@ const prepareEditFlow = async (
                     responseStatusAvailabilityData == "SUCCESS" ||
                     responseStatusAvailabilityData == "success"
                 ) {
-
-
                     set(
                         action.screenConfig,
                         "components.div.children.availabilityMediaCardWrapper.visible",
@@ -191,15 +189,41 @@ const prepareEditFlow = async (
                     set(
                         action.screenConfig,
                         "components.div.children.availabilityTimeSlotWrapper.visible",
-                        bookingsModelList[0].bkDuration === "HOURLY" ? true : false
+                        bookingsModelList[0].bkDuration === "HOURLY"
+                            ? true
+                            : false
                     );
 
                     set(
                         action.screenConfig,
                         "components.div.children.availabilityCalendarWrapper.visible",
-                        bookingsModelList[0].bkDuration === "FULLDAY" ? true : false
+                        bookingsModelList[0].bkDuration === "FULLDAY"
+                            ? true
+                            : false
                     );
 
+                    if (bookingsModelList[0].timeslots.length > 0) {
+                        dispatch(
+                            prepareFinalObject(
+                                "DisplayPacc.bkDisplayFromDateTime",
+                                bookingsModelList[0].bkFromDate +
+                                    ", " +
+                                    bookingsModelList[0].timeslots[0].slot.split(
+                                        "-"
+                                    )[0]
+                            )
+                        );
+                        dispatch(
+                            prepareFinalObject(
+                                "DisplayPacc.bkDisplayToDateTime",
+                                bookingsModelList[0].bkToDate +
+                                    ", " +
+                                    bookingsModelList[0].timeslots[0].slot.split(
+                                        "-"
+                                    )[0]
+                            )
+                        );
+                    }
 
                     let data = availabilityData.data;
                     let reservedDates = [];
@@ -218,7 +242,6 @@ const prepareEditFlow = async (
                             reservedDates
                         )
                     );
-                  
                 } else {
                     dispatch(
                         toggleSnackbar(

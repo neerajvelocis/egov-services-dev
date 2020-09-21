@@ -28,9 +28,7 @@ import { httpRequest } from "../../../../ui-utils";
 import set from "lodash/set";
 import get from "lodash/get";
 
-import {
-    getPreviousBill
-} from "../utils";
+import { getPreviousBill } from "../utils";
 import {
     prepareDocumentsUploadData,
     getSearchResults,
@@ -209,7 +207,27 @@ export const prepareEditFlow = async (
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
+       
+       
         if (availabilityCheckData !== undefined) {
+
+            let paymentStatus = get(
+                state,
+                "screenConfiguration.preparedFinalObject.availabilityCheckData.bkPaymentStatus",
+                ""
+            );
+            if (paymentStatus === "SUCCESS" || paymentStatus === "success") {
+                let queryObject = [
+                    { key: "tenantId", value: tenantId },
+                    { key: "consumerCode", value: applicationNumber },
+                ];
+                const response = await getPreviousBill(queryObject);
+                dispatch(prepareFinalObject("oldBill", response.data));
+                console.log(response.data, "myresponse");
+            }
+    
+
+
             set(
                 action.screenConfig,
                 "components.div.children.formwizardSecondStep.children.bookingDetails.children.cardContent.children.applicationDetailsConatiner.children.bkLocationChangeAmount.visible",
@@ -219,17 +237,17 @@ export const prepareEditFlow = async (
                     : false
             );
 
-
-            if(availabilityCheckData.bkPaymentStatus === "SUCCESS" ||
-            availabilityCheckData.bkPaymentStatus === "success"){
-                let queryObject = [
-                    { key: "tenantId", value: tenantId },
-                    { key: "consumerCode", value: applicationNumber },
-                ];
-                const response = await getPreviousBill(queryObject)
-                console.log(response, "myresponse");
+            if (
+                availabilityCheckData.bkPaymentStatus === "SUCCESS" ||
+                availabilityCheckData.bkPaymentStatus === "success"
+            ) {
+                // let queryObject = [
+                //     { key: "tenantId", value: tenantId },
+                //     { key: "consumerCode", value: applicationNumber },
+                // ];
+                // const response = await getPreviousBill(queryObject)
+                // console.log(response, "myresponse");
             }
-            
 
             const masterData = get(
                 state,
@@ -335,44 +353,6 @@ export const prepareEditFlow = async (
             // );
         }
     }
-    // if (applicationNumber) {
-    //     let response = await getSearchResultsView([
-    //         { key: "tenantId", value: tenantId },
-    //         { key: "applicationNumber", value: applicationNumber },
-    //     ]);
-    //     setapplicationNumber(applicationNumber);
-    //     setApplicationNumberBox(state, dispatch, applicationNumber);
-
-    //     // let Refurbishresponse = furnishOsbmResponse(response);
-    //     dispatch(prepareFinalObject("Booking", response.bookingsModelList[0]));
-    //     // dispatch(
-    //     //     prepareFinalObject("Booking.bkFromDate", convertDateInYMD(fromDate))
-    //     // );
-    //     // dispatch(
-    //     //     prepareFinalObject("Booking.bkToDate", convertDateInYMD(toDate))
-    //     // );
-
-    //     // dispatch(prepareFinalObject("Booking.bkBookingVenue", venue));
-    //     // dispatch(prepareFinalObject("Booking.bkSector", locality));
-
-    //     let fileStoreIds = Object.keys(response.documentMap);
-    //     let fileStoreIdsValue = Object.values(response.documentMap);
-    //     if (fileStoreIds.length > 0) {
-    //         let fileUrls =
-    //             fileStoreIds.length > 0
-    //                 ? await getFileUrlFromAPI(fileStoreIds)
-    //                 : {};
-    //         dispatch(
-    //             prepareFinalObject("documentsUploadReduxOld.documents", [
-    //                 {
-    //                     fileName: fileStoreIdsValue[0],
-    //                     fileStoreId: fileStoreIds[0],
-    //                     fileUrl: fileUrls[fileStoreIds[0]],
-    //                 },
-    //             ])
-    //         );
-    //     }
-    // }
 };
 
 const screenConfig = {

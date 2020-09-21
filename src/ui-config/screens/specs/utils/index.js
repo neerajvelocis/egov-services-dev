@@ -1600,7 +1600,7 @@ export const getPreviousBill = async (queryObject) => {
             "",
             queryObject
         );
-        return response;
+        return { status: "success", data: response.Bill };
     } catch (error) {
         console.log(error, "errornew");
     }
