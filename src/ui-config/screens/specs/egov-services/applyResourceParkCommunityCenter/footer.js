@@ -44,12 +44,13 @@ const callBackForNext = async (state, dispatch) => {
     hasFieldToaster = validatestepformflag[1];
     if (activeStep === 2 && isFormValid != false) {
         // prepareDocumentsUploadData(state, dispatch);
+        let paymentStatus = get(state, "screenConfiguration.preparedFinalObject.Booking.bkPaymentStatus", "");
+
         let response = await createUpdatePCCApplication(
             state,
             dispatch,
-            "INITIATE"
+            paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "RE_INITIATED": "INITIATE"
         );
-        console.log(response, "myResponse");
         let responseStatus = get(response, "status", "");
         if (responseStatus == "SUCCESS" || responseStatus == "success") {
             // DISPLAY SUCCESS MESSAGE
@@ -70,11 +71,6 @@ const callBackForNext = async (state, dispatch) => {
             const reviewUrl = `/egov-services/applyparkcommunitycenter?applicationNumber=${applicationNumber}&tenantId=${tenantId}&businessService=${businessService}`;
             dispatch(setRoute(reviewUrl));
 
-            // set(
-            //     state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
-            //     "components.div.children.headerDiv.children.header.children.applicationNumber.props.number",
-            //     applicationNumber
-            // );
             set(
                 state.screenConfiguration.screenConfig["applyparkcommunitycenter"],
                 "components.div.children.headerDiv.children.header.children.applicationNumber.visible",

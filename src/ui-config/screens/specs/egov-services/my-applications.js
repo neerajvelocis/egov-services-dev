@@ -52,7 +52,7 @@ const getMdmsData = async (action, state, dispatch) => {
                             "name": "Status"
                         },
                          {
-                            "name": "ApplicationType"
+                            "name": "BookingType"
                         }
                     ],
                 },

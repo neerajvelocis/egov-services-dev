@@ -5,8 +5,14 @@ import get from "lodash/get";
 
 class EstimateCardContainer extends Component {
 
+    constructor(props){
+        super(props)
+    }
+    
+
     render() {
-        return <FeesEstimateCard estimate={this.props.estimate} baseCharge={this.props.baseCharge} />;
+        const {estimate, baseCharge, oldBill} = this.props
+        return <FeesEstimateCard estimate={estimate} baseCharge={baseCharge} oldBill={oldBill} />;
     }
 }
 
@@ -52,6 +58,11 @@ const mapStateToProps = (state, ownProps) => {
             )
         )[0]
     );
+    const oldBill = get(
+        screenConfiguration,
+        "preparedFinalObject.oldBill",
+        []
+    )
     const baseCharge = get(
         screenConfiguration,
         "preparedFinalObject.BaseCharge",
@@ -77,7 +88,7 @@ const mapStateToProps = (state, ownProps) => {
         totalAmount,
         arrears,
     };
-    return { estimate, baseCharge };
+    return { estimate, baseCharge, oldBill };
 };
 
 export default connect(mapStateToProps, null)(EstimateCardContainer);

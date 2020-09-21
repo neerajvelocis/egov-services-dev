@@ -78,7 +78,9 @@ function totalAmount(arr) {
 }
 
 function FeesEstimateCard(props) {
-    const { classes, estimate, baseCharge } = props;
+    const { classes, estimate, baseCharge, oldBill } = props;
+    console.log(estimate, "estimate");
+    console.log(oldBill, "oldBill");
     const total = totalAmount(estimate.fees);
     const totalHeadClassName = "pm-total-amount-value " + classes.bigheader;
 
@@ -146,6 +148,30 @@ function FeesEstimateCard(props) {
                             );
                         })}
                     </Grid>
+                    {oldBill && oldBill.length > 0 && (
+                        <Grid container>
+                            <Grid item xs={6}>
+                                <Typography variant="body2">
+                                    <LabelContainer
+                                        labelName="Total Amount"
+                                        labelKey="Previous Paid Amount"
+                                        style={styles.taxStylesLeft}
+                                    />
+                                </Typography>
+                            </Grid>
+                            <Grid
+                                item
+                                xs={6}
+                                align="right"
+                                style={{ paddingRight: 0 }}
+                                className="pm-application-table-total-value"
+                            >
+                                <Typography variant="body2">
+                                    {oldBill[0].totalAmount.toFixed(2)}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    )}
                     <Divider style={{ marginBottom: 16 }} />
                     <Grid container>
                         <Grid item xs={6}>
@@ -163,7 +189,13 @@ function FeesEstimateCard(props) {
                             style={{ paddingRight: 0 }}
                             className="pm-application-table-total-value"
                         >
-                            <Typography variant="body2">{total.toFixed(2)}</Typography>
+                            <Typography variant="body2">
+                                {oldBill && oldBill.length > 0
+                                    ? (total - oldBill[0].totalAmount).toFixed(
+                                          2
+                                      )
+                                    : total.toFixed(2)}
+                            </Typography>
                         </Grid>
                     </Grid>
                 </div>
@@ -180,7 +212,10 @@ function FeesEstimateCard(props) {
                     />
                 </Typography>
                 <Typography className={totalHeadClassName} align="right">
-                    Rs {total.toFixed(2)}
+                    Rs{" "}
+                    {oldBill && oldBill.length > 0
+                        ? (total - oldBill[0].totalAmount).toFixed(2)
+                        : total.toFixed(2)}
                 </Typography>
 
                 {estimate.extra && estimate.extra.length !== 0 ? (

@@ -16,6 +16,7 @@ import {
     getPaymentGateways,
     getSearchResultsView,
 } from "../../../../ui-utils/commons";
+import { getPreviousBill } from "../utils";
 
 import {
     getapplicationType,
@@ -53,26 +54,39 @@ const setSearchResponse = async (
     action,
     dispatch,
     applicationNumber,
-    tenantId
+    tenantId,
+    businessService
 ) => {
     const response = await getSearchResultsView([
         { key: "tenantId", value: tenantId },
         { key: "applicationNumber", value: applicationNumber },
     ]);
-    let recData = get(response, "bookingsModelList", []);
+    let bookingsModelList = get(response, "bookingsModelList", []);
+    dispatch(prepareFinalObject("Booking", bookingsModelList[0]));
     dispatch(
-        prepareFinalObject("Booking", recData.length > 0 ? recData[0] : {})
+        prepareFinalObject(
+            "availabilityCheckData",
+            bookingsModelList[0]
+        )
     );
-    dispatch(
-        prepareFinalObject("BookingDocument", get(response, "documentMap", {}))
-    );
+
+    // let paymentStatus = recData[0].bkPaymentStatus;
+    // if (paymentStatus === "SUCCESS" || paymentStatus === "success") {
+    //     let queryObject = [
+    //         { key: "tenantId", value: tenantId },
+    //         { key: "consumerCode", value: applicationNumber },
+    //     ];
+    //     const response = await getPreviousBill(queryObject);
+    //     dispatch(prepareFinalObject("oldBill", response.data));
+    //     console.log(response.data, "myresponse");
+    // }
 
     await generateBill(
         state,
         dispatch,
         applicationNumber,
         tenantId,
-        recData[0].businessService
+        businessService
     );
 
     // await handleCheckAvailability(
@@ -167,7 +181,14 @@ const screenConfig = {
         setapplicationNumber(applicationNumber);
         setapplicationType(businessService);
         setPaymentMethods(action, state, dispatch);
-        setSearchResponse(state, action, dispatch, applicationNumber, tenantId);
+        setSearchResponse(
+            state,
+            action,
+            dispatch,
+            applicationNumber,
+            tenantId,
+            businessService
+        );
 
         return action;
     },

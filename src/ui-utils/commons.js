@@ -321,7 +321,7 @@ export const createUpdatePCCApplication = async (state, dispatch, action) => {
     let response = "";
     let tenantId = getTenantId().split(".")[0];
 
-    let method = action === "INITIATE" ? "CREATE" : "UPDATE";
+    let method = action === "INITIATE" || action === "RE_INITIATED" ? "CREATE" : "UPDATE";
     try {
         let payload = get(
             state.screenConfiguration.preparedFinalObject,

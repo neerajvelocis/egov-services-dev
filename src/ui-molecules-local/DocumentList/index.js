@@ -128,9 +128,10 @@ class DocumentList extends Component {
         const {
             documentsList,
             documentsUploadRedux,
-            documentsUploadReduxOld,
+            // documentsUploadReduxOld,
             prepareFinalObject,
         } = this.props;
+        console.log(this.props, "my Props");
         let index = 0;
         documentsList.forEach((docType) => {
             docType.cards &&
@@ -175,12 +176,12 @@ class DocumentList extends Component {
                             oldDocType != docType.code ||
                             oldDocCode != card.name
                         ) {
-                            let oldDocumentData;
-                            if (Object.keys(documentsUploadReduxOld).length > 0) {
-                                oldDocumentData = {
-                                    documents: [documentsUploadReduxOld.documents[index]],
-                                };
-                            }
+                            // let oldDocumentData;
+                            // if (Object.keys(documentsUploadReduxOld).length > 0) {
+                            //     oldDocumentData = {
+                            //         documents: [documentsUploadReduxOld.documents[index]],
+                            //     };
+                            // }
                             let newDocumentData = {
                                 documentType: docType.code,
                                 documentCode: card.name,
@@ -189,6 +190,9 @@ class DocumentList extends Component {
                                 isDocumentTypeRequired: card.dropdown
                                     ? card.dropdown.required
                                     : false,
+                                    testUploadRedux: card.dropdown
+                                    ? card.dropdown.required
+                                    : "hello test",
                             };
                             // Object.keys(documentsUploadReduxOld).length > 0
                             //     ? (documentsUploadRedux[index] = {

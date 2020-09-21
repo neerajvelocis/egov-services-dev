@@ -51,14 +51,23 @@ class PaymentRedirect extends Component {
                     { key: "applicationNumber", value: consumerCode },
                 ]);
 
+                let paymentStatus = get(
+                    response.bookingsModelList[0],
+                    "bkPaymentStatus",
+                    ""
+                );
                 let payload = response.bookingsModelList[0];
+
+                let bkAction = ""
                 set(
                     payload,
                     "bkAction",
-                    bookingType === "OSBM" || bookingType === "OSUJM" 
+                    bookingType === "OSBM" || bookingType === "OSUJM"
                         ? "PAY"
-                        : bookingType === "GFCP" || bookingType === "PACC"
+                        : bookingType === "GFCP"
                         ? "APPLY"
+                        : bookingType === "PACC"
+                        ? paymentStatus === "SUCCESS" || paymentStatus === "succes" ? "MODIFY" : "APPLY"
                         : "PAIDAPPLY"
                 );
                 set(payload, "bkPaymentStatus", transactionStatus);
@@ -76,7 +85,7 @@ class PaymentRedirect extends Component {
                 );
             }
         } catch (e) {
-            console.log(e)
+            console.log(e);
         }
     };
     render() {
