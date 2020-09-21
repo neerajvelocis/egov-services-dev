@@ -91,6 +91,8 @@ class PlotArea extends React.Component {
                 "availabilityCheckData.reservedDays",
                 reservedDates
             );
+
+            console.log(data, "Reservered Time Slots");
             this.props.prepareFinalObject(
                 "availabilityCheckData.reservedTimeSlotsData",
                 data

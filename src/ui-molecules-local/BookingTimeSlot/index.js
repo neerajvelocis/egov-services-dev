@@ -120,10 +120,25 @@ class CustomTimeSlots extends Component {
         //         document.getElementById(currentSelectedTimeSlot).checked = true;
         //     }
         // }
+        if (this.props.initiatedBookingFromDate) {
+            var [goYear, goMonth, goDay] = this.props.initiatedBookingFromDate.split("-");
+            let goDate = `${goDay}-${goMonth}-${goYear}`;
+            let i = 0;
+
+            for (i; i < this.props.rows.length; i++) {
+                if (this.props.rows[i].date == goDate) {
+                    break;
+                }
+            }
+            console.log(i, "i fffvalue");
+            this.setState((state) => ({
+                currentSlide: i,
+            }));
+        }
     }
     componentWillReceiveProps(nextProps) {
         // const { currentSelectedTimeSlot, rows } = this.props;
-        console.log(nextProps, "nextProps");
+        //console.log(nextProps, "nextProps");
         // if (rows.length > 0) {
         //     if (
         //         currentSelectedTimeSlot !== "" ||
@@ -143,13 +158,13 @@ class CustomTimeSlots extends Component {
 
         document.getElementById(
             e.target.getAttribute("data-date") +
-                ":" +
-                e.target.getAttribute("data-timeslot")
+            ":" +
+            e.target.getAttribute("data-timeslot")
         ).checked = true;
         console.log(
             e.target.getAttribute("data-date") +
-                "---" +
-                e.target.getAttribute("data-timeslot")
+            "---" +
+            e.target.getAttribute("data-timeslot")
         );
         var [from, to] = e.target.getAttribute("data-timeslot").split("-");
         var [apiDay, apiMonth, apiYear] = e.target
@@ -333,6 +348,14 @@ class CustomTimeSlots extends Component {
                                                                 )[0];
                                                                 availabilityClass =
                                                                     "booked-time-slot";
+                                                            } else if (item1.indexOf(
+                                                                ":initiated"
+                                                            ) !== -1) {
+                                                                item1 = item1.split(
+                                                                    ":"
+                                                                )[0];
+                                                                availabilityClass =
+                                                                    "initiated-time-slot";
                                                             } else {
                                                                 availabilityClass =
                                                                     "available-time-slot";
@@ -439,6 +462,50 @@ class CustomTimeSlots extends Component {
                                                                         {item1}
                                                                     </TableCell>
                                                                 );
+                                                            } else if (availabilityClass === "initiated-time-slot") {
+
+                                                                return (
+                                                                    <TableCell
+                                                                        className={`date-timeslot ${timeSlotExpired} ${availabilityClass}`}
+                                                                        data-date={
+                                                                            item.date
+                                                                        }
+                                                                        data-timeslot={
+                                                                            item1
+                                                                        }
+                                                                        align={
+                                                                            "center"
+                                                                        }
+                                                                        onClick={
+                                                                            this
+                                                                                .selectTimeSlot
+                                                                        }
+                                                                    >
+                                                                        {item1}
+                                                                        <input
+                                                                            className="book-timeslot"
+                                                                            name="time-slot"
+                                                                            type="checkbox"
+                                                                            checked={true}
+                                                                            id={
+                                                                                item.date +
+                                                                                ":" +
+                                                                                item1
+                                                                            }
+                                                                            data-date={
+                                                                                item.date
+                                                                            }
+                                                                            data-timeslot={
+                                                                                item1
+                                                                            }
+                                                                            onClick={
+                                                                                this
+                                                                                    .selectTimeSlot
+                                                                            }
+                                                                        />
+                                                                    </TableCell>
+                                                                );
+
                                                             } else {
                                                                 return (
                                                                     <TableCell
@@ -462,6 +529,7 @@ class CustomTimeSlots extends Component {
                                                                             className="book-timeslot"
                                                                             name="time-slot"
                                                                             type="checkbox"
+
                                                                             id={
                                                                                 item.date +
                                                                                 ":" +
@@ -496,9 +564,9 @@ class CustomTimeSlots extends Component {
                     .header-date{font-weight: bold;font-size:18px;}
                     .date-timeslot{border-right: 1px solid white;color:white;font-weight:bold;text-align:center;}
                     p.carousel-status, .control-dots{display:none;}
-                    .available-time-slot{background-color:green;}
+                    .available-time-slot, .initiated-time-slot{background-color:green;}
                     .booked-time-slot{background-color:red}
-                    .available-time-slot:hover {opacity: 0.5;}
+                    .available-time-slot:hover, .initiated-time-slot:hover {opacity: 0.5;}
                     .date-timeslot.expired-time-slot{background-color: gray;}
                     .book-timeslot{position: absolute;top: 65px;width: 21px;height: 21px;margin-left:9px !important;}
                     thead.timeslot-table-head{border: 1px solid gray;}
@@ -524,12 +592,16 @@ const mapStateToProps = (state) => {
         "screenConfiguration.preparedFinalObject.availabilityCheckData"
     );
 
-    const currentSelectedTimeSlot = `${availabilityCheckData.bkFromDate}:${availabilityCheckData.timeslots[0].slot}`;
+    //const currentSelectedTimeSlot = `${availabilityCheckData.bkFromDate}:${availabilityCheckData.timeslots[0].slot}`;
 
     const reservedTimeSlotsData = get(
         state,
         "screenConfiguration.preparedFinalObject.availabilityCheckData.reservedTimeSlotsData"
     );
+
+
+
+
     let timeSlotArray = [];
     let bookedSlotArray = [];
     var date = new Date();
@@ -557,6 +629,19 @@ const mapStateToProps = (state) => {
         }
     }
 
+    //Edit Case Coverd To show Checkbox Checked
+    const initiatedBookingTimeSlot = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.timeslots"
+    );
+    const initiatedBookingFromDate = get(
+        state,
+        "screenConfiguration.preparedFinalObject.availabilityCheckData.bkFromDate"
+    );
+
+    //******************************** */
+
+
     for (let i = 0; i < 180; i++) {
         let month = ("0" + (date.getMonth() + 1)).slice(-2);
         let day = ("0" + date.getDate()).slice(-2);
@@ -573,25 +658,34 @@ const mapStateToProps = (state) => {
         let tempObj = {};
         tempObj.date = timeSlotArray[j].date;
         tempObj.timeSlots = timeSlotArray[j].timeSlots;
+
         if (bookedSlotArray && bookedSlotArray.length > 0) {
             for (let k = 0; k < bookedSlotArray.length; k++) {
                 if (timeSlotArray[j].date === bookedSlotArray[k].date) {
-                    for (
-                        let l = 0;
-                        l < timeSlotArray[j].timeSlots.length;
-                        l++
-                    ) {
-                        if (
-                            bookedSlotArray[k].timeSlots.includes(
-                                timeSlotArray[j].timeSlots[l]
-                            )
+                    for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
+                        if (bookedSlotArray[k].timeSlots.includes(
+                            timeSlotArray[j].timeSlots[l]
+                        )
                         ) {
-                            timeSlotArray[j].timeSlots.splice(
-                                l,
-                                1,
-                                `${timeSlotArray[j].timeSlots[l]}:booked`
+                            timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:booked`
                             );
                         }
+                    }
+                }
+            }
+        }
+
+        if (initiatedBookingFromDate) {
+            var [goYear, goMonth, goDay] = initiatedBookingFromDate.split("-");
+            let goDate = `${goDay}-${goMonth}-${goYear}`;
+            if (timeSlotArray[j].date === goDate && initiatedBookingTimeSlot) {
+
+                for (let l = 0; l < timeSlotArray[j].timeSlots.length; l++) {
+                    console.log(timeSlotArray[j].timeSlots[l], initiatedBookingTimeSlot[0].slot, "fsdfsfsdf");
+
+                    if (initiatedBookingTimeSlot[0].slot === timeSlotArray[j].timeSlots[l]) {
+                        console.log("Hello Bulbul");
+                        timeSlotArray[j].timeSlots.splice(l, 1, `${timeSlotArray[j].timeSlots[l]}:initiated`);
                     }
                 }
             }
@@ -602,7 +696,7 @@ const mapStateToProps = (state) => {
     return {
         rows: finalBookedTimeSlots,
         currentDate: new Date(),
-        currentSelectedTimeSlot: currentSelectedTimeSlot,
+        initiatedBookingFromDate: initiatedBookingFromDate,
     };
 };
 

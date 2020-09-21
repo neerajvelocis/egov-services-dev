@@ -181,6 +181,8 @@ const prepareEditFlow = async (
                     responseStatusAvailabilityData == "SUCCESS" ||
                     responseStatusAvailabilityData == "success"
                 ) {
+
+
                     set(
                         action.screenConfig,
                         "components.div.children.availabilityMediaCardWrapper.visible",
@@ -220,7 +222,7 @@ const prepareEditFlow = async (
                                     ", " +
                                     bookingsModelList[0].timeslots[0].slot.split(
                                         "-"
-                                    )[0]
+                                    )[1]
                             )
                         );
                     }
@@ -240,6 +242,12 @@ const prepareEditFlow = async (
                         prepareFinalObject(
                             "availabilityCheckData.reservedDays",
                             reservedDates
+                        )
+                    );
+                    dispatch(
+                        prepareFinalObject(
+                            "availabilityCheckData.reservedTimeSlotsData",
+                            data
                         )
                     );
                 } else {
