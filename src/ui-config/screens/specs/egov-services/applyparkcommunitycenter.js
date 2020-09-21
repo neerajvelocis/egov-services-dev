@@ -220,8 +220,8 @@ export const prepareEditFlow = async (
             );
 
 
-            if(availabilityCheckData.bkPaymentStatus === "SUCCESS" ||
-            availabilityCheckData.bkPaymentStatus === "success"){
+            if (availabilityCheckData.bkPaymentStatus === "SUCCESS" ||
+                availabilityCheckData.bkPaymentStatus === "success") {
                 let queryObject = [
                     { key: "tenantId", value: tenantId },
                     { key: "consumerCode", value: applicationNumber },
@@ -229,7 +229,7 @@ export const prepareEditFlow = async (
                 const response = await getPreviousBill(queryObject)
                 console.log(response, "myresponse");
             }
-            
+
 
             const masterData = get(
                 state,

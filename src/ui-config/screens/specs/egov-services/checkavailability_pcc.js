@@ -218,7 +218,6 @@ const prepareEditFlow = async (
                             reservedDates
                         )
                     );
-                  
                 } else {
                     dispatch(
                         toggleSnackbar(
