@@ -207,8 +207,8 @@ export const prepareEditFlow = async (
             state,
             "screenConfiguration.preparedFinalObject.availabilityCheckData"
         );
-       
-       
+
+
         if (availabilityCheckData !== undefined) {
 
             let paymentStatus = get(
@@ -225,7 +225,7 @@ export const prepareEditFlow = async (
                 dispatch(prepareFinalObject("oldBill", response.data));
                 console.log(response.data, "myresponse");
             }
-    
+
 
 
             set(
